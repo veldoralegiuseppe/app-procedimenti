@@ -4,7 +4,6 @@ import {ThemeProvider } from '@mui/material/styles';
 import ResponsiveAppBar from './components/navbar/Navbar.jsx';
 import {themeOne} from '/src/components/Theming.jsx'
 import { styled } from '@mui/system';
-import Box from '@mui/material/Box';
 import Grid from '@mui/material/Unstable_Grid2';
 
 const root = createRoot(document.getElementById('mainContainer'));
