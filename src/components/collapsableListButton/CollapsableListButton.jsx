@@ -8,6 +8,7 @@ import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import Collapse from '@mui/material/Collapse';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
+import { ListItemButtonThemed } from '/src/components/Theming.jsx';
 
 export default function CollapsableListButton({label, children, icon}){
     const [open, setOpen] = React.useState(true);
@@ -18,18 +19,16 @@ export default function CollapsableListButton({label, children, icon}){
   
     return (
       <Box sx={{width: '100%'}}>
-        <ListItemButton sx={{padding: '8px 10px'}} onClick={handleClick}>
+        <ListItemButtonThemed sx={{padding: '8px 10px'}} onClick={handleClick}>
           <ListItemIcon sx={{minWidth: '24px'}}>
             {icon}
           </ListItemIcon>
           <ListItemText primary={label} />
           {!open ? <ExpandLess /> : <ExpandMore />}
-        </ListItemButton>
+        </ListItemButtonThemed>
         <Collapse in={!open} timeout='auto' unmountOnExit>
           <List component="div" disablePadding>
               {children}
-              <ListItemButton sx={{padding: '8px 10px'}}>
-              </ListItemButton>
           </List>
         </Collapse>
       </Box>
