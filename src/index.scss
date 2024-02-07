@@ -13,8 +13,6 @@
 html, 
 body {
     height: 100%;
-    //background-color: #eef2f6; 
-    //background-color: white; 
 }
 
 html {
@@ -24,6 +22,7 @@ html {
 body{
     font-family: -apple-system, Roboto, Helvetica, Arial, sans-serif;
     box-sizing: border-box;
+    overflow-y: scroll;
 }
 
 // MAIN LAYOUT
