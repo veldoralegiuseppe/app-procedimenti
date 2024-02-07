@@ -16,7 +16,7 @@ import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
 import PersonSearchOutlinedIcon from '@mui/icons-material/PersonSearchOutlined';
 import PostAddOutlinedIcon from '@mui/icons-material/PostAddOutlined';
 import FindInPageOutlinedIcon from '@mui/icons-material/FindInPageOutlined';
-import { Header, HamburgerButton, ReactiveToolbar,} from '/src/components/navbar/NavbarTheming.jsx';
+import { Header, HamburgerButton, ReactiveToolbar, SectionText} from '/src/components/navbar/NavbarTheming.jsx';
 import { useTheme } from '@mui/material/styles';
 import logoM from '/src/assets/img/logo-m.png';
 import NavbarButton from '/src/components/navbar/NavbarButton.jsx';
@@ -81,21 +81,22 @@ export default function ResponsiveAppBar({drawerWidth}) {
   
   const drawer = (
     <div>
-      <Toolbar sx={{borderRightColor: 'transparent'}}>
-        <img src={logo} width="80"/>
+      <Toolbar sx={{borderRightColor: 'transparent', justifyContent: 'start', paddingLeft: '10px !important'}}>
+        <img src={logo} width="92"/>
       </Toolbar>
         
       <Divider sx={{borderColor: 'transparent'}}/>
-        <List sx={{padding: '10px 4px 16px 4px'}}>
+        <List sx={{padding: '0px 11px 16px 11px', '& .MuiBox-root:not(:first-of-type)':{paddingTop: '10px'} }}>
           {
             menuSection.map(s => (
-              <Box key={s.sezione} sx={{padding: '10px 0px 5px 0'}}>
-                <Typography sx={{color: 'rgb(145, 158, 171)', fontFamily:'Public Sans', fontWeight: '700', fontSize: '0.75rem', marginLeft: '5px'}} variant="h6">{s.sezione.toLocaleUpperCase()}</Typography>
+              <Box key={s.sezione}>
+                <SectionText variant="h6">{s.sezione.toLocaleUpperCase()}</SectionText>
                 {s.sub.map((item, index) =>(
                   <ListItem key={item.id} disablePadding>
                     {item.view}
                   </ListItem>
                 ))}
+                   <Divider  sx={{marginTop: '10px'}} />
               </Box>
             ))
           }

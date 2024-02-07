@@ -6,15 +6,16 @@ export const themeOne = createTheme({
   palette: {
     mode: 'light',
     primary: {
-      main: '#5690f2',
-      light: '#c3e1ff',
+      main: '#fb8500',
+      light: '#ffe5c8'
     },
     secondary: {
-      main: '#ed9747',
-      light: '#f7bc6f',
+      main: '#bbdefb',
+      //light: '#f7bc6f',
     },
     text: {
-      primary: '#121926',
+      primary: '#555353',
+      light: 'rgb(171 178 186)',
     },
     background: {
       default: '#ffffff',
@@ -29,6 +30,6 @@ var temaScelto = themeOne
 export const ContentGrid = styled(Grid)({
   backgroundColor: temaScelto.palette.background.paper,
   [temaScelto.breakpoints.down('md')]: {
-    margin: `0 10px 0 10px`,
+    margin: `0 19px`,
   }
 });
