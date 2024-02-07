@@ -7,8 +7,6 @@ import Drawer from '@mui/material/Drawer';
 import Divider from '@mui/material/Divider';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import ListItemText from '@mui/material/ListItemText';
 import { Typography } from '@mui/material';
 import CollapsableListButton from '/src/components/collapsableListButton/CollapsableListButton.jsx'
 import GridViewIcon from '@mui/icons-material/GridView';
@@ -18,59 +16,53 @@ import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
 import PersonSearchOutlinedIcon from '@mui/icons-material/PersonSearchOutlined';
 import PostAddOutlinedIcon from '@mui/icons-material/PostAddOutlined';
 import FindInPageOutlinedIcon from '@mui/icons-material/FindInPageOutlined';
-import { ListItemButtonThemed } from '/src/components/Theming.jsx';
 import { Header, HamburgerButton, ReactiveToolbar,} from '/src/components/navbar/NavbarTheming.jsx';
 import { useTheme } from '@mui/material/styles';
 import logoM from '/src/assets/img/logo-m.png';
+import NavbarButton from '/src/components/navbar/NavbarButton.jsx';
 
-const provvedimentiListItem = (
-  ['Crea', 'Ricerca'].map((text, index) => (
-    <ListItemButtonThemed key={`provvedimenti-${index}`}>
-      <ListItemIcon sx={{minWidth: '24px'}}>
-        {text == 'Crea' ? <PostAddOutlinedIcon/> : <FindInPageOutlinedIcon/>}
-      </ListItemIcon>
-      <ListItemText primary={text}/>
-    </ListItemButtonThemed>
-  ))
-)
-
-const partiListItem = (
-  ['Crea', 'Ricerca'].map((text, index) => (
-    <ListItemButtonThemed key={`parti-${index}`} >
-      <ListItemIcon sx={{minWidth: '24px'}}>
-        {text == 'Crea' ? <PersonAddAltIcon/> : <PersonSearchOutlinedIcon/>}
-      </ListItemIcon>
-      <ListItemText primary={text}/>
-    </ListItemButtonThemed>
-  ))
-)
-
-const dashboardView = (
-  <ListItemButtonThemed sx={{padding: '8px 10px'}}>
-    <ListItemIcon sx={{minWidth: '24px'}}>
-      <GridViewIcon/>
-    </ListItemIcon>
-    <ListItemText primary='Overview' />
-  </ListItemButtonThemed>
-)
-
-const menuSection = [
-  {sezione: 'Dashboard', sub: [{id:'Overview', view: dashboardView}]}, 
-  {sezione: 'Gestisci', sub: [ 
-      {id:'ProvvedimentiMain', view: <CollapsableListButton label='Provvedimenti' icon={<SourceOutlinedIcon/>}>{provvedimentiListItem}</CollapsableListButton>}, 
-      {id: 'PartiMain', view: <CollapsableListButton label='Parti e controparti' icon={<PeopleOutlineIcon/>}>{partiListItem}</CollapsableListButton>},
-    ]}
-]
 
 export default function ResponsiveAppBar({drawerWidth}) {
 
   const theme = useTheme()
 
   /**
+   * BUTTONS
+   */
+  const [activeIndex, setActiveIndex] = React.useState(0);
+
+  const dashboardView = (
+    <NavbarButton key={'DashboardButton'} isActive={activeIndex === 0} handleClick={() => setActiveIndex(0)} icon={<GridViewIcon/>} label='Overview'>
+    </NavbarButton>
+  )
+
+  const provvedimentiListItem = (
+    ['Crea', 'Ricerca'].map((text, index) => (
+        <NavbarButton key={'ProvvedimentiSubButton'+text} isActive={activeIndex === index+1} handleClick={() => setActiveIndex(index+1)} icon={text == 'Crea' ? <PostAddOutlinedIcon/> : <FindInPageOutlinedIcon/>} label={text}>
+        </NavbarButton>
+    ))
+  )
+  
+  const partiListItem = (
+    ['Crea', 'Ricerca'].map((text, index) => (
+      <NavbarButton  key={'PartiSubButton'+text} isActive={activeIndex === index+3} handleClick={() => setActiveIndex(index+3)} icon={text == 'Crea' ? <PersonAddAltIcon/> : <PersonSearchOutlinedIcon/>} label={text}>
+      </NavbarButton>
+    ))
+  )
+  
+  /**
    * DRAWER
    */
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [isClosing, setIsClosing] = React.useState(false);
+
+  const menuSection = [
+  {sezione: 'Dashboard', sub: [{id:'Overview', view: dashboardView}]}, 
+  {sezione: 'Gestisci', sub: [ 
+      {id:'ProvvedimentiMain', view: <CollapsableListButton label='Provvedimenti' icon={<SourceOutlinedIcon/>}>{provvedimentiListItem}</CollapsableListButton>}, 
+      {id: 'PartiMain', view: <CollapsableListButton label='Parti e controparti' icon={<PeopleOutlineIcon/>}>{partiListItem}</CollapsableListButton>},
+    ]}
+  ]
 
   const handleDrawerClose = () => {
     setIsClosing(true);
@@ -87,7 +79,6 @@ export default function ResponsiveAppBar({drawerWidth}) {
     }
   };
   
- 
   const drawer = (
     <div>
       <Toolbar sx={{borderRightColor: 'transparent'}}>
@@ -95,7 +86,7 @@ export default function ResponsiveAppBar({drawerWidth}) {
       </Toolbar>
         
       <Divider sx={{borderColor: 'transparent'}}/>
-        <List sx={{padding: '10px 0 16px 0px'}}>
+        <List sx={{padding: '10px 4px 16px 4px'}}>
           {
             menuSection.map(s => (
               <Box key={s.sezione} sx={{padding: '10px 0px 5px 0'}}>
@@ -171,3 +162,4 @@ export default function ResponsiveAppBar({drawerWidth}) {
     </Box>
   );
 }
+

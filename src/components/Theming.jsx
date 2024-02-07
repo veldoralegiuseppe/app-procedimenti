@@ -1,6 +1,5 @@
 import { createTheme } from '@mui/material/styles';
 import { styled } from '@mui/system';
-import ListItemButton from '@mui/material/ListItemButton';
 import Grid from '@mui/material/Unstable_Grid2';
 
 export const themeOne = createTheme({
@@ -12,6 +11,7 @@ export const themeOne = createTheme({
     },
     secondary: {
       main: '#ed9747',
+      light: '#f7bc6f',
     },
     text: {
       primary: '#121926',
@@ -26,16 +26,9 @@ export const themeOne = createTheme({
 
 var temaScelto = themeOne
 
-// COMMONS
 export const ContentGrid = styled(Grid)({
   backgroundColor: temaScelto.palette.background.paper,
   [temaScelto.breakpoints.down('md')]: {
     margin: `0 10px 0 10px`,
   }
 });
-
-export const ListItemButtonThemed = styled(ListItemButton)(({ theme }) =>({
-  '&:hover':{
-    backgroundColor: theme.palette.primary.light,
-  }
-}));

@@ -2,6 +2,7 @@ import { styled } from '@mui/system';
 import AppBar from '@mui/material/AppBar';
 import MenuIcon from '@mui/icons-material/Menu';
 import Toolbar from '@mui/material/Toolbar';
+import ListItemButton from '@mui/material/ListItemButton';
 
 export const Header = styled(AppBar)(({ theme }) =>({
     backgroundColor: theme.palette.background.default,
@@ -23,7 +24,7 @@ export const HamburgerButton = styled(MenuIcon)(({ theme }) =>({
     "&:hover": {
       backgroundColor: 'transparent',
       //backgroundColor: theme.palette.secondary.main,
-      color: '#f7bc6f',
+      color: theme.palette.secondary.light,
     }
 }));
 
@@ -35,5 +36,11 @@ export const ReactiveToolbar = styled(Toolbar)(({ theme }) =>({
     }
 }));
 
+export const NavbarListItemButton = styled(ListItemButton)(({ theme }) =>({
+  borderRadius: '8px',
+  '&:hover':{
+    backgroundColor: theme.palette.primary.light,
+  }
+}));
 
   
