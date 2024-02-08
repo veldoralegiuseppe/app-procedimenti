@@ -20,32 +20,29 @@ import { Header, HamburgerButton, ReactiveToolbar, SectionText} from '/src/compo
 import { useTheme } from '@mui/material/styles';
 import logoM from '/src/assets/img/logo-m.png';
 import NavbarButton from '/src/components/navbar/NavbarButton.jsx';
+import { AppContext } from '/src/store/app-context.jsx';
 
 
-export default function ResponsiveAppBar({drawerWidth}) {
+export default function ResponsiveAppBar({drawerWidth, onButtonClick}) {
 
+  var activeIndex = React.useContext(AppContext);
   const theme = useTheme()
 
-  /**
-   * BUTTONS
-   */
-  const [activeIndex, setActiveIndex] = React.useState(0);
-
   const dashboardView = (
-    <NavbarButton key={'DashboardButton'} isActive={activeIndex === 0} handleClick={() => setActiveIndex(0)} icon={<GridViewIcon/>} label='Overview'>
+    <NavbarButton key={'DashboardButton'} isActive={activeIndex === 0} handleClick={() => onButtonClick(0)} icon={<GridViewIcon/>} label='Overview'>
     </NavbarButton>
   )
 
   const provvedimentiListItem = (
     ['Crea', 'Ricerca'].map((text, index) => (
-        <NavbarButton key={'ProvvedimentiSubButton'+text} isActive={activeIndex === index+1} handleClick={() => setActiveIndex(index+1)} icon={text == 'Crea' ? <PostAddOutlinedIcon/> : <FindInPageOutlinedIcon/>} label={text}>
+        <NavbarButton key={'ProvvedimentiSubButton'+text} isActive={activeIndex === index+1} handleClick={() => onButtonClick(index+1)} icon={text == 'Crea' ? <PostAddOutlinedIcon/> : <FindInPageOutlinedIcon/>} label={text}>
         </NavbarButton>
     ))
   )
   
   const partiListItem = (
     ['Crea', 'Ricerca'].map((text, index) => (
-      <NavbarButton  key={'PartiSubButton'+text} isActive={activeIndex === index+3} handleClick={() => setActiveIndex(index+3)} icon={text == 'Crea' ? <PersonAddAltIcon/> : <PersonSearchOutlinedIcon/>} label={text}>
+      <NavbarButton  key={'PartiSubButton'+text} isActive={activeIndex === index+3} handleClick={() => onButtonClick(index+3)} icon={text == 'Crea' ? <PersonAddAltIcon/> : <PersonSearchOutlinedIcon/>} label={text}>
       </NavbarButton>
     ))
   )
