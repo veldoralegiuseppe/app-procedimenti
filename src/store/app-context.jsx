@@ -1,5 +1,5 @@
 import { createContext } from "react";
 
 export const AppContext = createContext({
-    selectedNavbarButton: 0
+    currentPath: '/dashboard',
 })

@@ -15,16 +15,14 @@ root.render(
 );
 
 function App(){
-   /**
-   * BUTTONS
-   */
-  const [activeIndex, setActiveIndex] = React.useState(0);
+ 
+  const [path, setPath] = React.useState('/dashboard');
 
   return (
-    <AppContext.Provider value={activeIndex}>
+    <AppContext.Provider value={{currentPath: path}}>
         <ThemeProvider theme={themeOne}>
             <CssBaseline/>
-            <ResponsiveAppBar drawerWidth={sideMenuWidth} onButtonClick={ setActiveIndex }></ResponsiveAppBar>
+            <ResponsiveAppBar drawerWidth={sideMenuWidth} onButtonClick={ setPath }></ResponsiveAppBar>
             <ContentGrid container sx={{margin: `0 20px 0 ${sideMenuWidth}px`, height: '100%', borderRadius: '8px 8px 0 0',}}>
                 <Grid></Grid>
             </ContentGrid>

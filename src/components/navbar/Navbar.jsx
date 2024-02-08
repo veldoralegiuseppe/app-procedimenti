@@ -25,24 +25,24 @@ import { AppContext } from '/src/store/app-context.jsx';
 
 export default function ResponsiveAppBar({drawerWidth, onButtonClick}) {
 
-  var activeIndex = React.useContext(AppContext);
+  var {currentPath} = React.useContext(AppContext);
   const theme = useTheme()
 
   const dashboardView = (
-    <NavbarButton key={'DashboardButton'} isActive={activeIndex === 0} handleClick={() => onButtonClick(0)} icon={<GridViewIcon/>} label='Overview'>
+    <NavbarButton key={'/dashboard'} isActive={currentPath === '/dashboard'} handleClick={() => onButtonClick('/dashboard')} icon={<GridViewIcon/>} label='Overview'>
     </NavbarButton>
   )
 
   const provvedimentiListItem = (
-    ['Crea', 'Ricerca'].map((text, index) => (
-        <NavbarButton key={'ProvvedimentiSubButton'+text} isActive={activeIndex === index+1} handleClick={() => onButtonClick(index+1)} icon={text == 'Crea' ? <PostAddOutlinedIcon/> : <FindInPageOutlinedIcon/>} label={text}>
+    [{path:'/crea', label: 'Crea'}, {path:'/ricerca', label: 'Ricerca'}].map((router, index) => (
+        <NavbarButton key={`/provvedimento/${router.path}`} isActive={currentPath === `/provvedimento/${router.path}`} handleClick={() => onButtonClick(`/provvedimento/${router.path}`)} icon={router.path == '/crea' ? <PostAddOutlinedIcon/> : <FindInPageOutlinedIcon/>} label={router.label}>
         </NavbarButton>
     ))
   )
   
   const partiListItem = (
-    ['Crea', 'Ricerca'].map((text, index) => (
-      <NavbarButton  key={'PartiSubButton'+text} isActive={activeIndex === index+3} handleClick={() => onButtonClick(index+3)} icon={text == 'Crea' ? <PersonAddAltIcon/> : <PersonSearchOutlinedIcon/>} label={text}>
+    [{path:'/crea', label: 'Crea'}, {path:'/ricerca', label: 'Ricerca'}].map((router, index) => (
+      <NavbarButton  key={`/parti/${router.path}`} isActive={currentPath === `/parti/${router.path}`} handleClick={() => onButtonClick(`/parti/${router.path}`)} icon={router.path == '/crea' ? <PersonAddAltIcon/> : <PersonSearchOutlinedIcon/>} label={router.label}>
       </NavbarButton>
     ))
   )
