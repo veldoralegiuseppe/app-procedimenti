@@ -20,7 +20,7 @@ import { Header, HamburgerButton, ReactiveToolbar, SectionText} from '/src/compo
 import { useTheme } from '@mui/material/styles';
 import logoM from '/src/assets/img/logo-m.png';
 import NavbarButton from '/src/components/navbar/NavbarButton.jsx';
-import { AppContext } from '/src/store/app-context.jsx';
+import { AppContext, routes } from '/src/store/app-context.jsx';
 
 
 export default function ResponsiveAppBar({drawerWidth, onButtonClick}) {
@@ -28,38 +28,57 @@ export default function ResponsiveAppBar({drawerWidth, onButtonClick}) {
   var {currentPath} = React.useContext(AppContext);
   const theme = useTheme()
 
-  const dashboardView = (
-    <NavbarButton key={'/dashboard'} isActive={currentPath === '/dashboard'} handleClick={() => onButtonClick('/dashboard')} icon={<GridViewIcon/>} label='Overview'>
-    </NavbarButton>
-  )
-
-  const provvedimentiListItem = (
-    [{path:'/crea', label: 'Crea'}, {path:'/ricerca', label: 'Ricerca'}].map((router, index) => (
-        <NavbarButton key={`/provvedimento/${router.path}`} isActive={currentPath === `/provvedimento/${router.path}`} handleClick={() => onButtonClick(`/provvedimento/${router.path}`)} icon={router.path == '/crea' ? <PostAddOutlinedIcon/> : <FindInPageOutlinedIcon/>} label={router.label}>
-        </NavbarButton>
-    ))
-  )
-  
-  const partiListItem = (
-    [{path:'/crea', label: 'Crea'}, {path:'/ricerca', label: 'Ricerca'}].map((router, index) => (
-      <NavbarButton  key={`/parti/${router.path}`} isActive={currentPath === `/parti/${router.path}`} handleClick={() => onButtonClick(`/parti/${router.path}`)} icon={router.path == '/crea' ? <PersonAddAltIcon/> : <PersonSearchOutlinedIcon/>} label={router.label}>
-      </NavbarButton>
-    ))
-  )
-  
   /**
    * DRAWER
    */
   const [mobileOpen, setMobileOpen] = React.useState(false);
   const [isClosing, setIsClosing] = React.useState(false);
 
-  const menuSection = [
-  {sezione: 'Dashboard', sub: [{id:'Overview', view: dashboardView}]}, 
-  {sezione: 'Gestisci', sub: [ 
-      {id:'ProvvedimentiMain', view: <CollapsableListButton label='Provvedimenti' icon={<SourceOutlinedIcon/>}>{provvedimentiListItem}</CollapsableListButton>}, 
-      {id: 'PartiMain', view: <CollapsableListButton label='Parti e controparti' icon={<PeopleOutlineIcon/>}>{partiListItem}</CollapsableListButton>},
-    ]}
-  ]
+  /**
+   * Costriusce i button del menu in funzione dei path specificati. I path che prevedono dei children sono tradotti in dei collapsable
+   * @param {string} root root del path
+   * @returns view
+   */
+  function buildView(root){
+    const pathButtonMap = new Map()
+    pathButtonMap.set('/dashboard', {label: 'Dashboard', icon: <GridViewIcon/>})
+    pathButtonMap.set('/provvedimenti', {label: 'Provvedimenti', icon: <SourceOutlinedIcon/>})
+    pathButtonMap.set('/provvedimenti/crea', {label: 'Crea', icon: <PostAddOutlinedIcon/>})
+    pathButtonMap.set('/provvedimenti/cerca', {label: 'Cerca', icon: <FindInPageOutlinedIcon/>})
+    pathButtonMap.set('/parti', {label: 'Parti e controparti', icon: <PeopleOutlineIcon/>})
+    pathButtonMap.set('/parti/crea', {label: 'Crea', icon: <PersonAddAltIcon/>})
+    pathButtonMap.set('/parti/cerca', {label: 'Cerca', icon: <PersonSearchOutlinedIcon/>})
+
+    function NavButton(key, path, {icon, label}){
+      return (
+        <NavbarButton key={key} isActive={currentPath === path} handleClick={() => onButtonClick(path)} icon={icon} label={label}>
+        </NavbarButton>
+      )
+    }
+
+    function WrapNavButton(children,{icon, label}, path){
+      return <CollapsableListButton key={path} label={label} icon={icon}>{children}</CollapsableListButton>
+    }
+    
+    if(routes) 
+      return routes.filter(r => r.path === root).map(r => {
+       
+        if(r.children){ 
+          return WrapNavButton(  r.children.map(c => NavButton(r.path+c.path, r.path+c.path, pathButtonMap.get(r.path+c.path))), pathButtonMap.get(r.path), r.path )
+        }
+        else
+          return NavButton(r.path, r.path, pathButtonMap.get(r.path)) 
+    })
+    else <></>
+  }
+
+  const menu = [
+    {sezione: 'Dashboard', sub: [{key:'Overview', view: buildView('/dashboard')}]}, 
+    {sezione: 'Gestisci', sub: [ 
+        {key:'ProvvedimentiMain', view: buildView('/provvedimenti')}, 
+        {key: 'PartiMain', view: buildView('/parti')},
+      ]}
+    ]
 
   const handleDrawerClose = () => {
     setIsClosing(true);
@@ -85,11 +104,11 @@ export default function ResponsiveAppBar({drawerWidth, onButtonClick}) {
       <Divider sx={{borderColor: 'transparent'}}/>
         <List sx={{padding: '0px 11px 16px 11px', '& .MuiBox-root:not(:first-of-type)':{paddingTop: '10px'} }}>
           {
-            menuSection.map(s => (
+            menu.map(s => (
               <Box key={s.sezione}>
                 <SectionText variant="h6">{s.sezione.toLocaleUpperCase()}</SectionText>
                 {s.sub.map((item, index) =>(
-                  <ListItem key={item.id} disablePadding>
+                  <ListItem key={item.key} disablePadding>
                     {item.view}
                   </ListItem>
                 ))}
