@@ -7,7 +7,6 @@ import Drawer from '@mui/material/Drawer';
 import Divider from '@mui/material/Divider';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
-import { Typography } from '@mui/material';
 import CollapsableListButton from '/src/components/collapsableListButton/CollapsableListButton.jsx'
 import GridViewIcon from '@mui/icons-material/GridView';
 import SourceOutlinedIcon from '@mui/icons-material/SourceOutlined';
@@ -106,7 +105,7 @@ export default function ResponsiveAppBar({drawerWidth, onButtonClick}) {
           {
             menu.map(s => (
               <Box key={s.sezione}>
-                <SectionText variant="h6">{s.sezione.toLocaleUpperCase()}</SectionText>
+                <SectionText>{s.sezione.toLocaleUpperCase()}</SectionText>
                 {s.sub.map((item, index) =>(
                   <ListItem key={item.key} disablePadding>
                     {item.view}

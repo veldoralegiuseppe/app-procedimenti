@@ -29,6 +29,7 @@ var temaScelto = themeOne
 
 export const ContentGrid = styled(Grid)({
   backgroundColor: temaScelto.palette.background.paper,
+  padding: '16px',
   [temaScelto.breakpoints.down('md')]: {
     margin: `0 19px`,
   }
