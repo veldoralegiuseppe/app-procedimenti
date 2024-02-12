@@ -8,7 +8,7 @@ export default function NavbarButton({icon, label, isActive, handleClick}){
     return (
         <NavbarListItemButton selected={isActive} key={`provvedimenti`}  onClick={handleClick}>
             <ListItemIcon sx={{minWidth: '24px'}}> {icon} </ListItemIcon>
-            <ListItemText primary={label}/>
+            <ListItemText primary={label} sx={ {'& .MuiTypography-root':{fontSize: '0.9rem'}} }/>
         </NavbarListItemButton>
     )
 }

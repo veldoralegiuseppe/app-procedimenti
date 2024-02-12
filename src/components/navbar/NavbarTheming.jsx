@@ -55,11 +55,12 @@ export const NavbarListItemButton = styled(ListItemButton)(({ theme }) =>({
 }));
 
 export const SectionText = styled(Typography)(({ theme }) =>({
-  color: theme.palette.text.primary, 
+  color: theme.palette.logo.primary, 
   fontFamily:'Public Sans', 
-  fontWeight: '400', 
-  fontSize: '0.75rem', 
-  margin: '0 4px 10px 0'
+  fontWeight: '600', 
+  fontSize: '0.875rem', 
+  margin: '0 4px 10px 0',
+  lineHeight: '1.66',
 
 }));
 

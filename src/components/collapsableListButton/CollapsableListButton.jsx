@@ -22,7 +22,7 @@ export default function CollapsableListButton({label, children, icon}){
           <ListItemIcon sx={{minWidth: '24px'}}>
             {icon}
           </ListItemIcon>
-          <ListItemText primary={label} />
+          <ListItemText  sx={ {'& .MuiTypography-root':{fontSize: '0.9rem'}} } primary={label} />
           {!open ? <ExpandLess /> : <ExpandMore />}
         </CollapsableListItemButton>
         <Collapse in={!open} timeout='auto' unmountOnExit>

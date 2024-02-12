@@ -15,12 +15,14 @@ export default function CreaProvvedimento(){
     }
 
     return(
+        <>
         <Grid xs={12}>
             <div style={{display: 'flex', backgroundColor: 'white', justifyContent: 'space-between', height: '56px', alignItems: 'center', padding: '0 16px', borderRadius: '8px'}}>
-                <Typography variant="h5" sx={{fontWeight: '700'}}>{getCurrentPage()}</Typography>
+                <Typography variant="h5" sx={{fontWeight: '600', fontSize: '1.25rem', color:'#4b62a2'}}>{getCurrentPage()}</Typography>
                 <Breadcrumbs></Breadcrumbs>
             </div>
         </Grid>
+        </>
     )
 }
 

@@ -23,21 +23,21 @@ export default function IconBreadcrumbs() {
                   onClick={(event) => {event.preventDefault(); handleClick(subPath.slice(0, index+1).join(''))}} 
                   color="inherit" 
                   href={subPath.slice(0, index+1).join('')}>
-                 <Typography variant="h6">{camelCase(path.replace('/',''))}</Typography>
+                 <Typography variant="h6" sx={{fontSize: '0.9rem'}}>{camelCase(path.replace('/',''))}</Typography>
             </Link>
         ))
     }
 
     return (
         <div role="presentation">
-        <Breadcrumbs aria-label="breadcrumb" separator="›" sx={{'& .MuiBreadcrumbs-separator':{fontSize: '2rem', paddingBottom: '0.25rem'} }}>
+        <Breadcrumbs aria-label="breadcrumb" separator="›" sx={{'& .MuiBreadcrumbs-separator':{fontSize: '1.5rem', paddingBottom: '0.15rem'} }}>
             <Link 
                 key={'/dashboard'} 
                 underline="hover" 
                 sx={{ display: 'flex', alignItems: 'center' }} 
                 color="inherit" href="/dashboard" 
                 onClick={(event) => {event.preventDefault(); handleClick('/dashboard')}} >
-                <HomeIcon sx={{ mr: 0.5, color: '#fb8500', width:'1.7rem', height: '1.7rem' }} fontSize="inherit" />
+                <HomeIcon sx={{ mr: 0.5, color: '#fb8500', width:'1.25rem', height: '1.25rem' }} fontSize="inherit" />
             </Link>
             {Links()}
         </Breadcrumbs>

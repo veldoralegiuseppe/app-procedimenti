@@ -40,7 +40,7 @@ export default function ResponsiveAppBar({drawerWidth, onButtonClick}) {
    */
   function buildView(root){
     const pathButtonMap = new Map()
-    pathButtonMap.set('/dashboard', {label: 'Dashboard', icon: <GridViewIcon/>})
+    pathButtonMap.set('/dashboard', {label: 'Overview', icon: <GridViewIcon/>})
     pathButtonMap.set('/provvedimenti', {label: 'Provvedimenti', icon: <SourceOutlinedIcon/>})
     pathButtonMap.set('/provvedimenti/crea', {label: 'Crea', icon: <PostAddOutlinedIcon/>})
     pathButtonMap.set('/provvedimenti/cerca', {label: 'Cerca', icon: <FindInPageOutlinedIcon/>})
@@ -101,7 +101,7 @@ export default function ResponsiveAppBar({drawerWidth, onButtonClick}) {
       </Toolbar>
         
       <Divider sx={{borderColor: 'transparent'}}/>
-        <List sx={{padding: '0px 11px 16px 11px', '& .MuiBox-root:not(:first-of-type)':{paddingTop: '10px'} }}>
+        <List sx={{padding: '9px 11px 16px 11px', '& .MuiBox-root:not(:first-of-type)':{paddingTop: '10px'} }}>
           {
             menu.map(s => (
               <Box key={s.sezione}>
@@ -120,7 +120,7 @@ export default function ResponsiveAppBar({drawerWidth, onButtonClick}) {
   );
 
   return (
-    <Box sx={{ flexGrow: 1, backgroundColor: theme.palette.background.default}}>
+    <Box sx={{ flexGrow: 0, backgroundColor: theme.palette.background.default}}>
       <Header position="static">
         <ReactiveToolbar>
           <IconButton

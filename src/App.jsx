@@ -24,7 +24,7 @@ function App(){
         <ThemeProvider theme={themeOne}>
             <CssBaseline/>
             <ResponsiveAppBar drawerWidth={sideMenuWidth} onButtonClick={ setPath }></ResponsiveAppBar>
-            <ContentGrid container sx={{margin: `0 20px 0 ${sideMenuWidth}px`, height: '100%', borderRadius: '8px 8px 0 0',}}>
+            <ContentGrid container sx={{margin: `0 20px 0 ${sideMenuWidth}px`, borderRadius: '8px 8px 0 0', flex: '1'}}>
                
                     {getRoute(path).component}
                 

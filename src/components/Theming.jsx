@@ -13,6 +13,10 @@ export const themeOne = createTheme({
       main: '#bbdefb',
       //light: '#f7bc6f',
     },
+    logo:{
+      primary: '#4b62a2',
+      secondary: '#ed9747',
+    },
     text: {
       primary: '#555353',
       light: 'rgb(171 178 186)',
