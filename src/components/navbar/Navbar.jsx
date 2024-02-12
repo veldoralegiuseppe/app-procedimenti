@@ -41,9 +41,9 @@ export default function ResponsiveAppBar({drawerWidth, onButtonClick}) {
   function buildView(root){
     const pathButtonMap = new Map()
     pathButtonMap.set('/dashboard', {label: 'Overview', icon: <GridViewIcon/>})
-    pathButtonMap.set('/provvedimenti', {label: 'Provvedimenti', icon: <SourceOutlinedIcon/>})
-    pathButtonMap.set('/provvedimenti/crea', {label: 'Crea', icon: <PostAddOutlinedIcon/>})
-    pathButtonMap.set('/provvedimenti/cerca', {label: 'Cerca', icon: <FindInPageOutlinedIcon/>})
+    pathButtonMap.set('/procedimenti', {label: 'Procedimenti', icon: <SourceOutlinedIcon/>})
+    pathButtonMap.set('/procedimenti/crea', {label: 'Crea', icon: <PostAddOutlinedIcon/>})
+    pathButtonMap.set('/procedimenti/cerca', {label: 'Cerca', icon: <FindInPageOutlinedIcon/>})
     pathButtonMap.set('/parti', {label: 'Parti e controparti', icon: <PeopleOutlineIcon/>})
     pathButtonMap.set('/parti/crea', {label: 'Crea', icon: <PersonAddAltIcon/>})
     pathButtonMap.set('/parti/cerca', {label: 'Cerca', icon: <PersonSearchOutlinedIcon/>})
@@ -74,7 +74,7 @@ export default function ResponsiveAppBar({drawerWidth, onButtonClick}) {
   const menu = [
     {sezione: 'Dashboard', sub: [{key:'Overview', view: buildView('/dashboard')}]}, 
     {sezione: 'Gestisci', sub: [ 
-        {key:'ProvvedimentiMain', view: buildView('/provvedimenti')}, 
+        {key:'ProcedimentiMain', view: buildView('/procedimenti')}, 
         {key: 'PartiMain', view: buildView('/parti')},
       ]}
     ]

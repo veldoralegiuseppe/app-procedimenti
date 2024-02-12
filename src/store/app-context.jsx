@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { createContext } from "react";
-import CreaProvvedimento from '/src/components/creaProvvedimento/CreaProvvedimento.jsx';
+import CreaProcedimentoPage from '/src/components/creaProcedimentoPage/CreaProcedimentoPage.jsx';
 
 export const routes = [
     {
@@ -8,11 +8,11 @@ export const routes = [
         component: 'dashboard', 
     },
     {
-        path: '/provvedimenti', 
+        path: '/procedimenti', 
         children: [
             {
                 path: '/crea',
-                component: <CreaProvvedimento/>
+                component: <CreaProcedimentoPage/>
             },
             {
                 path: '/cerca',

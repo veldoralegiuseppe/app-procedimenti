@@ -41,6 +41,8 @@
     "@fontsource/roboto": "^5.0.8",
     "@mui/icons-material": "^5.15.7",
     "@mui/material": "^5.15.7",
+    "@mui/x-date-pickers": "^6.19.4",
+    "dayjs": "^1.11.10",
     "electron-squirrel-startup": "^1.0.0"
   }
 }
