@@ -25,7 +25,7 @@ export const themeOne = createTheme(
         light: 'rgb(171 178 186)',
       },
       background: {
-        default: '#ffffff',
+        default: 'rgb(255,255,255)',
         paper: '#eef2f6',
       },
     },

@@ -7,12 +7,16 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
 import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
+import { CssTextField } from './DefinisciProcedimentoTheming.jsx';
+import Paper from "@mui/material/Paper";
+import { useTheme } from '@mui/material/styles';
 
 const filter = createFilterOptions();
 
-export default function FreeSoloCreateOptionDialog() {
+export default function SedeSelect({inputWidth, backgroundColor}) {
   const [value, setValue] = React.useState(null);
   const [open, toggleOpen] = React.useState(false);
+  const theme = useTheme()
 
   const handleClose = () => {
     setDialogValue({
@@ -87,10 +91,13 @@ export default function FreeSoloCreateOptionDialog() {
         selectOnFocus
         clearOnBlur
         handleHomeEndKeys
-        renderOption={(props, option) => <li {...props}>{option.title}</li>}
-        sx={{margin: '10px',width: '132.5px', backgroundColor: 'rgb(248,250,252)', display:'inline-block', '& .MuiAutocomplete-endAdornment':{top: '23%'}}}
+        PaperComponent={({ children }) => (
+          <Paper style={{ backgroundColor: theme.palette.primary.light}}>{children}</Paper>
+        )}
+        renderOption={(props, option) => <li {...props} style={{color: theme.palette.primary.main, fontSize: '.9rem', fontWeight:'500'}}>{option.title}</li>}
+        sx={{margin: '10px',width: inputWidth, backgroundColor: backgroundColor, display:'inline-block', '& .MuiAutocomplete-endAdornment':{top: '23%'}}}
         freeSolo
-        renderInput={(params) => <TextField {...params} label="Sede" size='small'/>}
+        renderInput={(params) => <CssTextField {...params} label="Sede" size='small'/>}
       />
       <Dialog open={open} onClose={handleClose}>
         <form onSubmit={handleSubmit}>
