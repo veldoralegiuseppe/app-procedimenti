@@ -4,6 +4,12 @@ import Select from '@mui/material/Select';
 
 export const CssTextField = styled(TextField)(({ theme }) => ({
 
+  //  '& .MuiInputLabel-root[data-shrink="true"]':{
+  //     color: theme.palette.logo.secondary,
+
+  //     '& ~ .MuiInputBase-root fieldset':{ borderColor: theme.palette.logo.secondary,}
+  //   },
+
     '& .MuiOutlinedInput-root': {
         '&:hover fieldset': {
             borderColor: theme.palette.logo.secondary,

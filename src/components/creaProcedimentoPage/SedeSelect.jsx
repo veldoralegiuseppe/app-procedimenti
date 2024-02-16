@@ -13,7 +13,7 @@ import { useTheme } from '@mui/material/styles';
 
 const filter = createFilterOptions();
 
-export default function SedeSelect({inputWidth, backgroundColor}) {
+export default function SedeSelect({inputWidth, minWidth, maxWidth, backgroundColor, margin}) {
   const [value, setValue] = React.useState(null);
   const [open, toggleOpen] = React.useState(false);
   const theme = useTheme()
@@ -94,8 +94,8 @@ export default function SedeSelect({inputWidth, backgroundColor}) {
         PaperComponent={({ children }) => (
           <Paper style={{ backgroundColor: theme.palette.primary.light}}>{children}</Paper>
         )}
-        renderOption={(props, option) => <li {...props} style={{color: theme.palette.primary.main, fontSize: '.9rem', fontWeight:'500'}}>{option.title}</li>}
-        sx={{margin: '10px',width: inputWidth, backgroundColor: backgroundColor, display:'inline-block', '& .MuiAutocomplete-endAdornment':{top: '23%'}}}
+        renderOption={(props, option) => <li {...props} style={{color: theme.palette.primary.main, fontSize: '.9rem', fontWeight:'500', }}>{option.title}</li>}
+        sx={{margin: margin,width: inputWidth, minWidth: minWidth, maxWidth: maxWidth, backgroundColor: backgroundColor, display:'inline-block', '& .MuiAutocomplete-endAdornment':{top: '23%'},'& .MuiFormLabel-root':{color: 'rgb(128 128 128 / 60%)'}}}
         freeSolo
         renderInput={(params) => <CssTextField {...params} label="Sede" size='small'/>}
       />

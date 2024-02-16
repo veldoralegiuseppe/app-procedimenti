@@ -50,15 +50,15 @@ export const NavbarListItemButton = styled(ListItemButton)(({ theme }) =>({
     color: theme.palette.primary.main,
     backgroundColor: theme.palette.primary.light,
 
-    "& .MuiListItemText-primary":{fontWeight: '700'}
+    "& .MuiListItemText-primary":{fontWeight: '500'}
   }
 }));
 
 export const SectionText = styled(Typography)(({ theme }) =>({
   color: theme.palette.logo.primary, 
   fontFamily:'Public Sans', 
-  fontWeight: '600', 
-  fontSize: '0.875rem', 
+  fontWeight: '500', 
+  fontSize: '0.9rem', 
   margin: '0 4px 10px 0',
   lineHeight: '1.66',
 

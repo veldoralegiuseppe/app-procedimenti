@@ -12,6 +12,6 @@ export const CollapsableListItemButton = styled(ListItemButton)(({ theme }) =>({
       'svg':{ color: theme.palette.primary.main,},
       color: theme.palette.primary.main,
       backgroundColor: 'transparent',
-      "& .MuiListItemText-primary":{fontWeight: '700'}
+      "& .MuiListItemText-primary":{fontWeight: '500'}
     }
 }));

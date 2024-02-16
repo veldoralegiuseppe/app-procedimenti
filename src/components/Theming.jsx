@@ -21,8 +21,9 @@ export const themeOne = createTheme(
         secondary: '#ed9747',
       },
       text: {
-        primary: '#555353',
-        light: 'rgb(171 178 186)',
+        primary: '#585858',
+        secondary: '#787878',
+        //light: 'rgb(171 178 186)',
       },
       background: {
         default: 'rgb(255,255,255)',

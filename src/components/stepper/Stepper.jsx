@@ -59,7 +59,7 @@ export default function HorizontalLinearStepper({steps}) {
 
   return (
     <Box sx={{ width: '100%', backgroundColor: theme.palette.background.default, borderRadius: '8px', padding: '16px 16px', alignItems: 'center' }}>
-      <Stepper activeStep={activeStep}>
+      <Stepper activeStep={activeStep} sx={{paddingBottom: '2rem', borderBottom: '1px solid #f1f1f1'}}>
         {steps.map((step, index) => {
           const stepProps = {};
           const labelProps = {};
@@ -73,13 +73,13 @@ export default function HorizontalLinearStepper({steps}) {
           }
           return (
             <Step key={step.label} {...stepProps}>
-              <StepLabel {...labelProps} sx={{'& .MuiStepLabel-label':{fontSize: '.9rem'},'& .MuiSvgIcon-root':{width: '2.5rem', height:'2.5rem'}, '& .MuiSvgIcon-root text':{fontSize: '1rem', fill: 'white'} }}>{step.label}</StepLabel>
+              <StepLabel {...labelProps} sx={{'& .MuiStepLabel-label':{fontSize: '.9rem', fontWeight: '400'},'& .MuiStepLabel-label.Mui-active, & .MuiStepLabel-label.Mui-completed':{color: theme.palette.primary.main, fontWeight: '400' },'& .MuiSvgIcon-root':{width: '2rem', height:'2rem'}, '& .MuiSvgIcon-root text':{fontSize: '1rem', fill: 'white'} }}>{step.label}</StepLabel>
             </Step>
           );
         })}
       </Stepper>
 
-      <div style={{display: 'flex', flexDirection: 'column', rowGap: '4rem', marginTop: '5rem'}}>
+      <div style={{display: 'flex', flexDirection: 'column', rowGap: '0'}}>
         {activeStep === steps.length ? (
             <React.Fragment>
             <Typography sx={{ mt: 2, mb: 1 }}>
@@ -96,14 +96,14 @@ export default function HorizontalLinearStepper({steps}) {
 
               {/* Button di controllo */}
               <Grid xs={12}>
-                  <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
+                  <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2, justifyContent: 'space-around', alignItems: 'center' }}>
                       <Button
                       color="inherit"
                       disabled={activeStep === 0}
                       onClick={handleBack}
-                      sx={{ mr: 1 }}
+                      sx={{backgroundColor: 'rgb(228 228 228 / 60%)', color: theme.palette.text.disabled, '&:hover':{backgroundColor: theme.palette.logo.primary}}}
                       >
-                      Back
+                      Indietro
                       </Button>
                       <Box sx={{ flex: '1 1 auto' }} />
                       {isStepOptional(activeStep) && (
@@ -112,8 +112,8 @@ export default function HorizontalLinearStepper({steps}) {
                       </Button>
                       )}
 
-                      <Button onClick={handleNext}>
-                      {activeStep === steps.length - 1 ? 'Finish' : 'Next'}
+                      <Button onClick={handleNext} sx={{backgroundColor: theme.palette.primary.light, color: theme.palette.primary.main, '&:hover':{backgroundColor:  theme.palette.primary.light, color: theme.palette.primary.mai}}}>
+                      {activeStep === steps.length - 1 ? 'Crea' : 'Avanti'}
                       </Button>
                   </Box>
               </Grid>

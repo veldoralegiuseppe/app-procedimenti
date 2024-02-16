@@ -7,7 +7,7 @@ import { CssBaseline } from '@mui/material/';
 import { AppContext, routes, getRoute } from '/src/store/app-context.jsx';
 
 const root = createRoot(document.getElementById('mainContainer'));
-const sideMenuWidth = 170
+const sideMenuWidth = '16rem'
 
 root.render( 
     <App></App>
@@ -23,7 +23,7 @@ function App(){
         <ThemeProvider theme={themeOne}>
             <CssBaseline/>
             <ResponsiveAppBar drawerWidth={sideMenuWidth} onButtonClick={ setPath }></ResponsiveAppBar>
-            <ContentGrid container spacing={0} sx={{margin: `0 20px 0 ${sideMenuWidth}px`, borderRadius: '8px 8px 0 0', flex: '1'}}>
+            <ContentGrid container spacing={0} sx={{margin: `0 20px 0 ${sideMenuWidth}`, borderRadius: '8px 8px 0 0', flex: '1', padding: '18px'}}>
               {getRoute(path).component} 
             </ContentGrid>
         </ThemeProvider>

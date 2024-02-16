@@ -4,9 +4,12 @@ import Link from '@mui/material/Link';
 import HomeIcon from '@mui/icons-material/Home';
 import { Typography } from '@mui/material';
 import { AppContext, getRoute } from '/src/store/app-context.jsx';
+import { useTheme } from '@mui/material/styles';
 
 export default function IconBreadcrumbs() {
     var {currentPath, setCurrentPath} = React.useContext(AppContext);
+    const theme = useTheme()
+
 
     function handleClick(requestPath) {
         if(getRoute(requestPath).component) setCurrentPath(requestPath)
@@ -19,11 +22,11 @@ export default function IconBreadcrumbs() {
         return subPath.map((path, index) => (
             <Link key={path} 
                   underline="hover" 
-                  sx={{ display: 'flex', alignItems: 'center' }} 
+                  sx={{ display: 'flex', alignItems: 'center', color: theme.palette.text.primary }} 
                   onClick={(event) => {event.preventDefault(); handleClick(subPath.slice(0, index+1).join(''))}} 
                   color="inherit" 
                   href={subPath.slice(0, index+1).join('')}>
-                 <Typography variant="h6" sx={{fontSize: '0.9rem'}}>{camelCase(path.replace('/',''))}</Typography>
+                 <Typography variant="h6" sx={{fontSize: '0.9rem', fontWeight: '400', color: theme.palette.text.primary}}>{camelCase(path.replace('/',''))}</Typography>
             </Link>
         ))
     }
@@ -34,8 +37,9 @@ export default function IconBreadcrumbs() {
             <Link 
                 key={'/dashboard'} 
                 underline="hover" 
-                sx={{ display: 'flex', alignItems: 'center' }} 
-                color="inherit" href="/dashboard" 
+                sx={{ display: 'flex', alignItems: 'center', color: theme.palette.text.primary }} 
+                color="inherit" 
+                href="/dashboard" 
                 onClick={(event) => {event.preventDefault(); handleClick('/dashboard')}} >
                 <HomeIcon sx={{ mr: 0.5, color: '#fb8500', width:'1.25rem', height: '1.25rem' }} fontSize="inherit" />
             </Link>
