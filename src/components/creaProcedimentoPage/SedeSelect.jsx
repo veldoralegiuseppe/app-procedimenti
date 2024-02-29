@@ -92,12 +92,30 @@ export default function SedeSelect({inputWidth, minWidth, maxWidth, backgroundCo
         clearOnBlur
         handleHomeEndKeys
         PaperComponent={({ children }) => (
-          <Paper style={{ backgroundColor: theme.palette.primary.light}}>{children}</Paper>
+          <Paper sx={{backgroundColor: theme.palette.dropdown.primary}}>{children}</Paper>
         )}
-        renderOption={(props, option) => <li {...props} style={{color: theme.palette.primary.main, fontSize: '.9rem', fontWeight:'500', }}>{option.title}</li>}
-        sx={{margin: margin,width: inputWidth, minWidth: minWidth, maxWidth: maxWidth, backgroundColor: backgroundColor, display:'inline-block', '& .MuiAutocomplete-endAdornment':{top: '23%'},'& .MuiOutlinedInput-input':{fontWeight: '500'}}}
+        renderOption={(props, option) => 
+          <li {...props} 
+          
+          style={{color: theme.palette.primary.main, fontSize: '.9rem', fontWeight:'400'}}>
+                {option.title}
+          </li>
+        }
+        sx={{
+          margin: margin,
+          width: inputWidth, 
+          minWidth: minWidth, 
+          maxWidth: maxWidth, 
+          backgroundColor: backgroundColor, 
+          display:'inline-block', 
+        }}
         freeSolo
-        renderInput={(params) => <CssTextField {...params} label="Sede" size='small'/>}
+        renderInput={(params) => 
+          <CssTextField {...params} 
+          label="Sede" 
+          size='small'
+          />
+        }
       />
       <Dialog open={open} onClose={handleClose}>
         <form onSubmit={handleSubmit}>

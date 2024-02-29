@@ -2,6 +2,15 @@
 @import "~@fontsource/public-sans/index.css";
 @import "~@fontsource/roboto/index.css";
 
+// GLOBAL
+$primary-main: #fb8500;
+$background-default: rgb(255,255,255);
+$text-primary: #585858;
+$dropdown-primary: #fdf7f1;
+$dropdown-hover: rgba(251, 134, 0, 0.125);
+$dropdown-selected: #ffb25c;
+
+
 *,
 *::after,
 *::before{
@@ -31,4 +40,104 @@ body{
     flex-direction: column;
     min-height: 100vh;
     gap: 0;
+}
+
+// DATE PICKER CUSTOMIZATION
+.MuiPickersLayout-root{
+    .MuiDayCalendar-weekDayLabel {
+        color: $primary-main;
+        // border-radius: 2;
+        // border-width: 1;
+        // border-color: '#e91e63';
+        // border: '1px solid';
+        // background-color: '#f8bbd0';
+    }
+
+    .MuiPickersToolbar-root{
+        span{
+            color: $background-default;
+        }
+    }
+
+    .MuiPickersCalendarHeader-root{
+        .MuiPickersFadeTransitionGroup-root div {text-transform: capitalize;}
+    }
+
+    .MuiYearCalendar-root{
+        .MuiPickersYear-root button{
+            color: $text-primary;
+
+            &.Mui-selected, &.Mui-selected:focus{
+                background-color: rgba($primary-main, 0.8);
+                color: white;
+
+            }
+
+            &:hover{
+                background-color: rgb(176 176 176 / 15%);
+            }
+        }
+    }
+
+    .MuiPickersDay-root{
+        &.MuiPickersDay-today{
+            border: none;
+        }
+        
+        &.Mui-selected{
+            background-color: rgba($primary-main, 0.8);
+            color: white;
+        }
+
+        &:focus{
+            background-color: rgba($primary-main, 0.8);
+            color: white;
+            border: none;
+    
+            &.Mui-selected{
+                background-color: rgba($primary-main, 0.8);
+                color: white;
+            }
+        }
+
+        &:hover{
+            background-color: rgb(176 176 176 / 15%);
+        }
+    }
+
+    .MuiTimeClock-root{
+        background-color: $background-default;
+        .MuiClockNumber-root.Mui-selected{
+            color: white;
+        }
+        .MuiClock-clock{
+            background-color: #f3f3f3;
+            //background-color: rgba(251, 134, 0, 0.125)
+        }
+    }
+   
+}
+
+// SEDI LIST ITEM
+.MuiAutocomplete-popper {
+    .MuiAutocomplete-listbox .MuiAutocomplete-option{
+        background-color: $dropdown-primary;
+
+        &:hover, .Mui-focused{
+            background-color: $dropdown-hover;
+        }
+
+        &.Mui-focused{
+            background-color: $dropdown-hover;
+        }
+
+        &[aria-selected=true],  &:hover[aria-selected="true"].Mui-focused {
+            background-color: $dropdown-selected !important;
+            color: white !important;
+        }
+    }
+};
+.MuiAutocomplete-root > div > div > div{
+    // Icona della X
+    margin-top: 2.5px;
 }

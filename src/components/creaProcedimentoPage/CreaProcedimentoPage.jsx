@@ -23,7 +23,7 @@ import { useTheme } from '@mui/material/styles';
 import RegistroProcedimentoButton from './RegistroProcedimentoButton.jsx';
 
 
-export default function CreaProvvedimento(){
+export default function CreaProcedimento(){
 
     var {currentPath} = React.useContext(AppContext);
     const steps = [
@@ -64,9 +64,12 @@ function DefinisciProcedimento(){
     const backgroundColor = theme.palette.background.default
     const formLabelFontSize = '1rem'
     const labelColor = 'rgb(105 105 105 / 60%)'
-    
+    const valoreControversiaRef = React.useRef(null);
+    const oggControvMenuItemStyle = {'&:hover':{backgroundColor: theme.palette.dropdown.hover}, '&.Mui-selected, &.Mui-selected:hover':{backgroundColor: theme.palette.dropdown.selected, color: 'white'}}
 
-     // FORM SELECT PROVA
+    handleClickOutside(valoreControversiaRef, convalidaCifra)
+
+    // FORM SELECT PROVA
     const [age, setAge] = React.useState('');
 
     const handleChange = (event) => {
@@ -92,7 +95,23 @@ function DefinisciProcedimento(){
             <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='it' localeText={itIT.components.MuiLocalizationProvider.defaultProps.localeText}>
                 <MobileDatePicker 
                 label='Data deposito'
-                sx={{margin: margin, backgroundColor: backgroundColor, width: inputWidth, minWidth: minWidth, maxWidth: maxWidth, '& .MuiFormLabel-root':{color: labelColor}, '& .MuiOutlinedInput-input':{fontWeight: '500'}}}
+                sx={{
+                    margin: margin, 
+                    backgroundColor: backgroundColor, 
+                    width: inputWidth, 
+                    minWidth: minWidth, 
+                    maxWidth: maxWidth, 
+                    '& .MuiFormLabel-root':{color: labelColor}, 
+                    '& .MuiOutlinedInput-input':{fontWeight: '500'},
+                    '& .MuiDayCalendar-weekDayLabel': {
+                        color: 'red !important',
+                        borderRadius: 2,
+                        borderWidth: 1,
+                        borderColor: '#e91e63',
+                        border: '1px solid',
+                        backgroundColor: '#f8bbd0',
+                    },
+                }}
                 slots={{textField: CssTextField}}
                 slotProps={{
                     textField: {
@@ -147,7 +166,7 @@ function DefinisciProcedimento(){
                             MenuProps: {
                                 MenuListProps: {
                                     sx: {
-                                        backgroundColor: theme.palette.primary.light,
+                                        backgroundColor: theme.palette.dropdown.primary,
                                         color: theme.palette.primary.main,
                                     }
                                 },
@@ -156,7 +175,7 @@ function DefinisciProcedimento(){
                                     '& .MuiMenuItem-root': {
                                         //padding: '1rem',
                                         fontSize: '.9rem',
-                                        fontWeight: '500',
+                                        fontWeight: '400',
                                     },
                                     },
                                 },
@@ -167,25 +186,26 @@ function DefinisciProcedimento(){
                         onChange={handleChange}
                         sx={{'& .MuiOutlinedInput-input':{fontWeight: '500'},}}
                         >
-                        <MenuItem value={10}>Ten</MenuItem>
-                        <MenuItem value={20}>Twenty</MenuItem>
-                        <MenuItem value={30}>Thirty</MenuItem>
+                        <MenuItem sx={oggControvMenuItemStyle} value={10}>Ten</MenuItem>
+                        <MenuItem sx={oggControvMenuItemStyle} value={20}>Twenty</MenuItem>
+                        <MenuItem sx={oggControvMenuItemStyle} value={30}>Thirty</MenuItem>
                         </CssSelect>
                 </FormControl>
 
                 <CssTextField 
-                    InputProps={{
-                    startAdornment: (
-                        <InputAdornment position="start">
-                        <EuroSymbolIcon sx={{color: labelColor}}/>
-                        </InputAdornment>
-                    ),
-                    }}
+                InputProps={{
+                startAdornment: (
+                    <InputAdornment position="start">
+                    <EuroSymbolIcon sx={{color: labelColor}}/>
+                    </InputAdornment>
+                ),
+                }}
                 sx={{margin: margin, backgroundColor: backgroundColor, width: inputWidth, minWidth: minWidth, maxWidth: maxWidth, '& .MuiFormLabel-root':{color: labelColor}, '& .MuiOutlinedInput-input':{fontWeight: '500'}}} 
                 id="outlined-basic" 
                 label="Valore della controversia" 
+                ref={valoreControversiaRef}
                 variant="outlined" 
-                size='small' 
+                size='small'
                 required/>
             </Grid>
         </div>
@@ -199,4 +219,43 @@ function DefinisciProcedimento(){
  */
 function camelCase(str) {
     return str.substring(0,1).toLocaleUpperCase() + str.substring(1)
+}
+
+/**
+ * Gestisce il click al di fuori del componente di interesse
+ * @param {*} ref 
+ */
+function handleClickOutside(ref, callback){
+    React.useEffect(() => {
+        /**
+         * Alert if clicked on outside of element
+         */
+        function handleClickOutside(event) {
+            if (ref.current && !ref.current.contains(event.target)) {
+                if(callback) callback(ref)
+            }
+        }
+        // Bind the event listener
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            // Unbind the event listener on clean up
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, [ref]);
+}
+
+/**
+ * Convalida la cifra espressa in euro aggiungendo all'occorrenza la virgola
+ * @param {String} ref Riferimento al componente
+ */
+function convalidaCifra(ref){
+    let importo = ref.current.childNodes[1].childNodes[1].value
+    if(!importo) return
+
+    var regex = /^\d+(\,\d{1,2})?$/
+    if(!regex.test(importo)) console.log('Errore')
+    else if(!importo.includes(',')){
+        importo += ',00'
+        ref.current.childNodes[1].childNodes[1].value = importo
+    }
 }

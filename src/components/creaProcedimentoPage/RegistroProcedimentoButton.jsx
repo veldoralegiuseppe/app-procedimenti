@@ -3,8 +3,10 @@ import { CssTextField} from './DefinisciProcedimentoTheming.jsx';
 import InputAdornment from '@mui/material/InputAdornment';
 import { useTheme } from '@mui/material/styles';
 
+var firstClick = false
 
 function handleClick(ref) {
+    firstClick = true
    for(let i=0; i<ref.current.childNodes.length; i++){
         ref.current.childNodes[i].className += ' Mui-focused'
         //console.log(ref.current.childNodes[i].className)
@@ -22,8 +24,8 @@ function handleOutsideClick(ref, inputRef) {
                     ref.current.childNodes[i].className = ref.current.childNodes[i].className.replaceAll(' Mui-focused','')
                     //console.log(ref.current.childNodes[i].className)
                 }
-                if(inputRef && !inputRef.current.value){
-                    console.log(inputRef.current)
+                if(inputRef && firstClick && !inputRef.current.value){
+                    //console.log(inputRef.current)
                     inputRef.current.value = new Date().getFullYear()
                 } 
             }

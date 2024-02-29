@@ -20,6 +20,11 @@ export const themeOne = createTheme(
         primary: '#4b62a2',
         secondary: '#ed9747',
       },
+      dropdown: {
+        primary: '#fdf7f1',
+        hover: 'rgba(251, 134, 0, 0.125)',
+        selected: '#ffb25c'
+      },
       text: {
         primary: '#585858',
         secondary: '#787878',
