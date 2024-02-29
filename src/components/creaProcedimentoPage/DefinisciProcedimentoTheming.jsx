@@ -10,6 +10,7 @@ export const CssTextField = styled(TextField)(({ theme }) => ({
   //     '& ~ .MuiInputBase-root fieldset':{ borderColor: theme.palette.logo.secondary,}
   //   },
 
+    '& .MuiInputLabel-root.Mui-focused':{ color: theme.palette.logo.secondary,},
     '& .MuiOutlinedInput-root': {
         '&:hover fieldset': {
             borderColor: theme.palette.logo.secondary,
@@ -31,6 +32,7 @@ export const CssTextField = styled(TextField)(({ theme }) => ({
       '&:hover .MuiSvgIcon-root, &.Mui-focused .MuiSvgIcon-root': {
         fill: `${theme.palette.logo.secondary} !important`,
       },
+      '& .MuiInputLabel-root.Mui-focused':{ color: `${theme.palette.logo.secondary} !important`,},
       '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
         border: `1.2px solid ${theme.palette.logo.secondary}`,
     },

@@ -50,18 +50,18 @@ export default function SedeSelect({inputWidth, minWidth, maxWidth, backgroundCo
             setTimeout(() => {
               toggleOpen(true);
               setDialogValue({
-                title: camelCase(newValue),
+                title: newValue.toLocaleUpperCase(),
                 year: '',
               });
             });
           } else if (newValue && newValue.inputValue) {
             toggleOpen(true);
             setDialogValue({
-              title: camelCase(newValue.inputValue),
+              title: newValue.inputValue,
               year: '',
             });
           } else {
-            setValue(camelCase(newValue));
+            setValue(newValue);
           }
         }}
         filterOptions={(options, params) => {
@@ -69,8 +69,8 @@ export default function SedeSelect({inputWidth, minWidth, maxWidth, backgroundCo
 
           if (params.inputValue !== '') {
             filtered.push({
-              inputValue: params.inputValue,
-              title: `Aggiungi "${camelCase(params.inputValue)}"`,
+              inputValue: params.inputValue.toLocaleUpperCase(),
+              title: `Aggiungi "${params.inputValue.toLocaleUpperCase()}"`,
             });
           }
 
@@ -95,7 +95,7 @@ export default function SedeSelect({inputWidth, minWidth, maxWidth, backgroundCo
           <Paper style={{ backgroundColor: theme.palette.primary.light}}>{children}</Paper>
         )}
         renderOption={(props, option) => <li {...props} style={{color: theme.palette.primary.main, fontSize: '.9rem', fontWeight:'500', }}>{option.title}</li>}
-        sx={{margin: margin,width: inputWidth, minWidth: minWidth, maxWidth: maxWidth, backgroundColor: backgroundColor, display:'inline-block', '& .MuiAutocomplete-endAdornment':{top: '23%'},'& .MuiFormLabel-root':{color: 'rgb(128 128 128 / 60%)'}}}
+        sx={{margin: margin,width: inputWidth, minWidth: minWidth, maxWidth: maxWidth, backgroundColor: backgroundColor, display:'inline-block', '& .MuiAutocomplete-endAdornment':{top: '23%'},'& .MuiOutlinedInput-input':{fontWeight: '500'}}}
         freeSolo
         renderInput={(params) => <CssTextField {...params} label="Sede" size='small'/>}
       />
@@ -134,9 +134,9 @@ export default function SedeSelect({inputWidth, minWidth, maxWidth, backgroundCo
 
 // Top 100 films as rated by IMDb users. http://www.imdb.com/chart/top
 const sedi = [
-  { title: 'Nola'},
-  { title: 'Medarb'},
-  { title: 'Napoli 3'},
+  { title: 'NOLA'},
+  { title: 'MEDARB'},
+  { title: 'NAPOLI 3'},
 ];
 
 /**

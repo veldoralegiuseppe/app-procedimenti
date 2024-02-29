@@ -20,6 +20,7 @@ import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined
 import QueryBuilderOutlinedIcon from '@mui/icons-material/QueryBuilderOutlined';
 import { CssTextField, CssSelect} from './DefinisciProcedimentoTheming.jsx';
 import { useTheme } from '@mui/material/styles';
+import RegistroProcedimentoButton from './RegistroProcedimentoButton.jsx';
 
 
 export default function CreaProvvedimento(){
@@ -78,18 +79,20 @@ function DefinisciProcedimento(){
             <Grid xs={12}>
             <Grid xs={12}><Typography sx={{fontWeight: '400', fontSize: formLabelFontSize, padding: '0 0 0 1rem', color: '#585858'}}>Procedimento di mediazione</Typography></Grid>
             
-            <CssTextField 
-            sx={{margin: margin, backgroundColor: backgroundColor, width: inputWidth, minWidth: minWidth, maxWidth: maxWidth, '& .MuiFormLabel-root':{color: labelColor},  '& .MuiOutlinedInput-input':{fontWeight: '600'}}} 
+            {/* <CssTextField 
+            sx={{margin: margin, backgroundColor: backgroundColor, width: inputWidth, minWidth: minWidth, maxWidth: maxWidth, '& .MuiFormLabel-root':{color: labelColor},  '& .MuiOutlinedInput-input':{fontWeight: '500'}}} 
             id="outlined-basic"
             label="Numero" 
             variant="outlined" 
             size='small' 
-            required/>
+            required/> */}
+
+            <RegistroProcedimentoButton></RegistroProcedimentoButton>
 
             <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='it' localeText={itIT.components.MuiLocalizationProvider.defaultProps.localeText}>
                 <MobileDatePicker 
                 label='Data deposito'
-                sx={{margin: margin, backgroundColor: backgroundColor, width: inputWidth, minWidth: minWidth, maxWidth: maxWidth, '& .MuiFormLabel-root':{color: labelColor}, '& .MuiOutlinedInput-input':{fontWeight: '600'}}}
+                sx={{margin: margin, backgroundColor: backgroundColor, width: inputWidth, minWidth: minWidth, maxWidth: maxWidth, '& .MuiFormLabel-root':{color: labelColor}, '& .MuiOutlinedInput-input':{fontWeight: '500'}}}
                 slots={{textField: CssTextField}}
                 slotProps={{
                     textField: {
@@ -111,7 +114,7 @@ function DefinisciProcedimento(){
             <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='it' localeText={itIT.components.MuiLocalizationProvider.defaultProps.localeText}>   
                 <MobileDateTimePicker
                 label='Data incontro'
-                sx={{margin: margin, backgroundColor: backgroundColor, width: inputWidth, minWidth: minWidth, maxWidth: maxWidth, '& .MuiFormLabel-root':{color: labelColor}, '& .MuiOutlinedInput-input':{fontWeight: '600'}}}
+                sx={{margin: margin, backgroundColor: backgroundColor, width: inputWidth, minWidth: minWidth, maxWidth: maxWidth, '& .MuiFormLabel-root':{color: labelColor}, '& .MuiOutlinedInput-input':{fontWeight: '500'}}}
                 slots={{textField: CssTextField}}
                 slotProps={{
                     textField: {
@@ -134,7 +137,7 @@ function DefinisciProcedimento(){
             <Grid xs={12}>
                 <Grid xs={12}><Typography variant="h6" sx={{fontWeight: '400', fontSize: formLabelFontSize, padding: '0 0 0 1rem',color: '#585858' }}>Controversia</Typography></Grid>
 
-                <FormControl size='small' sx={{width: inputWidth, margin: margin, backgroundColor: backgroundColor, minWidth: minWidth, maxWidth: maxWidth, '& .MuiFormLabel-root':{color: labelColor}} }>
+                <FormControl size='small' sx={{width: inputWidth, margin: margin, backgroundColor: backgroundColor, minWidth: minWidth, maxWidth: maxWidth,} }>
                         <InputLabel id="oggetto-controversia-input-label">Oggetto</InputLabel>
                         <CssSelect
                         labelId="oggetto-controversia-input-label"
@@ -162,7 +165,7 @@ function DefinisciProcedimento(){
                         label="Oggetto"
                         size='small'
                         onChange={handleChange}
-                        sx={{'& .MuiOutlinedInput-input':{fontWeight: '600'}}}
+                        sx={{'& .MuiOutlinedInput-input':{fontWeight: '500'},}}
                         >
                         <MenuItem value={10}>Ten</MenuItem>
                         <MenuItem value={20}>Twenty</MenuItem>
@@ -178,7 +181,7 @@ function DefinisciProcedimento(){
                         </InputAdornment>
                     ),
                     }}
-                sx={{margin: margin, backgroundColor: backgroundColor, width: inputWidth, minWidth: minWidth, maxWidth: maxWidth, '& .MuiFormLabel-root':{color: labelColor}, '& .MuiOutlinedInput-input':{fontWeight: '600'}}} 
+                sx={{margin: margin, backgroundColor: backgroundColor, width: inputWidth, minWidth: minWidth, maxWidth: maxWidth, '& .MuiFormLabel-root':{color: labelColor}, '& .MuiOutlinedInput-input':{fontWeight: '500'}}} 
                 id="outlined-basic" 
                 label="Valore della controversia" 
                 variant="outlined" 
