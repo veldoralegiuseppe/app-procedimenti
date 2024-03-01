@@ -50,7 +50,15 @@ export default function StepProcedimento(){
              */
             function handleClickOutside(event) {
                 if (ref.current && !ref.current.contains(event.target)) {
-                    convalidaCifra(ref)
+                    let importo = ref.current.childNodes[1].childNodes[1].value
+
+                    if (convalidaCifra(importo)){
+                        if(!importo.includes(',')) importo += ',00'
+                        ref.current.childNodes[1].childNodes[1].setAttribute('value',importo)
+                        ref.current.childNodes[1].childNodes[1].value = importo
+                        procedimento.valoreControversia = importo
+                    }
+                   
                 }
             }
             // Bind the event listener
@@ -62,23 +70,12 @@ export default function StepProcedimento(){
         }, [ref]);
     }
      /**
-     * Convalida la cifra espressa in euro aggiungendo all'occorrenza la virgola
+     * Convalida la cifra espressa in euro 
      * @param {String} ref Riferimento al componente
      */
-    function convalidaCifra(ref){
-        if(!ref) return
-        let importo = ref.current.childNodes[1].childNodes[1].value
-       
+    function convalidaCifra(importo){
         var regex = /^\d+(\,\d{1,2})?$/
-        if(!regex.test(importo)) console.log('Errore')
-        else if(!importo.includes(',')){
-            importo += ',00'
-            ref.current.childNodes[1].childNodes[1].setAttribute('value',importo)
-            ref.current.childNodes[1].childNodes[1].value = importo
-        }
-
-        procedimento.valoreControversia = importo
-       
+        return regex.test(importo)
     }
     handleClickOutside(valoreControversiaRef)
 
@@ -235,7 +232,13 @@ export default function StepProcedimento(){
                 }}
                 defaultValue={procedimento.valoreControversia}
                 onChange={event => {
-                    procedimento.valoreControversia = event.currentTarget.value
+                    let importoCorrente = event.currentTarget.value
+                    var regex = /^\d+(\,\d{0,2})?$/g
+
+                    if( regex.test(importoCorrente) ) 
+                        procedimento.valoreControversia = event.currentTarget.value
+                    else 
+                        event.currentTarget.value = importoCorrente.substr(0, importoCorrente.length - 1)
                 }}
                 sx={{margin: margin, backgroundColor: backgroundColor, width: inputWidth, minWidth: minWidth, maxWidth: maxWidth, '& .MuiFormLabel-root':{color: labelColor}, '& .MuiOutlinedInput-input':{fontWeight: '500'}}} 
                 id="outlined-basic" 
