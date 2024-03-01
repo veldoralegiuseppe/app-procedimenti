@@ -36,6 +36,7 @@ export default function StepProcedimento(){
     const backgroundColor = theme.palette.background.default
     const formLabelFontSize = '1rem'
     const labelColor = 'rgb(105 105 105 / 60%)'
+    const oggettiControversia = [{value: 'ALTRE NATURE DELLA CONTROVERSIA', view: 'ALTRE NATURE DELLA CONTROVERSIA'}, {value:'CONTRATTI BANCARI', view: 'CONTRATTI BANCARI'}, {value:'CONTRATTI FINANZIARI', view:'CONTRATTI FINANZIARI'}, {value: 'CONTRATTI DI OPERA', view: 'CONTRATTI D\'OPERA'}, {value:'CONTRATTI DI RETE', view: 'CONTRATTI DI RETE'}, {value:'CONTRATTI DI SOMMINISTRAZIONE', view:'CONTRATTI DI SOMMINISTRAZIONE'}, {value:'CONSORZIO', view:'CONSORZIO'}, {value:'DIRITTI REALI', view:'DIRITTI REALI'}, {value:'DIVISIONE', view:'DIVISIONE'}, {value:'FRANCHISING', view:'FRANCHISING'}, {value: 'LOCAZIONE', view: 'LOCAZIONE'}, {value:'PATTI DI FAMIGLIA', view:'PATTI DI FAMIGLIA'}, {value: 'RESPONSABILITA MEDICA', view: 'RESPONSABILITÀ MEDICA'}, {value:'RISARCIMENTO DANNI MEZZO STAMPA', view:'RISARCIMENTO DANNI MEZZO STAMPA'}, {value:'SUCCESSIONE EREDITARIA', view:'SUCCESSIONE EREDITARIA'}, {value: 'SOCIETA DI PERSONE', view:'SOCIETÀ DI PERSONE'}, {value: 'SUBFORNITURA', view: 'SUBFORNITURA'}]
     const valoreControversiaRef = React.useRef(null);
     const oggControvMenuItemStyle = {'&:hover':{backgroundColor: theme.palette.dropdown.hover}, '&.Mui-selected, &.Mui-selected:hover':{backgroundColor: theme.palette.dropdown.selected, color: 'white'}}
 
@@ -189,7 +190,7 @@ export default function StepProcedimento(){
                         <CssSelect
                         labelId="oggetto-controversia-input-label"
                         id="oggetto-controversia-select"
-                        value={procedimento.oggettoControversia}
+                        defaultValue={procedimento.oggettoControversia ? procedimento.oggettoControversia : ""}
                         inputProps={{
                             MenuProps: {
                                 MenuListProps: {
@@ -200,11 +201,13 @@ export default function StepProcedimento(){
                                 },
                                 PaperProps: {
                                     sx: {
-                                    '& .MuiMenuItem-root': {
-                                        //padding: '1rem',
-                                        fontSize: '.9rem',
-                                        fontWeight: '400',
-                                    },
+                                        '& .MuiMenuItem-root': {
+                                            //padding: '1rem',
+                                            fontSize: '.9rem',
+                                            fontWeight: '400',
+                                        },
+                                        maxHeight: '125px',
+                                        overflowY: 'scroll'
                                     },
                                 },
                             },
@@ -216,9 +219,11 @@ export default function StepProcedimento(){
                         }}
                         sx={{'& .MuiOutlinedInput-input':{fontWeight: '500', color: theme.palette.text.primary}, }}
                         >
-                        <MenuItem sx={oggControvMenuItemStyle} value={10}>Ten</MenuItem>
-                        <MenuItem sx={oggControvMenuItemStyle} value={20}>Twenty</MenuItem>
-                        <MenuItem sx={oggControvMenuItemStyle} value={30}>Thirty</MenuItem>
+                        {
+                            oggettiControversia.map((ogg, index) => (
+                                <MenuItem sx={oggControvMenuItemStyle} key={`oggetto-controversia-item-${index}`} value={ogg.value}>{ogg.view}</MenuItem>
+                            ))
+                        }
                         </CssSelect>
                 </FormControl>
 
