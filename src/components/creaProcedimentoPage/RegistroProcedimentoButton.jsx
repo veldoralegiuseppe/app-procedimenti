@@ -18,17 +18,28 @@ function getAnnoValidate(annoRef){
     }
 }
 
+ /**
+ * Riempie il numero di protocollo con gli 0 messi all'inizio
+ * @param {string} numProtocollo 
+ * @returns Numero di protocollo
+ */
+ function fill(numProtocollo){
+    let dim = 6 - numProtocollo.length
+    if(dim == 0) return numProtocollo
+    return '0'.repeat(dim) + numProtocollo
+}
+
 function getNumProtocolloValidate(numProtocolloRef){
 
     if(!numProtocolloRef) return undefined
     else {
         let str = numProtocolloRef.current.value
         if(!isNumber(str.substr(str.length - 1))) numProtocolloRef.current.value = str.substr(0, str.length - 1)
-        return numProtocolloRef.current.value == '' ? undefined : numProtocolloRef.current.value
+        return numProtocolloRef.current.value == '' ? undefined : fill(numProtocolloRef.current.value)
     }
 }
 
-export default function RegistroProcedimentoButton({onChange}){
+export default function RegistroProcedimentoButton({onChange, numProtocollo, anno}){
     const theme = useTheme()
     const inputWidth = '20%'
     const minWidth = '133.5px'
@@ -51,17 +62,6 @@ export default function RegistroProcedimentoButton({onChange}){
     
     function handleOutsideClick(ref, annoRef, numProtocolloRef) {
         React.useEffect(() => {
-
-            /**
-             * Riempie il numero di protocollo con gli 0 messi all'inizio
-             * @param {string} numProtocollo 
-             * @returns Numero di protocollo
-             */
-            function fill(numProtocollo){
-                let dim = 6 - numProtocollo.length
-                if(dim == 0) return numProtocollo
-                return '0'.repeat(dim) + numProtocollo
-            }
 
             /**
              * Alert if clicked on outside of element
@@ -103,9 +103,9 @@ export default function RegistroProcedimentoButton({onChange}){
                 startAdornment: (
                     <InputAdornment position="start" sx={{alignItems: 'center', justifyContent: 'center', position: 'absolute', left:'0', flex:'1', marginRight: '0', fontFamily: 'Roboto', fontWeight: '500'}}>
                         <div style={{display: 'flex', flexDirection: 'row', flex: `1`, minWidth: minWidth, height: '34.13px', color: theme.palette.text.primary}}>
-                            <input onChange={() => onChange(getNumProtocolloValidate(numProtocolloRef), annoRef.current.value )} ref={numProtocolloRef} maxLength="6" type="text" style={{width: '45%', minWidth: '55px',  border: 'none', paddingRight: '2.5px', textAlign: 'right', outline: 'none', fontFamily: 'Roboto', fontWeight: '500', fontSize: '1rem'}} />
+                            <input onChange={() => onChange(getNumProtocolloValidate(numProtocolloRef), annoRef.current.value )} ref={numProtocolloRef} maxLength="6" defaultValue={numProtocollo ? numProtocollo : ''} type="text" style={{width: '45%', minWidth: '55px',  border: 'none', paddingRight: '2.5px', textAlign: 'right', outline: 'none', fontFamily: 'Roboto', fontWeight: '500', fontSize: '1rem'}} />
                             <div style={{textAlign:'center', margin: 'auto', fontSize: '1.4rem', color: '#cdcdcd'}}>/</div>
-                            <input onChange={() => onChange(numProtocolloRef.current.value, getAnnoValidate(annoRef) )} ref={annoRef} defaultValue={new Date().getFullYear()} type="text" maxLength="4" style={{width: '60%', maxWidth: '65px', border: 'none', paddingLeft: '2.5px', outline: 'none', fontFamily: 'Roboto', fontWeight: '500', fontSize: '1rem'}}/>
+                            <input onChange={() => onChange(numProtocolloRef.current.value, getAnnoValidate(annoRef) )} ref={annoRef} defaultValue={anno ? anno : new Date().getFullYear()} type="text" maxLength="4" style={{width: '60%', maxWidth: '65px', border: 'none', paddingLeft: '2.5px', outline: 'none', fontFamily: 'Roboto', fontWeight: '500', fontSize: '1rem'}}/>
                         </div>
                     </InputAdornment>
                 ),
