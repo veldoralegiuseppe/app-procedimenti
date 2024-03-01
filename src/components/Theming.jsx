@@ -17,7 +17,7 @@ export const themeOne = createTheme(
         //light: '#f7bc6f',
       },
       logo:{
-        primary: '#4b62a2',
+        primary: '#467bae',
         secondary: '#ed9747',
       },
       dropdown: {

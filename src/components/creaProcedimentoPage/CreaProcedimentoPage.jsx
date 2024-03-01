@@ -23,6 +23,7 @@ import { useTheme } from '@mui/material/styles';
 import RegistroProcedimentoButton from './RegistroProcedimentoButton.jsx';
 
 
+
 export default function CreaProcedimento(){
 
     var {currentPath} = React.useContext(AppContext);
@@ -66,27 +67,71 @@ function DefinisciProcedimento(){
     const labelColor = 'rgb(105 105 105 / 60%)'
     const valoreControversiaRef = React.useRef(null);
     const oggControvMenuItemStyle = {'&:hover':{backgroundColor: theme.palette.dropdown.hover}, '&.Mui-selected, &.Mui-selected:hover':{backgroundColor: theme.palette.dropdown.selected, color: 'white'}}
+    const [oggettoControversia, setOggettoControversia] = React.useState('');
+    const [valoreControversia, setValoreControversia] = React.useState('');
 
-    handleClickOutside(valoreControversiaRef, convalidaCifra)
+    /**
+     * Gestisce il click al di fuori del componente di interesse
+     * @param {*} ref 
+     */
+    function handleClickOutside(ref){
+        React.useEffect(() => {
+            /**
+             * Alert if clicked on outside of element
+             */
+            function handleClickOutside(event) {
+                if (ref.current && !ref.current.contains(event.target)) {
 
-    // FORM SELECT PROVA
-    const [age, setAge] = React.useState('');
+                    convalidaCifra(ref)
+                }
+            }
+            // Bind the event listener
+            document.addEventListener("mousedown", handleClickOutside);
+            return () => {
+                // Unbind the event listener on clean up
+                document.removeEventListener("mousedown", handleClickOutside);
+            };
+        }, [ref]);
+    }
+     /**
+     * Convalida la cifra espressa in euro aggiungendo all'occorrenza la virgola
+     * @param {String} ref Riferimento al componente
+     */
+    function convalidaCifra(ref){
+        if(!ref) return
+        let importo = ref.current.childNodes[1].childNodes[1].value
+        if(!importo || importo == '') return
+     
+        var regex = /^\d+(\,\d{1,2})?$/
+        if(!regex.test(importo)) console.log('Errore')
+        else if(!importo.includes(',')){
+            importo += ',00'
+            ref.current.childNodes[1].childNodes[1].setAttribute('value',importo)
+            ref.current.childNodes[1].childNodes[1].value = importo
+        }
 
-    const handleChange = (event) => {
-        setAge(event.target.value);
+        setValoreControversia(importo);
+    }
+    handleClickOutside(valoreControversiaRef)
+
+    const handleChangeOggettoControversia = (event) => {
+        console.log(`Oggetto di controversia: ${event.target.value}`)
+        setOggettoControversia(event.target.value);
     };
 
     return (
-        <div style={{display: 'flex', flexDirection:'column', alignItems: 'center', justifyContent:'center', rowGap:'2.5rem', padding: '4rem 0'}}>
+        <div style={{display: 'flex', flexDirection:'column', alignItems: 'center', justifyContent:'center', rowGap:'4rem', padding: '4rem 0'}}>
             {/* Procedimento di mediazione */}
             <Grid xs={12}>
-                <Grid xs={12}><Typography sx={{fontWeight: '400', fontSize: formLabelFontSize, padding: '0 0 0 1rem', color: '#585858'}}>Procedimento di mediazione</Typography></Grid>
+                <Grid xs={12} sx={{borderBottom:'1px solid #467bae61', margin: '0 0 0 1rem', width: 'calc(100% - 1rem)'}}><Typography sx={{fontWeight: '400', fontSize: formLabelFontSize, color: '#467bae'}}>Procedimento di mediazione</Typography></Grid>
                 
-                <RegistroProcedimentoButton onChange={(value) => {console.log(`Valore giunto al parent: ${value}`)} }></RegistroProcedimentoButton>
+                <RegistroProcedimentoButton onChange={(numProtocollo, anno) => {console.log(`Numero di protocollo: ${numProtocollo}\nAnno: ${anno}`)} }></RegistroProcedimentoButton>
 
                 <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='it' localeText={itIT.components.MuiLocalizationProvider.defaultProps.localeText}>
                     <MobileDatePicker 
                     label='Data deposito'
+                    defaultValue={undefined}
+                    onChange={ (value) => console.log(`Data deposito: ${new Date(value).toLocaleDateString('it-IT')}`)}
                     sx={{
                         margin: margin, 
                         backgroundColor: backgroundColor, 
@@ -120,11 +165,17 @@ function DefinisciProcedimento(){
                     />
                 </LocalizationProvider>
 
-                <SedeSelect inputWidth={inputWidth} minWidth={minWidth}  maxWidth={maxWidth} margin={margin} backgroundColor={backgroundColor}></SedeSelect>
+                <SedeSelect  onChange={(value) => console.log(`Sede selezionata: ${JSON.stringify(value)}`)} inputWidth={inputWidth} minWidth={minWidth}  maxWidth={maxWidth} margin={margin} labelColor={labelColor} backgroundColor={backgroundColor}></SedeSelect>
 
                 <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='it' localeText={itIT.components.MuiLocalizationProvider.defaultProps.localeText}>   
                     <MobileDateTimePicker
                     label='Data incontro'
+                    defaultValue={undefined}
+                    onChange={ (value) => {
+                        let dataIncontro = new Date(value).toLocaleDateString('it-IT')
+                        let oraIncontro = new Date(value).toLocaleTimeString('it-IT')
+                        console.log(`Data incontro: ${dataIncontro}\nOra incontro: ${oraIncontro}`)
+                    }}
                     sx={{margin: margin, backgroundColor: backgroundColor, width: inputWidth, minWidth: minWidth, maxWidth: maxWidth, '& .MuiFormLabel-root':{color: labelColor}, '& .MuiOutlinedInput-input':{fontWeight: '500'}}}
                     slots={{textField: CssTextField}}
                     slotProps={{
@@ -146,14 +197,14 @@ function DefinisciProcedimento(){
 
             {/* Controversia */}
             <Grid xs={12}>
-                <Grid xs={12}><Typography variant="h6" sx={{fontWeight: '400', fontSize: formLabelFontSize, padding: '0 0 0 1rem',color: '#585858' }}>Controversia</Typography></Grid>
+                <Grid xs={12} sx={{borderBottom:'1px solid #467bae61', margin: '0 0 0 1rem', width: 'calc(100% - 1rem)'}}><Typography variant="h6" sx={{fontWeight: '400', fontSize: formLabelFontSize, color: `#467bae` }}>Controversia</Typography></Grid>
 
-                <FormControl size='small' sx={{width: inputWidth, margin: margin, backgroundColor: backgroundColor, minWidth: minWidth, maxWidth: maxWidth,} }>
+                <FormControl size='small' sx={{width: inputWidth, margin: margin, backgroundColor: backgroundColor, minWidth: minWidth, maxWidth: maxWidth, '& .MuiFormLabel-root':{color: labelColor}} }>
                         <InputLabel id="oggetto-controversia-input-label">Oggetto</InputLabel>
                         <CssSelect
                         labelId="oggetto-controversia-input-label"
                         id="oggetto-controversia-select"
-                        value={age}
+                        value={oggettoControversia}
                         inputProps={{
                             MenuProps: {
                                 MenuListProps: {
@@ -175,8 +226,8 @@ function DefinisciProcedimento(){
                         }}
                         label="Oggetto"
                         size='small'
-                        onChange={handleChange}
-                        sx={{'& .MuiOutlinedInput-input':{fontWeight: '500'},}}
+                        onChange={handleChangeOggettoControversia}
+                        sx={{'& .MuiOutlinedInput-input':{fontWeight: '500', color: theme.palette.text.primary}, }}
                         >
                         <MenuItem sx={oggControvMenuItemStyle} value={10}>Ten</MenuItem>
                         <MenuItem sx={oggControvMenuItemStyle} value={20}>Twenty</MenuItem>
@@ -188,9 +239,13 @@ function DefinisciProcedimento(){
                 InputProps={{
                 startAdornment: (
                     <InputAdornment position="start">
-                    <EuroSymbolIcon sx={{color: labelColor}}/>
+                    <EuroSymbolIcon sx={{color: '#69696961'}}/>
                     </InputAdornment>
                 ),
+                }}
+                value={valoreControversia}
+                onChange={event => {
+                    setValoreControversia(event.currentTarget.value)
                 }}
                 sx={{margin: margin, backgroundColor: backgroundColor, width: inputWidth, minWidth: minWidth, maxWidth: maxWidth, '& .MuiFormLabel-root':{color: labelColor}, '& .MuiOutlinedInput-input':{fontWeight: '500'}}} 
                 id="outlined-basic" 
@@ -213,41 +268,5 @@ function camelCase(str) {
     return str.substring(0,1).toLocaleUpperCase() + str.substring(1)
 }
 
-/**
- * Gestisce il click al di fuori del componente di interesse
- * @param {*} ref 
- */
-function handleClickOutside(ref, callback){
-    React.useEffect(() => {
-        /**
-         * Alert if clicked on outside of element
-         */
-        function handleClickOutside(event) {
-            if (ref.current && !ref.current.contains(event.target)) {
-                if(callback) callback(ref)
-            }
-        }
-        // Bind the event listener
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => {
-            // Unbind the event listener on clean up
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, [ref]);
-}
 
-/**
- * Convalida la cifra espressa in euro aggiungendo all'occorrenza la virgola
- * @param {String} ref Riferimento al componente
- */
-function convalidaCifra(ref){
-    let importo = ref.current.childNodes[1].childNodes[1].value
-    if(!importo) return
 
-    var regex = /^\d+(\,\d{1,2})?$/
-    if(!regex.test(importo)) console.log('Errore')
-    else if(!importo.includes(',')){
-        importo += ',00'
-        ref.current.childNodes[1].childNodes[1].value = importo
-    }
-}

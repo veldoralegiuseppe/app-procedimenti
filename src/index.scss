@@ -81,12 +81,23 @@ body{
 
     .MuiPickersDay-root{
         &.MuiPickersDay-today{
-            border: none;
+            border: unset !important;
+            background-color: unset !important;
+            color: $text-primary !important;
+
+            &:hover{
+                background-color: rgb(176 176 176 / 15%) !important;
+            }
+
+            &.Mui-selected:hover{
+                background-color: rgba($primary-main, 0.8) !important;
+                color: white !important;
+            }
         }
         
         &.Mui-selected{
-            background-color: rgba($primary-main, 0.8);
-            color: white;
+            background-color: rgba($primary-main, 0.8) !important;
+            color: white !important;
         }
 
         &:focus{

@@ -13,30 +13,28 @@ import { useTheme } from '@mui/material/styles';
 
 const filter = createFilterOptions();
 
-export default function SedeSelect({inputWidth, minWidth, maxWidth, backgroundColor, margin}) {
+export default function SedeSelect({inputWidth, minWidth, maxWidth, backgroundColor, margin, labelColor, onChange}) {
   const [value, setValue] = React.useState(null);
   const [open, toggleOpen] = React.useState(false);
   const theme = useTheme()
 
   const handleClose = () => {
     setDialogValue({
-      title: '',
-      year: '',
+      sede: '',
     });
     toggleOpen(false);
   };
 
   const [dialogValue, setDialogValue] = React.useState({
-    title: '',
-    year: '',
+    sede: '',
   });
 
   const handleSubmit = (event) => {
     event.preventDefault();
     setValue({
-      title: dialogValue.title,
-      year: parseInt(dialogValue.year, 10),
+      sede: dialogValue.sede,
     });
+    onChange({sede: dialogValue.sede})
     handleClose();
   };
 
@@ -50,18 +48,17 @@ export default function SedeSelect({inputWidth, minWidth, maxWidth, backgroundCo
             setTimeout(() => {
               toggleOpen(true);
               setDialogValue({
-                title: newValue.toLocaleUpperCase(),
-                year: '',
+                sede: newValue.toLocaleUpperCase(),
               });
             });
           } else if (newValue && newValue.inputValue) {
             toggleOpen(true);
             setDialogValue({
-              title: newValue.inputValue,
-              year: '',
+              sede: newValue.inputValue,
             });
           } else {
             setValue(newValue);
+            if(onChange) onChange(newValue)
           }
         }}
         filterOptions={(options, params) => {
@@ -70,7 +67,7 @@ export default function SedeSelect({inputWidth, minWidth, maxWidth, backgroundCo
           if (params.inputValue !== '') {
             filtered.push({
               inputValue: params.inputValue.toLocaleUpperCase(),
-              title: `Aggiungi "${params.inputValue.toLocaleUpperCase()}"`,
+              sede: `Aggiungi "${params.inputValue.toLocaleUpperCase()}"`,
             });
           }
 
@@ -86,7 +83,7 @@ export default function SedeSelect({inputWidth, minWidth, maxWidth, backgroundCo
           if (option.inputValue) {
             return option.inputValue;
           }
-          return option.title;
+          return option.sede;
         }}
         selectOnFocus
         clearOnBlur
@@ -98,7 +95,7 @@ export default function SedeSelect({inputWidth, minWidth, maxWidth, backgroundCo
           <li {...props} 
           
           style={{color: theme.palette.primary.main, fontSize: '.9rem', fontWeight:'400'}}>
-                {option.title}
+                {option.sede}
           </li>
         }
         sx={{
@@ -114,6 +111,7 @@ export default function SedeSelect({inputWidth, minWidth, maxWidth, backgroundCo
           <CssTextField {...params} 
           label="Sede" 
           size='small'
+          sx={{'& .MuiOutlinedInput-input':{fontWeight: '500'}, '& .MuiFormLabel-root':{color: labelColor}, }}
           />
         }
       />
@@ -128,11 +126,11 @@ export default function SedeSelect({inputWidth, minWidth, maxWidth, backgroundCo
               autoFocus
               margin="dense"
               id="name"
-              value={dialogValue.title}
+              value={dialogValue.sede}
               onChange={(event) =>
                 setDialogValue({
                   ...dialogValue,
-                  title: event.target.value,
+                  sede: event.target.value,
                 })
               }
               label="Sede"
@@ -152,9 +150,9 @@ export default function SedeSelect({inputWidth, minWidth, maxWidth, backgroundCo
 
 // Top 100 films as rated by IMDb users. http://www.imdb.com/chart/top
 const sedi = [
-  { title: 'NOLA'},
-  { title: 'MEDARB'},
-  { title: 'NAPOLI 3'},
+  { sede: 'NOLA'},
+  { sede: 'MEDARB'},
+  { sede: 'NAPOLI 3'},
 ];
 
 /**

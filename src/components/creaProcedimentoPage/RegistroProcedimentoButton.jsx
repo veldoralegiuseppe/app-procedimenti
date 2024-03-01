@@ -101,11 +101,11 @@ export default function RegistroProcedimentoButton({onChange}){
             sx={{margin: margin, backgroundColor: backgroundColor, width: inputWidth, minWidth: minWidth, maxWidth: maxWidth, '& .MuiInputBase-root':{position: 'relative'}, '& .MuiFormLabel-root':{color: labelColor},  '& .MuiOutlinedInput-input':{fontWeight: '500'}}} 
             InputProps={{
                 startAdornment: (
-                    <InputAdornment position="start" sx={{alignItems: 'center', justifyContent: 'center', position: 'absolute', left:'0', flex:'1', marginRight: '0'}}>
-                        <div style={{display: 'flex', flexDirection: 'row', flex: `1`, minWidth: minWidth, height: '34.13px'}}>
-                            <input onChange={() => onChange( getNumProtocolloValidate(numProtocolloRef) )} ref={numProtocolloRef} maxLength="6" type="text" style={{width: '32%', minWidth: '55px', maxWidth: '57px',  border: 'none', paddingRight: '2.5px', textAlign: 'right', outline: 'none'}} />
+                    <InputAdornment position="start" sx={{alignItems: 'center', justifyContent: 'center', position: 'absolute', left:'0', flex:'1', marginRight: '0', fontFamily: 'Roboto', fontWeight: '500'}}>
+                        <div style={{display: 'flex', flexDirection: 'row', flex: `1`, minWidth: minWidth, height: '34.13px', color: theme.palette.text.primary}}>
+                            <input onChange={() => onChange(getNumProtocolloValidate(numProtocolloRef), annoRef.current.value )} ref={numProtocolloRef} maxLength="6" type="text" style={{width: '45%', minWidth: '55px',  border: 'none', paddingRight: '2.5px', textAlign: 'right', outline: 'none', fontFamily: 'Roboto', fontWeight: '500', fontSize: '1rem'}} />
                             <div style={{textAlign:'center', margin: 'auto', fontSize: '1.4rem', color: '#cdcdcd'}}>/</div>
-                            <input onChange={() => onChange( getAnnoValidate(annoRef) )} ref={annoRef} defaultValue={new Date().getFullYear()} type="text" maxLength="4" style={{width: '60%', maxWidth: '65px', border: 'none', paddingLeft: '2.5px', outline: 'none'}}/>
+                            <input onChange={() => onChange(numProtocolloRef.current.value, getAnnoValidate(annoRef) )} ref={annoRef} defaultValue={new Date().getFullYear()} type="text" maxLength="4" style={{width: '60%', maxWidth: '65px', border: 'none', paddingLeft: '2.5px', outline: 'none', fontFamily: 'Roboto', fontWeight: '500', fontSize: '1rem'}}/>
                         </div>
                     </InputAdornment>
                 ),

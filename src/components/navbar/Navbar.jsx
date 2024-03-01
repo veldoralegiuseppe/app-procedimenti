@@ -96,7 +96,7 @@ export default function ResponsiveAppBar({drawerWidth, onButtonClick}) {
   
   const drawer = (
     <div>
-      <Toolbar sx={{borderRightColor: 'transparent', justifyContent: 'start', paddingLeft: '10px !important'}}>
+      <Toolbar sx={{borderRightColor: 'transparent', justifyContent: 'center', paddingLeft: '10px !important'}}>
         <img src={logo} width="102"/>
       </Toolbar>
         
