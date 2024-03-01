@@ -141,7 +141,7 @@ export default function StepProcedimento(){
                     if(!values) procedimento.sede = undefined
                     else procedimento.sede = values.sede
                 }} 
-                currValue={procedimento.sede ? procedimento.sede : ""}
+                currValue={procedimento.sede ? procedimento.sede : null}
                 inputWidth={inputWidth} 
                 minWidth={minWidth}  
                 maxWidth={maxWidth} 

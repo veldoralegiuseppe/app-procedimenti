@@ -14,7 +14,7 @@ import { useTheme } from '@mui/material/styles';
 const filter = createFilterOptions();
 
 export default function SedeSelect({inputWidth, minWidth, maxWidth, backgroundColor, margin, labelColor, onChange, currValue}) {
-  const [value, setValue] = React.useState({sede: currValue});
+  const [value, setValue] = React.useState(currValue ? {sede: currValue} : null);
   const [open, toggleOpen] = React.useState(false);
   const theme = useTheme()
 
