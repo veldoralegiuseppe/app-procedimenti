@@ -3,43 +3,32 @@ import { CssTextField} from './DefinisciProcedimentoTheming.jsx';
 import InputAdornment from '@mui/material/InputAdornment';
 import { useTheme } from '@mui/material/styles';
 
-var firstClick = false
-
-function handleClick(ref) {
-    firstClick = true
-   for(let i=0; i<ref.current.childNodes.length; i++){
-        ref.current.childNodes[i].className += ' Mui-focused'
-        //console.log(ref.current.childNodes[i].className)
-   }
+function isNumber(str){
+    let reg = /^[0-9]+$/g
+    let validInput = str.trim()
+    return reg.test(validInput) ? validInput : undefined
 }
 
-function handleOutsideClick(ref, inputRef) {
-    React.useEffect(() => {
-        /**
-         * Alert if clicked on outside of element
-         */
-        function handleClickOutside(event) {
-            if (ref.current && !ref.current.contains(event.target)) {
-                for(let i=0; i<ref.current.childNodes.length; i++){
-                    ref.current.childNodes[i].className = ref.current.childNodes[i].className.replaceAll(' Mui-focused','')
-                    //console.log(ref.current.childNodes[i].className)
-                }
-                if(inputRef && firstClick && !inputRef.current.value){
-                    //console.log(inputRef.current)
-                    inputRef.current.value = new Date().getFullYear()
-                } 
-            }
-        }
-        // Bind the event listener
-        document.addEventListener("mousedown", handleClickOutside);
-        return () => {
-            // Unbind the event listener on clean up
-            document.removeEventListener("mousedown", handleClickOutside);
-        };
-    }, [ref]);
+function getAnnoValidate(annoRef){
+    if(!annoRef) return undefined
+    else {
+        let str = annoRef.current.value
+        if(!isNumber(str.substr(str.length - 1))) annoRef.current.value = str.substr(0, str.length - 1)
+        return annoRef.current.value == '' ? undefined : annoRef.current.value
+    }
 }
 
-export default function RegistroProcedimentoButton(){
+function getNumProtocolloValidate(numProtocolloRef){
+
+    if(!numProtocolloRef) return undefined
+    else {
+        let str = numProtocolloRef.current.value
+        if(!isNumber(str.substr(str.length - 1))) numProtocolloRef.current.value = str.substr(0, str.length - 1)
+        return numProtocolloRef.current.value == '' ? undefined : numProtocolloRef.current.value
+    }
+}
+
+export default function RegistroProcedimentoButton({onChange}){
     const theme = useTheme()
     const inputWidth = '20%'
     const minWidth = '133.5px'
@@ -50,8 +39,60 @@ export default function RegistroProcedimentoButton(){
     const labelColor = 'rgb(105 105 105 / 60%)'
     const textFieldRef = React.useRef(null);
     const annoRef = React.useRef(null);
+    const numProtocolloRef = React.useRef(null);
 
-    handleOutsideClick(textFieldRef, annoRef)
+    function handleClick(ref) {
+       
+       for(let i=0; i<ref.current.childNodes.length; i++){
+            ref.current.childNodes[i].className += ' Mui-focused'
+            //console.log(ref.current.childNodes[i].className)
+       }
+    }
+    
+    function handleOutsideClick(ref, annoRef, numProtocolloRef) {
+        React.useEffect(() => {
+
+            /**
+             * Riempie il numero di protocollo con gli 0 messi all'inizio
+             * @param {string} numProtocollo 
+             * @returns Numero di protocollo
+             */
+            function fill(numProtocollo){
+                let dim = 6 - numProtocollo.length
+                if(dim == 0) return numProtocollo
+                return '0'.repeat(dim) + numProtocollo
+            }
+
+            /**
+             * Alert if clicked on outside of element
+             */
+            function handleClickOutside(event) {
+                if (ref.current && !ref.current.contains(event.target)) {
+                    for(let i=0; i<ref.current.childNodes.length; i++){
+                        ref.current.childNodes[i].className = ref.current.childNodes[i].className.replaceAll(' Mui-focused','')
+                        //console.log(ref.current.childNodes[i].className)
+                    }
+                    // if(annoRef && firstClick && !annoRef.current.value){
+                    //     //console.log(inputRef.current)
+                    //     annoRef.current.value = new Date().getFullYear()
+                    //     onChange( getAnnoValidate(annoRef) )
+                    // } 
+                    if(numProtocolloRef && numProtocolloRef.current.value){
+                        //console.log(inputRef.current)
+                        numProtocolloRef.current.value = fill(numProtocolloRef.current.value)
+                    } 
+                }
+            }
+            // Bind the event listener
+            document.addEventListener("mousedown", handleClickOutside);
+            return () => {
+                // Unbind the event listener on clean up
+                document.removeEventListener("mousedown", handleClickOutside);
+            };
+        }, [ref]);
+    }
+
+    handleOutsideClick(textFieldRef, annoRef, numProtocolloRef)
 
     return(
         <CssTextField 
@@ -62,9 +103,9 @@ export default function RegistroProcedimentoButton(){
                 startAdornment: (
                     <InputAdornment position="start" sx={{alignItems: 'center', justifyContent: 'center', position: 'absolute', left:'0', flex:'1', marginRight: '0'}}>
                         <div style={{display: 'flex', flexDirection: 'row', flex: `1`, minWidth: minWidth, height: '34.13px'}}>
-                            <input type="text" style={{width: '65%', border: 'none', paddingRight: '2.5px', textAlign: 'right', outline: 'none'}} />
+                            <input onChange={() => onChange( getNumProtocolloValidate(numProtocolloRef) )} ref={numProtocolloRef} maxLength="6" type="text" style={{width: '32%', minWidth: '55px', maxWidth: '57px',  border: 'none', paddingRight: '2.5px', textAlign: 'right', outline: 'none'}} />
                             <div style={{textAlign:'center', margin: 'auto', fontSize: '1.4rem', color: '#cdcdcd'}}>/</div>
-                            <input ref={annoRef} defaultValue="" type="text" style={{width: '35%', border: 'none', paddingLeft: '2.5px', outline: 'none'}}/>
+                            <input onChange={() => onChange( getAnnoValidate(annoRef) )} ref={annoRef} defaultValue={new Date().getFullYear()} type="text" maxLength="4" style={{width: '60%', maxWidth: '65px', border: 'none', paddingLeft: '2.5px', outline: 'none'}}/>
                         </div>
                     </InputAdornment>
                 ),

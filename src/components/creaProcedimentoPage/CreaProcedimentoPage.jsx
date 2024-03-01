@@ -80,75 +80,67 @@ function DefinisciProcedimento(){
         <div style={{display: 'flex', flexDirection:'column', alignItems: 'center', justifyContent:'center', rowGap:'2.5rem', padding: '4rem 0'}}>
             {/* Procedimento di mediazione */}
             <Grid xs={12}>
-            <Grid xs={12}><Typography sx={{fontWeight: '400', fontSize: formLabelFontSize, padding: '0 0 0 1rem', color: '#585858'}}>Procedimento di mediazione</Typography></Grid>
-            
-            {/* <CssTextField 
-            sx={{margin: margin, backgroundColor: backgroundColor, width: inputWidth, minWidth: minWidth, maxWidth: maxWidth, '& .MuiFormLabel-root':{color: labelColor},  '& .MuiOutlinedInput-input':{fontWeight: '500'}}} 
-            id="outlined-basic"
-            label="Numero" 
-            variant="outlined" 
-            size='small' 
-            required/> */}
+                <Grid xs={12}><Typography sx={{fontWeight: '400', fontSize: formLabelFontSize, padding: '0 0 0 1rem', color: '#585858'}}>Procedimento di mediazione</Typography></Grid>
+                
+                <RegistroProcedimentoButton onChange={(value) => {console.log(`Valore giunto al parent: ${value}`)} }></RegistroProcedimentoButton>
 
-            <RegistroProcedimentoButton></RegistroProcedimentoButton>
-
-            <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='it' localeText={itIT.components.MuiLocalizationProvider.defaultProps.localeText}>
-                <MobileDatePicker 
-                label='Data deposito'
-                sx={{
-                    margin: margin, 
-                    backgroundColor: backgroundColor, 
-                    width: inputWidth, 
-                    minWidth: minWidth, 
-                    maxWidth: maxWidth, 
-                    '& .MuiFormLabel-root':{color: labelColor}, 
-                    '& .MuiOutlinedInput-input':{fontWeight: '500'},
-                    '& .MuiDayCalendar-weekDayLabel': {
-                        color: 'red !important',
-                        borderRadius: 2,
-                        borderWidth: 1,
-                        borderColor: '#e91e63',
-                        border: '1px solid',
-                        backgroundColor: '#f8bbd0',
-                    },
-                }}
-                slots={{textField: CssTextField}}
-                slotProps={{
-                    textField: {
-                        InputProps: {
-                        endAdornment: (
-                            <InputAdornment position="end">
-                            <CalendarMonthOutlinedIcon sx={{color: labelColor}}/>
-                            </InputAdornment>
-                        ),
+                <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='it' localeText={itIT.components.MuiLocalizationProvider.defaultProps.localeText}>
+                    <MobileDatePicker 
+                    label='Data deposito'
+                    sx={{
+                        margin: margin, 
+                        backgroundColor: backgroundColor, 
+                        width: inputWidth, 
+                        minWidth: minWidth, 
+                        maxWidth: maxWidth, 
+                        '& .MuiFormLabel-root':{color: labelColor}, 
+                        '& .MuiOutlinedInput-input':{fontWeight: '500'},
+                        '& .MuiDayCalendar-weekDayLabel': {
+                            color: 'red !important',
+                            borderRadius: 2,
+                            borderWidth: 1,
+                            borderColor: '#e91e63',
+                            border: '1px solid',
+                            backgroundColor: '#f8bbd0',
                         },
-                        size: 'small',
-                    },
-                }}
-                />
-            </LocalizationProvider>
-
-            <SedeSelect inputWidth={inputWidth} minWidth={minWidth}  maxWidth={maxWidth} margin={margin} backgroundColor={backgroundColor}></SedeSelect>
-
-            <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='it' localeText={itIT.components.MuiLocalizationProvider.defaultProps.localeText}>   
-                <MobileDateTimePicker
-                label='Data incontro'
-                sx={{margin: margin, backgroundColor: backgroundColor, width: inputWidth, minWidth: minWidth, maxWidth: maxWidth, '& .MuiFormLabel-root':{color: labelColor}, '& .MuiOutlinedInput-input':{fontWeight: '500'}}}
-                slots={{textField: CssTextField}}
-                slotProps={{
-                    textField: {
-                        InputProps: {
-                        endAdornment: (
-                            <InputAdornment position="end">
-                            <QueryBuilderOutlinedIcon sx={{color: labelColor}}/>
-                            </InputAdornment>
-                        ),
-                        },
-                        size: 'small'
-                    },
                     }}
-                />
-            </LocalizationProvider>
+                    slots={{textField: CssTextField}}
+                    slotProps={{
+                        textField: {
+                            InputProps: {
+                            endAdornment: (
+                                <InputAdornment position="end">
+                                <CalendarMonthOutlinedIcon sx={{color: labelColor}}/>
+                                </InputAdornment>
+                            ),
+                            },
+                            size: 'small',
+                        },
+                    }}
+                    />
+                </LocalizationProvider>
+
+                <SedeSelect inputWidth={inputWidth} minWidth={minWidth}  maxWidth={maxWidth} margin={margin} backgroundColor={backgroundColor}></SedeSelect>
+
+                <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='it' localeText={itIT.components.MuiLocalizationProvider.defaultProps.localeText}>   
+                    <MobileDateTimePicker
+                    label='Data incontro'
+                    sx={{margin: margin, backgroundColor: backgroundColor, width: inputWidth, minWidth: minWidth, maxWidth: maxWidth, '& .MuiFormLabel-root':{color: labelColor}, '& .MuiOutlinedInput-input':{fontWeight: '500'}}}
+                    slots={{textField: CssTextField}}
+                    slotProps={{
+                        textField: {
+                            InputProps: {
+                            endAdornment: (
+                                <InputAdornment position="end">
+                                <QueryBuilderOutlinedIcon sx={{color: labelColor}}/>
+                                </InputAdornment>
+                            ),
+                            },
+                            size: 'small'
+                        },
+                        }}
+                    />
+                </LocalizationProvider>
 
             </Grid>
 
