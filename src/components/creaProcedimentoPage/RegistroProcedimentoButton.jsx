@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { CssTextField} from './DefinisciProcedimentoTheming.jsx';
+import { CssTextField} from './StepProcedimentoTheming.jsx';
 import InputAdornment from '@mui/material/InputAdornment';
 import { useTheme } from '@mui/material/styles';
 
@@ -39,7 +39,7 @@ function getNumProtocolloValidate(numProtocolloRef){
     }
 }
 
-export default function RegistroProcedimentoButton({onChange, numProtocollo, anno}){
+export default function RegistroProcedimentoButton({onChange, numProtocollo, anno, reset}){
     const theme = useTheme()
     const inputWidth = '20%'
     const minWidth = '133.5px'
@@ -92,8 +92,20 @@ export default function RegistroProcedimentoButton({onChange, numProtocollo, ann
         }, [ref]);
     }
 
-    handleOutsideClick(textFieldRef, annoRef, numProtocolloRef)
+    function handleReset(){
+        if(!reset) return
+        numProtocollo = undefined
+        anno = new Date().getFullYear()
+        numProtocolloRef.current.value = ''
+        annoRef.current.value = anno
+    }
 
+    handleOutsideClick(textFieldRef, annoRef, numProtocolloRef)
+    handleReset()
+
+    React.useEffect(()=>{
+        console.log('Registro render!')
+    },[])
     return(
         <CssTextField 
             onClick={() => handleClick(textFieldRef)}

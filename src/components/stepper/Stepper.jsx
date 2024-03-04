@@ -95,7 +95,7 @@ export default function HorizontalLinearStepper({steps}) {
               {steps[activeStep].component}
 
               {/* Button di controllo */}
-              <Grid xs={12}>
+              <Grid xs={12} sx={{borderTop: '1px solid #f1f1f1'}}>
                   <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2, justifyContent: 'space-around', alignItems: 'center' }}>
                       <Button
                       color="inherit"

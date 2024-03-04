@@ -16,10 +16,12 @@ import InputAdornment from '@mui/material/InputAdornment';
 import { MobileDateTimePicker } from '@mui/x-date-pickers/MobileDateTimePicker';
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
 import QueryBuilderOutlinedIcon from '@mui/icons-material/QueryBuilderOutlined';
-import { CssTextField, CssSelect} from './DefinisciProcedimentoTheming.jsx';
+import { CssTextField, CssSelect, ClearButton} from './StepProcedimentoTheming.jsx';
 import { useTheme } from '@mui/material/styles';
 import RegistroProcedimentoButton from './RegistroProcedimentoButton.jsx';
 import {ProcedimentoContext} from '/src/store/procedimento-context.jsx'
+import DeleteIcon from '@mui/icons-material/Delete';
+import { Procedimento } from '../../vo/procedimento.js';
 
 
 /**
@@ -28,7 +30,9 @@ import {ProcedimentoContext} from '/src/store/procedimento-context.jsx'
  */
 export default function StepProcedimento(){
     const theme = useTheme()
-    const {procedimento} = React.useContext(ProcedimentoContext)
+    var [procedimento, setProcedimento] = React.useContext(ProcedimentoContext)
+    var [currProc, setCurrProcedimento] = React.useState(procedimento)
+    var [reset, setReset] = React.useState(false)
     const inputWidth = '20%'
     const minWidth = '133.5px'
     const maxWidth = '200px'
@@ -40,6 +44,7 @@ export default function StepProcedimento(){
     const valoreControversiaRef = React.useRef(null);
     const oggControvMenuItemStyle = {'&:hover':{backgroundColor: theme.palette.dropdown.hover}, '&.Mui-selected, &.Mui-selected:hover':{backgroundColor: theme.palette.dropdown.selected, color: 'white'}}
 
+    
     /**
      * Gestisce il click al di fuori del componente di interesse
      * @param {*} ref 
@@ -70,6 +75,7 @@ export default function StepProcedimento(){
             };
         }, [ref]);
     }
+
      /**
      * Convalida la cifra espressa in euro 
      * @param {String} ref Riferimento al componente
@@ -80,29 +86,37 @@ export default function StepProcedimento(){
     }
     handleClickOutside(valoreControversiaRef)
 
+    React.useEffect(() => {
+        console.log(`Re-render!\nReset: ${reset}\nCurrProc:${JSON.stringify(currProc)}\nProcedimento:${JSON.stringify(procedimento)}`)
+        setReset(false)
+    })
+
     return (
-        <div style={{display: 'flex', flexDirection:'column', alignItems: 'center', justifyContent:'center', rowGap:'4rem', padding: '4rem 0'}}>
+        <div style={{display: 'flex', flexDirection:'column', alignItems: 'center', justifyContent:'center', rowGap:'4rem', padding: '4.5rem 0'}}>
             {/* Procedimento di mediazione */}
             <Grid xs={12}>
                 <Grid xs={12} sx={{borderBottom:'1px solid #467bae61', margin: '0 0 0 1rem', width: 'calc(100% - 1rem)'}}><Typography sx={{fontWeight: '400', fontSize: formLabelFontSize, color: '#467bae'}}>Procedimento di mediazione</Typography></Grid>
                 
                 <RegistroProcedimentoButton 
                 onChange={(numProtocollo, anno) => {
-                    procedimento.numProtocollo = numProtocollo
-                    procedimento.annoProtocollo = anno
+                    currProc.numProtocollo = numProtocollo
+                    currProc.annoProtocollo = anno
+                    setProcedimento({...currProc})
                 }}
-                numProtocollo={procedimento.numProtocollo}
-                anno={procedimento.annoProtocollo}
+                numProtocollo={reset ? "" : currProc.numProtocollo}
+                anno={reset ? "" : currProc.annoProtocollo}
+                reset={reset}
                 >
                 </RegistroProcedimentoButton>
 
                 <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='it' localeText={itIT.components.MuiLocalizationProvider.defaultProps.localeText}>
                     <MobileDatePicker 
                     label='Data deposito'
-                    value={dayjs(procedimento.dataDeposito)}
+                    value={dayjs(currProc.dataDeposito)}
                     onChange={ (value) => {
-                        procedimento.dataDeposito = new Date(value)
-                        procedimento.dataDepositoLocale = new Date(value).toLocaleDateString('it-IT')
+                        currProc.dataDeposito = new Date(value)
+                        currProc.dataDepositoLocale = new Date(value).toLocaleDateString('it-IT')
+                        setProcedimento({...currProc})
                     }}
                     sx={{
                         margin: margin, 
@@ -139,10 +153,13 @@ export default function StepProcedimento(){
 
                 <SedeSelect  
                 onChange={(values) => {
-                    if(!values) procedimento.sede = undefined
-                    else procedimento.sede = values.sede
+                    if(!values) currProc.sede = undefined
+                    else {
+                        currProc.sede = values.sede
+                    }
+                    setProcedimento({...currProc})
                 }} 
-                currValue={procedimento.sede ? procedimento.sede : null}
+                currValue={reset ? "" : currProc.sede ? currProc.sede : null}
                 inputWidth={inputWidth} 
                 minWidth={minWidth}  
                 maxWidth={maxWidth} 
@@ -154,13 +171,14 @@ export default function StepProcedimento(){
                 <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='it' localeText={itIT.components.MuiLocalizationProvider.defaultProps.localeText}>   
                     <MobileDateTimePicker
                     label='Data incontro'
-                    value={procedimento.dataOraIncontro ? dayjs(procedimento.dataOraIncontro) : undefined}
+                    value={reset ? null : currProc.dataOraIncontro ? dayjs({...currProc}.dataOraIncontro) : null}
                     onChange={ (value) => {
                         let dataIncontro = new Date(value).toLocaleDateString('it-IT')
                         let oraIncontro = new Date(value).toLocaleTimeString('it-IT')
-                        procedimento.dataOraIncontro = new Date(value)
-                        procedimento.dataIncontro = dataIncontro
-                        procedimento.oraIncontro = oraIncontro
+                        currProc.dataOraIncontro = new Date(value)
+                        currProc.dataIncontro = dataIncontro
+                        currProc.oraIncontro = oraIncontro
+                        setProcedimento({...currProc})
                     }}
                     sx={{margin: margin, backgroundColor: backgroundColor, width: inputWidth, minWidth: minWidth, maxWidth: maxWidth, '& .MuiFormLabel-root':{color: labelColor}, '& .MuiOutlinedInput-input':{fontWeight: '500'}}}
                     slots={{textField: CssTextField}}
@@ -190,7 +208,7 @@ export default function StepProcedimento(){
                         <CssSelect
                         labelId="oggetto-controversia-input-label"
                         id="oggetto-controversia-select"
-                        defaultValue={procedimento.oggettoControversia ? procedimento.oggettoControversia : ""}
+                        value={reset ? "" : currProc.oggettoControversia ? currProc.oggettoControversia : ""}
                         inputProps={{
                             MenuProps: {
                                 MenuListProps: {
@@ -215,7 +233,8 @@ export default function StepProcedimento(){
                         label="Oggetto"
                         size='small'
                         onChange={(event) => {
-                            procedimento.oggettoControversia = event.target.value
+                            currProc.oggettoControversia = event.target.value
+                            setProcedimento({...currProc})
                         }}
                         sx={{'& .MuiOutlinedInput-input':{fontWeight: '500', color: theme.palette.text.primary}, }}
                         >
@@ -235,15 +254,20 @@ export default function StepProcedimento(){
                     </InputAdornment>
                 ),
                 }}
-                defaultValue={procedimento.valoreControversia}
+                defaultValue={reset ? "" : currProc.valoreControversia}
                 onChange={event => {
                     let importoCorrente = event.currentTarget.value
+
                     var regex = /^\d+(\,\d{0,2})?$/g
 
                     if( regex.test(importoCorrente) ) 
-                        procedimento.valoreControversia = event.currentTarget.value
-                    else 
+                        currProc.valoreControversia = importoCorrente
+                    else{ 
                         event.currentTarget.value = importoCorrente.substr(0, importoCorrente.length - 1)
+                        if(event.currentTarget.value.length == 0) currProc.valoreControversia = undefined
+                    }
+                    
+                    setProcedimento({...currProc})
                 }}
                 sx={{margin: margin, backgroundColor: backgroundColor, width: inputWidth, minWidth: minWidth, maxWidth: maxWidth, '& .MuiFormLabel-root':{color: labelColor}, '& .MuiOutlinedInput-input':{fontWeight: '500'}}} 
                 id="outlined-basic" 
@@ -253,6 +277,33 @@ export default function StepProcedimento(){
                 size='small'
                 required/>
             </Grid>
+
+            {/* Reset button */}
+            <Grid xs={12} sx={{ display: 'flex', justifyContent: 'start', margin: '1rem 0 0 1rem', width: 'calc(100% - 1rem)'}}>
+                <ClearBtn
+                currProc={currProc}
+                onReset={() => {
+                    procedimento = new Procedimento()
+                    setProcedimento(procedimento)
+                    setCurrProcedimento(procedimento)
+                    setReset(true)
+                }}
+                />
+            </Grid>
         </div>
+    )
+}
+
+function ClearBtn({currProc, onReset}){
+ 
+
+    function reset(){
+        onReset()
+    }
+
+    return (
+        <ClearButton variant="outlined" onClick={reset} startIcon={<DeleteIcon />} sx={{fontSize: '.9rem'}} disabled={new Procedimento().equals(currProc)}>
+            Pulisci campi
+        </ClearButton>
     )
 }

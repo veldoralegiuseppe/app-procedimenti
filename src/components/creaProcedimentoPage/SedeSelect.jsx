@@ -7,7 +7,7 @@ import DialogContentText from '@mui/material/DialogContentText';
 import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
 import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
-import { CssTextField } from './DefinisciProcedimentoTheming.jsx';
+import { CssTextField } from './StepProcedimentoTheming.jsx';
 import Paper from "@mui/material/Paper";
 import { useTheme } from '@mui/material/styles';
 
