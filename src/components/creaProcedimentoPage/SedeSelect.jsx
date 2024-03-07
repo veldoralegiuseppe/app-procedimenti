@@ -13,7 +13,7 @@ import { useTheme } from '@mui/material/styles';
 
 const filter = createFilterOptions();
 
-export default function SedeSelect({inputWidth, minWidth, maxWidth, backgroundColor, margin, labelColor, onChange, currValue}) {
+export default function SedeSelect({inputWidth, minWidth, maxWidth, backgroundColor, margin, labelColor, onChange, currValue, reset}) {
   const [value, setValue] = React.useState(currValue ? {sede: currValue} : null);
   const [open, toggleOpen] = React.useState(false);
   const theme = useTheme()
@@ -37,6 +37,15 @@ export default function SedeSelect({inputWidth, minWidth, maxWidth, backgroundCo
     onChange({sede: dialogValue.sede})
     handleClose();
   };
+
+  function resetSede(){
+    console.log('Reset sede')
+    setValue(null)
+  }
+
+  React.useEffect(()=>{
+    if(reset) setValue(null)
+  })
 
   return (
     <React.Fragment>
@@ -112,6 +121,7 @@ export default function SedeSelect({inputWidth, minWidth, maxWidth, backgroundCo
           label="Sede" 
           size='small'
           sx={{'& .MuiOutlinedInput-input':{fontWeight: '500'}, '& .MuiFormLabel-root':{color: labelColor}, }}
+          //defaultValue={reset ? resetSede() : ""}
           />
         }
       />

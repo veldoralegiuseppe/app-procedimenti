@@ -36,7 +36,7 @@ export default function StepProcedimento(){
     var [cursorShift, setCursorShift] = React.useState(0)
     const inputWidth = '20%'
     const minWidth = '133.5px'
-    const maxWidth = '200px'
+    const maxWidth = '168px'
     const margin = '18px 20px 10px 10px'
     const backgroundColor = theme.palette.background.default
     const formLabelFontSize = '1rem'
@@ -95,10 +95,10 @@ export default function StepProcedimento(){
         input.value = '0,00'
     }
 
-    // React.useEffect(() => {
-    //     console.log(`Re-render!\nReset: ${reset}\nCurrProc:${JSON.stringify(currProc)}\nProcedimento:${JSON.stringify(procedimento)}`)
-    //     setReset(false)
-    // })
+    React.useEffect(() => {
+        // console.log(`Re-render!\nReset: ${reset}\nCurrProc:${JSON.stringify(currProc)}\nProcedimento:${JSON.stringify(procedimento)}`)
+        setReset(false)
+    })
 
     return (
         <div style={{display: 'flex', flexDirection:'column', alignItems: 'center', justifyContent:'center', rowGap:'4rem', padding: '4.5rem 0'}}>
@@ -115,6 +115,8 @@ export default function StepProcedimento(){
                 numProtocollo={reset ? "" : currProc.numProtocollo}
                 anno={reset ? "" : currProc.annoProtocollo}
                 reset={reset}
+                maxWidth={maxWidth}
+                minWidth={minWidth}
                 >
                 </RegistroProcedimentoButton>
 
@@ -168,7 +170,8 @@ export default function StepProcedimento(){
                     }
                     setProcedimento({...currProc})
                 }} 
-                currValue={reset ? "" : currProc.sede ? currProc.sede : null}
+                currValue={currProc.sede ? currProc.sede : null}
+                reset={reset}
                 inputWidth={inputWidth} 
                 minWidth={minWidth}  
                 maxWidth={maxWidth} 

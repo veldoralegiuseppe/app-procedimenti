@@ -39,11 +39,9 @@ function getNumProtocolloValidate(numProtocolloRef){
     }
 }
 
-export default function RegistroProcedimentoButton({onChange, numProtocollo, anno, reset}){
+export default function RegistroProcedimentoButton({onChange, numProtocollo, anno, reset, maxWidth, minWidth}){
     const theme = useTheme()
     const inputWidth = '20%'
-    const minWidth = '133.5px'
-    const maxWidth = '200px'
     const margin = '18px 20px 10px 10px'
     const backgroundColor = theme.palette.background.default
     const formLabelFontSize = '1rem'
@@ -93,6 +91,7 @@ export default function RegistroProcedimentoButton({onChange, numProtocollo, ann
     }
 
     function handleReset(){
+        //console.log(`Handle reset: ${reset}`)
         if(!reset) return
         numProtocollo = undefined
         anno = new Date().getFullYear()
@@ -110,14 +109,15 @@ export default function RegistroProcedimentoButton({onChange, numProtocollo, ann
         <CssTextField 
             onClick={() => handleClick(textFieldRef)}
             ref={textFieldRef}
+            defaultValue={reset ? handleReset() : ""}
             sx={{margin: margin, backgroundColor: backgroundColor, width: inputWidth, minWidth: minWidth, maxWidth: maxWidth, '& .MuiInputBase-root':{position: 'relative'}, '& .MuiFormLabel-root':{color: labelColor},  '& .MuiOutlinedInput-input':{fontWeight: '500'}}} 
             InputProps={{
                 startAdornment: (
                     <InputAdornment position="start" sx={{alignItems: 'center', justifyContent: 'center', position: 'absolute', left:'0', flex:'1', marginRight: '0', fontFamily: 'Roboto', fontWeight: '500'}}>
                         <div style={{display: 'flex', flexDirection: 'row', flex: `1`, minWidth: minWidth, height: '34.13px', color: theme.palette.text.primary}}>
-                            <input onChange={() => onChange(getNumProtocolloValidate(numProtocolloRef), annoRef.current.value )} ref={numProtocolloRef} maxLength="6" defaultValue={numProtocollo ? numProtocollo : ''} type="text" style={{width: '45%', minWidth: '55px',  border: 'none', paddingRight: '2.5px', textAlign: 'right', outline: 'none', fontFamily: 'Roboto', fontWeight: '500', fontSize: '1rem'}} />
-                            <div style={{textAlign:'center', margin: 'auto', fontSize: '1.4rem', color: '#cdcdcd'}}>/</div>
-                            <input onChange={() => onChange(numProtocolloRef.current.value, getAnnoValidate(annoRef) )} ref={annoRef} defaultValue={anno ? anno : new Date().getFullYear()} type="text" maxLength="4" style={{width: '60%', maxWidth: '65px', border: 'none', paddingLeft: '2.5px', outline: 'none', fontFamily: 'Roboto', fontWeight: '500', fontSize: '1rem'}}/>
+                            <input onChange={() => onChange(getNumProtocolloValidate(numProtocolloRef), annoRef.current.value )} ref={numProtocolloRef} maxLength="6" defaultValue={numProtocollo ? numProtocollo : ''} type="text" style={{width: '60%', minWidth: '55px',  border: 'none', paddingRight: '2.5px', textAlign: 'right', outline: 'none', fontFamily: 'Roboto', fontWeight: '500', fontSize: '1rem'}} />
+                            <div style={{display:'flex', justifyContent: 'center', alignItems:'center', padding: '0 2px', fontSize: '1.4rem', color: '#cdcdcd'}}>/</div>
+                            <input onChange={() => onChange(numProtocolloRef.current.value, getAnnoValidate(annoRef) )} ref={annoRef} defaultValue={anno ? anno : new Date().getFullYear()} type="text" maxLength="4" style={{width: '23%', maxWidth: '65px', border: 'none', paddingLeft: '2.5px', outline: 'none', fontFamily: 'Roboto', fontWeight: '500', fontSize: '1rem'}}/>
                         </div>
                     </InputAdornment>
                 ),
