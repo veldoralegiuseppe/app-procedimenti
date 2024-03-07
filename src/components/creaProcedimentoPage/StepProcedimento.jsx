@@ -33,6 +33,7 @@ export default function StepProcedimento(){
     var [procedimento, setProcedimento] = React.useContext(ProcedimentoContext)
     var [currProc, setCurrProcedimento] = React.useState(procedimento)
     var [reset, setReset] = React.useState(false)
+    var [cursorShift, setCursorShift] = React.useState(0)
     const inputWidth = '20%'
     const minWidth = '133.5px'
     const maxWidth = '200px'
@@ -86,10 +87,18 @@ export default function StepProcedimento(){
     }
     handleClickOutside(valoreControversiaRef)
 
-    React.useEffect(() => {
-        console.log(`Re-render!\nReset: ${reset}\nCurrProc:${JSON.stringify(currProc)}\nProcedimento:${JSON.stringify(procedimento)}`)
-        setReset(false)
-    })
+    /**
+     * Resetta il campo valore della controversia
+     */
+    function resetValoreControversia(){
+        let input = valoreControversiaRef.current.childNodes[1].childNodes[1]
+        input.value = '0,00'
+    }
+
+    // React.useEffect(() => {
+    //     console.log(`Re-render!\nReset: ${reset}\nCurrProc:${JSON.stringify(currProc)}\nProcedimento:${JSON.stringify(procedimento)}`)
+    //     setReset(false)
+    // })
 
     return (
         <div style={{display: 'flex', flexDirection:'column', alignItems: 'center', justifyContent:'center', rowGap:'4rem', padding: '4.5rem 0'}}>
@@ -248,28 +257,169 @@ export default function StepProcedimento(){
 
                 <CssTextField 
                 InputProps={{
-                startAdornment: (
-                    <InputAdornment position="start">
-                    <EuroSymbolIcon sx={{color: '#69696961'}}/>
-                    </InputAdornment>
-                ),
+                    startAdornment: (
+                        <InputAdornment position="start">
+                        <EuroSymbolIcon sx={{color: '#69696961'}}/>
+                        </InputAdornment>
+                    ),
+                    maxLength: 30
                 }}
-                defaultValue={reset ? "" : currProc.valoreControversia}
+                defaultValue={reset ? resetValoreControversia() : "0,00"}
                 onChange={event => {
-                    let importoCorrente = event.currentTarget.value
+                    let input = valoreControversiaRef.current.childNodes[1].childNodes[1]
+                    let importoCorrente = input.value.replaceAll('.','')
+                    const activateLog = false 
+                    if(activateLog) console.log('onChange!')
+                    
+                    var isOnlyCent = /^,{1}\d+/g
+                    var inputValido = /(?<![\D*\w*])(\d+,{1}\d{2})(?![\D*\d*,*])/g
 
-                    var regex = /^\d+(\,\d{0,2})?$/g
+                    if(isOnlyCent.test(importoCorrente) || importoCorrente == '') {
+                        input.value = ''
+                    }
+                    else if(!importoCorrente.includes(',')){
+                        // Inserimento di numeri interi
+                        if(importoCorrente.length < 3) {
+                            if(activateLog) console.log('Gestisco numeri interi')
+                            input.value = importoCorrente += ',00'
+                            input.setSelectionRange(1, 1)
+                        } else {
+                            // Canc della virgola
+                            if(activateLog) console.log('Gestisco la virgola cancellata')
+                            let currentPosition = input.selectionStart
+                            input.value = importoCorrente.slice(0, importoCorrente.length-2) + ',' + importoCorrente.slice(importoCorrente.length-2)
+                            input.setSelectionRange(currentPosition, currentPosition)
+                        }
+                        
+                    }
+                    else if(importoCorrente.charAt(0) == '0' && /\d/g.test(importoCorrente.charAt(1))){
+                        // Gestisco i numeri del tipo 023,00
+                        if(activateLog) console.log('Gestisco i valori all inizio')
+                        let currentPosition = input.selectionStart
+                        input.value = importoCorrente.slice(1)
+                        input.setSelectionRange(currentPosition-1, currentPosition-1)
+                    }
+                    else if(input.selectionStart == input.value.length - 3 && importoCorrente.includes(",,")){
+                        // Gestisco l'aggiunta della virgola
+                        if(activateLog) console.log('Gestisco aggiunta virgola')
+                        if(importoCorrente.includes(",,") && !inputValido.test(importoCorrente.replace(',,',','))) return 
+                        else {
+                            let currentPosition = input.selectionStart
+                            input.value = importoCorrente.replace(",,",",")
+                            input.setSelectionRange(currentPosition, currentPosition)
+                        }                       
+                    }
+                    else if(input.selectionStart == input.value.length - 2 ){
+                        // Aggiunta di un decimale 
+                        if(activateLog) console.log('Aggiungo un decimale')
+                        let importo = importoCorrente.slice(0,importoCorrente.length - 2) + importoCorrente.slice(importoCorrente.length-1)
+                        if(!inputValido.test(importo)) {
+                            if(activateLog) console.log('Input invalido nell aggiungere decimali')
+                            let currentPosition = input.selectionStart
+                            input.value = currProc.valoreControversia
+                            input.setSelectionRange(currentPosition-1, currentPosition-1)
+                            return
+                        }
+                        let currentPosition = input.selectionStart
+                        let formattedImporto = Number(importo.replaceAll(',','.')).toLocaleString('it-IT',{
+                            style: 'decimal', 
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                        })
+                        input.value = formattedImporto
+                        let numPunti = (formattedImporto.match(/\./g) || []).length
+                        if(activateLog) console.log(`Aggiungo decimo - importo:${importo}, formattedImporto: ${formattedImporto}, numPunti: ${numPunti}, currentPosition: ${currentPosition}, cursorShift:${cursorShift}`)
+                        if(numPunti == cursorShift) 
+                            input.setSelectionRange(currentPosition, currentPosition)
+                        else
+                            input.setSelectionRange(currentPosition+1, currentPosition+1)
+                    }
+                    else if(input.selectionStart == input.value.length - 1 ){
+                        if(importoCorrente.charAt(importoCorrente.length-2) == ',') {
+                            // Canc dei decimi
+                            if(activateLog) console.log('Gestisco il canc dei decimi')
+                            let importo = importoCorrente.slice(0, importoCorrente.length-1) + '0' + importoCorrente.slice(importoCorrente.length-1)
+                            if(!inputValido.test(importo)) {
+                                if(activateLog) console.log('Input invalido nel canc decimi')
+                                let currentPosition = input.selectionStart
+                                input.value = currProc.valoreControversia
+                                input.setSelectionRange(currentPosition-1, currentPosition-1)
+                                return
+                            }
+                            let currentPosition = input.selectionStart
+                            input.value = importoCorrente.slice(0, importoCorrente.length-1) + '0' + importoCorrente.slice(importoCorrente.length-1)
+                            input.setSelectionRange(currentPosition, currentPosition)
+                        } else {
+                            // Aggiunta di un centesimo
+                            if(activateLog) console.log('Aggiungo un centesimo')
+                            let importo = importoCorrente.slice(0,importoCorrente.length - 1)
+                            if(!inputValido.test(importo)) {
+                                let currentPosition = input.selectionStart
+                                input.value = currProc.valoreControversia
+                                input.setSelectionRange(currentPosition, currentPosition)
+                                return
+                            }
+                            let currentPosition = input.selectionStart
+                            let formattedImporto = Number(importo.replaceAll(',','.')).toLocaleString('it-IT',{
+                                style: 'decimal', 
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2,
+                            })
+                            input.value = formattedImporto
+                            input.setSelectionRange(currentPosition, currentPosition)
+                        }
+                    }
+                    else if(input.selectionStart == input.value.length){
+                        // Canc dei centesimi
+                        if(importoCorrente.charAt(importoCorrente.length-2) == ',') {
+                            if(activateLog) console.log('Gestisco il canc dei centesimi')
+                            let currentPosition = input.selectionStart
+                            input.value += '0'
+                            input.setSelectionRange(currentPosition, currentPosition)
+                        } else {
+                            let currentPosition = input.selectionStart
+                            input.value = currProc.valoreControversia
+                            input.setSelectionRange(currentPosition, currentPosition)
+                        }
+                    }
+                    else if(!inputValido.test(importoCorrente)){
+                        let currentPosition = input.selectionStart
+                        input.value = currProc.valoreControversia
+                        input.setSelectionRange(currentPosition-1, currentPosition-1)
+                        //input.setSelectionRange(dimParteIntera, dimParteIntera)
+                    } 
+                        
+                
+                    // Aggiungo i punti
+                    if(activateLog) console.log(`input.value:${input.value}`)
+                    let importoView = input.value ? input.value.replaceAll('.','') : '0.00'
+                    let importoNumber = Number(importoView.replace(',','.'))
+                    if(activateLog) console.log(`importoView:${importoView}\nimportoNumber: ${importoNumber}`)
+                    const formattedNumber = importoNumber.toLocaleString('it-IT',{
+                        style: 'decimal', 
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                    })
+                    let currentPosition = input.selectionStart
+                    currProc.valoreControversia = formattedNumber
+                    setProcedimento({...currProc})
+                    input.value = formattedNumber
+                   
+                    let numPunti = (formattedNumber.match(/\./g) || []).length
+                    if(activateLog) console.log(`prevPosition: ${currentPosition}, numPunti: ${numPunti}`)
 
-                    if( regex.test(importoCorrente) ) 
-                        currProc.valoreControversia = importoCorrente
-                    else{ 
-                        event.currentTarget.value = importoCorrente.substr(0, importoCorrente.length - 1)
-                        if(event.currentTarget.value.length == 0) currProc.valoreControversia = undefined
+                    if(numPunti == cursorShift) 
+                        input.setSelectionRange(Number(currentPosition), Number(currentPosition))
+                    else{
+                        if(numPunti > cursorShift)
+                            input.setSelectionRange(Number(currentPosition+1), Number(currentPosition+1))
+                        else 
+                            input.setSelectionRange(Number(currentPosition-1), Number(currentPosition-1))   
+                        setCursorShift(numPunti)
                     }
                     
-                    setProcedimento({...currProc})
                 }}
-                sx={{margin: margin, backgroundColor: backgroundColor, width: inputWidth, minWidth: minWidth, maxWidth: maxWidth, '& .MuiFormLabel-root':{color: labelColor}, '& .MuiOutlinedInput-input':{fontWeight: '500'}}} 
+                sx={{margin: margin, backgroundColor: backgroundColor, width: inputWidth, minWidth: minWidth, maxWidth: maxWidth, '& .MuiFormLabel-root':{color: labelColor}, '& .MuiOutlinedInput-input':{fontWeight: '500', color: theme.palette.text.primary}}} 
                 id="outlined-basic" 
                 label="Valore della controversia" 
                 ref={valoreControversiaRef}

@@ -9,7 +9,7 @@ export class Procedimento {
     dataIncontroLocale
     oraIncontroLocale
     oggettoControversia
-    valoreControversia
+    valoreControversia = '0,00'
 
     getProtocollo = () => {return this.numProtocollo+'/'+this.annoProtocollo}
     equals = (p) => {
