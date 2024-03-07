@@ -299,6 +299,14 @@ export default function StepProcedimento(){
                         input.value = importoCorrente.slice(1)
                         input.setSelectionRange(currentPosition-1, currentPosition-1)
                     }
+                    else if(input.selectionStart == 1 && currProc.valoreControversia == '0,00'){
+                        if(activateLog) console.log('Gestisco primo input')
+                        let importo = importoCorrente.charAt(0) + importoCorrente.slice(2)
+                        input.value = importo
+                        let currentPosition = input.selectionStart
+                        if(activateLog) console.log(`importoCorrente: ${importoCorrente}, importo: ${importo}, currentPosition: ${currentPosition}`)
+                        input.setSelectionRange(currentPosition-3,currentPosition-3)
+                    }
                     else if(input.selectionStart == input.value.length - 3 && importoCorrente.includes(",,")){
                         // Gestisco l'aggiunta della virgola
                         if(activateLog) console.log('Gestisco aggiunta virgola')
