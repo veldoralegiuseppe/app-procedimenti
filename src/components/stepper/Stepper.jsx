@@ -108,7 +108,16 @@ export default function HorizontalLinearStepper({steps}) {
                       color="inherit"
                       disabled={activeStep === 0}
                       onClick={handleBack}
-                      sx={{backgroundColor: 'rgb(228 228 228 / 60%)', color: theme.palette.text.disabled, '&:hover':{backgroundColor: theme.palette.logo.primary}}}
+                      sx={{
+                        '&.Mui-disabled':{
+                          backgroundColor: 'unset', 
+                          border: `.9px solid rgb(199 199 199 / 60%)`, 
+                          color: theme.palette.text.disabled,
+                        }, 
+                        backgroundColor: 'unset',
+                        border: `.9px solid ${theme.palette.logo.primary}`, 
+                        color: theme.palette.logo.primary,
+                        '&:hover':{backgroundColor: '#6ea5da29'}}}
                       >
                       Indietro
                       </Button>
@@ -122,7 +131,10 @@ export default function HorizontalLinearStepper({steps}) {
                       <Button 
                       onClick={handleNext} 
                       disabled={disableNext}
-                      sx={{backgroundColor: theme.palette.primary.light, color: theme.palette.primary.main, '&:hover':{backgroundColor:  theme.palette.primary.light, color: theme.palette.primary.main}}}
+                      sx={{
+                        backgroundColor: theme.palette.primary.light, 
+                        color: theme.palette.primary.main, 
+                        '&:hover':{backgroundColor:  theme.palette.primary.light, color: theme.palette.primary.main}}}
                       >
                         {activeStep === steps.length - 1 ? 'Crea' : 'Avanti'}
                       </Button>
