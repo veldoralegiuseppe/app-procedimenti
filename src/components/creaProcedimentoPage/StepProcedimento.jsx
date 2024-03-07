@@ -55,11 +55,10 @@ function StepProcedimento(props, ref){
     React.useImperativeHandle(ref, () => ({
             validate(){
                 //console.log(`${JSON.stringify(currProc)}`)
-                // if(currProc.numProtocollo && currProc.sede && currProc.oggettoControversia && currProc.valoreControversia != '0,00')
-                //     return true
-                // else
-                //     return false
-                return true
+                if(currProc.numProtocollo && currProc.sede && currProc.oggettoControversia && currProc.valoreControversia != '0,00')
+                    return true
+                else
+                    return false
             }
         })
     )
@@ -496,6 +495,8 @@ function StepProcedimento(props, ref){
 
 function ClearBtn({currProc, onReset}){
  
+    const theme = useTheme()
+    var isDisabled = new Procedimento().equals(currProc)
 
     function reset(){
         onReset()
@@ -505,9 +506,15 @@ function ClearBtn({currProc, onReset}){
         <ClearButton 
         variant="outlined" 
         onClick={reset} 
-        startIcon={<DeleteIcon />} 
-        sx={{fontSize: '.9rem'}} 
-        disabled={new Procedimento().equals(currProc)}>
+        startIcon={<DeleteIcon sx={{color: isDisabled ? 'rgb(105 105 105 / 60%)' : theme.palette.primary.main}}/>} 
+        sx={{
+            '&.Mui-disabled':{
+                color: theme.palette.text.disabled,
+                fontWeight:'400'
+            },
+            fontSize: '.9rem'
+        }} 
+        disabled={isDisabled}>
             Pulisci campi
         </ClearButton>
     )

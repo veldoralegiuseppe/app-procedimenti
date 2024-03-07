@@ -113,6 +113,7 @@ export default function HorizontalLinearStepper({steps}) {
                           backgroundColor: 'unset', 
                           border: `.9px solid rgb(199 199 199 / 60%)`, 
                           color: theme.palette.text.disabled,
+                          fontWeight: '400'
                         }, 
                         backgroundColor: 'unset',
                         border: `.9px solid ${theme.palette.logo.primary}`, 
@@ -132,6 +133,7 @@ export default function HorizontalLinearStepper({steps}) {
                       onClick={handleNext} 
                       disabled={disableNext}
                       sx={{
+                        '&.Mui-disabled':{backgroundColor: '#f4f4f4', color: theme.palette.text.disabled, fontWeight: '400'},
                         backgroundColor: theme.palette.primary.light, 
                         color: theme.palette.primary.main, 
                         '&:hover':{backgroundColor:  theme.palette.primary.light, color: theme.palette.primary.main}}}
