@@ -18,7 +18,7 @@ export default function HorizontalLinearStepper({steps}) {
 
   React.useLayoutEffect(()=>{
     activeStepRef = steps[activeStep].component.ref 
-    setDisableNext(!activeStepRef.current.validate())
+    setDisableNext(!activeStepRef?.current.validate())
   })
 
   const isStepOptional = (step) => {

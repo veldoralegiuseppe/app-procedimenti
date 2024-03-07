@@ -13,7 +13,7 @@ import { useTheme } from '@mui/material/styles';
 
 const filter = createFilterOptions();
 
-export default function SedeSelect({inputWidth, minWidth, maxWidth, backgroundColor, margin, labelColor, onChange, currValue, reset}) {
+export default function SedeSelect({inputWidth, minWidth, maxWidth, backgroundColor, margin, labelColor, onChange, currValue, reset, error, helperText}) {
   const [value, setValue] = React.useState(currValue ? {sede: currValue} : null);
   const [open, toggleOpen] = React.useState(false);
   const theme = useTheme()
@@ -119,6 +119,8 @@ export default function SedeSelect({inputWidth, minWidth, maxWidth, backgroundCo
         renderInput={(params) => 
           <CssTextField {...params} 
           required
+          error={error}
+          helperText={helperText}
           label="Sede" 
           size='small'
           sx={{'& .MuiOutlinedInput-input':{fontWeight: '500'}, '& .MuiFormLabel-root':{color: labelColor}, }}

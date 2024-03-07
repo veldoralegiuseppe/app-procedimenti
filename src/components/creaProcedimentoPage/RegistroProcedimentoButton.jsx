@@ -39,7 +39,7 @@ function getNumProtocolloValidate(numProtocolloRef){
     }
 }
 
-export default function RegistroProcedimentoButton({onChange, numProtocollo, anno, reset, maxWidth, minWidth}){
+export default function RegistroProcedimentoButton({onChange, numProtocollo, anno, reset, maxWidth, minWidth, error, helperText}){
     const theme = useTheme()
     const inputWidth = '20%'
     const margin = '18px 20px 10px 10px'
@@ -107,6 +107,8 @@ export default function RegistroProcedimentoButton({onChange, numProtocollo, ann
     },[])
     return(
         <CssTextField 
+            error={error}
+            helperText={helperText}
             onClick={() => handleClick(textFieldRef)}
             ref={textFieldRef}
             defaultValue={reset ? handleReset() : ""}

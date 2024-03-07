@@ -21,6 +21,7 @@ import { useTheme } from '@mui/material/styles';
 import RegistroProcedimentoButton from './RegistroProcedimentoButton.jsx';
 import {ProcedimentoContext} from '/src/store/procedimento-context.jsx'
 import DeleteIcon from '@mui/icons-material/Delete';
+import FormHelperText from '@mui/material/FormHelperText';
 import { Procedimento } from '../../vo/procedimento.js';
 
 
@@ -44,11 +45,20 @@ function StepProcedimento(props, ref){
     const oggettiControversia = [{value: 'ALTRE NATURE DELLA CONTROVERSIA', view: 'ALTRE NATURE DELLA CONTROVERSIA'}, {value:'CONTRATTI BANCARI', view: 'CONTRATTI BANCARI'}, {value:'CONTRATTI FINANZIARI', view:'CONTRATTI FINANZIARI'}, {value: 'CONTRATTI DI OPERA', view: 'CONTRATTI D\'OPERA'}, {value:'CONTRATTI DI RETE', view: 'CONTRATTI DI RETE'}, {value:'CONTRATTI DI SOMMINISTRAZIONE', view:'CONTRATTI DI SOMMINISTRAZIONE'}, {value:'CONSORZIO', view:'CONSORZIO'}, {value:'DIRITTI REALI', view:'DIRITTI REALI'}, {value:'DIVISIONE', view:'DIVISIONE'}, {value:'FRANCHISING', view:'FRANCHISING'}, {value: 'LOCAZIONE', view: 'LOCAZIONE'}, {value:'PATTI DI FAMIGLIA', view:'PATTI DI FAMIGLIA'}, {value: 'RESPONSABILITA MEDICA', view: 'RESPONSABILITÀ MEDICA'}, {value:'RISARCIMENTO DANNI MEZZO STAMPA', view:'RISARCIMENTO DANNI MEZZO STAMPA'}, {value:'SUCCESSIONE EREDITARIA', view:'SUCCESSIONE EREDITARIA'}, {value: 'SOCIETA DI PERSONE', view:'SOCIETÀ DI PERSONE'}, {value: 'SUBFORNITURA', view: 'SUBFORNITURA'}]
     const valoreControversiaRef = React.useRef(null);
     const oggControvMenuItemStyle = {'&:hover':{backgroundColor: theme.palette.dropdown.hover}, '&.Mui-selected, &.Mui-selected:hover':{backgroundColor: theme.palette.dropdown.selected, color: 'white'}}
-
+    var protocolloProcError = false
+    var dataDepositoError = false
+    var dataIncontroError = false
+    var sedeError = false
+    var oggettoControversiaError = false
+    var valoreControversiaError = false
    
     React.useImperativeHandle(ref, () => ({
             validate(){
-                return true
+                //console.log(`${JSON.stringify(currProc)}`)
+                if(currProc.numProtocollo && currProc.sede && currProc.oggettoControversia && currProc.valoreControversia != '0,00')
+                    return true
+                else
+                    return false
             }
         })
     )
@@ -122,6 +132,8 @@ function StepProcedimento(props, ref){
                 numProtocollo={reset ? "" : currProc.numProtocollo}
                 anno={reset ? "" : currProc.annoProtocollo}
                 reset={reset}
+                error={protocolloProcError}
+                helperText=""
                 maxWidth={maxWidth}
                 minWidth={minWidth}
                 >
@@ -142,7 +154,7 @@ function StepProcedimento(props, ref){
                         width: inputWidth, 
                         minWidth: minWidth, 
                         maxWidth: maxWidth, 
-                        '& .MuiFormLabel-root':{color: labelColor}, 
+                        '& .MuiFormLabel-root:not(.Mui-error)':{color: labelColor}, 
                         '& .MuiOutlinedInput-input':{fontWeight: '500'},
                         '& .MuiDayCalendar-weekDayLabel': {
                             color: 'red !important',
@@ -156,11 +168,13 @@ function StepProcedimento(props, ref){
                     slots={{textField: CssTextField}}
                     slotProps={{
                         textField: {
+                            error: dataDepositoError,
+                            helperText: "",
                             required: true,
                             InputProps: {
                                 endAdornment: (
                                     <InputAdornment position="end">
-                                    <CalendarMonthOutlinedIcon sx={{color: labelColor}}/>
+                                    <CalendarMonthOutlinedIcon sx={{color: dataDepositoError ? theme.palette.error.main : labelColor}}/>
                                     </InputAdornment>
                                 ),
                             },
@@ -180,6 +194,8 @@ function StepProcedimento(props, ref){
                 }} 
                 currValue={currProc.sede ? currProc.sede : null}
                 reset={reset}
+                error={sedeError}
+                helperText=""
                 inputWidth={inputWidth} 
                 minWidth={minWidth}  
                 maxWidth={maxWidth} 
@@ -200,15 +216,24 @@ function StepProcedimento(props, ref){
                         currProc.oraIncontro = oraIncontro
                         setProcedimento({...currProc})
                     }}
-                    sx={{margin: margin, backgroundColor: backgroundColor, width: inputWidth, minWidth: minWidth, maxWidth: maxWidth, '& .MuiFormLabel-root':{color: labelColor}, '& .MuiOutlinedInput-input':{fontWeight: '500'}}}
+                    sx={{
+                        margin: margin, 
+                        backgroundColor: backgroundColor, 
+                        width: inputWidth, 
+                        minWidth: minWidth, 
+                        maxWidth: maxWidth, 
+                        '& .MuiFormLabel-root:not(.Mui-error)':{color: labelColor}, 
+                        '& .MuiOutlinedInput-input':{fontWeight: '500'}}}
                     slots={{textField: CssTextField}}
                     slotProps={{
                         textField: {
+                            error: dataIncontroError,
+                            helperText: "",
                             required: false,
                             InputProps: {
                             endAdornment: (
                                 <InputAdornment position="end">
-                                <QueryBuilderOutlinedIcon sx={{color: labelColor}}/>
+                                <QueryBuilderOutlinedIcon sx={{color: dataIncontroError ? theme.palette.error.main : labelColor}}/>
                                 </InputAdornment>
                             ),
                             },
@@ -224,11 +249,12 @@ function StepProcedimento(props, ref){
             <Grid xs={12}>
                 <Grid xs={12} sx={{borderBottom:'1px solid #467bae61', margin: '0 0 0 1rem', width: 'calc(100% - 1rem)'}}><Typography variant="h6" sx={{fontWeight: '400', fontSize: formLabelFontSize, color: `#467bae` }}>Controversia</Typography></Grid>
 
-                <FormControl required size='small' sx={{width: inputWidth, margin: margin, backgroundColor: backgroundColor, minWidth: minWidth, maxWidth: maxWidth, '& .MuiFormLabel-root':{color: labelColor}} }>
-                        <InputLabel id="oggetto-controversia-input-label">Oggetto</InputLabel>
+                <FormControl required size='small' sx={{width: inputWidth, margin: margin, backgroundColor: backgroundColor, minWidth: minWidth, maxWidth: maxWidth, '& .MuiFormLabel-root:not(.Mui-error)':{color: labelColor}} }>
+                        <InputLabel id="oggetto-controversia-input-label" error={oggettoControversiaError}>Oggetto</InputLabel>
                         <CssSelect
                         labelId="oggetto-controversia-input-label"
                         id="oggetto-controversia-select"
+                        error={oggettoControversiaError}
                         value={reset ? "" : currProc.oggettoControversia ? currProc.oggettoControversia : ""}
                         inputProps={{
                             MenuProps: {
@@ -265,18 +291,21 @@ function StepProcedimento(props, ref){
                             ))
                         }
                         </CssSelect>
+                        <FormHelperText error={oggettoControversiaError}></FormHelperText>
                 </FormControl>
 
                 <CssTextField 
                 InputProps={{
                     startAdornment: (
                         <InputAdornment position="start">
-                        <EuroSymbolIcon sx={{color: '#69696961'}}/>
+                        <EuroSymbolIcon sx={{color: valoreControversiaError ? theme.palette.error.main : '#69696961'}}/>
                         </InputAdornment>
                     ),
                     maxLength: 30
                 }}
-                defaultValue={reset ? resetValoreControversia() : "0,00"}
+                error={valoreControversiaError}
+                helperText=""
+                defaultValue={reset ? resetValoreControversia() : currProc.valoreControversia}
                 onChange={event => {
                     let input = valoreControversiaRef.current.childNodes[1].childNodes[1]
                     let importoCorrente = input.value.replaceAll('.','')
@@ -439,7 +468,7 @@ function StepProcedimento(props, ref){
                     }
                     
                 }}
-                sx={{margin: margin, backgroundColor: backgroundColor, width: inputWidth, minWidth: minWidth, maxWidth: maxWidth, '& .MuiFormLabel-root':{color: labelColor}, '& .MuiOutlinedInput-input':{fontWeight: '500', color: theme.palette.text.primary}}} 
+                sx={{margin: margin, backgroundColor: backgroundColor, width: inputWidth, minWidth: minWidth, maxWidth: maxWidth, '& .MuiFormLabel-root:not(.Mui-error)':{color: labelColor}, '& .MuiOutlinedInput-input':{fontWeight: '500', color: theme.palette.text.primary,},}} 
                 id="outlined-basic" 
                 label="Valore della controversia" 
                 ref={valoreControversiaRef}
