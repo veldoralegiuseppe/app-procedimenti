@@ -11,9 +11,10 @@ export default function CreaProcedimento(){
 
     const theme = useTheme()
     var [procedimento, setProcedimento] = React.useState(new Procedimento())
+    const stepProcRef = React.useRef()
 
     const steps = [
-        {label: 'Definisci il procedimento', component: <StepProcedimento procedimento={procedimento}/>}, 
+        {label: 'Definisci il procedimento', component: <StepProcedimento procedimento={procedimento} ref={stepProcRef}/>}, 
         {label: 'Definisci le parti', component: 'Definisci parti'}, 
         {label: 'Riepilogo', component: 'Finale'}
     ];  

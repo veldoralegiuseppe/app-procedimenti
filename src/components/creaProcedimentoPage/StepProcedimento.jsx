@@ -28,7 +28,7 @@ import { Procedimento } from '../../vo/procedimento.js';
  * Pagina associata allo step 'Definisci procedimento'
  * @returns Step procedimento
  */
-export default function StepProcedimento(){
+function StepProcedimento(props, ref){
     const theme = useTheme()
     var [procedimento, setProcedimento] = React.useContext(ProcedimentoContext)
     var [currProc, setCurrProcedimento] = React.useState(procedimento)
@@ -45,6 +45,13 @@ export default function StepProcedimento(){
     const valoreControversiaRef = React.useRef(null);
     const oggControvMenuItemStyle = {'&:hover':{backgroundColor: theme.palette.dropdown.hover}, '&.Mui-selected, &.Mui-selected:hover':{backgroundColor: theme.palette.dropdown.selected, color: 'white'}}
 
+   
+    React.useImperativeHandle(ref, () => ({
+            validate(){
+                return true
+            }
+        })
+    )
     
     /**
      * Gestisce il click al di fuori del componente di interesse
@@ -101,7 +108,7 @@ export default function StepProcedimento(){
     })
 
     return (
-        <div style={{display: 'flex', flexDirection:'column', alignItems: 'center', justifyContent:'center', rowGap:'4rem', padding: '4.5rem 0'}}>
+        <form id='step-procedimento-form' style={{display: 'flex', flexDirection:'column', alignItems: 'center', justifyContent:'center', rowGap:'4rem', padding: '4.5rem 0'}}>
             {/* Procedimento di mediazione */}
             <Grid xs={12}>
                 <Grid xs={12} sx={{borderBottom:'1px solid #467bae61', margin: '0 0 0 1rem', width: 'calc(100% - 1rem)'}}><Typography sx={{fontWeight: '400', fontSize: formLabelFontSize, color: '#467bae'}}>Procedimento di mediazione</Typography></Grid>
@@ -149,12 +156,13 @@ export default function StepProcedimento(){
                     slots={{textField: CssTextField}}
                     slotProps={{
                         textField: {
+                            required: true,
                             InputProps: {
-                            endAdornment: (
-                                <InputAdornment position="end">
-                                <CalendarMonthOutlinedIcon sx={{color: labelColor}}/>
-                                </InputAdornment>
-                            ),
+                                endAdornment: (
+                                    <InputAdornment position="end">
+                                    <CalendarMonthOutlinedIcon sx={{color: labelColor}}/>
+                                    </InputAdornment>
+                                ),
                             },
                             size: 'small',
                         },
@@ -196,6 +204,7 @@ export default function StepProcedimento(){
                     slots={{textField: CssTextField}}
                     slotProps={{
                         textField: {
+                            required: false,
                             InputProps: {
                             endAdornment: (
                                 <InputAdornment position="end">
@@ -215,7 +224,7 @@ export default function StepProcedimento(){
             <Grid xs={12}>
                 <Grid xs={12} sx={{borderBottom:'1px solid #467bae61', margin: '0 0 0 1rem', width: 'calc(100% - 1rem)'}}><Typography variant="h6" sx={{fontWeight: '400', fontSize: formLabelFontSize, color: `#467bae` }}>Controversia</Typography></Grid>
 
-                <FormControl size='small' sx={{width: inputWidth, margin: margin, backgroundColor: backgroundColor, minWidth: minWidth, maxWidth: maxWidth, '& .MuiFormLabel-root':{color: labelColor}} }>
+                <FormControl required size='small' sx={{width: inputWidth, margin: margin, backgroundColor: backgroundColor, minWidth: minWidth, maxWidth: maxWidth, '& .MuiFormLabel-root':{color: labelColor}} }>
                         <InputLabel id="oggetto-controversia-input-label">Oggetto</InputLabel>
                         <CssSelect
                         labelId="oggetto-controversia-input-label"
@@ -451,7 +460,7 @@ export default function StepProcedimento(){
                 }}
                 />
             </Grid>
-        </div>
+        </form>
     )
 }
 
@@ -463,8 +472,15 @@ function ClearBtn({currProc, onReset}){
     }
 
     return (
-        <ClearButton variant="outlined" onClick={reset} startIcon={<DeleteIcon />} sx={{fontSize: '.9rem'}} disabled={new Procedimento().equals(currProc)}>
+        <ClearButton 
+        variant="outlined" 
+        onClick={reset} 
+        startIcon={<DeleteIcon />} 
+        sx={{fontSize: '.9rem'}} 
+        disabled={new Procedimento().equals(currProc)}>
             Pulisci campi
         </ClearButton>
     )
 }
+
+export default React.forwardRef(StepProcedimento)

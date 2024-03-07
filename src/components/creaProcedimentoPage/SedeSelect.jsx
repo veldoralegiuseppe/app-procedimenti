@@ -118,6 +118,7 @@ export default function SedeSelect({inputWidth, minWidth, maxWidth, backgroundCo
         freeSolo
         renderInput={(params) => 
           <CssTextField {...params} 
+          required
           label="Sede" 
           size='small'
           sx={{'& .MuiOutlinedInput-input':{fontWeight: '500'}, '& .MuiFormLabel-root':{color: labelColor}, }}

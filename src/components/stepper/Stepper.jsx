@@ -12,7 +12,14 @@ import Grid from '@mui/material/Unstable_Grid2';
 export default function HorizontalLinearStepper({steps}) {
   const [activeStep, setActiveStep] = React.useState(0);
   const [skipped, setSkipped] = React.useState(new Set());
+  var [disableNext, setDisableNext] = React.useState(true);
   const theme = useTheme()
+  var activeStepRef = React.useRef(null)
+
+  React.useLayoutEffect(()=>{
+    activeStepRef = steps[activeStep].component.ref 
+    setDisableNext(!activeStepRef.current.validate())
+  })
 
   const isStepOptional = (step) => {
     return false
@@ -82,13 +89,13 @@ export default function HorizontalLinearStepper({steps}) {
       <div style={{display: 'flex', flexDirection: 'column', rowGap: '0'}}>
         {activeStep === steps.length ? (
             <React.Fragment>
-            <Typography sx={{ mt: 2, mb: 1 }}>
-                All steps completed - you&apos;re finished
-            </Typography>
-            <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
-                <Box sx={{ flex: '1 1 auto' }} />
-                <Button onClick={handleReset}>Reset</Button>
-            </Box>
+              <Typography sx={{ mt: 2, mb: 1 }}>
+                  All steps completed - you&apos;re finished
+              </Typography>
+              <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
+                  <Box sx={{ flex: '1 1 auto' }} />
+                  <Button onClick={handleReset}>Reset</Button>
+              </Box>
             </React.Fragment>
         ) : (
             <React.Fragment>
@@ -112,8 +119,12 @@ export default function HorizontalLinearStepper({steps}) {
                       </Button>
                       )}
 
-                      <Button onClick={handleNext} sx={{backgroundColor: theme.palette.primary.light, color: theme.palette.primary.main, '&:hover':{backgroundColor:  theme.palette.primary.light, color: theme.palette.primary.mai}}}>
-                      {activeStep === steps.length - 1 ? 'Crea' : 'Avanti'}
+                      <Button 
+                      onClick={handleNext} 
+                      disabled={disableNext}
+                      sx={{backgroundColor: theme.palette.primary.light, color: theme.palette.primary.main, '&:hover':{backgroundColor:  theme.palette.primary.light, color: theme.palette.primary.main}}}
+                      >
+                        {activeStep === steps.length - 1 ? 'Crea' : 'Avanti'}
                       </Button>
                   </Box>
               </Grid>
