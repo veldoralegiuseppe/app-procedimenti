@@ -102,9 +102,6 @@ export default function RegistroProcedimentoButton({onChange, numProtocollo, ann
     handleOutsideClick(textFieldRef, annoRef, numProtocolloRef)
     handleReset()
 
-    React.useEffect(()=>{
-        console.log('Registro render!')
-    },[])
     return(
         <CssTextField 
             error={error}

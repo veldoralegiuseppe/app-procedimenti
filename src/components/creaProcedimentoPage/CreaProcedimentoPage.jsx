@@ -4,7 +4,7 @@ import { Typography } from '@mui/material';
 import HorizontalLinearStepper from '/src/components/stepper/Stepper.jsx';
 import { useTheme } from '@mui/material/styles';
 import { ProcedimentoContext } from '/src/store/procedimento-context.jsx';
-import StepProcedimento from './StepProcedimento.jsx';
+import StepProcedimento from './stepProcedimento/StepProcedimento.jsx';
 import { Procedimento } from '/src/vo/procedimento.js';
 
 export default function CreaProcedimento(){

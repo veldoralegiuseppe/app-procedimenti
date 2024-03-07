@@ -8,7 +8,7 @@ import { itIT } from '@mui/x-date-pickers/locales';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
-import SedeSelect from '/src/components/creaProcedimentoPage/SedeSelect.jsx';
+import SedeSelect from './SedeSelect.jsx';
 import "dayjs/locale/it";
 import dayjs from 'dayjs';
 import EuroSymbolIcon from '@mui/icons-material/EuroSymbol';
@@ -22,7 +22,7 @@ import RegistroProcedimentoButton from './RegistroProcedimentoButton.jsx';
 import {ProcedimentoContext} from '/src/store/procedimento-context.jsx'
 import DeleteIcon from '@mui/icons-material/Delete';
 import FormHelperText from '@mui/material/FormHelperText';
-import { Procedimento } from '../../vo/procedimento.js';
+import { Procedimento } from '/src/vo/procedimento.js';
 
 
 /**
