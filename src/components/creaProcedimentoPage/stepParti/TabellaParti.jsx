@@ -43,6 +43,7 @@ function createData(id, cognome, nome, cf, speseAvvio, spesePostali, pagamentoIn
 const rows = [
   createData(1, 'ROSSI', 'MARIO', 'VLDGPP97E16F138C', '€100,00', '€100,00','€100,00'),
   createData(2, 'NERI', 'LUIGI', 'VLDGPP97E16F138C', '€100,00', '€100,00','€100,00'),
+  // createData(3, 'Nessuna parte inserita', '', '', '', '',''),
 ];
 
 function descendingComparator(a, b, orderBy) {
@@ -235,6 +236,7 @@ export default function TabellaParti() {
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
+  const [isEmpty, setIsEmpty] = React.useState(false)
   const theme = useTheme()
 
   const handleRequestSort = (event, property) => {
@@ -315,10 +317,11 @@ export default function TabellaParti() {
                     tabIndex={-1}
                     key={row.id}
                     selected={isItemSelected}
-                    sx={{ cursor: 'pointer', '&.MuiTableRow-hover:hover':{backgroundColor: '#f6dbbc52'}, '&.Mui-selected':{backgroundColor: '#ffe5c8', '&:hover':{backgroundColor: '#ffe5c8'}} }}
+                    sx={{ pointerEvents: isEmpty ? 'none' : 'auto', cursor: isEmpty ? 'default' : 'pointer', '&.MuiTableRow-hover:hover':{backgroundColor: '#f6dbbc52'}, '&.Mui-selected':{backgroundColor: '#ffe5c8', '&:hover':{backgroundColor: '#ffe5c8'}} }}
                   >
                     <TableCell padding="checkbox" sx={bodyTableCellSx}>
-                      <Checkbox
+                      {isEmpty ? <></> :
+                        <Checkbox
                         sx={{'&:hover':{backgroundColor: 'unset'}}}
                         color="primary"
                         checked={isItemSelected}
@@ -326,9 +329,10 @@ export default function TabellaParti() {
                           'aria-labelledby': labelId,
                         }}
                       />
+                    }
                     </TableCell>
                     <TableCell
-                      sx={bodyTableCellSx}
+                      sx={{transform: isEmpty ? 'translateX(244%)' : 'unset',...bodyTableCellSx}}
                       component="th"
                       id={labelId}
                       scope="row"
