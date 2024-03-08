@@ -55,10 +55,11 @@ function StepProcedimento(props, ref){
     React.useImperativeHandle(ref, () => ({
             validate(){
                 //console.log(`${JSON.stringify(currProc)}`)
-                if(currProc.numProtocollo && currProc.sede && currProc.oggettoControversia && currProc.valoreControversia != '0,00')
-                    return true
-                else
-                    return false
+                // if(currProc.numProtocollo && currProc.sede && currProc.oggettoControversia && currProc.valoreControversia != '0,00')
+                //     return true
+                // else
+                //     return false
+                return true
             }
         })
     )

@@ -26,7 +26,7 @@ export const themeOne = createTheme(
         selected: '#ffb25c'
       },
       text: {
-        primary: '#585858',
+        primary: '#656565',
         secondary: '#787878',
         //light: 'rgb(171 178 186)',
       },

@@ -6,6 +6,7 @@ import { useTheme } from '@mui/material/styles';
 import { ProcedimentoContext } from '/src/store/procedimento-context.jsx';
 import StepProcedimento from './stepProcedimento/StepProcedimento.jsx';
 import { Procedimento } from '/src/vo/procedimento.js';
+import StepParti from './stepParti/StepParti.jsx';
 
 export default function CreaProcedimento(){
 
@@ -15,7 +16,7 @@ export default function CreaProcedimento(){
 
     const steps = [
         {label: 'Definisci il procedimento', component: <StepProcedimento procedimento={procedimento} ref={stepProcRef}/>}, 
-        {label: 'Definisci le parti', component: 'Definisci parti'}, 
+        {label: 'Definisci le parti', component: <StepParti></StepParti>}, 
         {label: 'Riepilogo', component: 'Finale'}
     ];  
 
