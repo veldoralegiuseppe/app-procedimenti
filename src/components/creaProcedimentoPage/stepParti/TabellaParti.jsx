@@ -23,8 +23,9 @@ import FilterListIcon from '@mui/icons-material/FilterList';
 import { visuallyHidden } from '@mui/utils';
 import { useTheme } from '@mui/material/styles';
 
-const headerBackgroundColor = '#467bae'
-const headerBackgroundColor2 = '#fff9f5c9'
+const headerBackgroundColor = '#4a769b'
+const headerBackgroundColor2 = '#ffffff8f'
+const footerBackgroundColor = '#4a769b'
 const bodyTableCellSx = {borderColor: '#eeeeee', fontWeight: '500', color: '#707070'}
 
 function createData(id, cognome, nome, cf, speseAvvio, spesePostali, pagamentoIndennita) {
@@ -126,19 +127,25 @@ function EnhancedTableHead(props) {
   return (
     <TableHead sx={{color: theme.palette.background.default}}> 
       <TableRow sx={{backgroundColor: headerBackgroundColor, fontFamily: 'Public Sans'}}>
-        <TableCell align="center" colSpan={4} sx={{color: theme.palette.background.default, borderBottom: 'none', fontFamily: 'Public Sans', lineHeight: '1rem'}}>
+        <TableCell align="center" colSpan={4} sx={{color: 'white', borderBottom: 'none', fontFamily: 'Public Sans', lineHeight: '1rem'}}>
           REFERENZE
         </TableCell>
-        <TableCell align="center" colSpan={3} sx={{color: theme.palette.background.default, borderBottom: 'none', fontFamily: 'Public Sans', lineHeight: '1rem'}}>
+        <TableCell align="center" colSpan={3} sx={{color: 'white', borderBottom: 'none', fontFamily: 'Public Sans', lineHeight: '1rem'}}>
           IMPORTI
         </TableCell>
       </TableRow>
       <TableRow>
-        <TableCell padding="checkbox" sx={{color: theme.palette.logo.secondary, backgroundColor: headerBackgroundColor2, borderBottom: 'none'}}>
+        <TableCell padding="checkbox" sx={{color: theme.palette.logo.secondary, backgroundColor: headerBackgroundColor2,  borderBottom: '1px solid #3e678f4d'}}>
         </TableCell>
         {headCells.map((headCell) => (
           <TableCell
-            sx={{color: theme.palette.logo.secondary, backgroundColor: headerBackgroundColor2, borderBottom: 'none'}}
+            sx={{
+              color: footerBackgroundColor, 
+              backgroundColor: headerBackgroundColor2,  
+              borderBottom: '1px solid #3e678f4d',
+              '& .MuiButtonBase-root:hover':{ color: theme.palette.logo.secondary},
+              '& .MuiButtonBase-root.Mui-active':{ color: theme.palette.logo.secondary, '& svg':{color: theme.palette.logo.secondary}},
+            }}
             key={headCell.id}
             align={headCell.numeric ? 'right' : 'left'}
             padding={headCell.disablePadding ? 'none' : 'normal'}
@@ -246,7 +253,7 @@ export default function TabellaParti() {
   };
 
   const handleClick = (event, id) => {
-    setSelected(id);
+    id == selected ? setSelected(-1) : setSelected(id);
   };
 
   const handleChangePage = (event, newPage) => {
@@ -308,10 +315,11 @@ export default function TabellaParti() {
                     tabIndex={-1}
                     key={row.id}
                     selected={isItemSelected}
-                    sx={{ cursor: 'pointer', '&.MuiTableRow-hover:hover':{backgroundColor: '#6ea5da29'}, '&.Mui-selected':{backgroundColor: '#6ea5da4d', '&:hover':{backgroundColor: '#6ea5da4d'}} }}
+                    sx={{ cursor: 'pointer', '&.MuiTableRow-hover:hover':{backgroundColor: '#f6dbbc52'}, '&.Mui-selected':{backgroundColor: '#ffe5c8', '&:hover':{backgroundColor: '#ffe5c8'}} }}
                   >
                     <TableCell padding="checkbox" sx={bodyTableCellSx}>
                       <Checkbox
+                        sx={{'&:hover':{backgroundColor: 'unset'}}}
                         color="primary"
                         checked={isItemSelected}
                         inputProps={{
@@ -350,7 +358,7 @@ export default function TabellaParti() {
           </Table>
         </TableContainer>
         <TablePagination
-          sx={{backgroundColor: headerBackgroundColor, color: theme.palette.background.default, height: '2rem', overflow: 'hidden', display: 'flex', justifyContent: 'flex-end', alignItems: 'center'}}
+          sx={{backgroundColor: footerBackgroundColor, color: theme.palette.background.default, height: '2rem', overflow: 'hidden', display: 'flex', justifyContent: 'flex-end', alignItems: 'center'}}
           labelRowsPerPage={"Elementi per pagina"}
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
