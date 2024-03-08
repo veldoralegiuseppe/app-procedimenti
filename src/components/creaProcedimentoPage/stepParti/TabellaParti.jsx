@@ -130,7 +130,7 @@ function EnhancedTableHead(props) {
           REFERENZE
         </TableCell>
         <TableCell align="center" colSpan={3} sx={{color: theme.palette.background.default, borderBottom: 'none', fontFamily: 'Public Sans', lineHeight: '1rem'}}>
-          SPESE
+          IMPORTI
         </TableCell>
       </TableRow>
       <TableRow>
