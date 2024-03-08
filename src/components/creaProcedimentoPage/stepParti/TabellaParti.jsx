@@ -110,14 +110,14 @@ function EnhancedTableHead(props) {
 
   return (
     <TableHead sx={{color: theme.palette.background.default}}> 
-      <TableRow sx={{backgroundColor: headerBackgroundColor, fontFamily: 'Public Sans'}}>
+      {/* <TableRow sx={{backgroundColor: headerBackgroundColor, fontFamily: 'Public Sans'}}>
         <TableCell align="center" colSpan={4} sx={{color: 'white', borderBottom: 'none', fontFamily: 'Public Sans', lineHeight: '1rem'}}>
           REFERENZE
         </TableCell>
         <TableCell align="center" colSpan={3} sx={{color: 'white', borderBottom: 'none', fontFamily: 'Public Sans', lineHeight: '1rem'}}>
           IMPORTI
         </TableCell>
-      </TableRow>
+      </TableRow> */}
       <TableRow>
         <TableCell padding="checkbox" sx={{color: theme.palette.logo.secondary, backgroundColor: headerBackgroundColor2,  borderBottom: '1px solid #3e678f4d'}}>
         </TableCell>
