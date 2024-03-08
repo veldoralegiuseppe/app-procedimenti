@@ -28,23 +28,6 @@ const headerBackgroundColor2 = '#ffffff8f'
 const footerBackgroundColor = '#4a769b'
 const bodyTableCellSx = {borderColor: '#eeeeee', fontWeight: '500', color: '#707070'}
 
-function createData(id, cognome, nome, cf, speseAvvio, spesePostali, pagamentoIndennita) {
-  return {
-    id,
-    cognome,
-    nome,
-    cf,
-    speseAvvio,
-    spesePostali,
-    pagamentoIndennita,
-  };
-}
-
-const rows = [
-  createData(1, 'ROSSI', 'MARIO', 'VLDGPP97E16F138C', '€100,00', '€100,00','€100,00'),
-  createData(2, 'NERI', 'LUIGI', 'VLDGPP97E16F138C', '€100,00', '€100,00','€100,00'),
-  // createData(3, 'Nessuna parte inserita', '', '', '', '',''),
-];
 
 function descendingComparator(a, b, orderBy) {
   if (b[orderBy] < a[orderBy]) {
@@ -238,6 +221,23 @@ export default function TabellaParti() {
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [isEmpty, setIsEmpty] = React.useState(false)
   const theme = useTheme()
+
+  function createData(id, cognome, nome, cf, speseAvvio, spesePostali, pagamentoIndennita) {
+    return {
+      id,
+      cognome,
+      nome,
+      cf,
+      speseAvvio,
+      spesePostali,
+      pagamentoIndennita,
+    };
+  }
+  
+  const rows = isEmpty ? [createData(1, 'Nessuna parte inserita', '', '', '', '','')] : [
+    createData(1, 'ROSSI', 'MARIO', 'VLDGPP97E16F138C', '€100,00', '€100,00','€100,00'),
+    createData(2, 'NERI', 'LUIGI', 'VLDGPP97E16F138C', '€100,00', '€100,00','€100,00'),
+  ];
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
