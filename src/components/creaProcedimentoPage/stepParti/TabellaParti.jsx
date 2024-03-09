@@ -30,6 +30,7 @@ const bodyTableCellSx = {borderColor: '#eeeeee', fontWeight: '500', color: '#707
 
 
 function descendingComparator(a, b, orderBy) {
+  console.log(`a: ${JSON.stringify(a)}, b: ${JSON.stringify(b)}, orderBy: ${orderBy}`)
   if (b[orderBy] < a[orderBy]) {
     return -1;
   }
@@ -63,37 +64,37 @@ function stableSort(array, comparator) {
 
 const headCells = [
   {
-    id: 'tab-cognome',
+    id: 'cognome',
     numeric: false,
     disablePadding: true,
     label: 'Cognome',
   },
   {
-    id: 'tab-nome',
+    id: 'nome',
     numeric: false,
     disablePadding: false,
     label: 'Nome',
   },
   {
-    id: 'tab-cf',
+    id: 'cf',
     numeric: false,
     disablePadding: false,
     label: 'Codice fiscale',
   },
   {
-    id: 'tab-spese-avvio',
+    id: 'speseAvvio',
     numeric: false,
     disablePadding: false,
     label: 'Spese avvio',
   },
   {
-    id: 'tab-spese-postali',
+    id: 'spesePostali',
     numeric: false,
     disablePadding: false,
     label: 'Spese postali',
   },
   {
-    id: 'tab-pagamento-indennita',
+    id: 'pagamentoIndennita',
     numeric: false,
     disablePadding: false,
     label: 'Pagamento indennità',
@@ -127,7 +128,7 @@ function EnhancedTableHead(props) {
               color: footerBackgroundColor, 
               backgroundColor: headerBackgroundColor2,  
               borderBottom: '1px solid #3e678f4d',
-              '& .MuiButtonBase-root:hover':{ color: theme.palette.logo.secondary},
+              '& .MuiButtonBase-root:hover':{ color: '#ff9f32a8'},
               '& .MuiButtonBase-root.Mui-active':{ color: theme.palette.logo.secondary, '& svg':{color: theme.palette.logo.secondary}},
             }}
             key={headCell.id}
@@ -214,7 +215,7 @@ EnhancedTableToolbar.propTypes = {
 
 export default function TabellaParti() {
   const [order, setOrder] = React.useState('asc');
-  const [orderBy, setOrderBy] = React.useState('calories');
+  const [orderBy, setOrderBy] = React.useState('cognome');
   const [selected, setSelected] = React.useState(-1);
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
@@ -235,7 +236,7 @@ export default function TabellaParti() {
   }
   
   const rows = isEmpty ? [createData(1, 'Nessuna parte inserita', '', '', '', '','')] : [
-    createData(1, 'ROSSI', 'MARIO', 'VLDGPP97E16F138C', '€100,00', '€100,00','€100,00'),
+    createData(1, 'ROSSI', 'MARIO', 'ALDGPP97E16F138C', '€10,00', '€10,00','€10,00'),
     createData(2, 'NERI', 'LUIGI', 'VLDGPP97E16F138C', '€100,00', '€100,00','€100,00'),
   ];
 
