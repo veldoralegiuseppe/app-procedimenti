@@ -107,117 +107,7 @@ const headCells = [
   },
 ];
 
-function EnhancedTableHead(props) {
-  const theme = useTheme()
-  const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } =
-    props;
-  const createSortHandler = (property) => (event) => {
-    onRequestSort(event, property);
-  };
 
-  return (
-    <TableHead sx={{color: theme.palette.background.default}}> 
-      {/* <TableRow sx={{backgroundColor: headerBackgroundColor, fontFamily: 'Public Sans'}}>
-        <TableCell align="center" colSpan={4} sx={{color: 'white', borderBottom: 'none', fontFamily: 'Public Sans', lineHeight: '1rem'}}>
-          REFERENZE
-        </TableCell>
-        <TableCell align="center" colSpan={3} sx={{color: 'white', borderBottom: 'none', fontFamily: 'Public Sans', lineHeight: '1rem'}}>
-          IMPORTI
-        </TableCell>
-      </TableRow> */}
-      <TableRow>
-        <TableCell padding="checkbox" sx={{color: theme.palette.logo.secondary, backgroundColor: headerBackgroundColor2,  borderBottom: '1px solid #3e678f4d'}}>
-        </TableCell>
-        {headCells.map((headCell) => (
-          <TableCell
-            sx={{
-              color: footerBackgroundColor, 
-              backgroundColor: headerBackgroundColor2,  
-              borderBottom: '1px solid #3e678f4d',
-              '& .MuiButtonBase-root:hover':{ color: '#ff9f32a8'},
-              '& .MuiButtonBase-root.Mui-active':{ color: theme.palette.logo.secondary, '& svg':{color: theme.palette.logo.secondary}},
-            }}
-            key={headCell.id}
-            align={headCell.numeric ? 'right' : 'left'}
-            padding={headCell.disablePadding ? 'none' : 'normal'}
-            sortDirection={orderBy === headCell.id ? order : false}
-          >
-            <TableSortLabel
-              active={orderBy === headCell.id}
-              direction={orderBy === headCell.id ? order : 'asc'}
-              onClick={createSortHandler(headCell.id)}
-            >
-              {headCell.label}
-              {orderBy === headCell.id ? (
-                <Box component="span" sx={visuallyHidden}>
-                  {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                </Box>
-              ) : null}
-            </TableSortLabel>
-          </TableCell>
-        ))}
-      </TableRow>
-    </TableHead>
-  );
-}
-
-EnhancedTableHead.propTypes = {
-  numSelected: PropTypes.number.isRequired,
-  onRequestSort: PropTypes.func.isRequired,
-  onSelectAllClick: PropTypes.func.isRequired,
-  order: PropTypes.oneOf(['asc', 'desc']).isRequired,
-  orderBy: PropTypes.string.isRequired,
-  rowCount: PropTypes.number.isRequired,
-};
-
-function EnhancedTableToolbar(props) {
-  const theme = useTheme()
-  const { numSelected } = props;
-
-  return (
-    <Toolbar
-      variant='dense'
-      sx={{
-        minHeight: 'unset',
-        height: '2rem',
-        backgroundColor: theme.palette.background.default,
-        pl: { sm: 2 },
-        pr: { xs: 1, sm: 1 },
-        ...(numSelected > 0 && {
-          bgcolor: (theme) => theme.palette.background.default,
-          borderBottom:  '1px solid #c72525cc'
-        }),
-      }}
-    >
-      {numSelected > 0 ? (
-        <Typography
-          sx={{ flex: '1 1 100%', color: '#c72525cc' }}
-          color="inherit"
-          variant="subtitle1"
-          component="div"
-        >
-        Vuoi eliminare la parte selezionata ?
-        </Typography>
-      ) : (
-        <></>
-      )}
-
-      {numSelected > 0 ? (
-        <Tooltip title="Elimina">
-          <IconButton sx={{'&:hover': {backgroundColor: 'unset',}}}>
-            <DeleteIcon sx={{color: '#c72525cc', '&:hover': {color: '#e53636cc'}}}/>
-          </IconButton>
-        </Tooltip>
-      ) : (
-        <></>
-      )}
-    </Toolbar>
-  );
-}
-
-EnhancedTableToolbar.propTypes = {
-  numSelected: PropTypes.number.isRequired,
-};
 
 export default function TabellaParti() {
   const [order, setOrder] = React.useState('asc');
@@ -227,15 +117,23 @@ export default function TabellaParti() {
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [isEmpty, setIsEmpty] = React.useState(false)
+  var [rows, setRows] = React.useState(rows = isEmpty ? [createData(1, 'Nessuna parte inserita', '', '', '', '','')] : [
+    createData(1, 'ROSSI', 'MARIO', 'ALDGPP97E16F138C', '€10,00', '€10,00','€10,00'),
+    createData(2, 'NERI', 'LUIGI', 'VLDGPP97E16F138C', '€100,00', '€100,00','€100,00'),
+  ])
   const theme = useTheme()
 
   function createData(id, cognome, nome, cf, speseAvvio, spesePostali, pagamentoIndennita) {
-    let totale = Number(speseAvvio.replace('€','').replaceAll('.','').replace(',','.')) + Number(spesePostali.replace('€','').replaceAll('.','').replace(',','.')) + Number(pagamentoIndennita.replace('€','').replaceAll('.','').replace(',','.'))
-    totale = '€' + totale.toLocaleString('it-IT',{
-      style: 'decimal', 
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    })
+    let totale = ''
+
+    if(speseAvvio && spesePostali && pagamentoIndennita){ 
+      totale = Number(speseAvvio.replace('€','').replaceAll('.','').replace(',','.')) + Number(spesePostali.replace('€','').replaceAll('.','').replace(',','.')) + Number(pagamentoIndennita.replace('€','').replaceAll('.','').replace(',','.'))
+      totale = '€' + totale.toLocaleString('it-IT',{
+        style: 'decimal', 
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })
+    }
 
     return {
       id,
@@ -249,11 +147,6 @@ export default function TabellaParti() {
     };
   }
   
-  const rows = isEmpty ? [createData(1, 'Nessuna parte inserita', '', '', '', '','')] : [
-    createData(1, 'ROSSI', 'MARIO', 'ALDGPP97E16F138C', '€10,00', '€10,00','€10,00'),
-    createData(2, 'NERI', 'LUIGI', 'VLDGPP97E16F138C', '€100,00', '€100,00','€100,00'),
-  ];
-
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
     setOrder(isAsc ? 'desc' : 'asc');
@@ -288,6 +181,132 @@ export default function TabellaParti() {
 
   const isSelected = (id) => selected == id;
 
+  const handleDelete = (event) => {
+    let newRows = rows.splice(selected-1, 1)
+    if (newRows.length == 0){
+      newRows = [createData(1, 'Nessuna parte inserita', '', '', '', '','')]
+      setIsEmpty(true)
+    } 
+    else 
+      setIsEmpty(false)
+    
+    setRows(newRows)
+    setSelected(-1)
+
+  }
+
+  function EnhancedTableHead(props) {
+    const theme = useTheme()
+    const { onSelectAllClick, order, orderBy, numSelected, rowCount, onRequestSort } =
+      props;
+    const createSortHandler = (property) => (event) => {
+      onRequestSort(event, property);
+    };
+  
+    return (
+      <TableHead sx={{color: theme.palette.background.default}}> 
+        {/* <TableRow sx={{backgroundColor: headerBackgroundColor, fontFamily: 'Public Sans'}}>
+          <TableCell align="center" colSpan={4} sx={{color: 'white', borderBottom: 'none', fontFamily: 'Public Sans', lineHeight: '1rem'}}>
+            REFERENZE
+          </TableCell>
+          <TableCell align="center" colSpan={3} sx={{color: 'white', borderBottom: 'none', fontFamily: 'Public Sans', lineHeight: '1rem'}}>
+            IMPORTI
+          </TableCell>
+        </TableRow> */}
+        <TableRow>
+          <TableCell padding="checkbox" sx={{color: theme.palette.logo.secondary, backgroundColor: headerBackgroundColor2,  borderBottom: '1px solid #3e678f4d'}}>
+          </TableCell>
+          {headCells.map((headCell) => (
+            <TableCell
+              sx={{
+                color: footerBackgroundColor, 
+                backgroundColor: headerBackgroundColor2,  
+                borderBottom: '1px solid #3e678f4d',
+                '& .MuiButtonBase-root:hover':{ color: '#ff9f32a8'},
+                '& .MuiButtonBase-root.Mui-active':{ color: theme.palette.logo.secondary, '& svg':{color: theme.palette.logo.secondary}},
+              }}
+              key={headCell.id}
+              align={headCell.numeric ? 'right' : 'left'}
+              padding={headCell.disablePadding ? 'none' : 'normal'}
+              sortDirection={orderBy === headCell.id ? order : false}
+            >
+              <TableSortLabel
+                active={orderBy === headCell.id}
+                direction={orderBy === headCell.id ? order : 'asc'}
+                onClick={createSortHandler(headCell.id)}
+              >
+                {headCell.label}
+                {orderBy === headCell.id ? (
+                  <Box component="span" sx={visuallyHidden}>
+                    {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                  </Box>
+                ) : null}
+              </TableSortLabel>
+            </TableCell>
+          ))}
+        </TableRow>
+      </TableHead>
+    );
+  }
+  
+  EnhancedTableHead.propTypes = {
+    numSelected: PropTypes.number.isRequired,
+    onRequestSort: PropTypes.func.isRequired,
+    onSelectAllClick: PropTypes.func.isRequired,
+    order: PropTypes.oneOf(['asc', 'desc']).isRequired,
+    orderBy: PropTypes.string.isRequired,
+    rowCount: PropTypes.number.isRequired,
+  };
+  
+  function EnhancedTableToolbar(props) {
+    const theme = useTheme()
+    const { numSelected } = props;
+  
+    return (
+      <Toolbar
+        variant='dense'
+        sx={{
+          minHeight: 'unset',
+          height: '2rem',
+          backgroundColor: theme.palette.background.default,
+          pl: { sm: 2 },
+          pr: { xs: 1, sm: 1 },
+          ...(numSelected > 0 && {
+            bgcolor: (theme) => theme.palette.background.default,
+            borderBottom:  '1px solid #c72525cc'
+          }),
+        }}
+      >
+        {numSelected > 0 ? (
+          <Typography
+            sx={{ flex: '1 1 100%', color: '#c72525cc' }}
+            color="inherit"
+            variant="subtitle1"
+            component="div"
+          >
+          Vuoi eliminare la parte selezionata ?
+          </Typography>
+        ) : (
+          <></>
+        )}
+  
+        {numSelected > 0 ? (
+          <Tooltip onClick={handleDelete} title="Elimina">
+            <IconButton sx={{'&:hover': {backgroundColor: 'unset',}}}>
+              <DeleteIcon sx={{color: '#c72525cc', '&:hover': {color: '#e53636cc'}}}/>
+            </IconButton>
+          </Tooltip>
+        ) : (
+          <></>
+        )}
+      </Toolbar>
+    );
+  }
+  
+  EnhancedTableToolbar.propTypes = {
+    numSelected: PropTypes.number.isRequired,
+  };
+
   // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
@@ -298,7 +317,7 @@ export default function TabellaParti() {
         page * rowsPerPage,
         page * rowsPerPage + rowsPerPage,
       ),
-    [order, orderBy, page, rowsPerPage],
+    [rows, order, orderBy, page, rowsPerPage],
   );
 
   return (
@@ -347,7 +366,7 @@ export default function TabellaParti() {
                     }
                     </TableCell>
                     <TableCell
-                      sx={{transform: isEmpty ? 'translateX(244%)' : 'unset',...bodyTableCellSx}}
+                      sx={{transform: isEmpty ? 'translateX(292%)' : 'unset', color: isEmpty ? theme.palette.text.disabled : theme.palette.text.primary, ...bodyTableCellSx}}
                       component="th"
                       id={labelId}
                       scope="row"
