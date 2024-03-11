@@ -203,9 +203,9 @@ function EnhancedTableToolbar(props) {
       )}
 
       {numSelected > 0 ? (
-        <Tooltip title="Delete">
-          <IconButton>
-            <DeleteIcon sx={{color: '#c72525cc'}}/>
+        <Tooltip title="Elimina">
+          <IconButton sx={{'&:hover': {backgroundColor: 'unset',}}}>
+            <DeleteIcon sx={{color: '#c72525cc', '&:hover': {color: '#e53636cc'}}}/>
           </IconButton>
         </Tooltip>
       ) : (
@@ -371,7 +371,7 @@ export default function TabellaParti() {
                     height: (dense ? 33 : 53) * emptyRows,
                   }}
                 >
-                  <TableCell colSpan={6} />
+                  <TableCell colSpan={8} />
                 </TableRow>
               )}
             </TableBody>
