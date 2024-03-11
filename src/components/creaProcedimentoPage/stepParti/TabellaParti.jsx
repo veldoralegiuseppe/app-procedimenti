@@ -30,7 +30,7 @@ const bodyTableCellSx = {borderColor: '#eeeeee', fontWeight: '500', color: '#707
 
 
 function descendingComparator(a, b, orderBy) {
-  console.log(`a: ${JSON.stringify(a)}, b: ${JSON.stringify(b)}, orderBy: ${orderBy}`)
+  //console.log(`a: ${JSON.stringify(a)}, b: ${JSON.stringify(b)}, orderBy: ${orderBy}`)
   if (b[orderBy] < a[orderBy]) {
     return -1;
   }
@@ -109,7 +109,7 @@ const headCells = [
 
 
 
-export default function TabellaParti() {
+export default function TabellaParti(props) {
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('cognome');
   const [selected, setSelected] = React.useState(-1);
@@ -164,6 +164,8 @@ export default function TabellaParti() {
 
   const handleClick = (event, id) => {
     id == selected ? setSelected(-1) : setSelected(id);
+    props.onSelect(id == selected ? -1 : id)
+    console.log(`Tabella parti - id: ${id} riga selezionata: ${selected}`)
   };
 
   const handleChangePage = (event, newPage) => {
@@ -183,6 +185,7 @@ export default function TabellaParti() {
     setRows(rows.splice(rows.length, 0, row))
     console.log(`Gestisco l'aggiunta:\n${rows}`)
     setSelected(-1)
+    props.onSelect(selected)
     setIsEmpty(false)
   }
 
@@ -199,6 +202,7 @@ export default function TabellaParti() {
     
     setRows(newRows)
     setSelected(-1)
+    props.onSelect(selected)
 
   }
 
