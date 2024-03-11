@@ -179,6 +179,13 @@ export default function TabellaParti() {
     setDense(event.target.checked);
   };
 
+  const handleAdd = (event, row) => {
+    setRows(rows.splice(rows.length, 0, row))
+    console.log(`Gestisco l'aggiunta:\n${rows}`)
+    setSelected(-1)
+    setIsEmpty(false)
+  }
+
   const isSelected = (id) => selected == id;
 
   const handleDelete = (event) => {
