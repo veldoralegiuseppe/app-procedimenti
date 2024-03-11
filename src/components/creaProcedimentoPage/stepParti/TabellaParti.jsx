@@ -99,6 +99,12 @@ const headCells = [
     disablePadding: false,
     label: 'Pagamento indennità',
   },
+  {
+    id: 'totale',
+    numeric: false,
+    disablePadding: false,
+    label: 'Totale',
+  },
 ];
 
 function EnhancedTableHead(props) {
@@ -224,6 +230,13 @@ export default function TabellaParti() {
   const theme = useTheme()
 
   function createData(id, cognome, nome, cf, speseAvvio, spesePostali, pagamentoIndennita) {
+    let totale = Number(speseAvvio.replace('€','').replaceAll('.','').replace(',','.')) + Number(spesePostali.replace('€','').replaceAll('.','').replace(',','.')) + Number(pagamentoIndennita.replace('€','').replaceAll('.','').replace(',','.'))
+    totale = '€' + totale.toLocaleString('it-IT',{
+      style: 'decimal', 
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
+    })
+
     return {
       id,
       cognome,
@@ -232,6 +245,7 @@ export default function TabellaParti() {
       speseAvvio,
       spesePostali,
       pagamentoIndennita,
+      totale
     };
   }
   
@@ -347,6 +361,7 @@ export default function TabellaParti() {
                     <TableCell sx={bodyTableCellSx} align="left">{row.speseAvvio}</TableCell>
                     <TableCell sx={bodyTableCellSx} align="left">{row.spesePostali}</TableCell>
                     <TableCell sx={bodyTableCellSx} align="left">{row.pagamentoIndennita}</TableCell>
+                    <TableCell sx={bodyTableCellSx} align="left">{row.totale}</TableCell>
                   </TableRow>
                 );
               })}
