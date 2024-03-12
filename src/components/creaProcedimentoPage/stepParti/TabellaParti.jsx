@@ -202,7 +202,7 @@ export default function TabellaParti(props) {
     
     setRows(newRows)
     setSelected(-1)
-    props.onSelect(selected)
+    props.onSelect(-1)
 
   }
 
