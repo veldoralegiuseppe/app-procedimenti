@@ -35,8 +35,6 @@
     "style-loader": "^3.3.4"
   },
   "dependencies": {
-    "@emotion/react": "^11.11.3",
-    "@emotion/styled": "^11.11.0",
     "@fontsource/public-sans": "^5.0.16",
     "@fontsource/roboto": "^5.0.8",
     "@mui/icons-material": "^5.15.7",

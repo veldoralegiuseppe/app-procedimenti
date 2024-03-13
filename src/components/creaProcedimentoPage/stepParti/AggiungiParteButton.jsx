@@ -28,6 +28,8 @@ import "dayjs/locale/it";
 import dayjs from 'dayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 
+
+
 const formLabelFontSize = '1rem'
 const labelColor = 'rgb(105 105 105 / 60%)'
 const inputSx = {width: '20%', margin: '14px 20px 10px 0px', minWidth: '133.5px', maxWidth: '168px',}
@@ -167,90 +169,6 @@ function Creazione(props){
                 </Accordion>
             </Grid>
             
-
-            {/* Dati del soggetto */}
-            {/* <Grid xs={12} sx={{width: '100%'}}>
-                <Grid xs={12} sx={{borderBottom:'1px solid #467bae61',}}><Typography sx={{fontWeight: '400', fontSize: formLabelFontSize, color: '#467bae'}}>Dati del soggetto</Typography></Grid>
-                
-                <CssTextField
-                    required
-                    size='small'
-                    id="outlined-required-cf-piva"
-                    label="Codice fiscale/P.IVA"
-                    defaultValue=""
-                    sx={textFieldSx}
-                />
-
-                <CssTextField
-                    required
-                    size='small'
-                    id="outlined-required-cognome"
-                    label="Cognome"
-                    defaultValue=""
-                    sx={textFieldSx}
-                />
-
-                <CssTextField
-                    required
-                    size='small'
-                    id="outlined-required-nome"
-                    label="Nome"
-                    defaultValue=""
-                    sx={textFieldSx}
-                />
-
-                <CssTextField
-                    type='email'
-                    size='small'
-                    id="outlined-required-email"
-                    label="Email"
-                    defaultValue=""
-                    sx={textFieldSx}
-                />
-            </Grid> */}
-
-            {/* Domicilio */}
-            {/* <Grid xs={12} sx={{width: '100%'}}>
-            <Grid xs={12} sx={{borderBottom:'1px solid #467bae61',}}><Typography sx={{fontWeight: '400', fontSize: formLabelFontSize, color: '#467bae'}}>Domicilio</Typography></Grid>
-
-                <CssTextField
-                    sx={textFieldSx}
-                    size='small'
-                    id="outlined-required-indirizzo"
-                    label="Indirizzo"
-                    defaultValue=""
-                />
-
-                <CssTextField
-                    sx={textFieldSx}
-                    size='small'
-                    id="outlined-required-citta"
-                    label="Città"
-                    defaultValue=""
-                />
-
-                <CssTextField
-                    sx={textFieldSx}
-                    size='small'
-                    id="outlined-required-cap"
-                    label="CAP"
-                    defaultValue=""
-                />
-            </Grid> */}
-
-            {/* Assistenza legale */}
-            {/* <Grid xs={12} sx={{width: '100%'}}>
-            <Grid xs={12} sx={{borderBottom:'1px solid #467bae61',}}><Typography sx={{fontWeight: '400', fontSize: formLabelFontSize, color: '#467bae'}}>Assistenza legale</Typography></Grid>
-                <CssTextField
-                    required
-                    size='small'
-                    id="outlined-required-avvocato"
-                    label="Avvocato"
-                    defaultValue=""
-                    sx={textFieldSx}
-                />
-            </Grid> */}
-
             {/* Buttons */}
             {/* <Grid xs={12} sx={{width: '100%', display: 'flex', justifyContent: 'flex-end', marginTop: '3rem'}}>
                 <Button 
@@ -432,6 +350,37 @@ function FormPersonaFisica(){
                     sx={{...textFieldSx, minWidth: '400px', maxWidth: '420px'}}
                 />  
 
+            </Grid>
+
+             {/* Assistenza legale */}
+            <Grid xs={12} sx={{width: '100%'}}>
+            <Grid xs={12} sx={{borderBottom:'1px solid #467bae61',}}><Typography sx={{fontWeight: '400', fontSize: formLabelFontSize, color: '#467bae'}}>Assistenza legale</Typography></Grid>
+                <CssTextField
+                    required
+                    size='small'
+                    id="outlined-required-avvocato"
+                    label="Avvocato"
+                    defaultValue=""
+                    sx={{...textFieldSx, minWidth: '246px', maxWidth: '250px'}}
+                />
+            </Grid>
+
+            {/* Spese */}
+            {/* <Grid xs={12} sx={{width: '100%'}}>
+                <Grid xs={12} sx={{borderBottom:'1px solid #467bae61',}}><Typography sx={{fontWeight: '400', fontSize: formLabelFontSize, color: '#467bae'}}>Spese</Typography></Grid>
+            </Grid> */}
+
+            {/* Note */}
+            <Grid xs={12} sx={{width: '100%'}}>
+                <Grid xs={12} sx={{borderBottom:'1px solid #467bae61',}}><Typography sx={{fontWeight: '400', fontSize: formLabelFontSize, color: '#467bae'}}>Informazioni aggiuntive</Typography></Grid>
+                <CssTextField
+                    id="outlined-required-note"
+                    label="Note"
+                    multiline
+                    rows={3}
+                    sx={{...textFieldSx, minWidth: '100%'}}
+                    onChange={(event) => event.target.value = event.target.value.trim() == '' ? '' : event.target.value.toLocaleUpperCase()}
+                />
             </Grid>
         </div>
     )
