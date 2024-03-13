@@ -77,7 +77,7 @@ export default function AggiungiParteButton(props) {
                 aria-describedby="keep-mounted-modal-description"
             >
                 <Box sx={style}>
-                    <Typography id="keep-mounted-modal-title" variant="h5" component="h2">Nuova Anagrafica</Typography>
+                    <div style={{borderBottom: '1px solid #f1f1f1', paddingBottom: '16px'}}><Typography id="keep-mounted-modal-title" variant="h5" component="h2">Nuova Anagrafica</Typography></div>
                     <Creazione sx={{margin: '3rem 0 0 0'}}/>
                 </Box>
             </Modal>
@@ -87,13 +87,7 @@ export default function AggiungiParteButton(props) {
 
 function Creazione(props){
     const theme = useTheme()
-    const backgroundColor = theme.palette.background.default
     var [tipologiaPersona, setTipologiaPersona] = React.useState('PERSONA_FISICA');
-    const textFieldSx = {'& .MuiFormLabel-root:not(.Mui-error)':{color: labelColor}, '& .MuiOutlinedInput-input':{fontWeight: '500', color: theme.palette.text.primary,}, ...inputSx}
-    const buttonColor = '#82b9ec'
-    const buttonHoverColor = '#4a769b'
-
-   
 
     return (
         <div style={{position: 'relative', display: 'flex', flexDirection:'column', alignItems: 'flex-start', justifyContent:'center', rowGap:'3rem', padding: '0', ...props.sx}}>       
@@ -170,12 +164,12 @@ function Creazione(props){
             </Grid>
             
             {/* Buttons */}
-            {/* <Grid xs={12} sx={{width: '100%', display: 'flex', justifyContent: 'flex-end', marginTop: '3rem'}}>
+            <Grid xs={12} sx={{width: '100%', paddingTop: '16px', display: 'flex', justifyContent: 'flex-end', marginTop: '3rem', borderTop: '1px solid #f1f1f1'}}>
                 <Button 
                     variant='outlined'
                     sx={{
                         width: '90px', 
-                        marginRight: '3rem', 
+                        marginRight: '4.5rem', 
                         color:' #467bae', 
                         //'&:hover, &:hover svg':{backgroundColor: 'unset', color: buttonHoverColor},
                         '&.Mui-disabled':{
@@ -200,7 +194,7 @@ function Creazione(props){
                 >
                     Crea
                 </Button>
-            </Grid> */}
+            </Grid>
         </div>
     )
 }
