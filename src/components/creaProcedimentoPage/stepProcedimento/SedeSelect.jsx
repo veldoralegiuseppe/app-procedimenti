@@ -73,7 +73,7 @@ export default function SedeSelect({inputWidth, minWidth, maxWidth, backgroundCo
         filterOptions={(options, params) => {
           const filtered = filter(options, params);
 
-          if (params.inputValue !== '') {
+          if (params.inputValue !== '' && !sedi.find(o => o.sede == params.inputValue.toLocaleUpperCase())) {
             filtered.push({
               inputValue: params.inputValue.toLocaleUpperCase(),
               sede: `Aggiungi "${params.inputValue.toLocaleUpperCase()}"`,

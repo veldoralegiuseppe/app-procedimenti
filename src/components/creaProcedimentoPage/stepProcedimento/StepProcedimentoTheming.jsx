@@ -13,6 +13,7 @@ export const CssTextField = styled(TextField)(({ theme }) => ({
 
     '& .MuiInputLabel-root.Mui-focused':{ color: theme.palette.logo.secondary,},
     '& .MuiOutlinedInput-root': {
+      'input':{textTransform: 'uppercase'},
         '&:hover fieldset': {
             borderColor: theme.palette.logo.secondary,
         },

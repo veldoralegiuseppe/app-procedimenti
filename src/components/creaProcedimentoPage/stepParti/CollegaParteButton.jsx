@@ -11,8 +11,8 @@ export default function CollegaParteButton(props) {
     const handleOpen = () => setOpen(true);
     const handleClose = () => setOpen(false);
     const theme = useTheme()
-    const buttonColor = '#82b9ec'
-    const buttonHoverColor = '#4a769b'
+    const buttonColor = '#467bae'
+    const buttonHoverColor = '#7cb8f2'
     const style = {
         position: 'absolute',
         top: '50%',

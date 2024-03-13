@@ -13,6 +13,25 @@ import Grid from '@mui/material/Unstable_Grid2';
 import TextField from '@mui/material/TextField';
 import { styled } from '@mui/material/styles';
 import ArrowBackOutlinedIcon from '@mui/icons-material/ArrowBackOutlined';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Radio from '@mui/material/Radio';
+import RadioGroup from '@mui/material/RadioGroup';
+import Accordion from '@mui/material/Accordion';
+import AccordionDetails from '@mui/material/AccordionDetails';
+import AccordionSummary from '@mui/material/AccordionSummary';
+import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
+import FormLabel from '@mui/material/FormLabel';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { itIT } from '@mui/x-date-pickers/locales';
+import "dayjs/locale/it";
+import dayjs from 'dayjs';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+
+const formLabelFontSize = '1rem'
+const labelColor = 'rgb(105 105 105 / 60%)'
+const inputSx = {width: '20%', margin: '14px 20px 10px 0px', minWidth: '133.5px', maxWidth: '168px',}
+  
 
 export default function AggiungiParteButton(props) {
     const [open, setOpen] = React.useState(false);
@@ -21,6 +40,7 @@ export default function AggiungiParteButton(props) {
     const theme = useTheme()
     const style = {
         position: 'absolute',
+        overflowY: 'scroll',
         minHeight: '600px',
         maxHeight: '600px',
         top: '50%',
@@ -33,8 +53,8 @@ export default function AggiungiParteButton(props) {
         boxShadow: 24,
         p: 4,
     };
-    const buttonColor = '#82b9ec'
-    const buttonHoverColor = '#4a769b'
+    const buttonColor = '#467bae'
+    const buttonHoverColor = '#7cb8f2'
       
 
     return(
@@ -55,9 +75,7 @@ export default function AggiungiParteButton(props) {
                 aria-describedby="keep-mounted-modal-description"
             >
                 <Box sx={style}>
-                    <Typography id="keep-mounted-modal-title" variant="h5" component="h2">
-                        Creazione Parte
-                    </Typography>
+                    <Typography id="keep-mounted-modal-title" variant="h5" component="h2">Nuova Anagrafica</Typography>
                     <Creazione sx={{margin: '3rem 0 0 0'}}/>
                 </Box>
             </Modal>
@@ -67,66 +85,93 @@ export default function AggiungiParteButton(props) {
 
 function Creazione(props){
     const theme = useTheme()
-    const formLabelFontSize = '1rem'
     const backgroundColor = theme.palette.background.default
-    const labelColor = 'rgb(105 105 105 / 60%)'
-    const [tipologiaPersona, setTipologiaPersona] = React.useState('');
-    const inputSx = {width: '20%', margin: '18px 20px 10px 0px', minWidth: '133.5px', maxWidth: '168px',}
+    var [tipologiaPersona, setTipologiaPersona] = React.useState('PERSONA_FISICA');
     const textFieldSx = {'& .MuiFormLabel-root:not(.Mui-error)':{color: labelColor}, '& .MuiOutlinedInput-input':{fontWeight: '500', color: theme.palette.text.primary,}, ...inputSx}
-
     const buttonColor = '#82b9ec'
     const buttonHoverColor = '#4a769b'
 
-    const handleChange = (event) => {
-      setTipologiaPersona(event.target.value);
-    };
+   
 
     return (
         <div style={{position: 'relative', display: 'flex', flexDirection:'column', alignItems: 'flex-start', justifyContent:'center', rowGap:'3rem', padding: '0', ...props.sx}}>       
-            {/* Dati del soggetto */}
+            
+            {/* Tipologia */}
+            <Grid  xs={12} sx={{width: '100%'}}>
+                <Grid xs={12} sx={{borderBottom:'1px solid #467bae61',}}><Typography sx={{fontWeight: '400', fontSize: formLabelFontSize, color: '#467bae'}}>Tipologia</Typography></Grid>
+                <FormControl sx={{marginTop: '4px'}}>
+                    <RadioGroup
+                    row
+                    aria-labelledby="demo-row-radio-buttons-group-label"
+                    name="row-radio-buttons-group"
+                    value={tipologiaPersona}
+                    onChange={(event) => setTipologiaPersona(event.target.value)}
+                    >
+                    <FormControlLabel 
+                    value="PERSONA_FISICA" 
+                    control={<Radio />} 
+                    label="Persona fisica" 
+                    sx={{marginRight: '4.5rem', '& .MuiTypography-root':{color: theme.palette.text.primary, fontWeight: '400'}, '& .MuiRadio-root:not(.Mui-checked) span':{color: labelColor}}}/>
+                    
+                    <FormControlLabel 
+                    value="PERSONA_GIURIDICA" 
+                    control={<Radio />} 
+                    label="Persona giuridica" 
+                    sx={{ '& .MuiTypography-root':{color: theme.palette.text.primary, fontWeight: '400', }, '& .MuiRadio-root:not(.Mui-checked) span':{color: labelColor} }}/>
+                    
+                    </RadioGroup>
+                </FormControl>
+            </Grid>
+
+            {/* Persona fisica */}
             <Grid xs={12} sx={{width: '100%'}}>
+                <Accordion 
+                disabled={tipologiaPersona != 'PERSONA_FISICA'}
+                expanded={tipologiaPersona == 'PERSONA_FISICA'}
+                >
+                <AccordionSummary
+                    expandIcon={<ArrowDownwardIcon sx={{color: 'white'}}/>}
+                    aria-controls="panel1-content"
+                    id="panel1-header"
+                    sx={{backgroundColor: '#467bae', color: 'white', height: '48px', '&.Mui-expanded':{minHeight: 'unset'}}}
+                >
+                    <Typography>Persona fisica</Typography>
+                </AccordionSummary>
+                <AccordionDetails sx={{backgroundColor: theme.palette.background.default}}>
+                   <FormPersonaFisica/>
+                </AccordionDetails>
+                </Accordion>
+            </Grid>
+            
+
+            {/* Persona giuridica */}
+            <Grid xs={12} sx={{width: '100%'}}>
+                <Accordion 
+                disabled={tipologiaPersona != 'PERSONA_GIURIDICA'}
+                expanded={tipologiaPersona == 'PERSONA_GIURIDICA'}
+                >
+                <AccordionSummary
+                    expandIcon={<ArrowDownwardIcon sx={{color: 'white'}}/>}
+                    aria-controls="panel2-content"
+                    id="panel2-header"
+                    sx={{backgroundColor: '#467bae', color: 'white', height: '48px', '&.Mui-expanded':{minHeight: 'unset'}}}
+                >
+                    <Typography>Persona giuridica</Typography>
+                </AccordionSummary>
+                <AccordionDetails sx={{backgroundColor: theme.palette.background.default}}>
+                    <Typography>
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
+                    malesuada lacus ex, sit amet blandit leo lobortis eget.
+                    </Typography>
+                </AccordionDetails>
+                </Accordion>
+            </Grid>
+            
+
+            {/* Dati del soggetto */}
+            {/* <Grid xs={12} sx={{width: '100%'}}>
                 <Grid xs={12} sx={{borderBottom:'1px solid #467bae61',}}><Typography sx={{fontWeight: '400', fontSize: formLabelFontSize, color: '#467bae'}}>Dati del soggetto</Typography></Grid>
                 
-                <FormControl 
-                    required
-                    size='small'
-                    sx={{'& .MuiFormLabel-root:not(.Mui-error)':{color: labelColor}, ...inputSx}}
-                >
-                <InputLabel id="tipologia-persona-select-label">Tipologia persona</InputLabel>
-                <CssSelect
-                    labelId="tipologia-persona-select-label"
-                    id="tipologia-persona-select"
-                    value={tipologiaPersona}
-                    label="Tipologia persona"
-                    onChange={handleChange}
-                    inputProps={{
-                        MenuProps: {
-                            MenuListProps: {
-                                sx: {
-                                    backgroundColor: theme.palette.dropdown.primary,
-                                    color: theme.palette.primary.main,
-                                }
-                            },
-                            PaperProps: {
-                                sx: {
-                                    '& .MuiMenuItem-root': {
-                                        //padding: '1rem',
-                                        fontSize: '.9rem',
-                                        fontWeight: '400',
-                                    },
-                                    maxHeight: '125px',
-                                    //overflowY: 'scroll'
-                                },
-                            },
-                        },
-                    }}
-                    sx={{'& .MuiOutlinedInput-input':{fontWeight: '500', color: theme.palette.text.primary}, }}
-                >
-                    <MenuItem value={'PERSONA_FISICA'}>PERSONA FISICA</MenuItem>
-                    <MenuItem value={'PERSONA_GIURIDICA'}>PERSONA GIURIDICA</MenuItem>
-                </CssSelect>
-                </FormControl>
-
                 <CssTextField
                     required
                     size='small'
@@ -162,10 +207,10 @@ function Creazione(props){
                     defaultValue=""
                     sx={textFieldSx}
                 />
-            </Grid>
+            </Grid> */}
 
             {/* Domicilio */}
-            <Grid xs={12} sx={{width: '100%'}}>
+            {/* <Grid xs={12} sx={{width: '100%'}}>
             <Grid xs={12} sx={{borderBottom:'1px solid #467bae61',}}><Typography sx={{fontWeight: '400', fontSize: formLabelFontSize, color: '#467bae'}}>Domicilio</Typography></Grid>
 
                 <CssTextField
@@ -191,10 +236,10 @@ function Creazione(props){
                     label="CAP"
                     defaultValue=""
                 />
-            </Grid>
+            </Grid> */}
 
             {/* Assistenza legale */}
-            <Grid xs={12} sx={{width: '100%'}}>
+            {/* <Grid xs={12} sx={{width: '100%'}}>
             <Grid xs={12} sx={{borderBottom:'1px solid #467bae61',}}><Typography sx={{fontWeight: '400', fontSize: formLabelFontSize, color: '#467bae'}}>Assistenza legale</Typography></Grid>
                 <CssTextField
                     required
@@ -204,9 +249,10 @@ function Creazione(props){
                     defaultValue=""
                     sx={textFieldSx}
                 />
-            </Grid>
+            </Grid> */}
 
-            <Grid xs={12} sx={{width: '100%', display: 'flex', justifyContent: 'flex-end', marginTop: '3rem'}}>
+            {/* Buttons */}
+            {/* <Grid xs={12} sx={{width: '100%', display: 'flex', justifyContent: 'flex-end', marginTop: '3rem'}}>
                 <Button 
                     variant='outlined'
                     sx={{
@@ -236,11 +282,160 @@ function Creazione(props){
                 >
                     Crea
                 </Button>
-            </Grid>
+            </Grid> */}
         </div>
     )
 }
 
+function FormPersonaFisica(){
+    const theme = useTheme()
+    const textFieldSx = {'& .MuiFormLabel-root:not(.Mui-error,.Mui-focused,.Mui-selected)':{color: labelColor}, '& .MuiOutlinedInput-input':{fontWeight: '500', color: theme.palette.text.primary,}, ...inputSx}
+   
+    return (
+        <div style={{position: 'relative', marginTop: '1rem', width: '100%', display: 'flex', flexDirection:'column', alignItems: 'flex-start', justifyContent:'center', rowGap:'2.5rem', padding: '0'}}>
+            {/* Dati anagrafici */}
+            <Grid xs={12} sx={{width: '100%'}}>
+                <Grid xs={12} sx={{width: '100%', borderBottom:'1px solid #467bae61',}}><Typography sx={{fontWeight: '400', fontSize: formLabelFontSize, color: '#467bae'}}>Dati anagrafici</Typography></Grid>
+
+                <CssTextField
+                    required
+                    size='small'
+                    id="outlined-required-cognome"
+                    label="Cognome"
+                    defaultValue=""
+                    sx={textFieldSx}
+                />
+
+                <CssTextField
+                    required
+                    size='small'
+                    id="outlined-required-nome"
+                    label="Nome"
+                    defaultValue=""
+                    sx={textFieldSx}
+                />
+
+                <CssTextField
+                required
+                size='small'
+                id="outlined-required-cf-piva"
+                label="Codice fiscale"
+                defaultValue=""
+                sx={textFieldSx}
+                />
+
+                <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='it' localeText={itIT.components.MuiLocalizationProvider.defaultProps.localeText}>
+                    <DatePicker 
+                    label='Data di nascita'
+                    slots={{textField: CssTextField}}
+                    sx={{
+                        '& .MuiFormLabel-root:not(.Mui-error)':{color: labelColor}, 
+                        '& .MuiOutlinedInput-input':{fontWeight: '500'},
+                        '& .MuiDayCalendar-weekDayLabel': {
+                            color: 'red !important',
+                            borderRadius: 2,
+                            borderWidth: 1,
+                            borderColor: '#e91e63',
+                            border: '1px solid',
+                            backgroundColor: '#f8bbd0',
+                        },
+                    }}
+                    slotProps={{
+                        textField: {
+                            //error: dataDepositoError,
+                            helperText: "",
+                            //required: true,
+                            size: 'small',
+                            sx: textFieldSx
+                        },
+                    }}
+                    />
+                </LocalizationProvider>
+
+                <CssTextField
+                    size='small'
+                    id="outlined-required-comune-nascita"
+                    label="Comune di nascita"
+                    defaultValue=""
+                    sx={{...textFieldSx, minWidth: '246px', maxWidth: '250px'}}
+                />
+               
+            </Grid>
+
+            {/* Dati demografici */}
+            <Grid xs={12} sx={{width: '100%'}}>
+                <Grid xs={12} sx={{width: '100%', borderBottom:'1px solid #467bae61',}}><Typography sx={{fontWeight: '400', fontSize: formLabelFontSize, color: '#467bae'}}>Dati demografici</Typography></Grid>
+
+                <CssTextField
+                    size='small'
+                    id="outlined-required-comune-residenza"
+                    label="Comune di residenza"
+                    defaultValue=""
+                    sx={{...textFieldSx, minWidth: '246px', maxWidth: '250px'}}
+                />
+
+                <CssTextField
+                    size='small'
+                    id="outlined-required-indirizzo"
+                    label="Indirizzo"
+                    defaultValue=""
+                    sx={{...textFieldSx, minWidth: '246px', maxWidth: '250px'}}
+                />
+
+                <CssTextField
+                    size='small'
+                    id="outlined-required-cup"
+                    label="CAP"
+                    defaultValue=""
+                    sx={textFieldSx}
+                />      
+            </Grid>
+
+            {/* Recapiti */}
+            <Grid xs={12} sx={{width: '100%'}}>
+                <Grid xs={12} sx={{width: '100%', borderBottom:'1px solid #467bae61',}}><Typography sx={{fontWeight: '400', fontSize: formLabelFontSize, color: '#467bae'}}>Recapiti</Typography></Grid>
+
+                <CssTextField
+                    size='small'
+                    id="outlined-required-pec"
+                    label="PEC"
+                    defaultValue=""
+                    sx={{...textFieldSx, minWidth: '246px', maxWidth: '250px'}}
+                />  
+
+            <CssTextField
+                    size='small'
+                    id="outlined-required-email"
+                    label="Email"
+                    defaultValue=""
+                    sx={{...textFieldSx, minWidth: '246px', maxWidth: '250px'}}
+                />  
+            </Grid>
+
+            {/* Ditta individule */}
+            <Grid xs={12} sx={{width: '100%'}}>
+                <Grid xs={12} sx={{width: '100%', borderBottom:'1px solid #467bae61',}}><Typography sx={{fontWeight: '400', fontSize: formLabelFontSize, color: '#467bae'}}>Ditta individuale</Typography></Grid>
+                
+                <CssTextField
+                    size='small'
+                    id="outlined-required-piva"
+                    label="Partita IVA"
+                    defaultValue=""
+                    sx={textFieldSx}
+                />  
+
+                <CssTextField
+                    size='small'
+                    id="outlined-required-denominazione"
+                    label="Denominazione"
+                    defaultValue=""
+                    sx={{...textFieldSx, minWidth: '400px', maxWidth: '420px'}}
+                />  
+
+            </Grid>
+        </div>
+    )
+}
 
 const CssTextField = styled(TextField)(({ theme }) => ({
 
@@ -249,9 +444,9 @@ const CssTextField = styled(TextField)(({ theme }) => ({
   
     //     '& ~ .MuiInputBase-root fieldset':{ borderColor: theme.palette.logo.secondary,}
     //   },
-  
-      '& .MuiInputLabel-root.Mui-focused':{ color: theme.palette.logo.secondary,},
+      '& .MuiInputLabel-root.Mui-focused, & .MuiFormLabel-root.Mui-focused':{ color: theme.palette.logo.secondary,},
       '& .MuiOutlinedInput-root': {
+          'input':{textTransform: 'uppercase'},
           '&:hover fieldset': {
               borderColor: theme.palette.logo.secondary,
           },
