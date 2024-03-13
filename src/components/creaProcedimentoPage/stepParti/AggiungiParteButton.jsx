@@ -27,7 +27,7 @@ import { itIT } from '@mui/x-date-pickers/locales';
 import "dayjs/locale/it";
 import dayjs from 'dayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-
+import * as CodiceFiscaleUtils from '/src/assets/js/convalidaCodiceFiscale.js';
 
 
 const formLabelFontSize = '1rem'
@@ -139,7 +139,6 @@ function Creazione(props){
                 </Accordion>
             </Grid>
             
-
             {/* Persona giuridica */}
             <Grid xs={12} sx={{width: '100%'}}>
                 <Accordion 
@@ -233,6 +232,13 @@ function FormPersonaFisica(){
                 id="outlined-required-cf-piva"
                 label="Codice fiscale"
                 defaultValue=""
+                onChange={(event) => {
+                    let cf = event.target.value
+                    let isValid = CodiceFiscaleUtils.isValid(cf)
+                    console.log(`Codice fiscale valido: ${isValid}`)
+                    if(isValid)
+                        console.log(`Data di nascita: ${CodiceFiscaleUtils.dataCf(cf)}\nComune:${CodiceFiscaleUtils.comuneCf(cf)}\nSesso:${CodiceFiscaleUtils.sessoCf(cf)}`)
+                }}
                 sx={textFieldSx}
                 />
 
