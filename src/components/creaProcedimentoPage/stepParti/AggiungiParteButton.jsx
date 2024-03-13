@@ -110,14 +110,14 @@ function Creazione(props){
                     <FormControlLabel 
                     value="PERSONA_FISICA" 
                     control={<Radio />} 
-                    label="Persona fisica" 
-                    sx={{marginRight: '4.5rem', '& .MuiTypography-root':{color: theme.palette.text.primary, fontWeight: '400'}, '& .MuiRadio-root:not(.Mui-checked) span':{color: labelColor}}}/>
+                    label="PERSONA FISICA" 
+                    sx={{marginRight: '4.5rem', '& .MuiTypography-root':{color: theme.palette.text.primary, fontWeight: '500'}, '& .MuiRadio-root:not(.Mui-checked) span':{color: labelColor}}}/>
                     
                     <FormControlLabel 
                     value="PERSONA_GIURIDICA" 
                     control={<Radio />} 
-                    label="Persona giuridica" 
-                    sx={{ '& .MuiTypography-root':{color: theme.palette.text.primary, fontWeight: '400', }, '& .MuiRadio-root:not(.Mui-checked) span':{color: labelColor} }}/>
+                    label="PERSONA GIURIDICA" 
+                    sx={{ '& .MuiTypography-root':{color: theme.palette.text.primary, fontWeight: '500', }, '& .MuiRadio-root:not(.Mui-checked) span':{color: labelColor} }}/>
                     
                     </RadioGroup>
                 </FormControl>
