@@ -41,6 +41,14 @@ module.exports = {
                 js: './src/preload.js',
               },
             },
+            {
+              html: './src/index.html',
+              name: 'invisible_window',
+              js: './src/invisibleWindowRenderer.js',
+              preload: {
+                js: './src/invisibleWindowPreload.js',
+              },
+            },
           ],
         },
       },
