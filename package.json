@@ -37,6 +37,7 @@
   "dependencies": {
     "@fontsource/public-sans": "^5.0.16",
     "@fontsource/roboto": "^5.0.8",
+    "@fontsource/titillium-web": "^5.0.19",
     "@mui/icons-material": "^5.15.7",
     "@mui/material": "^5.15.7",
     "@mui/x-date-pickers": "^6.19.4",

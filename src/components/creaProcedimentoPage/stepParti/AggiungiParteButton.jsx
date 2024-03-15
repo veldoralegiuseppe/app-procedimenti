@@ -28,12 +28,15 @@ import "dayjs/locale/it";
 import dayjs from 'dayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import * as CodiceFiscaleUtils from '/src/assets/js/convalidaCodiceFiscale.js';
+import AgenziaEntrateLogo from '/src/assets/img/AgenziaEntrate_logo.png'
+import Alert from '@mui/material/Alert';
+import Stack from '@mui/material/Stack';
 
 
 const formLabelFontSize = '1rem'
 const labelColor = 'rgb(105 105 105 / 60%)'
 const inputSx = {width: '20%', margin: '14px 20px 10px 0px', minWidth: '133.5px', maxWidth: '168px',}
-//window.AgenziaEntrateAPI.onCaptcha((url) => {console.log(url)})
+
 
 export default function AggiungiParteButton(props) {
     const [open, setOpen] = React.useState(false);
@@ -79,6 +82,7 @@ export default function AggiungiParteButton(props) {
                 <Box sx={style}>
                     <div style={{borderBottom: '1px solid #f1f1f1', paddingBottom: '16px'}}><Typography id="keep-mounted-modal-title" variant="h5" component="h2">Nuova Anagrafica</Typography></div>
                     <Creazione sx={{margin: '3rem 0 0 0'}}/>
+                    <CopilaCampiObbligatoriAlert/>
                 </Box>
             </Modal>
         </div>
@@ -206,6 +210,62 @@ function FormPersonaFisica(){
 
     return (
         <div style={{position: 'relative', marginTop: '1rem', width: '100%', display: 'flex', flexDirection:'column', alignItems: 'flex-start', justifyContent:'center', rowGap:'2.5rem', padding: '0'}}>
+           
+            {/* Codice fiscale */}
+            <Grid xs={12} sx={{width: '100%'}}>
+                <Grid xs={12} sx={{width: '100%', borderBottom:'1px solid #467bae61',}}><Typography sx={{fontWeight: '400', fontSize: formLabelFontSize, color: '#467bae'}}>Codice fiscale</Typography></Grid>
+
+                <CssTextField
+                required
+                size='small'
+                id="outlined-required-cf-piva"
+                label="Codice fiscale"
+                defaultValue=""
+                onChange={(event) => {
+                    let cf = event.target.value
+                    let isValid = CodiceFiscaleUtils.isValid(cf)
+                    console.log(`Codice fiscale valido: ${isValid}`)
+                    if(isValid)
+                        console.log(`Data di nascita: ${CodiceFiscaleUtils.dataCf(cf)}\nComune:${CodiceFiscaleUtils.comuneCf(cf)}\nSesso:${CodiceFiscaleUtils.sessoCf(cf)}`)
+                }}
+                sx={textFieldSx}
+                />
+
+                <Button 
+                    variant='contained'
+                    onClick={() => {window.AgenziaEntrateAPI.getCaptcha()}}
+                    sx={{
+                        width: '110px', 
+                        height: '34.13px',
+                        margin: '14px 20px 10px 10px',
+                        //'&:hover, &:hover svg':{backgroundColor: 'unset', color: buttonHoverColor},
+                        '&.Mui-disabled':{
+                            backgroundColor: 'unset', 
+                            border: `.9px solid rgb(199 199 199 / 60%)`, 
+                            color: theme.palette.text.disabled,
+                            fontWeight: '400'
+                          }, 
+                          backgroundColor: '#f0f0f05c',
+                          '&:hover':{backgroundColor: '#6ea5da29'}
+                    }}
+                    startIcon={<Box component="img" sx={{width: '36px', height: '15px'}} src={AgenziaEntrateLogo} width={50} height={32}/>}
+                >
+                    <div style={{fontFamily: 'Titillium Web',  fontWeight: '600', paddingTop: '2px', fontSize: '10px', color: '#00467f'}}>Verifica</div>
+                </Button>
+                
+                {/* {captcha 
+                ? <Box
+                    component="img"
+                    sx={{
+                    height: 75,
+                    width: 150,
+                    }}
+                    alt="The house from the offer."
+                    src={captcha}
+                   /> 
+                : <></>} */}
+            </Grid>
+
             {/* Dati anagrafici */}
             <Grid xs={12} sx={{width: '100%'}}>
                 <Grid xs={12} sx={{width: '100%', borderBottom:'1px solid #467bae61',}}><Typography sx={{fontWeight: '400', fontSize: formLabelFontSize, color: '#467bae'}}>Dati anagrafici</Typography></Grid>
@@ -227,57 +287,6 @@ function FormPersonaFisica(){
                     defaultValue=""
                     sx={textFieldSx}
                 />
-
-                <CssTextField
-                required
-                size='small'
-                id="outlined-required-cf-piva"
-                label="Codice fiscale"
-                defaultValue=""
-                onChange={(event) => {
-                    let cf = event.target.value
-                    let isValid = CodiceFiscaleUtils.isValid(cf)
-                    console.log(`Codice fiscale valido: ${isValid}`)
-                    if(isValid)
-                        console.log(`Data di nascita: ${CodiceFiscaleUtils.dataCf(cf)}\nComune:${CodiceFiscaleUtils.comuneCf(cf)}\nSesso:${CodiceFiscaleUtils.sessoCf(cf)}`)
-                }}
-                sx={textFieldSx}
-                />
-
-                <Button 
-                    variant='outlined'
-                    onClick={() => {window.AgenziaEntrateAPI.getCaptcha()}}
-                    sx={{
-                        width: '90px', 
-                        marginRight: '4.5rem', 
-                        color:' #467bae', 
-                        //'&:hover, &:hover svg':{backgroundColor: 'unset', color: buttonHoverColor},
-                        '&.Mui-disabled':{
-                            backgroundColor: 'unset', 
-                            border: `.9px solid rgb(199 199 199 / 60%)`, 
-                            color: theme.palette.text.disabled,
-                            fontWeight: '400'
-                          }, 
-                          backgroundColor: 'unset',
-                          border: `.9px solid #467bae`, 
-                          '&:hover':{backgroundColor: '#6ea5da29', border: `.9px solid #467bae`}
-                    }}
-                    startIcon={<ArrowBackOutlinedIcon sx={{color: '#467bae', transition: 'background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms'}}/>}
-                >
-                    Check agenzia
-                </Button>
-                
-                {captcha 
-                ? <Box
-                    component="img"
-                    sx={{
-                    height: 75,
-                    width: 150,
-                    }}
-                    alt="The house from the offer."
-                    src={captcha}
-                   /> 
-                : <></>}
 
                 <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='it' localeText={itIT.components.MuiLocalizationProvider.defaultProps.localeText}>
                     <DatePicker 
@@ -419,8 +428,22 @@ function FormPersonaFisica(){
                     onChange={(event) => event.target.value = event.target.value.trim() == '' ? '' : event.target.value.toLocaleUpperCase()}
                 />
             </Grid>
+
+
         </div>
     )
+}
+
+function CopilaCampiObbligatoriAlert() {
+    var [isOpen, setIsOpen] = React.useState(true)
+
+    return (
+      <Stack sx={{ width: '100%', zIndex: '99', position: 'sticky', bottom: '0', display: 'flex', alignItems: 'center'}} spacing={2}>
+        { isOpen && <Alert open onClose={() => {setIsOpen(false)}} severity="warning" sx={{width: '60%', '& .MuiAlert-message':{display: 'flex', justifyItems: 'center', alignItems: 'center'}}}>
+          Compila i campi obbligatori
+        </Alert> }
+      </Stack>
+    );
 }
 
 const CssTextField = styled(TextField)(({ theme }) => ({
