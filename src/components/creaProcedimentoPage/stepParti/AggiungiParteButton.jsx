@@ -31,6 +31,7 @@ import * as CodiceFiscaleUtils from '/src/assets/js/convalidaCodiceFiscale.js';
 import AgenziaEntrateLogo from '/src/assets/img/AgenziaEntrate_logo.png'
 import Alert from '@mui/material/Alert';
 import Stack from '@mui/material/Stack';
+import ImportoField from '/src/components/importoField/ImportoField.jsx';
 
 
 const formLabelFontSize = '1rem'
@@ -248,9 +249,9 @@ function FormPersonaFisica(){
                           backgroundColor: '#f0f0f05c',
                           '&:hover':{backgroundColor: '#6ea5da29'}
                     }}
-                    startIcon={<Box component="img" sx={{width: '36px', height: '15px'}} src={AgenziaEntrateLogo} width={50} height={32}/>}
+                    startIcon={<Box component="img" sx={{width: '31px', height: '15px'}} src={AgenziaEntrateLogo} width={50} height={32}/>}
                 >
-                    <div style={{fontFamily: 'Titillium Web',  fontWeight: '600', paddingTop: '2px', fontSize: '10px', color: '#00467f'}}>Verifica</div>
+                    <div style={{fontFamily: 'Titillium Web',  fontWeight: '600', paddingTop: '2px', paddingLeft: '2px',fontSize: '10px', color: '#00467f'}}>Verifica</div>
                 </Button>
                 
                 {/* {captcha 
@@ -319,10 +320,53 @@ function FormPersonaFisica(){
                 <CssTextField
                     size='small'
                     id="outlined-required-comune-nascita"
-                    label="Comune di nascita"
+                    label="Provincia di nascita"
                     defaultValue=""
                     sx={{...textFieldSx, minWidth: '246px', maxWidth: '250px'}}
                 />
+
+                <CssTextField
+                    size='small'
+                    id="outlined-required-comune-nascita"
+                    label="Comune o stato estero di nascita"
+                    defaultValue=""
+                    sx={{...textFieldSx, minWidth: '246px', maxWidth: '250px'}}
+                />
+
+                <FormControl required size='small' sx={{...inputSx, '& .MuiFormLabel-root:not(.Mui-error, .Mui-focused)':{color: labelColor}} }>
+                        <InputLabel id="sesso-input-label">Sesso</InputLabel>
+                        <CssSelect
+                        labelId="sesso-input-label"
+                        id="sesso-select"
+                        defaultValue={""}
+                        inputProps={{
+                            MenuProps: {
+                                MenuListProps: {
+                                    sx: {
+                                        backgroundColor: theme.palette.dropdown.primary,
+                                        color: theme.palette.primary.main,
+                                    }
+                                },
+                                PaperProps: {
+                                    sx: {
+                                        '& .MuiMenuItem-root': {
+                                            //padding: '1rem',
+                                            fontSize: '.9rem',
+                                            fontWeight: '400',
+                                        },
+                                        maxHeight: '125px',
+                                    },
+                                },
+                            },
+                        }}
+                        label="Sesso"
+                        size='small'
+                        sx={{ width: '90px', '& .MuiOutlinedInput-input':{fontWeight: '500', color: theme.palette.text.primary}, }}
+                        >
+                        <MenuItem key={`M`} value={'M'}>UOMO</MenuItem>
+                        <MenuItem key={`F`} value={'F'}>DONNA</MenuItem>
+                        </CssSelect>
+                </FormControl>
                
             </Grid>
 
@@ -411,10 +455,13 @@ function FormPersonaFisica(){
                 />
             </Grid>
 
-            {/* Spese */}
-            {/* <Grid xs={12} sx={{width: '100%'}}>
-                <Grid xs={12} sx={{borderBottom:'1px solid #467bae61',}}><Typography sx={{fontWeight: '400', fontSize: formLabelFontSize, color: '#467bae'}}>Spese</Typography></Grid>
-            </Grid> */}
+            {/* Spese di mediazione */}
+            <Grid xs={12} sx={{width: '100%'}}>
+                <Grid xs={12} sx={{borderBottom:'1px solid #467bae61',}}><Typography sx={{fontWeight: '400', fontSize: formLabelFontSize, color: '#467bae'}}>Spese di mediazione</Typography></Grid>
+                <ImportoField importo={'0,00'} sx={inputSx} label={"Spese di avvio"} required={true}></ImportoField>
+                <ImportoField importo={'0,00'} sx={inputSx} label={"Spese postali"} required={true}></ImportoField>
+                <ImportoField importo={'0,00'} sx={inputSx} label={"Pagamento indennità"} required={true}></ImportoField>
+            </Grid>
 
             {/* Note */}
             <Grid xs={12} sx={{width: '100%'}}>
@@ -435,12 +482,12 @@ function FormPersonaFisica(){
 }
 
 function CopilaCampiObbligatoriAlert() {
-    var [isOpen, setIsOpen] = React.useState(true)
+    var [isOpen, setIsOpen] = React.useState(false)
 
     return (
       <Stack sx={{ width: '100%', zIndex: '99', position: 'sticky', bottom: '0', display: 'flex', alignItems: 'center'}} spacing={2}>
         { isOpen && <Alert open onClose={() => {setIsOpen(false)}} severity="warning" sx={{width: '60%', '& .MuiAlert-message':{display: 'flex', justifyItems: 'center', alignItems: 'center'}}}>
-          Compila i campi obbligatori
+          Per procedere all verifica compila i campi 'Nome', 'Cognome', 'Codice fiscale'
         </Alert> }
       </Stack>
     );

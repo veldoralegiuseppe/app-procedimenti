@@ -155,7 +155,7 @@ function StepProcedimento(props, ref){
                         width: inputWidth, 
                         minWidth: minWidth, 
                         maxWidth: maxWidth, 
-                        '& .MuiFormLabel-root:not(.Mui-error)':{color: labelColor}, 
+                        '& .MuiFormLabel-root:not(.Mui-error, .Mui-selected, .Mui-focused)':{color: labelColor}, 
                         '& .MuiOutlinedInput-input':{fontWeight: '500'},
                         '& .MuiDayCalendar-weekDayLabel': {
                             color: 'red !important',
@@ -223,7 +223,7 @@ function StepProcedimento(props, ref){
                         width: inputWidth, 
                         minWidth: minWidth, 
                         maxWidth: maxWidth, 
-                        '& .MuiFormLabel-root:not(.Mui-error)':{color: labelColor}, 
+                        '& .MuiFormLabel-root:not(.Mui-error,.Mui-selected, .Mui-focused)':{color: labelColor}, 
                         '& .MuiOutlinedInput-input':{fontWeight: '500'}}}
                     slots={{textField: CssTextField}}
                     slotProps={{
@@ -250,7 +250,7 @@ function StepProcedimento(props, ref){
             <Grid xs={12}>
                 <Grid xs={12} sx={{borderBottom:'1px solid #467bae61', margin: '0 0 0 1rem', width: 'calc(100% - 1rem)'}}><Typography variant="h6" sx={{fontWeight: '400', fontSize: formLabelFontSize, color: `#467bae` }}>Controversia</Typography></Grid>
 
-                <FormControl required size='small' sx={{width: inputWidth, margin: margin, backgroundColor: backgroundColor, minWidth: minWidth, maxWidth: maxWidth, '& .MuiFormLabel-root:not(.Mui-error)':{color: labelColor}} }>
+                <FormControl required size='small' sx={{width: inputWidth, margin: margin, backgroundColor: backgroundColor, minWidth: minWidth, maxWidth: maxWidth, '& .MuiFormLabel-root:not(.Mui-error, .Mui-focused)':{color: labelColor}} }>
                         <InputLabel id="oggetto-controversia-input-label" error={oggettoControversiaError}>Oggetto</InputLabel>
                         <CssSelect
                         labelId="oggetto-controversia-input-label"
@@ -312,9 +312,23 @@ function StepProcedimento(props, ref){
                     let importoCorrente = input.value.replaceAll('.','')
                     const activateLog = false 
                     if(activateLog) console.log('onChange!')
+                    var exit = false
                     
                     var isOnlyCent = /^,{1}\d+/g
                     var inputValido = /(?<![\D*\w*])(\d+,{1}\d{2})(?![\D*\d*,*])/g
+
+
+                    importoCorrente.split(',').forEach(s => {
+                        console.log(`Token: ${s}, isNumber: ${!/[^\d+]/g.test(s)}`)
+                        if(/[^\d+]/g.test(s)) {
+                            let currentPosition = input.selectionStart
+                            input.value = currProc.valoreControversia
+                            importoCorrente = currProc.valoreControversia.replaceAll('.','')
+                            input.setSelectionRange(currentPosition-1, currentPosition-1)
+                            exit = true
+                        }
+                    })
+                    if(exit) return
 
                     if(isOnlyCent.test(importoCorrente) || importoCorrente == '') {
                         input.value = ''
@@ -469,7 +483,7 @@ function StepProcedimento(props, ref){
                     }
                     
                 }}
-                sx={{margin: margin, backgroundColor: backgroundColor, width: inputWidth, minWidth: minWidth, maxWidth: maxWidth, '& .MuiFormLabel-root:not(.Mui-error)':{color: labelColor}, '& .MuiOutlinedInput-input':{fontWeight: '500', color: theme.palette.text.primary,},}} 
+                sx={{margin: margin, backgroundColor: backgroundColor, width: inputWidth, minWidth: minWidth, maxWidth: maxWidth, '& .MuiFormLabel-root:not(.Mui-error, .Mui-selected, .Mui-focused)':{color: labelColor}, '& .MuiOutlinedInput-input':{fontWeight: '500', color: theme.palette.text.primary,},}} 
                 id="outlined-basic" 
                 label="Valore della controversia" 
                 ref={valoreControversiaRef}
