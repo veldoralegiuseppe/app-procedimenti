@@ -42,11 +42,11 @@ module.exports = {
               },
             },
             {
-              html: './src/index.html',
+              html: './src/agenzia-entrate.html',
+              js: './src/agenzia-entrate-renderer.js',
               name: 'invisible_window',
-              js: './src/invisibleWindowRenderer.js',
               preload: {
-                js: './src/invisibleWindowPreload.js',
+                js: './src/agenzia-entrate-preload.js',
               },
             },
           ],
@@ -54,4 +54,7 @@ module.exports = {
       },
     },
   ],
+  resolve: {
+    modules: ['.', 'node_modules']
+  }
 };

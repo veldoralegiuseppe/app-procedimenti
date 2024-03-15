@@ -33,7 +33,7 @@ import * as CodiceFiscaleUtils from '/src/assets/js/convalidaCodiceFiscale.js';
 const formLabelFontSize = '1rem'
 const labelColor = 'rgb(105 105 105 / 60%)'
 const inputSx = {width: '20%', margin: '14px 20px 10px 0px', minWidth: '133.5px', maxWidth: '168px',}
-  
+//window.AgenziaEntrateAPI.onCaptcha((url) => {console.log(url)})
 
 export default function AggiungiParteButton(props) {
     const [open, setOpen] = React.useState(false);
@@ -201,7 +201,9 @@ function Creazione(props){
 function FormPersonaFisica(){
     const theme = useTheme()
     const textFieldSx = {'& .MuiFormLabel-root:not(.Mui-error,.Mui-focused,.Mui-selected)':{color: labelColor}, '& .MuiOutlinedInput-input':{fontWeight: '500', color: theme.palette.text.primary,}, ...inputSx}
-   
+    var [captcha, setCaptcha] = React.useState(null) 
+    window.AgenziaEntrateAPI.onCaptcha((url) => {console.log(url); setCaptcha(url)})
+
     return (
         <div style={{position: 'relative', marginTop: '1rem', width: '100%', display: 'flex', flexDirection:'column', alignItems: 'flex-start', justifyContent:'center', rowGap:'2.5rem', padding: '0'}}>
             {/* Dati anagrafici */}
@@ -241,6 +243,41 @@ function FormPersonaFisica(){
                 }}
                 sx={textFieldSx}
                 />
+
+                <Button 
+                    variant='outlined'
+                    onClick={() => {window.AgenziaEntrateAPI.getCaptcha()}}
+                    sx={{
+                        width: '90px', 
+                        marginRight: '4.5rem', 
+                        color:' #467bae', 
+                        //'&:hover, &:hover svg':{backgroundColor: 'unset', color: buttonHoverColor},
+                        '&.Mui-disabled':{
+                            backgroundColor: 'unset', 
+                            border: `.9px solid rgb(199 199 199 / 60%)`, 
+                            color: theme.palette.text.disabled,
+                            fontWeight: '400'
+                          }, 
+                          backgroundColor: 'unset',
+                          border: `.9px solid #467bae`, 
+                          '&:hover':{backgroundColor: '#6ea5da29', border: `.9px solid #467bae`}
+                    }}
+                    startIcon={<ArrowBackOutlinedIcon sx={{color: '#467bae', transition: 'background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms'}}/>}
+                >
+                    Check agenzia
+                </Button>
+                
+                {captcha 
+                ? <Box
+                    component="img"
+                    sx={{
+                    height: 75,
+                    width: 150,
+                    }}
+                    alt="The house from the offer."
+                    src={captcha}
+                   /> 
+                : <></>}
 
                 <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='it' localeText={itIT.components.MuiLocalizationProvider.defaultProps.localeText}>
                     <DatePicker 

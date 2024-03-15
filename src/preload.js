@@ -1,2 +1,6 @@
-// See the Electron documentation for details on how to use preload scripts:
-// https://www.electronjs.org/docs/latest/tutorial/process-model#preload-scripts
+import { contextBridge, ipcRenderer } from 'electron';
+
+contextBridge.exposeInMainWorld('AgenziaEntrateAPI', {
+    onCaptcha: (callback) => ipcRenderer.on('captcha', (_event, url) => callback(url)),
+    getCaptcha: () => ipcRenderer.send('get-captcha')
+})
