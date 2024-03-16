@@ -1,5 +1,4 @@
 export class Procedimento {
-    idProcedimento
     numProtocollo 
     annoProtocollo = '2024'
     dataDeposito = new Date().toDateString()

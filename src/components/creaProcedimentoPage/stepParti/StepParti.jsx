@@ -6,14 +6,13 @@ import TabellaParti from './TabellaParti.jsx';
 import AggiungiParteButton from './AggiungiParteButton.jsx';
 import CollegaParteButton from './CollegaParteButton.jsx';
 import DettaglioParte from './DettaglioParte.jsx';
+import { ProcedimentoContext } from '/src/store/procedimento-context.jsx';
 
 function StepParti(props, ref){
 
-    const theme = useTheme()
     const formLabelFontSize = '1rem'
     var [parteSelezionata, setParteSelezionata] = React.useState(-1)
-   
-
+    
     return(
         <div style={{display: 'flex', flexDirection:'column', alignItems: 'center', justifyContent:'center', rowGap:'4rem', padding: '4.5rem 0'}}>
             {/* Lista delle parti */}

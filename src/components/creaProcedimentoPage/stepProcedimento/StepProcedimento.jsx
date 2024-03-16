@@ -31,7 +31,8 @@ import { Procedimento } from '/src/vo/procedimento.js';
  */
 function StepProcedimento(props, ref){
     const theme = useTheme()
-    var [procedimento, setProcedimento] = React.useContext(ProcedimentoContext)
+    var context = React.useContext(ProcedimentoContext)
+    var [procedimento, setProcedimento] = context.procedimento
     var [currProc, setCurrProcedimento] = React.useState(procedimento)
     var [reset, setReset] = React.useState(false)
     var [cursorShift, setCursorShift] = React.useState(0)
