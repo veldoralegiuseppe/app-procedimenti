@@ -6,6 +6,7 @@ import { useTheme } from '@mui/material/styles';
 import InputLabel from '@mui/material/InputLabel';
 import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
+import { FormHelperText } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 import TextField from '@mui/material/TextField';
 import { styled } from '@mui/material/styles';
@@ -65,11 +66,13 @@ function FormPersonaFisica(props, ref){
                 sx={textFieldSx}
                 />
 
+            
                 <Button 
+                    id='button-agenzia-entrate'
                     variant='contained'
                     onClick={() => {window.AgenziaEntrateAPI.getCaptcha()}}
                     sx={{
-                        width: '110px', 
+                        width: '176px', 
                         height: '34.13px',
                         margin: '14px 20px 10px 10px',
                         //'&:hover, &:hover svg':{backgroundColor: 'unset', color: buttonHoverColor},
@@ -78,14 +81,16 @@ function FormPersonaFisica(props, ref){
                             border: `.9px solid rgb(199 199 199 / 60%)`, 
                             color: theme.palette.text.disabled,
                             fontWeight: '400'
-                          }, 
-                          backgroundColor: '#f0f0f05c',
-                          '&:hover':{backgroundColor: '#6ea5da29'}
+                        }, 
+                        backgroundColor: '#f0f0f05c',
+                        '&:hover':{backgroundColor: '#6ea5da29'}
                     }}
                     startIcon={<Box component="img" sx={{width: '33px', height: '13px'}} src={AgenziaEntrateLogo} width={50} height={32}/>}
                 >
-                    <div style={{fontFamily: 'Titillium Web',  fontWeight: '600', paddingTop: '2px', paddingLeft: '2px',fontSize: '10px', color: '#00467f'}}>Verifica</div>
+                    <div style={{fontFamily: 'Titillium Web',  fontWeight: '600', paddingTop: '2px', paddingLeft: '2px',fontSize: '10px', color: '#00467f'}}>Verifica anagrafica</div>
                 </Button>
+               
+               
                 
                 {/* {captcha 
                 ? <Box
