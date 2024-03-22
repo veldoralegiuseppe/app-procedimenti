@@ -5,10 +5,11 @@ import { useTheme } from '@mui/material/styles';
 import { styled } from '@mui/material/styles';
 import Paper from "@mui/material/Paper";
 
-export default function ProvinciaSelect(props) {
+function ProvinciaSelect(props, ref) {
     const [error, setError] = React.useState(null);
     const [isLoaded, setIsLoaded] = React.useState(false);
     const [items, setItems] = React.useState([]);
+    const [value, setValue] = React.useState(null)
     const theme = useTheme()
     const labelColor = 'rgb(105 105 105 / 60%)'
 
@@ -31,6 +32,26 @@ export default function ProvinciaSelect(props) {
           )
       }, [])
 
+    React.useImperativeHandle(ref, () => ({
+            setProvincia(value){
+                console.log('Value: ' + value)
+                let result = null
+                
+                if(!value)
+                    result = null
+                else if(!value.nome && !value.sigla)
+                    result = items.filter(p => p.nome.toLocaleUpperCase() == value.toLocaleUpperCase())[0]
+                else if(value.nome && !value.sigla)
+                    result = items.filter(p => p.nome.toLocaleUpperCase() == value.nome.toLocaleUpperCase())[0]
+                else if(!value.nome && value.sigla)
+                    result = items.filter(p => p.sigla.toLocaleUpperCase() == value.sigla.toLocaleUpperCase())[0]
+
+                console.log(`Result: ${JSON.stringify(result)}`)
+                setValue(result)
+            }
+        })
+    )
+    
 
     if(error)
         return (
@@ -47,6 +68,7 @@ export default function ProvinciaSelect(props) {
             <Autocomplete
             disablePortal
             id="combo-box-demo"
+            value={value}
             noOptionsText={'Nessun risultato'}
             options={items}
             getOptionLabel={(option) => option.nome.toLocaleUpperCase()}
@@ -56,7 +78,8 @@ export default function ProvinciaSelect(props) {
             renderOption={(props, option) =>  <li {...props} style={{color: theme.palette.primary.main, fontSize: '.9rem', fontWeight:'400'}}>{String(option.nome).toLocaleUpperCase()}</li>}
             sx={{...props.sx, display:'inline-block', }}
             onChange={(event, value) => {
-                //console.log(value)
+                console.log(value)
+                setValue(value)
                 props.onChange(value)
             }}
             renderInput={(params) => 
@@ -98,3 +121,4 @@ const CssTextField = styled(TextField)(({ theme }) => ({
 }));
 
 
+export default React.forwardRef(ProvinciaSelect)

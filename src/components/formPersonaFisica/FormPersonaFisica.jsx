@@ -23,6 +23,7 @@ import { PersonaFisica } from '/src/vo/personaFisica.js';
 import Select from '@mui/material/Select';
 import ProvinciaSelect from '/src/components/provinciaSelect/ProvinciaSelect.jsx';
 import ComuneSelect from '/src/components/comuneSelect/ComuneSelect.jsx';
+import * as ComuniUtils from '/src/assets/js/comuni.js'
 
 const labelColor = 'rgb(105 105 105 / 60%)'
 const inputSx = {width: '20%', margin: '14px 20px 10px 0px', minWidth: '133.5px', maxWidth: '168px',}
@@ -33,7 +34,8 @@ function FormPersonaFisica(props, ref){
     const textFieldSx = {'& .MuiFormLabel-root:not(.Mui-error,.Mui-focused,.Mui-selected)':{color: labelColor}, '& .MuiOutlinedInput-input':{fontWeight: '500', color: theme.palette.text.primary,}, ...inputSx}
     var [captcha, setCaptcha] = React.useState(null) 
     var [parteAttuale, setParteAttuale] = React.useState(new PersonaFisica())
-    var comuniRef = React.useRef()
+    var comuneNascitaRef = React.useRef()
+    var provinciaNascitaRef = React.useRef()
     
     React.useImperativeHandle(ref, () => ({
             onSubmit(){
@@ -43,6 +45,10 @@ function FormPersonaFisica(props, ref){
     )
 
     React.useEffect(() => {
+        // Inizializzo l'API dei comuni
+        ComuniUtils.initialize()
+
+        // API Electron
         window.AgenziaEntrateAPI.onCaptcha((url) => {console.log(url); setCaptcha(url)})
     },[])
 
@@ -60,8 +66,35 @@ function FormPersonaFisica(props, ref){
                 label="Codice fiscale"
                 defaultValue=""
                 onChange={(event) => {
-                   parteAttuale.codiceFiscale = event.currentTarget.value.toLocaleUpperCase()
-                   setParteAttuale({...parteAttuale})
+                    let cf = event.currentTarget.value.toLocaleUpperCase()
+                    if(CodiceFiscaleUtils.isValid(cf)){
+                        let comuneNascita = CodiceFiscaleUtils.comuneCf(cf)
+                        
+                        // Aggiorno la parte attuale
+                        parteAttuale.codiceFiscale = cf
+                        parteAttuale.dataNascita = CodiceFiscaleUtils.dataCf(cf)
+                        parteAttuale.comuneNascita = String(comuneNascita.nome).toLocaleUpperCase()
+                        parteAttuale.provinciaNascita = String(comuneNascita.provincia.nome).toLocaleUpperCase()
+                        parteAttuale.sesso = CodiceFiscaleUtils.sessoCf(cf)
+                        setParteAttuale({...parteAttuale})
+
+                        // Aggiorno il valore dei dati anagrafici
+                        provinciaNascitaRef.current.setProvincia(parteAttuale.provinciaNascita)
+                        comuneNascitaRef.current.setComune(comuneNascita)
+
+                    } else if(parteAttuale.codiceFiscale) {
+                         // Ripristino i campi calcolati in precedenza la parte attuale
+                        parteAttuale.codiceFiscale = null
+                        parteAttuale.dataNascita = null
+                        parteAttuale.comuneNascita = null
+                        parteAttuale.provinciaNascita = null
+                        parteAttuale.sesso = null
+                        setParteAttuale({...parteAttuale})
+
+                        provinciaNascitaRef.current.setProvincia(null)
+                        comuneNascitaRef.current.setComune(null)
+                    }
+                    
                 }}
                 sx={textFieldSx}
                 />
@@ -139,6 +172,7 @@ function FormPersonaFisica(props, ref){
                     <DatePicker 
                     label='Data di nascita'
                     slots={{textField: CssTextField}}
+                    value={parteAttuale.dataNascita ? dayjs(parteAttuale.dataNascita) : null}
                     sx={{
                         '& .MuiFormLabel-root:not(.Mui-error)':{color: labelColor}, 
                         '& .MuiOutlinedInput-input':{fontWeight: '500'},
@@ -168,12 +202,12 @@ function FormPersonaFisica(props, ref){
                     />
                 </LocalizationProvider>
 
-                <FormControl required size='small' sx={{...inputSx, width: '90px', minWidth: 'unset', maxWidth: 'unset','& .MuiFormLabel-root:not(.Mui-error, .Mui-focused)':{color: labelColor}} }>
+                <FormControl size='small' sx={{...inputSx, width: '90px', minWidth: 'unset', maxWidth: 'unset','& .MuiFormLabel-root:not(.Mui-error, .Mui-focused)':{color: labelColor}} }>
                         <InputLabel id="sesso-input-label">Sesso</InputLabel>
                         <CssSelect
                         labelId="sesso-input-label"
                         id="sesso-select"
-                        defaultValue={""}
+                        value={parteAttuale.sesso ? parteAttuale.sesso : ""}
                         inputProps={{
                             MenuProps: {
                                 MenuListProps: {
@@ -198,8 +232,8 @@ function FormPersonaFisica(props, ref){
                             parteAttuale.sesso = event.target.value
                             setParteAttuale({...parteAttuale})
                         }}
-                        label="Sesso"
                         size='small'
+                        label='Sesso'
                         sx={{ width: '90px', '& .MuiOutlinedInput-input':{fontWeight: '500', color: theme.palette.text.primary}, }}
                         >
                         <MenuItem key={`M`} value={'M'}>UOMO</MenuItem>
@@ -209,18 +243,21 @@ function FormPersonaFisica(props, ref){
 
                 <Grid xs={12}>
                     <ProvinciaSelect 
+                    ref={provinciaNascitaRef}
                     sx={{...inputSx, width: '260px', maxWidth: 'unset'}} 
                     label="Provincia di nascita"
                     onChange={(value) => {
-                        console.log(value)
-                        comuniRef.current.getComuniByProvincia(value ? String(value.nome).toLocaleUpperCase() : '')
+                        parteAttuale.provinciaNascita = value
+                        comuneNascitaRef.current.setProvincia(value)
+                        setParteAttuale({...parteAttuale})
                     }}
                     />
 
                     <ComuneSelect
                         sx={{...inputSx, width: '260px', maxWidth: 'unset',}} 
+                        provincia={parteAttuale.provinciaNascita}
                         label="Comune o stato estero di nascita"
-                        ref={comuniRef}
+                        ref={comuneNascitaRef}
                     />
                 </Grid>
                

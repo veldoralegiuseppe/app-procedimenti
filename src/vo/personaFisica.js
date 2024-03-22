@@ -5,6 +5,7 @@ export class PersonaFisica {
     dataNascita
     dataNascitaLocale
     comuneNascita
+    provinciaNascita 
     sesso
     comuneResidenza
     indirizzo

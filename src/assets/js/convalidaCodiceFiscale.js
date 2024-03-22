@@ -1,8 +1,11 @@
-import {COMUNI, COMUNI_ESTERI} from "./comuni.js"
+import {COMUNI_ESTERI, findComuneByCodiceCatastale} from "./comuni.js"
 
 const MESI = { A: '01', B: '02', C: '03', D: '04', E: '05', H: '06', L: '07', M: '08', P: '09', R: '10', S: '11', T: '12' };
 
-export function comuneCf (codiceFiscale) { return codiceFiscale.charAt(12).toUpperCase() === 'Z' ? COMUNI_ESTERI.get(codiceFiscale.substring(11,15).toUpperCase()) : COMUNI[codiceFiscale.substring(11,15).toUpperCase()]; }
+export function comuneCf (codiceFiscale) { 
+	return codiceFiscale.charAt(12).toUpperCase() === 'Z' 
+	? COMUNI_ESTERI.get(codiceFiscale.substring(11,15).toUpperCase()) 
+	: findComuneByCodiceCatastale(codiceFiscale.substring(11,15).toUpperCase()) }
 
 export function dataCf (codiceFiscale) {
 	let [ anno, giorno ] = [ codiceFiscale.substring(6,8), codiceFiscale.substring(9,11) ];

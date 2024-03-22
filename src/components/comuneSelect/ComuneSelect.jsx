@@ -7,18 +7,28 @@ import Paper from "@mui/material/Paper";
 import {COMUNI_ESTERI} from "/src/assets/js/comuni.js"
 
 function ComuneSelect(props, ref) {
-    const [error, setError] = React.useState(null);
-    const [isLoaded, setIsLoaded] = React.useState(false);
-    const [provincia, setProvincia] = React.useState('');
-    const [items, setItems] = React.useState([]);
+    const [error, setError] = React.useState(null)
+    const [isLoaded, setIsLoaded] = React.useState(false)
+    const [provincia, setProvincia] = React.useState(null)
+    const [items, setItems] = React.useState([])
+    const [value, setValue] = React.useState(null)
     const theme = useTheme()
     const labelColor = 'rgb(105 105 105 / 60%)'
     const options = {method: 'GET', headers: {accept: 'application/json'}};
     
     React.useImperativeHandle(ref, () => ({
-        getComuniByProvincia(provincia){
-           setProvincia(provincia)
+        setComune(comune){
+          console.log('Value: ' + comune)
+          let result = null
+          if(comune) result = comune
+          console.log(`Result: ${JSON.stringify(result)}`)
+          setProvincia(result ? result.provincia.nome : null)
+          setValue(result)
         },
+
+        setProvincia(provincia){
+          setProvincia(provincia ? provincia : null)
+        }
       })
     )
 
@@ -62,10 +72,12 @@ function ComuneSelect(props, ref) {
     else 
         return(
             <Autocomplete
-            disabled={provincia == ''}
+            disabled={!provincia}
             disablePortal
+            value={value}
             id="combo-box-demo"
-            noOptionsText={provincia == '' ? "Seleziona una provincia" : 'Nessun risultato'}
+            onChange={(event, value) => setValue(value)}
+            noOptionsText={!provincia ? "Seleziona una provincia" : 'Nessun risultato'}
             options={items}
             getOptionLabel={(option) => option.nome.toLocaleUpperCase()}
             PaperComponent={({ children }) => (
@@ -77,7 +89,7 @@ function ComuneSelect(props, ref) {
                 <CssTextField {...params} 
                 //required
                 //error={error}
-                helperText={provincia == "" ? "Seleziona una provincia per attivare questo campo" : ""}
+                helperText={!provincia ? "Seleziona una provincia per attivare questo campo" : ""}
                 label={props.label ? props.label : "Comune"}
                 size='small'
                 sx={{'& .MuiOutlinedInput-input':{fontWeight: '500'}, '& .MuiFormLabel-root':{color: labelColor}, '& .MuiInputBase-root.Mui-disabled':{color: 'rgb(105 105 105 / 60%)', backgroundColor: '#e5e5e578'}}}
