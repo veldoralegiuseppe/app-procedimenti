@@ -5,6 +5,8 @@ import { useTheme } from '@mui/material/styles';
 import { styled } from '@mui/material/styles';
 import Paper from "@mui/material/Paper";
 import {COMUNI_ESTERI} from "/src/assets/js/comuni.js"
+import { Comune } from '/src/vo/comune.js';
+import { Provincia } from '/src/vo/provincia.js';
 
 function ComuneSelect(props, ref) {
     const [error, setError] = React.useState(null)
@@ -18,34 +20,38 @@ function ComuneSelect(props, ref) {
     
     React.useImperativeHandle(ref, () => ({
         setComune(comune){
-          console.log('Value: ' + comune)
           let result = null
-          if(comune) result = comune
-          console.log(`Result: ${JSON.stringify(result)}`)
-          setProvincia(result ? result.provincia.nome : null)
+          if(comune && comune instanceof Comune) result = comune
+          setProvincia(result ? result.provincia : null)
           setValue(result)
         },
 
         setProvincia(provincia){
-          setProvincia(provincia ? provincia : null)
+          let result = null
+          if((typeof provincia === "string" || provincia.nome) && !(provincia instanceof Provincia)){
+            result = new Provincia(typeof provincia === 'string' ? {nome: provincia} : {nome: provincia.nome})
+          }
+          setProvincia(result)
         }
       })
     )
 
     React.useEffect(() => {
-        if(!provincia) return
+        if(!provincia || !provincia instanceof Provincia) return
 
-        if(String(provincia).toLocaleUpperCase () == 'STATO ESTERO'){
+        console.log(`Carico i comuni della provincia: ${JSON.stringify(provincia)}`)
+
+        if(String(provincia.nome).toLocaleUpperCase () == 'STATO ESTERO'){
           setIsLoaded(true);
-          setItems(Array.from(COMUNI_ESTERI, ([key, value]) => ({nome: value.denominazione, sigla: value.codiceISO})))
+          setItems(Array.from(COMUNI_ESTERI, ([key, value]) => (new Comune({nome: value.denominazione, provincia: {nome: 'STATO ESTERO'}}))))
         }
         else {
-          fetch(`https://axqvoqvbfjpaamphztgd.functions.supabase.co/comuni/provincia/${String(provincia).toLocaleLowerCase()}?page=1`, options)
+          fetch(`https://axqvoqvbfjpaamphztgd.functions.supabase.co/comuni/provincia/${String(provincia.nome).toLocaleLowerCase()}?page=1`, options)
             .then(res => res.json())
             .then(
               (result) => {
                 setIsLoaded(true);
-                setItems(result);
+                setItems( result.map(c => new Comune(c)) )
               },
               // Note: it's important to handle errors here
               // instead of a catch() block so that we don't swallow
@@ -75,6 +81,7 @@ function ComuneSelect(props, ref) {
             disabled={!provincia}
             disablePortal
             value={value}
+            isOptionEqualToValue={(option, value) => JSON.stringify(option) === JSON.stringify(value)}
             id="combo-box-demo"
             onChange={(event, value) => setValue(value)}
             noOptionsText={!provincia ? "Seleziona una provincia" : 'Nessun risultato'}
