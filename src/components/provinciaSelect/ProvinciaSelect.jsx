@@ -12,6 +12,7 @@ function ProvinciaSelect(props, ref) {
     const [value, setValue] = React.useState(null)
     const theme = useTheme()
     const labelColor = 'rgb(105 105 105 / 60%)'
+    const labelDisableColor = 'rgb(148 148 148 / 60%)'
 
     React.useEffect(() => {
         fetch("https://axqvoqvbfjpaamphztgd.functions.supabase.co/province")
@@ -67,6 +68,7 @@ function ProvinciaSelect(props, ref) {
         return(
             <Autocomplete
             disablePortal
+            disabled={props.disabled ? props.disabled : false}
             id="combo-box-demo"
             value={value}
             noOptionsText={'Nessun risultato'}
@@ -89,7 +91,9 @@ function ProvinciaSelect(props, ref) {
                 //helperText={helperText}
                 label={props.label ? props.label : "Provincia"}
                 size='small'
-                sx={{'& .MuiOutlinedInput-input':{fontWeight: '500'}, '& .MuiFormLabel-root':{color: labelColor}, }}
+                disabled={props.disabled}
+                sx={{'& .MuiOutlinedInput-input':{fontWeight: '500'}, '& .MuiFormLabel-root:not(.Mui-error, .Mui-focused, .Mui-disabled)':{color: labelColor}, '& .MuiFormLabel-root.Mui-disabled':{color: labelDisableColor},}}
+                helperText={props.helperText}
                 //defaultValue={reset ? resetSede() : ""}
                 />
               }
@@ -101,14 +105,16 @@ function ProvinciaSelect(props, ref) {
 const CssTextField = styled(TextField)(({ theme }) => ({
 
     //  '& .MuiInputLabel-root[data-shrink="true"]':{
-    //     color: theme.palette.logo.secondary,
+    //     //color: theme.palette.logo.secondary,
   
-    //     '& ~ .MuiInputBase-root fieldset':{ borderColor: theme.palette.logo.secondary,}
+    //     '& ~ .MuiInputBase-root fieldset':{ borderColor: 'red',}
     //   },
       '& .MuiInputLabel-root.Mui-focused, & .MuiFormLabel-root.Mui-focused':{ color: theme.palette.logo.secondary,},
       '& .MuiOutlinedInput-root': {
           'input':{textTransform: 'uppercase'},
-          '&:hover fieldset': {
+          '&.Mui-disabled':{backgroundColor: '#efefef73'},
+          '&.Mui-disabled fieldset':{borderColor: '#eaeaea'},
+          '&:hover:not(.Mui-disabled) fieldset': {
               borderColor: theme.palette.logo.secondary,
           },
           '&.Mui-focused fieldset': {

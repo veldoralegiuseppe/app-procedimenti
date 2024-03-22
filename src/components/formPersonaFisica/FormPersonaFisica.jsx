@@ -26,12 +26,14 @@ import ComuneSelect from '/src/components/comuneSelect/ComuneSelect.jsx';
 import * as ComuniUtils from '/src/assets/js/comuni.js'
 
 const labelColor = 'rgb(105 105 105 / 60%)'
+const labelDisableColor = 'rgb(148 148 148 / 60%)'
 const inputSx = {width: '20%', margin: '14px 20px 10px 0px', minWidth: '133.5px', maxWidth: '168px',}
 const formLabelFontSize = '1rem'
+const anagraficaHelperText = ""
 
 function FormPersonaFisica(props, ref){
     const theme = useTheme()
-    const textFieldSx = {'& .MuiFormLabel-root:not(.Mui-error,.Mui-focused,.Mui-selected)':{color: labelColor}, '& .MuiOutlinedInput-input':{fontWeight: '500', color: theme.palette.text.primary,}, ...inputSx}
+    const textFieldSx = {'& .MuiFormLabel-root:not(.Mui-error,.Mui-focused,.Mui-selected)':{color: labelColor}, '& .MuiFormLabel-root.Mui-disabled':{color: labelDisableColor},'& .MuiOutlinedInput-input':{fontWeight: '500', color: theme.palette.text.primary,}, ...inputSx}
     var [captcha, setCaptcha] = React.useState(null) 
     var [parteAttuale, setParteAttuale] = React.useState(new PersonaFisica())
     var comuneNascitaRef = React.useRef()
@@ -66,15 +68,30 @@ function FormPersonaFisica(props, ref){
                 label="Codice fiscale"
                 defaultValue=""
                 onChange={(event) => {
+                    // Verifica dell'input
                     let cf = event.currentTarget.value.toLocaleUpperCase()
-                    if(CodiceFiscaleUtils.isValid(cf)){
+                    let regex = /^[a-zA-Z0-9]{0,16}$/g
+                    if(!regex.test(cf)){
+                        console.log('Input invalido!')
+                        event.target.value = cf.slice(0, cf.length-1)
+                        return
+                    }
+                   
+                    // Controllo se il codice fiscale inserito sia valido
+                    let isValid = false 
+                    if(cf.length == 16) isValid = CodiceFiscaleUtils.isValid(cf)
+                    console.log(`Valore attuale: ${cf}, isValid: ${isValid}, parteAttuale.cf: ${parteAttuale.codiceFiscale}`)
+
+                    // Aggiornamento automatico della view
+                    if(cf.length == 16 && isValid){
+                        console.log('Aggiorno i campi anagrafici')
                         let comuneNascita = CodiceFiscaleUtils.comuneCf(cf)
-                        
+
                         // Aggiorno la parte attuale
                         parteAttuale.codiceFiscale = cf
                         parteAttuale.dataNascita = CodiceFiscaleUtils.dataCf(cf)
-                        parteAttuale.comuneNascita = String(comuneNascita.nome).toLocaleUpperCase()
-                        parteAttuale.provinciaNascita = String(comuneNascita.provincia.nome).toLocaleUpperCase()
+                        parteAttuale.comuneNascita = comuneNascita
+                        parteAttuale.provinciaNascita = comuneNascita.provincia
                         parteAttuale.sesso = CodiceFiscaleUtils.sessoCf(cf)
                         setParteAttuale({...parteAttuale})
 
@@ -82,8 +99,12 @@ function FormPersonaFisica(props, ref){
                         provinciaNascitaRef.current.setProvincia(parteAttuale.provinciaNascita)
                         comuneNascitaRef.current.setComune(comuneNascita)
 
+                    } else if(cf.length == 16 && !isValid){
+                        console.log('Gestiore errore formato codice fiscale')
+                        // Ripristinare i campi calcolati 
                     } else if(parteAttuale.codiceFiscale) {
                          // Ripristino i campi calcolati in precedenza la parte attuale
+                        console.log('Ripristino i campi anagrafici')
                         parteAttuale.codiceFiscale = null
                         parteAttuale.dataNascita = null
                         parteAttuale.comuneNascita = null
@@ -149,7 +170,14 @@ function FormPersonaFisica(props, ref){
                     label="Cognome"
                     defaultValue=""
                     onChange={(event) => {
-                        parteAttuale.cognome = event.currentTarget.value.toLocaleUpperCase()
+                         // Verifica dell'input
+                        let text = event.currentTarget.value.toLocaleUpperCase()
+                        let regex = /^[a-zA-Z]*$/g
+                        if(!regex.test(text)){
+                            event.target.value = text.slice(0, text.length-1)
+                            return
+                        }
+                        parteAttuale.cognome = text
                         setParteAttuale({...parteAttuale})
                     }}
                     sx={textFieldSx}
@@ -161,7 +189,14 @@ function FormPersonaFisica(props, ref){
                     id="outlined-required-nome"
                     label="Nome"
                     onChange={(event) => {
-                        parteAttuale.nome = event.currentTarget.value.toLocaleUpperCase()
+                        // Verifica dell'input
+                        let text = event.currentTarget.value.toLocaleUpperCase()
+                        let regex = /^[a-zA-Z]*$/g
+                        if(!regex.test(text)){
+                            event.target.value = text.slice(0, text.length-1)
+                            return
+                        }
+                        parteAttuale.nome = text
                         setParteAttuale({...parteAttuale})
                     }}
                     defaultValue=""
@@ -170,11 +205,13 @@ function FormPersonaFisica(props, ref){
 
                 <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='it' localeText={itIT.components.MuiLocalizationProvider.defaultProps.localeText}>
                     <DatePicker 
+                    disabled={true}
                     label='Data di nascita'
                     slots={{textField: CssTextField}}
                     value={parteAttuale.dataNascita ? dayjs(parteAttuale.dataNascita) : null}
                     sx={{
-                        '& .MuiFormLabel-root:not(.Mui-error)':{color: labelColor}, 
+                        '& .MuiFormLabel-root:not(.Mui-error, .Mui-focused, .Mui-disabled)':{color: labelColor}, 
+                        '& .MuiFormLabel-root.Mui-disabled':{color: labelDisableColor},
                         '& .MuiOutlinedInput-input':{fontWeight: '500'},
                         '& .MuiDayCalendar-weekDayLabel': {
                             color: 'red !important',
@@ -193,18 +230,20 @@ function FormPersonaFisica(props, ref){
                     slotProps={{
                         textField: {
                             //error: dataDepositoError,
-                            helperText: "",
+                            helperText: anagraficaHelperText,
                             //required: true,
                             size: 'small',
+                            disabled: 'false',
                             sx: textFieldSx
                         },
                     }}
                     />
                 </LocalizationProvider>
 
-                <FormControl size='small' sx={{...inputSx, width: '90px', minWidth: 'unset', maxWidth: 'unset','& .MuiFormLabel-root:not(.Mui-error, .Mui-focused)':{color: labelColor}} }>
-                        <InputLabel id="sesso-input-label">Sesso</InputLabel>
+                <FormControl size='small' disabled={true} sx={{...inputSx, '& .MuiFormLabel-root:not(.Mui-error, .Mui-focused, .Mui-disabled)':{color: labelColor},  '&.Mui-disabled .MuiFormLabel-root':{color: labelDisableColor}, }}>
+                        <InputLabel sx={{'&.Mui-disabled':{color: labelDisableColor}}} id="sesso-input-label">Sesso</InputLabel>
                         <CssSelect
+                        disabled={true}
                         labelId="sesso-input-label"
                         id="sesso-select"
                         value={parteAttuale.sesso ? parteAttuale.sesso : ""}
@@ -234,11 +273,12 @@ function FormPersonaFisica(props, ref){
                         }}
                         size='small'
                         label='Sesso'
-                        sx={{ width: '90px', '& .MuiOutlinedInput-input':{fontWeight: '500', color: theme.palette.text.primary}, }}
+                        sx={{'& .MuiOutlinedInput-input':{fontWeight: '500', color: theme.palette.text.primary}, }}
                         >
                         <MenuItem key={`M`} value={'M'}>UOMO</MenuItem>
                         <MenuItem key={`F`} value={'F'}>DONNA</MenuItem>
                         </CssSelect>
+                        <FormHelperText sx={{color: 'rgba(0, 0, 0, 0.38)'}}>{anagraficaHelperText}</FormHelperText>
                 </FormControl>
 
                 <Grid xs={12}>
@@ -246,8 +286,11 @@ function FormPersonaFisica(props, ref){
                     ref={provinciaNascitaRef}
                     sx={{...inputSx, width: '260px', maxWidth: 'unset'}} 
                     label="Provincia di nascita"
+                    disabled={true}
+                    helperText={anagraficaHelperText}
                     onChange={(value) => {
                         parteAttuale.provinciaNascita = value
+                        console.log(`Provincia selezionata: ${value}`)
                         comuneNascitaRef.current.setProvincia(value)
                         setParteAttuale({...parteAttuale})
                     }}
@@ -256,6 +299,8 @@ function FormPersonaFisica(props, ref){
                     <ComuneSelect
                         sx={{...inputSx, width: '260px', maxWidth: 'unset',}} 
                         provincia={parteAttuale.provinciaNascita}
+                        disabled={true}
+                        helperText={anagraficaHelperText}
                         label="Comune o stato estero di nascita"
                         ref={comuneNascitaRef}
                     />
@@ -420,7 +465,9 @@ const CssTextField = styled(TextField)(({ theme }) => ({
       '& .MuiInputLabel-root.Mui-focused, & .MuiFormLabel-root.Mui-focused':{ color: theme.palette.logo.secondary,},
       '& .MuiOutlinedInput-root': {
           'input':{textTransform: 'uppercase'},
-          '&:hover fieldset': {
+          '&.Mui-disabled':{backgroundColor: '#efefef73'},
+          '&.Mui-disabled fieldset':{borderColor: '#eaeaea'},
+          '&:hover:not(.Mui-disabled) fieldset': {
               borderColor: theme.palette.logo.secondary,
           },
           '&.Mui-focused fieldset': {
@@ -433,11 +480,12 @@ const CssTextField = styled(TextField)(({ theme }) => ({
 }));
 
 const CssSelect = styled(Select)(({ theme }) => ({
-
-    '&:hover .MuiOutlinedInput-notchedOutline': {
+    '&.Mui-disabled':{backgroundColor: '#efefef73'},
+    '&.Mui-disabled fieldset':{borderColor: '#eaeaea !important'},
+    '&:hover:not(.Mui-disabled) .MuiOutlinedInput-notchedOutline': {
       borderColor: `${theme.palette.logo.secondary}`,
     },
-    '&:hover .MuiSvgIcon-root, &.Mui-focused .MuiSvgIcon-root': {
+    '&:hover:not(.Mui-disabled) .MuiSvgIcon-root, &.Mui-focused .MuiSvgIcon-root': {
       fill: `${theme.palette.logo.secondary} !important`,
     },
     '& .MuiInputLabel-root.Mui-focused':{ color: `${theme.palette.logo.secondary} !important`,},

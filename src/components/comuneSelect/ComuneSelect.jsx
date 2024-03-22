@@ -16,6 +16,7 @@ function ComuneSelect(props, ref) {
     const [value, setValue] = React.useState(null)
     const theme = useTheme()
     const labelColor = 'rgb(105 105 105 / 60%)'
+    const labelDisableColor = 'rgb(148 148 148 / 60%)'
     const options = {method: 'GET', headers: {accept: 'application/json'}};
     
     React.useImperativeHandle(ref, () => ({
@@ -28,10 +29,12 @@ function ComuneSelect(props, ref) {
 
         setProvincia(provincia){
           let result = null
-          if((typeof provincia === "string" || provincia.nome) && !(provincia instanceof Provincia)){
+          if(provincia && (typeof provincia === "string" || provincia.nome) && !(provincia instanceof Provincia)){
             result = new Provincia(typeof provincia === 'string' ? {nome: provincia} : {nome: provincia.nome})
           }
+          if(!result) setValue(null)
           setProvincia(result)
+          
         }
       })
     )
@@ -78,7 +81,7 @@ function ComuneSelect(props, ref) {
     else 
         return(
             <Autocomplete
-            disabled={!provincia}
+            disabled={!provincia || props.disabled}
             disablePortal
             value={value}
             isOptionEqualToValue={(option, value) => JSON.stringify(option) === JSON.stringify(value)}
@@ -96,10 +99,11 @@ function ComuneSelect(props, ref) {
                 <CssTextField {...params} 
                 //required
                 //error={error}
-                helperText={!provincia ? "Seleziona una provincia per attivare questo campo" : ""}
+                disabled={props.disabled}
+                helperText={props.disabled ? props.helperText : (!provincia ? "Seleziona una provincia per attivare questo campo" : "")}
                 label={props.label ? props.label : "Comune"}
                 size='small'
-                sx={{'& .MuiOutlinedInput-input':{fontWeight: '500'}, '& .MuiFormLabel-root':{color: labelColor}, '& .MuiInputBase-root.Mui-disabled':{color: 'rgb(105 105 105 / 60%)', backgroundColor: '#e5e5e578'}}}
+                sx={{'& .MuiOutlinedInput-input':{fontWeight: '500'}, '& .MuiFormLabel-root:not(.Mui-error, .Mui-focused, .Mui-disabled)':{color: labelColor}, '& .MuiFormLabel-root.Mui-disabled':{color: labelDisableColor}}}
                 //defaultValue={reset ? resetSede() : ""}
                 />
               }
@@ -116,13 +120,15 @@ const CssTextField = styled(TextField)(({ theme }) => ({
     //     '& ~ .MuiInputBase-root fieldset':{ borderColor: theme.palette.logo.secondary,}
     //   },
       '& .MuiInputLabel-root.Mui-focused, & .MuiFormLabel-root.Mui-focused':{ color: theme.palette.logo.secondary,},
-      '& .MuiInputLabel-root.Mui-disabled, & .MuiFormLabel-root.Mui-disabled':{ color: 'rgb(173 173 173 / 60%)',},
+      //'& .MuiInputLabel-root.Mui-disabled, & .MuiFormLabel-root.Mui-disabled':{ color: 'rgb(173 173 173 / 60%)',},
       '& .MuiOutlinedInput-root': {
           'input':{textTransform: 'uppercase'},
           '&:hover:not(.Mui-disabled) fieldset': {
               borderColor: theme.palette.logo.secondary,
           },
-          '&.Mui-disabled fieldset':{borderColor: 'transparent', backgroundColor: '#f5f5f526'},
+          '&.Mui-disabled':{backgroundColor: '#efefef73'},
+          '&.Mui-disabled fieldset':{borderColor: '#eaeaea'},
+          //'&.Mui-disabled fieldset':{borderColor: 'transparent', backgroundColor: '#f5f5f526'},
           '&.Mui-focused fieldset': {
               border: `1.2px solid ${theme.palette.logo.secondary}`,
           },
