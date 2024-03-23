@@ -38,6 +38,9 @@ function FormPersonaFisica(props, ref){
     var [parteAttuale, setParteAttuale] = React.useState(new PersonaFisica())
     var comuneNascitaRef = React.useRef()
     var provinciaNascitaRef = React.useRef()
+    var [erroreCf, setErroreCf] = React.useState(false)
+    var [helperTextCf, setHelperTextCf] = React.useState("")
+   
     
     React.useImperativeHandle(ref, () => ({
             onSubmit(){
@@ -63,6 +66,8 @@ function FormPersonaFisica(props, ref){
 
                 <CssTextField
                 required
+                error={erroreCf}
+                helperText={helperTextCf}
                 size='small'
                 id="outlined-required-cf-piva"
                 label="Codice fiscale"
@@ -72,7 +77,6 @@ function FormPersonaFisica(props, ref){
                     let cf = event.currentTarget.value.toLocaleUpperCase()
                     let regex = /^[a-zA-Z0-9]{0,16}$/g
                     if(!regex.test(cf)){
-                        console.log('Input invalido!')
                         event.target.value = cf.slice(0, cf.length-1)
                         return
                     }
@@ -80,12 +84,17 @@ function FormPersonaFisica(props, ref){
                     // Controllo se il codice fiscale inserito sia valido
                     let isValid = false 
                     if(cf.length == 16) isValid = CodiceFiscaleUtils.isValid(cf)
-                    console.log(`Valore attuale: ${cf}, isValid: ${isValid}, parteAttuale.cf: ${parteAttuale.codiceFiscale}`)
-
+                
                     // Aggiornamento automatico della view
                     if(cf.length == 16 && isValid){
-                        console.log('Aggiorno i campi anagrafici')
+                       
                         let comuneNascita = CodiceFiscaleUtils.comuneCf(cf)
+
+                        // Rimuovo gli errori se presenti
+                        if(erroreCf){
+                            setErroreCf(false)
+                            setHelperTextCf("")
+                        }
 
                         // Aggiorno la parte attuale
                         parteAttuale.codiceFiscale = cf
@@ -101,9 +110,28 @@ function FormPersonaFisica(props, ref){
 
                     } else if(cf.length == 16 && !isValid){
                         console.log('Gestiore errore formato codice fiscale')
-                        // Ripristinare i campi calcolati 
+                        // Abilito l'errore ed il messaggio
+                        setErroreCf(true)
+                        setHelperTextCf('Codice fiscale non valido')
+                        
+                        // Ripristino i campi calcolati
+                        parteAttuale.codiceFiscale = null
+                        parteAttuale.dataNascita = null
+                        parteAttuale.comuneNascita = null
+                        parteAttuale.provinciaNascita = null
+                        parteAttuale.sesso = null
+                        setParteAttuale({...parteAttuale})
+
+                        provinciaNascitaRef.current.setProvincia(null)
+                        comuneNascitaRef.current.setComune(null) 
                     } else if(parteAttuale.codiceFiscale) {
-                         // Ripristino i campi calcolati in precedenza la parte attuale
+                        // Rimuovo gli errori se presenti
+                        if(erroreCf){
+                            setErroreCf(false)
+                            setHelperTextCf("")
+                        }
+
+                        // Ripristino i campi calcolati in precedenza la parte attuale
                         console.log('Ripristino i campi anagrafici')
                         parteAttuale.codiceFiscale = null
                         parteAttuale.dataNascita = null
@@ -462,18 +490,21 @@ const CssTextField = styled(TextField)(({ theme }) => ({
   
     //     '& ~ .MuiInputBase-root fieldset':{ borderColor: theme.palette.logo.secondary,}
     //   },
-      '& .MuiInputLabel-root.Mui-focused, & .MuiFormLabel-root.Mui-focused':{ color: theme.palette.logo.secondary,},
+      '& .MuiInputLabel-root.Mui-focused:not(.Mui-error), & .MuiFormLabel-root.Mui-focused:not(.Mui-error)':{ color: theme.palette.logo.secondary,},
       '& .MuiOutlinedInput-root': {
           'input':{textTransform: 'uppercase'},
           '&.Mui-disabled':{backgroundColor: '#efefef73'},
           '&.Mui-disabled fieldset':{borderColor: '#eaeaea'},
-          '&:hover:not(.Mui-disabled) fieldset': {
+          '&:hover:not(.Mui-disabled, .Mui-error) fieldset': {
               borderColor: theme.palette.logo.secondary,
           },
-          '&.Mui-focused fieldset': {
+          '&.Mui-focused.Mui-error fieldset': {
+            borderWidth: '1.2px'
+          },
+          '&.Mui-focused:not(.Mui-error) fieldset': {
               border: `1.2px solid ${theme.palette.logo.secondary}`,
           },
-          '&.Mui-focused .MuiInputAdornment-root .MuiSvgIcon-root': {
+          '&.Mui-focused:not(.Mui-error) .MuiInputAdornment-root .MuiSvgIcon-root': {
               fill: `${theme.palette.logo.secondary} !important`,
           },
       },
