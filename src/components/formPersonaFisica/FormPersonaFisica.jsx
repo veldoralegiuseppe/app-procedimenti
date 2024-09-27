@@ -23,13 +23,41 @@ import { PersonaFisica } from '/src/vo/personaFisica.js';
 import Select from '@mui/material/Select';
 import ProvinciaSelect from '/src/components/provinciaSelect/ProvinciaSelect.jsx';
 import ComuneSelect from '/src/components/comuneSelect/ComuneSelect.jsx';
+import { Comune } from '/src/vo/comune.js';
 import * as ComuniUtils from '/src/assets/js/comuni.js'
 
 const labelColor = 'rgb(105 105 105 / 60%)'
 const labelDisableColor = 'rgb(148 148 148 / 60%)'
-const inputSx = {width: '20%', margin: '14px 20px 10px 0px', minWidth: '133.5px', maxWidth: '168px',}
+const inputHeight = 35  //Altezza effettiva 
+const gridRowHeight = inputHeight +  34 + 3 // Input + Margine + Helper text 
+const inputSx = {width: '20%', height: `${inputHeight}px`, margin: '14px 20px 10px 0px', minWidth: '133.5px', maxWidth: '168px',}
 const formLabelFontSize = '1rem'
 const anagraficaHelperText = ""
+const validateEmail = (email) => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+};
+const validatePartitaIVA = (piva) => {
+    const regex = /^[0-9]{11}$/; // Verifica che sia composta da 11 cifre
+    if (!regex.test(piva)) return false;
+
+    // Aggiungi qui ulteriori controlli se necessari (es. codice ufficio o check digit)
+
+    return true;
+};
+const validateDenominazione = (denominazione) => {
+    // Richiede almeno una lettera o un numero, consente spazi e trattini, lunghezza tra 3 e 50 caratteri
+    const regex = /^(?![-\s]+$)[A-Za-z0-9\s\-]{3,50}$/;
+    return regex.test(denominazione);
+};
+const validateAvvocato = (avvocato) => {
+    const regex = /^[A-Za-zÀ-ÿ\s\-]{1,50}$/; // Consente lettere, spazi e trattini, lunghezza 1-50
+    return regex.test(avvocato);
+};
+
+
+  
+  
 
 function FormPersonaFisica(props, ref){
     const theme = useTheme()
@@ -38,8 +66,11 @@ function FormPersonaFisica(props, ref){
     var [parteAttuale, setParteAttuale] = React.useState(new PersonaFisica())
     var comuneNascitaRef = React.useRef()
     var provinciaNascitaRef = React.useRef()
+    var comuneResidenzaRef = React.useRef()
+    var provinciaResidenzaRef = React.useRef()
     var [erroreCf, setErroreCf] = React.useState(false)
     var [helperTextCf, setHelperTextCf] = React.useState("")
+    const [capResidenza, setCapResidenza] = React.useState("");
    
     
     React.useImperativeHandle(ref, () => ({
@@ -58,10 +89,10 @@ function FormPersonaFisica(props, ref){
     },[])
 
     return (
-        <div style={{position: 'relative', marginTop: '1rem', width: '100%', display: 'flex', flexDirection:'column', alignItems: 'flex-start', justifyContent:'center', rowGap:'2.5rem', padding: '0'}}>
+        <div style={{position: 'relative', marginTop: '1rem', width: '100%', display: 'flex', flexDirection:'column', alignItems: 'flex-start', justifyContent:'center', rowGap:'2.8rem', padding: '0'}}>
            
             {/* Codice fiscale */}
-            <Grid xs={12} sx={{width: '100%'}}>
+            <Grid xs={12} sx={{width: '100%', minHeight: `${gridRowHeight}px`}}>
                 <Grid xs={12} sx={{width: '100%', borderBottom:'1px solid #467bae61',}}><Typography sx={{fontWeight: '400', fontSize: formLabelFontSize, color: '#467bae'}}>Codice fiscale</Typography></Grid>
 
                 <CssTextField
@@ -147,48 +178,10 @@ function FormPersonaFisica(props, ref){
                 }}
                 sx={textFieldSx}
                 />
-
-            
-                <Button 
-                    id='button-agenzia-entrate'
-                    variant='contained'
-                    onClick={() => {window.AgenziaEntrateAPI.getCaptcha()}}
-                    sx={{
-                        width: '176px', 
-                        height: '34.13px',
-                        margin: '14px 20px 10px 10px',
-                        //'&:hover, &:hover svg':{backgroundColor: 'unset', color: buttonHoverColor},
-                        '&.Mui-disabled':{
-                            backgroundColor: 'unset', 
-                            border: `.9px solid rgb(199 199 199 / 60%)`, 
-                            color: theme.palette.text.disabled,
-                            fontWeight: '400'
-                        }, 
-                        backgroundColor: '#f0f0f05c',
-                        '&:hover':{backgroundColor: '#6ea5da29'}
-                    }}
-                    startIcon={<Box component="img" sx={{width: '33px', height: '13px'}} src={AgenziaEntrateLogo} width={50} height={32}/>}
-                >
-                    <div style={{fontFamily: 'Titillium Web',  fontWeight: '600', paddingTop: '2px', paddingLeft: '2px',fontSize: '10px', color: '#00467f'}}>Verifica anagrafica</div>
-                </Button>
-               
-               
-                
-                {/* {captcha 
-                ? <Box
-                    component="img"
-                    sx={{
-                    height: 75,
-                    width: 150,
-                    }}
-                    alt="The house from the offer."
-                    src={captcha}
-                   /> 
-                : <></>} */}
             </Grid>
 
             {/* Dati anagrafici */}
-            <Grid xs={12} sx={{width: '100%'}}>
+            <Grid xs={12} sx={{width: '100%', minHeight: `${gridRowHeight}px`}}>
                 <Grid xs={12} sx={{width: '100%', borderBottom:'1px solid #467bae61',}}><Typography sx={{fontWeight: '400', fontSize: formLabelFontSize, color: '#467bae'}}>Dati anagrafici</Typography></Grid>
 
                 <CssTextField
@@ -338,17 +331,29 @@ function FormPersonaFisica(props, ref){
             </Grid>
 
             {/* Dati demografici */}
-            <Grid xs={12} sx={{width: '100%'}}>
+            <Grid xs={12} sx={{width: '100%', minHeight: `${gridRowHeight}px`}}>
                 <Grid xs={12} sx={{width: '100%', borderBottom:'1px solid #467bae61',}}><Typography sx={{fontWeight: '400', fontSize: formLabelFontSize, color: '#467bae'}}>Dati demografici</Typography></Grid>
 
-                <CssTextField
-                    size='small'
-                    id="outlined-required-comune-residenza"
-                    label="Comune di residenza"
-                    defaultValue=""
-                    onChange={(event) => {
-                        parteAttuale.comuneResidenza = event.currentTarget.value.toLocaleUpperCase()
-                        setParteAttuale({...parteAttuale})
+                <ProvinciaSelect 
+                    ref={provinciaResidenzaRef} 
+                    label="Provincia di residenza" 
+                    onChange={(value) => {
+                        parteAttuale.provinciaResidenza = value;
+                        comuneResidenzaRef.current.setProvincia(value); // Imposta la provincia del comune di residenza
+                        setParteAttuale({ ...parteAttuale });
+                    }}
+                    sx={{...textFieldSx, minWidth: '246px', maxWidth: '250px'}}
+                />
+
+                <ComuneSelect 
+                    ref={comuneResidenzaRef} 
+                    provincia={parteAttuale.provinciaResidenza} 
+                    label="Comune di residenza" 
+                    onChange={(value) => {
+                        let comuneInstance = Object.assign(new Comune(), value);
+                        parteAttuale.comuneResidenza = comuneInstance
+                        setCapResidenza(value && value.cap ? value.cap : "");
+                        setParteAttuale({ ...parteAttuale });
                     }}
                     sx={{...textFieldSx, minWidth: '246px', maxWidth: '250px'}}
                 />
@@ -369,93 +374,106 @@ function FormPersonaFisica(props, ref){
                     size='small'
                     id="outlined-required-cup"
                     label="CAP"
-                    onChange={(event) => {
-                        parteAttuale.cap = event.currentTarget.value.toLocaleUpperCase()
-                        setParteAttuale({...parteAttuale})
-                    }}
-                    defaultValue=""
-                    sx={textFieldSx}
+                    disabled={true}
+                    value={capResidenza}
+                    sx={{...textFieldSx, minWidth: '246px', maxWidth: '250px'}}
                 />      
             </Grid>
 
             {/* Recapiti */}
-            <Grid xs={12} sx={{width: '100%'}}>
+            <Grid xs={12} sx={{width: '100%', minHeight: `${gridRowHeight}px`}}>
                 <Grid xs={12} sx={{width: '100%', borderBottom:'1px solid #467bae61',}}><Typography sx={{fontWeight: '400', fontSize: formLabelFontSize, color: '#467bae'}}>Recapiti</Typography></Grid>
 
                 <CssTextField
-                    size='small'
-                    id="outlined-required-pec"
-                    label="PEC"
-                    onChange={(event) => {
-                        parteAttuale.pec = event.currentTarget.value.toLocaleUpperCase()
-                        setParteAttuale({...parteAttuale})
-                    }}
-                    defaultValue=""
-                    sx={{...textFieldSx, minWidth: '246px', maxWidth: '250px'}}
-                />  
+                size='small'
+                id="outlined-required-pec"
+                label="PEC"
+                error={parteAttuale.pec ? !validateEmail(parteAttuale.pec) : false} // Imposta errore se non valido
+                helperText={parteAttuale.pec && !validateEmail(parteAttuale.pec) ? "PEC non valida" : ""}
+                onChange={(event) => {
+                    const value = event.currentTarget.value.toLocaleUpperCase();
+                    parteAttuale.pec = value;
+                    setParteAttuale({ ...parteAttuale });
+                }}
+                defaultValue=""
+                sx={{ ...textFieldSx, minWidth: '350px', maxWidth: '350px' }}
+                />
 
                 <CssTextField
-                        size='small'
-                        id="outlined-required-email"
-                        label="Email"
-                        defaultValue=""
-                        onChange={(event) => {
-                            parteAttuale.email = event.currentTarget.value.toLocaleUpperCase()
-                            setParteAttuale({...parteAttuale})
-                        }}
-                        sx={{...textFieldSx, minWidth: '246px', maxWidth: '250px'}}
-                    />  
+                size='small'
+                id="outlined-required-email"
+                label="Email"
+                error={parteAttuale.email ? !validateEmail(parteAttuale.email) : false} // Imposta errore se non valida
+                helperText={parteAttuale.email && !validateEmail(parteAttuale.email) ? "Email non valida" : ""}
+                onChange={(event) => {
+                    const value = event.currentTarget.value.toLocaleUpperCase();
+                    parteAttuale.email = value;
+                    setParteAttuale({ ...parteAttuale });
+                }}
+                defaultValue=""
+                sx={{ ...textFieldSx, minWidth: '350px', maxWidth: '350px' }}
+                />
+
                 </Grid>
 
             {/* Ditta individule */}
-            <Grid xs={12} sx={{width: '100%'}}>
+            <Grid xs={12} sx={{width: '100%', minheight: '80rem'}}>
                 <Grid xs={12} sx={{width: '100%', borderBottom:'1px solid #467bae61',}}><Typography sx={{fontWeight: '400', fontSize: formLabelFontSize, color: '#467bae'}}>Ditta individuale</Typography></Grid>
                 
                 <CssTextField
-                    size='small'
-                    id="outlined-required-piva"
-                    label="Partita IVA"
-                    onChange={(event) => {
-                        parteAttuale.partitaIVA = event.currentTarget.value.toLocaleUpperCase()
-                        setParteAttuale({...parteAttuale})
-                    }}
-                    defaultValue=""
-                    sx={textFieldSx}
-                />  
+                size='small'
+                id="outlined-required-piva"
+                label="Partita IVA"
+                error={parteAttuale.partitaIVA ? !validatePartitaIVA(parteAttuale.partitaIVA) : false}
+                helperText={parteAttuale.partitaIVA && !validatePartitaIVA(parteAttuale.partitaIVA) ? "Partita IVA non valida" : ""}
+                onChange={(event) => {
+                    const value = event.currentTarget.value;
+                    parteAttuale.partitaIVA = value;
+                    setParteAttuale({ ...parteAttuale });
+                }}
+                defaultValue=""
+                sx={{ ...textFieldSx, minWidth: '246px', maxWidth: '250px' }}
+                />
+
 
                 <CssTextField
-                    size='small'
-                    id="outlined-required-denominazione"
-                    label="Denominazione"
-                    onChange={(event) => {
-                        parteAttuale.denominazione = event.currentTarget.value.toLocaleUpperCase()
-                        setParteAttuale({...parteAttuale})
-                    }}
-                    defaultValue=""
-                    sx={{...textFieldSx, minWidth: '400px', maxWidth: '420px'}}
-                />  
+                size='small'
+                id="outlined-required-denominazione"
+                label="Denominazione"
+                error={parteAttuale.denominazione ? !validateDenominazione(parteAttuale.denominazione) : false}
+                helperText={parteAttuale.denominazione && !validateDenominazione(parteAttuale.denominazione) ? "Denominazione non valida" : ""}
+                onChange={(event) => {
+                    parteAttuale.denominazione = event.currentTarget.value.toLocaleUpperCase();
+                    setParteAttuale({ ...parteAttuale });
+                }}
+                defaultValue=""
+                sx={{ ...textFieldSx, minWidth: '400px', maxWidth: '420px' }}
+                />
+
 
             </Grid>
 
              {/* Assistenza legale */}
-            <Grid xs={12} sx={{width: '100%'}}>
+            <Grid xs={12} sx={{width: '100%', minHeight: `${gridRowHeight}px`}}>
             <Grid xs={12} sx={{borderBottom:'1px solid #467bae61',}}><Typography sx={{fontWeight: '400', fontSize: formLabelFontSize, color: '#467bae'}}>Assistenza legale</Typography></Grid>
                 <CssTextField
-                    required
-                    size='small'
-                    id="outlined-required-avvocato"
-                    label="Avvocato"
-                    onChange={(event) => {
-                        parteAttuale.assistenzaLegale = event.currentTarget.value.toLocaleUpperCase()
-                        setParteAttuale({...parteAttuale})
-                    }}
-                    defaultValue=""
-                    sx={{...textFieldSx, minWidth: '246px', maxWidth: '250px'}}
+                required
+                size='small'
+                id="outlined-required-avvocato"
+                label="Avvocato"
+                error={parteAttuale.assistenzaLegale ? !validateAvvocato(parteAttuale.assistenzaLegale) : false}
+                helperText={parteAttuale.assistenzaLegale && !validateAvvocato(parteAttuale.assistenzaLegale) ? "Nome non valido" : ""}
+                onChange={(event) => {
+                    parteAttuale.assistenzaLegale = event.currentTarget.value.toLocaleUpperCase();
+                    setParteAttuale({ ...parteAttuale });
+                }}
+                defaultValue=""
+                sx={{ ...textFieldSx, minWidth: '246px', maxWidth: '250px' }}
                 />
             </Grid>
 
             {/* Spese di mediazione */}
-            <Grid xs={12} sx={{width: '100%'}}>
+            <Grid xs={12} sx={{width: '100%', minHeight: `${gridRowHeight}px`}}>
                 <Grid xs={12} sx={{borderBottom:'1px solid #467bae61',}}><Typography sx={{fontWeight: '400', fontSize: formLabelFontSize, color: '#467bae'}}>Spese di mediazione</Typography></Grid>
                 <ImportoField importo={'0,00'} sx={inputSx} label={"Spese di avvio"} required={true}></ImportoField>
                 <ImportoField importo={'0,00'} sx={inputSx} label={"Spese postali"} required={true}></ImportoField>
@@ -463,7 +481,7 @@ function FormPersonaFisica(props, ref){
             </Grid>
 
             {/* Note */}
-            <Grid xs={12} sx={{width: '100%'}}>
+            <Grid xs={12} sx={{width: '100%', minHeight: `${gridRowHeight+80}px`}}>
                 <Grid xs={12} sx={{borderBottom:'1px solid #467bae61',}}><Typography sx={{fontWeight: '400', fontSize: formLabelFontSize, color: '#467bae'}}>Informazioni aggiuntive</Typography></Grid>
                 <CssTextField
                     id="outlined-required-note"

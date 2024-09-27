@@ -2,18 +2,65 @@ export const COMUNI_ESTERI=new Map;COMUNI_ESTERI.set("Z100",{codiceISO:"AL",deno
 
 var COMUNI = undefined;
 
-export async function initialize(){
-    try {
-        const response = await fetch('https://axqvoqvbfjpaamphztgd.functions.supabase.co/comuni', { method: 'GET', headers: { accept: 'application/json' } });
-        const response_1 = await response.json();
-        COMUNI = response_1;
-    } catch (err) {
-        return console.error(err);
-    }
+class Comune {
+  constructor(
+    codice,
+    nome,
+    nomeStraniero,
+    codiceCatastale,
+    cap,
+    prefisso,
+    provincia,
+    email,
+    pec,
+    telefono,
+    fax,
+    coordinate
+  ) {
+    this.codice = codice;
+    this.nome = nome;
+    this.nomeStraniero = nomeStraniero;
+    this.codiceCatastale = codiceCatastale;
+    this.cap = cap;
+    this.prefisso = prefisso;
+    this.provincia = provincia; // { nome: "Bari", regione: "Puglia" }
+    this.email = email;
+    this.pec = pec;
+    this.telefono = telefono;
+    this.fax = fax;
+    this.coordinate = coordinate; // { lat: 41.1083, lng: 16.6917 }
+  }
 }
 
-export function findComuneByCodiceCatastale(codice){
-   if(!COMUNI){initialize()}
-   let result = COMUNI.filter(c => String(c.codiceCatastale).toLocaleUpperCase() == String(codice).toLocaleUpperCase())
-   return result.length > 0 ? result[0] : undefined
+export async function initialize() {
+  try {
+    const response = await fetch('https://axqvoqvbfjpaamphztgd.functions.supabase.co/comuni', {
+      method: 'GET',
+      headers: { accept: 'application/json' }
+    });
+    const response_1 = await response.json();
+    
+    COMUNI = response_1.map(c => new Comune(
+      c.codice,
+      c.nome,
+      c.nomeStraniero,
+      c.codiceCatastale,
+      c.cap,
+      c.prefisso,
+      c.provincia,
+      c.email,
+      c.pec,
+      c.telefono,
+      c.fax,
+      c.coordinate
+    ));
+  } catch (err) {
+    return console.error(err);
+  }
+}
+
+export function findComuneByCodiceCatastale(codice) {
+  if (!COMUNI) { initialize(); }
+  let result = COMUNI.filter(c => String(c.codiceCatastale).toLocaleUpperCase() == String(codice).toLocaleUpperCase());
+  return result.length > 0 ? result[0] : undefined;
 }

@@ -109,8 +109,19 @@ const CssTextField = styled(TextField)(({ theme }) => ({
   
     //     '& ~ .MuiInputBase-root fieldset':{ borderColor: 'red',}
     //   },
-      '& .MuiInputLabel-root.Mui-focused, & .MuiFormLabel-root.Mui-focused':{ color: theme.palette.logo.secondary,},
-      '& .MuiOutlinedInput-root': {
+    '&.Mui-disabled': {
+        backgroundColor: '#efefef73',
+        '&:hover .MuiOutlinedInput-notchedOutline': {
+          borderColor: 'transparent', // Nessun effetto hover quando disabilitato
+        },
+    },
+    '&.Mui-disabled fieldset': {
+        borderColor: '#eaeaea !important',
+    },
+
+    '& .MuiInputLabel-root.Mui-focused, & .MuiFormLabel-root.Mui-focused':{ color: theme.palette.logo.secondary,},
+    
+    '& .MuiOutlinedInput-root': {
           'input':{textTransform: 'uppercase'},
           '&.Mui-disabled':{backgroundColor: '#efefef73'},
           '&.Mui-disabled fieldset':{borderColor: '#eaeaea'},
@@ -123,7 +134,7 @@ const CssTextField = styled(TextField)(({ theme }) => ({
           '&.Mui-focused .MuiInputAdornment-root .MuiSvgIcon-root': {
               fill: `${theme.palette.logo.secondary} !important`,
           },
-      },
+    },
 }));
 
 

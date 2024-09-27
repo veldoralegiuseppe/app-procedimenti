@@ -10,7 +10,7 @@ const MESI = { A: '01', B: '02', C: '03', D: '04', E: '05', H: '06', L: '07', M:
  * @returns Comune
  */
 export function comuneCf (codiceFiscale) { 
-	console.log(CodiceFiscaleUtils.Parser.cfToBirthPlace(codiceFiscale));
+	//console.log(CodiceFiscaleUtils.Parser.cfToBirthPlace(codiceFiscale));
 	return codiceFiscale.charAt(12).toUpperCase() === 'Z' 
 	? new Comune ({nome: COMUNI_ESTERI.get(codiceFiscale.substring(11,15).toUpperCase()), provincia: {nome: 'Stato estero'}}) 
 	: new Comune(findComuneByCodiceCatastale(codiceFiscale.substring(11,15).toUpperCase()))

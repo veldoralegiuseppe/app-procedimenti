@@ -80,62 +80,80 @@ function ComuneSelect(props, ref) {
         )
     else 
         return(
-            <Autocomplete
-            disabled={!provincia || props.disabled}
-            disablePortal
-            value={value}
-            isOptionEqualToValue={(option, value) => JSON.stringify(option) === JSON.stringify(value)}
-            id="combo-box-demo"
-            onChange={(event, value) => setValue(value)}
-            noOptionsText={!provincia ? "Seleziona una provincia" : 'Nessun risultato'}
-            options={items}
-            getOptionLabel={(option) => option.nome.toLocaleUpperCase()}
-            PaperComponent={({ children }) => (
-                <Paper sx={{backgroundColor: theme.palette.dropdown.primary}}>{children}</Paper>
-            )}
-            renderOption={(props, option) =>  <li {...props} style={{color: theme.palette.primary.main, fontSize: '.9rem', fontWeight:'400'}}>{String(option.nome).toLocaleUpperCase()}</li>}
-            sx={{...props.sx, display:'inline-block', }}
-            renderInput={(params) => 
-                <CssTextField {...params} 
-                //required
-                //error={error}
-                disabled={props.disabled}
-                helperText={props.disabled ? props.helperText : (!provincia ? "Seleziona una provincia per attivare questo campo" : "")}
-                label={props.label ? props.label : "Comune"}
-                size='small'
-                sx={{'& .MuiOutlinedInput-input':{fontWeight: '500'}, '& .MuiFormLabel-root:not(.Mui-error, .Mui-focused, .Mui-disabled)':{color: labelColor}, '& .MuiFormLabel-root.Mui-disabled':{color: labelDisableColor}}}
-                //defaultValue={reset ? resetSede() : ""}
-                />
-              }
+          <Autocomplete
+          disabled={!provincia || props.disabled}
+          disablePortal
+          value={value}
+          isOptionEqualToValue={(option, value) => JSON.stringify(option) === JSON.stringify(value)}
+          id="combo-box-demo"
+          onChange={(event, newValue) => {
+            setValue(newValue);  // Aggiorna lo stato locale
+            if (props.onChange) {  // Verifica se `onChange` è passato dai props
+              props.onChange(newValue);  // Chiama il callback del genitore con il nuovo valore
+            }
+          }}
+          noOptionsText={!provincia ? "Seleziona una provincia" : 'Nessun risultato'}
+          options={items}
+          getOptionLabel={(option) => option.nome.toLocaleUpperCase()}
+          PaperComponent={({ children }) => (
+            <Paper sx={{ backgroundColor: theme.palette.dropdown.primary }}>{children}</Paper>
+          )}
+          sx={{
+            ...props.sx,
+            display: 'inline-block',
+            '& .MuiAutocomplete-inputRoot.Mui-disabled': {
+              pointerEvents: 'none',
+              '& .MuiOutlinedInput-notchedOutline': {
+                borderColor: '#eaeaea !important',
+              },
+            },
+          }}
+          renderOption={(props, option) => (
+            <li {...props} style={{ color: theme.palette.primary.main }}>
+              {option.nome.toLocaleUpperCase()}
+            </li>
+          )}
+          renderInput={(params) => 
+            <CssTextField
+              {...params}
+              disabled={!provincia || props.disabled}
+              helperText={props.disabled ? props.helperText : (!provincia ? "Seleziona una provincia per attivare questo campo" : "")}
+              label={props.label ? props.label : "Comune"}
+              size="small"
+              sx={{
+                '& .MuiOutlinedInput-input': { fontWeight: '500' },
+                '& .MuiFormLabel-root:not(.Mui-error, .Mui-focused, .Mui-disabled)': { color: labelColor },
+                '& .MuiFormLabel-root.Mui-disabled': { color: labelDisableColor },
+              }}
             />
+          }
+          />
         )
 
 }
 
 const CssTextField = styled(TextField)(({ theme }) => ({
-
-    //  '& .MuiInputLabel-root[data-shrink="true"]':{
-    //     color: theme.palette.logo.secondary,
-  
-    //     '& ~ .MuiInputBase-root fieldset':{ borderColor: theme.palette.logo.secondary,}
-    //   },
-      '& .MuiInputLabel-root.Mui-focused, & .MuiFormLabel-root.Mui-focused':{ color: theme.palette.logo.secondary,},
-      //'& .MuiInputLabel-root.Mui-disabled, & .MuiFormLabel-root.Mui-disabled':{ color: 'rgb(173 173 173 / 60%)',},
-      '& .MuiOutlinedInput-root': {
-          'input':{textTransform: 'uppercase'},
-          '&:hover:not(.Mui-disabled) fieldset': {
-              borderColor: theme.palette.logo.secondary,
-          },
-          '&.Mui-disabled':{backgroundColor: '#efefef73'},
-          '&.Mui-disabled fieldset':{borderColor: '#eaeaea'},
-          //'&.Mui-disabled fieldset':{borderColor: 'transparent', backgroundColor: '#f5f5f526'},
-          '&.Mui-focused fieldset': {
-              border: `1.2px solid ${theme.palette.logo.secondary}`,
-          },
-          '&.Mui-focused .MuiInputAdornment-root .MuiSvgIcon-root': {
-              fill: `${theme.palette.logo.secondary} !important`,
-          },
+  '& .MuiOutlinedInput-root': {
+    input: { textTransform: 'uppercase' },
+    '&.Mui-disabled': {
+      backgroundColor: '#efefef73',
+      pointerEvents: 'none', // Disabilita l'interazione hover
+      '& fieldset': {
+        borderColor: '#eaeaea !important',
       },
+      '&:hover fieldset': {
+        borderColor: '#eaeaea !important', // Nessun effetto hover
+      },
+    },
+    '&:hover:not(.Mui-disabled) fieldset': {
+      borderColor: theme.palette.logo.secondary,
+    },
+    '&.Mui-focused fieldset': {
+      border: `1.2px solid ${theme.palette.logo.secondary}`,
+    },
+  },
 }));
+
+
 
 export default React.forwardRef(ComuneSelect)
