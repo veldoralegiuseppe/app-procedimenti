@@ -1,6 +1,4 @@
 import * as React from 'react';
-import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
 import InputLabel from '@mui/material/InputLabel';
@@ -17,7 +15,6 @@ import "dayjs/locale/it";
 import dayjs from 'dayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import * as CodiceFiscaleUtils from '/src/assets/js/convalidaCodiceFiscale.js';
-import AgenziaEntrateLogo from '/src/assets/img/AgenziaEntrate_logo.png'
 import ImportoField from '/src/components/importoField/ImportoField.jsx';
 import { PersonaFisica } from '/src/vo/personaFisica.js';
 import Select from '@mui/material/Select';
@@ -54,10 +51,6 @@ const validateAvvocato = (avvocato) => {
     const regex = /^[A-Za-zÀ-ÿ\s\-]{1,50}$/; // Consente lettere, spazi e trattini, lunghezza 1-50
     return regex.test(avvocato);
 };
-
-
-  
-  
 
 function FormPersonaFisica(props, ref){
     const theme = useTheme()
@@ -130,13 +123,12 @@ function FormPersonaFisica(props, ref){
                         // Aggiorno la parte attuale
                         parteAttuale.codiceFiscale = cf
                         parteAttuale.dataNascita = CodiceFiscaleUtils.dataCf(cf)
-                        parteAttuale.comuneNascita = comuneNascita
-                        parteAttuale.provinciaNascita = comuneNascita.provincia
+                        parteAttuale.luogoDiNascita = comuneNascita
                         parteAttuale.sesso = CodiceFiscaleUtils.sessoCf(cf)
                         setParteAttuale({...parteAttuale})
 
                         // Aggiorno il valore dei dati anagrafici
-                        provinciaNascitaRef.current.setProvincia(parteAttuale.provinciaNascita)
+                        provinciaNascitaRef.current.setProvincia(comuneNascita.provincia)
                         comuneNascitaRef.current.setComune(comuneNascita)
 
                     } else if(cf.length == 16 && !isValid){
@@ -148,8 +140,7 @@ function FormPersonaFisica(props, ref){
                         // Ripristino i campi calcolati
                         parteAttuale.codiceFiscale = null
                         parteAttuale.dataNascita = null
-                        parteAttuale.comuneNascita = null
-                        parteAttuale.provinciaNascita = null
+                        parteAttuale.luogoDiNascita = null
                         parteAttuale.sesso = null
                         setParteAttuale({...parteAttuale})
 
@@ -166,8 +157,7 @@ function FormPersonaFisica(props, ref){
                         console.log('Ripristino i campi anagrafici')
                         parteAttuale.codiceFiscale = null
                         parteAttuale.dataNascita = null
-                        parteAttuale.comuneNascita = null
-                        parteAttuale.provinciaNascita = null
+                        parteAttuale.luogoDiNascita = null
                         parteAttuale.sesso = null
                         setParteAttuale({...parteAttuale})
 
@@ -310,10 +300,9 @@ function FormPersonaFisica(props, ref){
                     disabled={true}
                     helperText={anagraficaHelperText}
                     onChange={(value) => {
-                        parteAttuale.provinciaNascita = value
                         console.log(`Provincia selezionata: ${value}`)
                         comuneNascitaRef.current.setProvincia(value)
-                        setParteAttuale({...parteAttuale})
+                        setParteAttuale({...parteAttuale, luogoDiNascita: {...new Comune(), provincia: value}})
                     }}
                     />
 
@@ -324,6 +313,9 @@ function FormPersonaFisica(props, ref){
                         helperText={anagraficaHelperText}
                         label="Comune o stato estero di nascita"
                         ref={comuneNascitaRef}
+                        onChange={(value) => {
+                            setParteAttuale({...parteAttuale, luogoDiNascita: value})
+                        }}
                     />
                 </Grid>
                
@@ -338,9 +330,8 @@ function FormPersonaFisica(props, ref){
                     ref={provinciaResidenzaRef} 
                     label="Provincia di residenza" 
                     onChange={(value) => {
-                        parteAttuale.provinciaResidenza = value;
                         comuneResidenzaRef.current.setProvincia(value); // Imposta la provincia del comune di residenza
-                        setParteAttuale({ ...parteAttuale });
+                        setParteAttuale({...parteAttuale, residenza: {...new Comune(), provincia: value}})
                     }}
                     sx={{...textFieldSx, minWidth: '246px', maxWidth: '250px'}}
                 />
@@ -351,9 +342,8 @@ function FormPersonaFisica(props, ref){
                     label="Comune di residenza" 
                     onChange={(value) => {
                         let comuneInstance = Object.assign(new Comune(), value);
-                        parteAttuale.comuneResidenza = comuneInstance
                         setCapResidenza(value && value.cap ? value.cap : "");
-                        setParteAttuale({ ...parteAttuale });
+                        setParteAttuale({...parteAttuale, residenza: comuneInstance})
                     }}
                     sx={{...textFieldSx, minWidth: '246px', maxWidth: '250px'}}
                 />
@@ -455,7 +445,7 @@ function FormPersonaFisica(props, ref){
 
              {/* Assistenza legale */}
             <Grid xs={12} sx={{width: '100%', minHeight: `${gridRowHeight}px`}}>
-            <Grid xs={12} sx={{borderBottom:'1px solid #467bae61',}}><Typography sx={{fontWeight: '400', fontSize: formLabelFontSize, color: '#467bae'}}>Assistenza legale</Typography></Grid>
+            <Grid xs={12} sx={{borderBottom:'1px solid #467bae61',}}><Typography sx={{fontWeight: '400', fontSize: formLabelFontSize, color: '#467bae'}}>Rappresentante legale</Typography></Grid>
                 <CssTextField
                 required
                 size='small'

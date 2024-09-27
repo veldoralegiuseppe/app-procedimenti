@@ -1,19 +1,11 @@
 import { Comune } from '/src/vo/comune.js';
 
-export class PersonaFisica {
-    codiceFiscale;
-    cognome;
-    nome;
-    dataNascita;
-    dataNascitaLocale;
-    luogoDiNascita = new Comune(); 
-    sesso;
-    residenza = new Comune();  
-    indirizzo;
-    pec;
-    email;
+export class PersonaGiuridica {
     partitaIVA;
     denominazione;
+    sedeLegale = new Comune(); 
+    email;
+    pec;
     assistenzaLegale;
     speseAvvio = 0;
     spesePostali = 0;

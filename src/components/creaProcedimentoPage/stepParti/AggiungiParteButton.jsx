@@ -17,8 +17,8 @@ import AccordionSummary from '@mui/material/AccordionSummary';
 import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
 import Alert from '@mui/material/Alert';
 import Stack from '@mui/material/Stack';
-import { PersonaFisica } from '/src/vo/personaFisica.js';
 import FormPersonaFisica from '/src/components/formPersonaFisica/FormPersonaFisica.jsx';
+import FormPersonaGiuridica from '/src/components/formPersonaGiuridica/FormPersonaGiuridica.jsx';
 
 const formLabelFontSize = '1rem'
 const labelColor = 'rgb(105 105 105 / 60%)'
@@ -78,6 +78,7 @@ function Creazione(props){
     const theme = useTheme()
     var [tipologiaPersona, setTipologiaPersona] = React.useState('PERSONA_FISICA')
     const formPersonaFisicaRef = React.useRef()
+    const formPersonaGiuridicaRef = React.useRef()
 
     return (
         <div style={{position: 'relative', display: 'flex', flexDirection:'column', alignItems: 'flex-start', justifyContent:'center', rowGap:'3rem', padding: '0', ...props.sx}}>       
@@ -144,10 +145,7 @@ function Creazione(props){
                     <Typography>Persona giuridica</Typography>
                 </AccordionSummary>
                 <AccordionDetails sx={{backgroundColor: theme.palette.background.default}}>
-                    <Typography>
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
-                    malesuada lacus ex, sit amet blandit leo lobortis eget.
-                    </Typography>
+                    <FormPersonaGiuridica ref={formPersonaGiuridicaRef}/>
                 </AccordionDetails>
                 </Accordion>
             </Grid>
@@ -178,7 +176,7 @@ function Creazione(props){
 
                 <Button 
                     variant='contained'
-                    onClick={() => {console.log(`personaFisica: ${JSON.stringify(formPersonaFisicaRef.current.onSubmit())}, personaGiuridica: void`)}}
+                    onClick={() => {console.log(`personaFisica: ${JSON.stringify(formPersonaFisicaRef.current?.onSubmit())}, personaGiuridica: ${JSON.stringify(formPersonaGiuridicaRef.current?.onSubmit())}`)}}
                     sx={{width: '90px', color: 'white', backgroundColor: '#108d10', '&:hover, &:hover svg':{backgroundColor: '#119c11', color: 'white'}}}
                     startIcon={<AddIcon sx={{color: 'white', transition: 'background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms'}}/>}
                 >
