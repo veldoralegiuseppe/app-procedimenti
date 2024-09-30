@@ -21,10 +21,11 @@ import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import { PersonaFisica } from '/src/vo/personaFisica.js';
 import Alert from '@mui/material/Alert';
+import ReadOnlyAmountField from '/src/components/readOnlyAmountField/ReadonlyAmountField.jsx';
 
 // Constants
 const labelColor = 'rgb(105 105 105 / 60%)';
-const labelDisableColor = 'rgb(148 148 148 / 60%)';
+const labelDisableColor = 'rgb(148 148 148 / 60%)'
 const inputHeight = 35;
 const gridRowHeight = inputHeight + 34 + 3;
 const formLabelFontSize = '1rem';
@@ -521,6 +522,20 @@ function FormPersonaFisica(props, ref) {
         <ImportoField importo={'0,00'} sx={textFieldSx(theme)} label={"Spese di avvio"} required={true} />
         <ImportoField importo={'0,00'} sx={textFieldSx(theme)} label={"Spese postali"} required={true} />
         <ImportoField importo={'0,00'} sx={textFieldSx(theme)} label={"Pagamento indennità"} required={true} />
+        <ReadOnlyAmountField
+        value="1.234,56"
+        label="Totale Spese"
+        backgroundColor="#d7ebff0f"   // Sfondo personalizzato
+        textColor="#467bae"         // Testo rosso
+        labelColor="#467bae"        // Label blu
+        borderColor="#467bae38"       // Bordo rosso
+        euroIconColor="#467bae"
+        sx={{ margin: '14px 20px 10px 0px' }}     // Stili extra tramite sx
+      />
+
+
+
+
       </Grid>
 
       {/* Note */}

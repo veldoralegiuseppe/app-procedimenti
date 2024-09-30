@@ -154,18 +154,7 @@ body{
     margin-top: 2.5px;
 }
 
-// Sovrascrivi l'effetto hover per gli input disabilitati
-.MuiAutocomplete-root.Mui-disabled .MuiOutlinedInput-notchedOutline {
-border-color: #eaeaea !important;
-}
 
-.Mui-disabled .MuiOutlinedInput-notchedOutline {
-border-color: #eaeaea !important; /* Colore del bordo fisso */
-}
-
-.Mui-disabled:hover .MuiOutlinedInput-notchedOutline {
-border-color: #eaeaea !important; /* Disabilita completamente il colore dell'hover */
-}
   
 
   
