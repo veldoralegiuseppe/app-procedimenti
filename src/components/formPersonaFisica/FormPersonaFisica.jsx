@@ -1,536 +1,509 @@
 import * as React from 'react';
 import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
-import InputLabel from '@mui/material/InputLabel';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import { FormHelperText } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2';
 import TextField from '@mui/material/TextField';
 import { styled } from '@mui/material/styles';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { itIT } from '@mui/x-date-pickers/locales';
-import "dayjs/locale/it";
 import dayjs from 'dayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import * as CodiceFiscaleUtils from '/src/assets/js/convalidaCodiceFiscale.js';
 import ImportoField from '/src/components/importoField/ImportoField.jsx';
-import { PersonaFisica } from '/src/vo/personaFisica.js';
-import Select from '@mui/material/Select';
 import ProvinciaSelect from '/src/components/provinciaSelect/ProvinciaSelect.jsx';
 import ComuneSelect from '/src/components/comuneSelect/ComuneSelect.jsx';
+import Select from '@mui/material/Select';
+import MenuItem from '@mui/material/MenuItem';
+import * as CodiceFiscaleUtils from '/src/assets/js/convalidaCodiceFiscale.js';
 import { Comune } from '/src/vo/comune.js';
-import * as ComuniUtils from '/src/assets/js/comuni.js'
+import * as ComuniUtils from '/src/assets/js/comuni.js';
+import FormControl from '@mui/material/FormControl';
+import InputLabel from '@mui/material/InputLabel';
+import { PersonaFisica } from '/src/vo/personaFisica.js';
+import Alert from '@mui/material/Alert';
 
-const labelColor = 'rgb(105 105 105 / 60%)'
-const labelDisableColor = 'rgb(148 148 148 / 60%)'
-const inputHeight = 35  //Altezza effettiva 
-const gridRowHeight = inputHeight +  34 + 3 // Input + Margine + Helper text 
-const inputSx = {width: '20%', height: `${inputHeight}px`, margin: '14px 20px 10px 0px', minWidth: '133.5px', maxWidth: '168px',}
-const formLabelFontSize = '1rem'
-const anagraficaHelperText = ""
-const validateEmail = (email) => {
-    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return regex.test(email);
-};
-const validatePartitaIVA = (piva) => {
-    const regex = /^[0-9]{11}$/; // Verifica che sia composta da 11 cifre
-    if (!regex.test(piva)) return false;
+// Constants
+const labelColor = 'rgb(105 105 105 / 60%)';
+const labelDisableColor = 'rgb(148 148 148 / 60%)';
+const inputHeight = 35;
+const gridRowHeight = inputHeight + 34 + 3;
+const formLabelFontSize = '1rem';
+const anagraficaHelperText = '';
 
-    // Aggiungi qui ulteriori controlli se necessari (es. codice ufficio o check digit)
+// Styling
+const textFieldSx = (theme) => ({
+  width: '20%',
+  height: `${inputHeight}px`,
+  margin: '14px 20px 10px 0px',
+  minWidth: '133.5px',
+  maxWidth: '168px',
+  '& .MuiFormLabel-root:not(.Mui-error,.Mui-focused,.Mui-selected)': {
+    color: labelColor,
+  },
+  '& .MuiFormLabel-root.Mui-disabled': {
+    color: labelDisableColor,
+  },
+  '& .MuiOutlinedInput-input': {
+    fontWeight: '500',
+    color: theme.palette.text.primary,
+  },
+});
 
-    return true;
-};
-const validateDenominazione = (denominazione) => {
-    // Richiede almeno una lettera o un numero, consente spazi e trattini, lunghezza tra 3 e 50 caratteri
-    const regex = /^(?![-\s]+$)[A-Za-z0-9\s\-]{3,50}$/;
-    return regex.test(denominazione);
-};
-const validateAvvocato = (avvocato) => {
-    const regex = /^[A-Za-zÀ-ÿ\s\-]{1,50}$/; // Consente lettere, spazi e trattini, lunghezza 1-50
-    return regex.test(avvocato);
-};
+const CssTextField = styled(TextField)(({ theme }) => ({
+  '& .MuiInputLabel-root.Mui-focused:not(.Mui-error), & .MuiFormLabel-root.Mui-focused:not(.Mui-error)': {
+    color: theme.palette.logo.secondary,
+  },
+  '& .MuiOutlinedInput-root': {
+    input: { textTransform: 'uppercase' },
+    '&.Mui-disabled': { backgroundColor: '#efefef73' },
+    '&.Mui-disabled fieldset': { borderColor: '#eaeaea' },
+    '&:hover:not(.Mui-disabled, .Mui-error) fieldset': {
+      borderColor: theme.palette.logo.secondary,
+    },
+    '&.Mui-focused.Mui-error fieldset': { borderWidth: '1.2px' },
+    '&.Mui-focused:not(.Mui-error) fieldset': { border: `1.2px solid ${theme.palette.logo.secondary}` },
+    '&.Mui-focused:not(.Mui-error) .MuiInputAdornment-root .MuiSvgIcon-root': {
+      fill: `${theme.palette.logo.secondary} !important`,
+    },
+  },
+}));
 
-function FormPersonaFisica(props, ref){
-    const theme = useTheme()
-    const textFieldSx = {'& .MuiFormLabel-root:not(.Mui-error,.Mui-focused,.Mui-selected)':{color: labelColor}, '& .MuiFormLabel-root.Mui-disabled':{color: labelDisableColor},'& .MuiOutlinedInput-input':{fontWeight: '500', color: theme.palette.text.primary,}, ...inputSx}
-    var [captcha, setCaptcha] = React.useState(null) 
-    var [parteAttuale, setParteAttuale] = React.useState(new PersonaFisica())
-    var comuneNascitaRef = React.useRef()
-    var provinciaNascitaRef = React.useRef()
-    var comuneResidenzaRef = React.useRef()
-    var provinciaResidenzaRef = React.useRef()
-    var [erroreCf, setErroreCf] = React.useState(false)
-    var [helperTextCf, setHelperTextCf] = React.useState("")
-    const [capResidenza, setCapResidenza] = React.useState("");
-   
-    
-    React.useImperativeHandle(ref, () => ({
-            onSubmit(){
-                return parteAttuale
-            }
-        }),
-    )
+const CssSelect = styled(Select)(({ theme }) => ({
+    '&.Mui-disabled': {
+      backgroundColor: '#efefef73',
+    },
+    '& .MuiSvgIcon-root': {
+      fill: theme.palette.text.primary, // Colore di default della freccia
+    },
+    '&:hover .MuiSvgIcon-root, &.Mui-focused .MuiSvgIcon-root': {
+      fill: theme.palette.logo.secondary, // Colore secondario quando selezionato o su hover
+    },
+    '& .MuiOutlinedInput-root': {
+      '&:hover fieldset': {
+        borderColor: theme.palette.logo.secondary, // Colore del bordo su hover
+      },
+      '&.Mui-focused fieldset': {
+        borderColor: theme.palette.logo.secondary, // Colore del bordo quando in focus
+      },
+    },
+  }));
+  
 
-    React.useEffect(() => {
-        // Inizializzo l'API dei comuni
-        ComuniUtils.initialize()
+// Main Component
+function FormPersonaFisica(props, ref) {
+  const theme = useTheme();
+  const [captcha, setCaptcha] = React.useState(null);
+  const [parteAttuale, setParteAttuale] = React.useState(new PersonaFisica());
+  const [erroreCf, setErroreCf] = React.useState(false);
+  const [helperTextCf, setHelperTextCf] = React.useState('');
+  const [capResidenza, setCapResidenza] = React.useState('');
+  const [anagraficiDisabilitati, setAnagraficiDisabilitati] = React.useState(false);
 
-        // API Electron
-        window.AgenziaEntrateAPI.onCaptcha((url) => {console.log(url); setCaptcha(url)})
-    },[])
+  const comuneNascitaRef = React.useRef();
+  const provinciaNascitaRef = React.useRef();
+  const comuneResidenzaRef = React.useRef();
+  const provinciaResidenzaRef = React.useRef();
 
-    return (
-        <div style={{position: 'relative', marginTop: '1rem', width: '100%', display: 'flex', flexDirection:'column', alignItems: 'flex-start', justifyContent:'center', rowGap:'2.8rem', padding: '0'}}>
-           
-            {/* Codice fiscale */}
-            <Grid xs={12} sx={{width: '100%', minHeight: `${gridRowHeight}px`}}>
-                <Grid xs={12} sx={{width: '100%', borderBottom:'1px solid #467bae61',}}><Typography sx={{fontWeight: '400', fontSize: formLabelFontSize, color: '#467bae'}}>Codice fiscale</Typography></Grid>
+  React.useEffect(() => {
+    ComuniUtils.initialize();
+    window.AgenziaEntrateAPI.onCaptcha((url) => setCaptcha(url));
+  }, []);
 
-                <CssTextField
-                required
+  const resetAnagrafici = () => {
+        setParteAttuale({ ...parteAttuale, dataNascita: null, luogoDiNascita: null, sesso: null });
+        provinciaNascitaRef.current.setProvincia(null);
+        comuneNascitaRef.current.setComune(null);
+        setAnagraficiDisabilitati(false);
+  };
+
+  const handleInvalidCodiceFiscale = (message) => {
+        setErroreCf(true);
+        setHelperTextCf(message);
+        resetAnagrafici();
+  };
+
+  const handleValidCodiceFiscale = (cf) => {
+        const comuneNascita = CodiceFiscaleUtils.comuneCf(cf);
+        setParteAttuale({
+            ...parteAttuale,
+            codiceFiscale: cf,
+            dataNascita: CodiceFiscaleUtils.dataCf(cf),
+            luogoDiNascita: comuneNascita,
+            sesso: CodiceFiscaleUtils.sessoCf(cf),
+        });
+        provinciaNascitaRef.current.setProvincia(comuneNascita.provincia);
+        comuneNascitaRef.current.setComune(comuneNascita);
+        setAnagraficiDisabilitati(true);
+        setErroreCf(false);
+        setHelperTextCf('');
+  };
+
+  const handleCodiceFiscaleChange = (event) => {
+        let cf = event.currentTarget.value.toLocaleUpperCase();
+
+        // Limita la lunghezza del Codice Fiscale a 16 caratteri
+        if (cf.length > 16) {
+            event.target.value = cf.slice(0, 16);
+            return;
+        }
+
+        // Se il campo è vuoto, rimuovi eventuali errori e resetta i campi
+        if (cf === '') {
+            setErroreCf(false);
+            setHelperTextCf('');
+            resetAnagrafici();
+            return;
+        }
+
+        // Controllo se il Codice Fiscale inserito è valido
+        const isValid = cf.length === 16 && CodiceFiscaleUtils.isValid(cf);
+
+        if (isValid) {
+            handleValidCodiceFiscale(cf);
+        } else if (cf.length === 16) {
+            handleInvalidCodiceFiscale('Codice fiscale non valido');
+        } else {
+            handleInvalidCodiceFiscale('Codice fiscale incompleto');
+        }
+  };
+
+  return (
+    <div style={{ position: 'relative', marginTop: '1rem', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', rowGap: '2.8rem' }}>
+      
+      {/* Codice fiscale */}
+      <Grid container xs={12} sx={{ width: '100%', minHeight: `${gridRowHeight}px` }}>
+        {/* Titolo */}
+        <Grid xs={12} sx={{ width: '100%', borderBottom: '1px solid #467bae61' }}>
+            <Typography sx={{ fontWeight: '400', fontSize: '1rem', color: '#467bae' }}>Codice fiscale</Typography>
+        </Grid>
+
+        {/* Campo Codice Fiscale */}
+        <Grid item xs={12} sx={{ display: 'flex', alignItems: 'center', columnGap: '7rem' }}>
+            <CssTextField
                 error={erroreCf}
                 helperText={helperTextCf}
                 size='small'
                 id="outlined-required-cf-piva"
                 label="Codice fiscale"
-                defaultValue=""
-                onChange={(event) => {
-                    // Verifica dell'input
-                    let cf = event.currentTarget.value.toLocaleUpperCase()
-                    let regex = /^[a-zA-Z0-9]{0,16}$/g
-                    if(!regex.test(cf)){
-                        event.target.value = cf.slice(0, cf.length-1)
-                        return
-                    }
-                   
-                    // Controllo se il codice fiscale inserito sia valido
-                    let isValid = false 
-                    if(cf.length == 16) isValid = CodiceFiscaleUtils.isValid(cf)
-                
-                    // Aggiornamento automatico della view
-                    if(cf.length == 16 && isValid){
-                       
-                        let comuneNascita = CodiceFiscaleUtils.comuneCf(cf)
+                onChange={handleCodiceFiscaleChange}
+                sx={textFieldSx(theme)}
+            />
 
-                        // Rimuovo gli errori se presenti
-                        if(erroreCf){
-                            setErroreCf(false)
-                            setHelperTextCf("")
-                        }
-
-                        // Aggiorno la parte attuale
-                        parteAttuale.codiceFiscale = cf
-                        parteAttuale.dataNascita = CodiceFiscaleUtils.dataCf(cf)
-                        parteAttuale.luogoDiNascita = comuneNascita
-                        parteAttuale.sesso = CodiceFiscaleUtils.sessoCf(cf)
-                        setParteAttuale({...parteAttuale})
-
-                        // Aggiorno il valore dei dati anagrafici
-                        provinciaNascitaRef.current.setProvincia(comuneNascita.provincia)
-                        comuneNascitaRef.current.setComune(comuneNascita)
-
-                    } else if(cf.length == 16 && !isValid){
-                        console.log('Gestiore errore formato codice fiscale')
-                        // Abilito l'errore ed il messaggio
-                        setErroreCf(true)
-                        setHelperTextCf('Codice fiscale non valido')
-                        
-                        // Ripristino i campi calcolati
-                        parteAttuale.codiceFiscale = null
-                        parteAttuale.dataNascita = null
-                        parteAttuale.luogoDiNascita = null
-                        parteAttuale.sesso = null
-                        setParteAttuale({...parteAttuale})
-
-                        provinciaNascitaRef.current.setProvincia(null)
-                        comuneNascitaRef.current.setComune(null) 
-                    } else if(parteAttuale.codiceFiscale) {
-                        // Rimuovo gli errori se presenti
-                        if(erroreCf){
-                            setErroreCf(false)
-                            setHelperTextCf("")
-                        }
-
-                        // Ripristino i campi calcolati in precedenza la parte attuale
-                        console.log('Ripristino i campi anagrafici')
-                        parteAttuale.codiceFiscale = null
-                        parteAttuale.dataNascita = null
-                        parteAttuale.luogoDiNascita = null
-                        parteAttuale.sesso = null
-                        setParteAttuale({...parteAttuale})
-
-                        provinciaNascitaRef.current.setProvincia(null)
-                        comuneNascitaRef.current.setComune(null)
-                    }
-                    
-                }}
-                sx={textFieldSx}
-                />
-            </Grid>
-
-            {/* Dati anagrafici */}
-            <Grid xs={12} sx={{width: '100%', minHeight: `${gridRowHeight}px`}}>
-                <Grid xs={12} sx={{width: '100%', borderBottom:'1px solid #467bae61',}}><Typography sx={{fontWeight: '400', fontSize: formLabelFontSize, color: '#467bae'}}>Dati anagrafici</Typography></Grid>
-
-                <CssTextField
-                    required
-                    size='small'
-                    id="outlined-required-cognome"
-                    label="Cognome"
-                    defaultValue=""
-                    onChange={(event) => {
-                         // Verifica dell'input
-                        let text = event.currentTarget.value.toLocaleUpperCase()
-                        let regex = /^[a-zA-Z]*$/g
-                        if(!regex.test(text)){
-                            event.target.value = text.slice(0, text.length-1)
-                            return
-                        }
-                        parteAttuale.cognome = text
-                        setParteAttuale({...parteAttuale})
-                    }}
-                    sx={textFieldSx}
-                />
-
-                <CssTextField
-                    required
-                    size='small'
-                    id="outlined-required-nome"
-                    label="Nome"
-                    onChange={(event) => {
-                        // Verifica dell'input
-                        let text = event.currentTarget.value.toLocaleUpperCase()
-                        let regex = /^[a-zA-Z]*$/g
-                        if(!regex.test(text)){
-                            event.target.value = text.slice(0, text.length-1)
-                            return
-                        }
-                        parteAttuale.nome = text
-                        setParteAttuale({...parteAttuale})
-                    }}
-                    defaultValue=""
-                    sx={textFieldSx}
-                />
-
-                <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='it' localeText={itIT.components.MuiLocalizationProvider.defaultProps.localeText}>
-                    <DatePicker 
-                    disabled={true}
-                    label='Data di nascita'
-                    slots={{textField: CssTextField}}
-                    value={parteAttuale.dataNascita ? dayjs(parteAttuale.dataNascita) : null}
+            <div style={{width: '42rem', margin: '14px 20px 10px 0px',}}>
+                <Alert
+                    severity="info"
                     sx={{
-                        '& .MuiFormLabel-root:not(.Mui-error, .Mui-focused, .Mui-disabled)':{color: labelColor}, 
-                        '& .MuiFormLabel-root.Mui-disabled':{color: labelDisableColor},
-                        '& .MuiOutlinedInput-input':{fontWeight: '500'},
-                        '& .MuiDayCalendar-weekDayLabel': {
-                            color: 'red !important',
-                            borderRadius: 2,
-                            borderWidth: 1,
-                            borderColor: '#e91e63',
-                            border: '1px solid',
-                            backgroundColor: '#f8bbd0',
-                        },
+                        fontSize: '0.875rem', // Testo ridimensionato
+                        padding: '4px 8px', // Margini ridotti per rendere l'Alert più piccolo
+                        //backgroundColor: '#e0f7fa', // Colore di sfondo azzurro chiaro
+                        color: '#0277bd', // Colore blu/azzurro per il testo
+                        width: '100%', // Fa sì che il testo si adatti alla larghezza
+                        whiteSpace: 'normal', // Permette al testo di andare a capo
+                        wordWrap: 'break-word', // Forza l'andata a capo se necessario
                     }}
-                    onChange={ (value) => {
-                        parteAttuale.dataNascita = new Date(value)
-                        parteAttuale.dataNascitaLocale = new Date(value).toLocaleDateString('it-IT')
-                        setParteAttuale({...parteAttuale})
-                    }}
-                    slotProps={{
-                        textField: {
-                            //error: dataDepositoError,
-                            helperText: anagraficaHelperText,
-                            //required: true,
-                            size: 'small',
-                            disabled: 'false',
-                            sx: textFieldSx
-                        },
-                    }}
-                    />
-                </LocalizationProvider>
+                >
+                    Inserendo il codice fiscale, i campi relativi ai dati anagrafici (esclusi nome e cognome) si compileranno automaticamente.
+                </Alert>
+            </div>
+            
+        </Grid>
 
-                <FormControl size='small' disabled={true} sx={{...inputSx, '& .MuiFormLabel-root:not(.Mui-error, .Mui-focused, .Mui-disabled)':{color: labelColor},  '&.Mui-disabled .MuiFormLabel-root':{color: labelDisableColor}, }}>
-                        <InputLabel sx={{'&.Mui-disabled':{color: labelDisableColor}}} id="sesso-input-label">Sesso</InputLabel>
-                        <CssSelect
-                        disabled={true}
-                        labelId="sesso-input-label"
-                        id="sesso-select"
-                        value={parteAttuale.sesso ? parteAttuale.sesso : ""}
-                        inputProps={{
-                            MenuProps: {
-                                MenuListProps: {
-                                    sx: {
-                                        backgroundColor: theme.palette.dropdown.primary,
-                                        color: theme.palette.primary.main,
-                                    }
+       
+      </Grid>
+
+      {/* Dati anagrafici */}
+      <Grid xs={12} sx={{ width: '100%', minHeight: `${gridRowHeight}px` }}>
+        <Grid xs={12} sx={{ width: '100%', borderBottom: '1px solid #467bae61' }}>
+            <Typography sx={{ fontWeight: '400', fontSize: '1rem', color: '#467bae' }}>Dati anagrafici</Typography>
+        </Grid>
+
+        {/* Cognome */}
+        <CssTextField
+            required
+            size='small'
+            id="outlined-required-cognome"
+            label="Cognome"
+            onChange={(event) => setParteAttuale({ ...parteAttuale, cognome: event.target.value.toLocaleUpperCase() })}
+            sx={{ ...textFieldSx(theme), minWidth: '246px', maxWidth: '250px' }}
+        />
+
+        {/* Nome */}
+        <CssTextField
+            required
+            size='small'
+            id="outlined-required-nome"
+            label="Nome"
+            onChange={(event) => setParteAttuale({ ...parteAttuale, nome: event.target.value.toLocaleUpperCase() })}
+            sx={{ ...textFieldSx(theme), minWidth: '246px', maxWidth: '250px' }}
+        />
+
+        {/* Data di nascita */}
+        <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='it' localeText={itIT.components.MuiLocalizationProvider.defaultProps.localeText}>
+            <DatePicker
+                disabled={anagraficiDisabilitati}
+                label="Data di nascita"
+                value={parteAttuale.dataNascita ? dayjs(parteAttuale.dataNascita) : null}
+                onChange={(value) => setParteAttuale({ ...parteAttuale, dataNascita: new Date(value) })}
+                slotProps={{
+                    textField: {
+                        helperText: anagraficaHelperText,
+                        size: 'small',
+                        sx: {
+                            ...textFieldSx(theme),
+                            minWidth: '246px',
+                            maxWidth: '250px',
+                            '& .MuiOutlinedInput-root': {
+                                '&:hover fieldset': {
+                                    borderColor: theme.palette.logo.secondary, // Colore del bordo su hover (arancione)
                                 },
-                                PaperProps: {
-                                    sx: {
-                                        '& .MuiMenuItem-root': {
-                                            //padding: '1rem',
-                                            fontSize: '.9rem',
-                                            fontWeight: '400',
-                                        },
-                                        maxHeight: '125px',
-                                    },
+                                '&.Mui-focused fieldset': {
+                                    borderColor: theme.palette.logo.secondary, // Colore del bordo su focus
                                 },
                             },
-                        }}
-                        onChange={(event) => {
-                            parteAttuale.sesso = event.target.value
-                            setParteAttuale({...parteAttuale})
-                        }}
-                        size='small'
-                        label='Sesso'
-                        sx={{'& .MuiOutlinedInput-input':{fontWeight: '500', color: theme.palette.text.primary}, }}
-                        >
-                        <MenuItem key={`M`} value={'M'}>UOMO</MenuItem>
-                        <MenuItem key={`F`} value={'F'}>DONNA</MenuItem>
-                        </CssSelect>
-                        <FormHelperText sx={{color: 'rgba(0, 0, 0, 0.38)'}}>{anagraficaHelperText}</FormHelperText>
-                </FormControl>
 
-                <Grid xs={12}>
-                    <ProvinciaSelect 
-                    ref={provinciaNascitaRef}
-                    sx={{...inputSx, width: '260px', maxWidth: 'unset'}} 
-                    label="Provincia di nascita"
-                    disabled={true}
-                    helperText={anagraficaHelperText}
-                    onChange={(value) => {
-                        console.log(`Provincia selezionata: ${value}`)
-                        comuneNascitaRef.current.setProvincia(value)
-                        setParteAttuale({...parteAttuale, luogoDiNascita: {...new Comune(), provincia: value}})
-                    }}
-                    />
-
-                    <ComuneSelect
-                        sx={{...inputSx, width: '260px', maxWidth: 'unset',}} 
-                        provincia={parteAttuale.provinciaNascita}
-                        disabled={true}
-                        helperText={anagraficaHelperText}
-                        label="Comune o stato estero di nascita"
-                        ref={comuneNascitaRef}
-                        onChange={(value) => {
-                            setParteAttuale({...parteAttuale, luogoDiNascita: value})
-                        }}
-                    />
-                </Grid>
-               
-
-            </Grid>
-
-            {/* Dati demografici */}
-            <Grid xs={12} sx={{width: '100%', minHeight: `${gridRowHeight}px`}}>
-                <Grid xs={12} sx={{width: '100%', borderBottom:'1px solid #467bae61',}}><Typography sx={{fontWeight: '400', fontSize: formLabelFontSize, color: '#467bae'}}>Dati demografici</Typography></Grid>
-
-                <ProvinciaSelect 
-                    ref={provinciaResidenzaRef} 
-                    label="Provincia di residenza" 
-                    onChange={(value) => {
-                        comuneResidenzaRef.current.setProvincia(value); // Imposta la provincia del comune di residenza
-                        setParteAttuale({...parteAttuale, residenza: {...new Comune(), provincia: value}})
-                    }}
-                    sx={{...textFieldSx, minWidth: '246px', maxWidth: '250px'}}
-                />
-
-                <ComuneSelect 
-                    ref={comuneResidenzaRef} 
-                    provincia={parteAttuale.provinciaResidenza} 
-                    label="Comune di residenza" 
-                    onChange={(value) => {
-                        let comuneInstance = Object.assign(new Comune(), value);
-                        setCapResidenza(value && value.cap ? value.cap : "");
-                        setParteAttuale({...parteAttuale, residenza: comuneInstance})
-                    }}
-                    sx={{...textFieldSx, minWidth: '246px', maxWidth: '250px'}}
-                />
-
-                <CssTextField
-                    size='small'
-                    id="outlined-required-indirizzo"
-                    label="Indirizzo"
-                    onChange={(event) => {
-                        parteAttuale.indirizzo = event.currentTarget.value.toLocaleUpperCase()
-                        setParteAttuale({...parteAttuale})
-                    }}
-                    defaultValue=""
-                    sx={{...textFieldSx, minWidth: '246px', maxWidth: '250px'}}
-                />
-
-                <CssTextField
-                    size='small'
-                    id="outlined-required-cup"
-                    label="CAP"
-                    disabled={true}
-                    value={capResidenza}
-                    sx={{...textFieldSx, minWidth: '246px', maxWidth: '250px'}}
-                />      
-            </Grid>
-
-            {/* Recapiti */}
-            <Grid xs={12} sx={{width: '100%', minHeight: `${gridRowHeight}px`}}>
-                <Grid xs={12} sx={{width: '100%', borderBottom:'1px solid #467bae61',}}><Typography sx={{fontWeight: '400', fontSize: formLabelFontSize, color: '#467bae'}}>Recapiti</Typography></Grid>
-
-                <CssTextField
-                size='small'
-                id="outlined-required-pec"
-                label="PEC"
-                error={parteAttuale.pec ? !validateEmail(parteAttuale.pec) : false} // Imposta errore se non valido
-                helperText={parteAttuale.pec && !validateEmail(parteAttuale.pec) ? "PEC non valida" : ""}
-                onChange={(event) => {
-                    const value = event.currentTarget.value.toLocaleUpperCase();
-                    parteAttuale.pec = value;
-                    setParteAttuale({ ...parteAttuale });
+                            '&:hover .MuiSvgIcon-root': {
+                                color: theme.palette.logo.secondary, // Colore dell'icona su hover (arancione)
+                            },
+                            '&.Mui-focused .MuiSvgIcon-root': {
+                                color: theme.palette.logo.secondary, // Colore dell'icona in focus (arancione)
+                            },
+                        },
+                        disabled: anagraficiDisabilitati,
+                    },
                 }}
-                defaultValue=""
-                sx={{ ...textFieldSx, minWidth: '350px', maxWidth: '350px' }}
-                />
+            />
+        </LocalizationProvider>
 
-                <CssTextField
-                size='small'
-                id="outlined-required-email"
-                label="Email"
-                error={parteAttuale.email ? !validateEmail(parteAttuale.email) : false} // Imposta errore se non valida
-                helperText={parteAttuale.email && !validateEmail(parteAttuale.email) ? "Email non valida" : ""}
-                onChange={(event) => {
-                    const value = event.currentTarget.value.toLocaleUpperCase();
-                    parteAttuale.email = value;
-                    setParteAttuale({ ...parteAttuale });
+        {/* Sesso */}
+        <FormControl
+            variant="outlined"  
+            size="small"
+            disabled={anagraficiDisabilitati}
+            sx={{
+                minWidth: '133.5px',
+                maxWidth: '168px',
+                margin: '14px 20px 10px 0px',
+                '& .MuiOutlinedInput-root': {
+                    '& fieldset': {
+                        borderWidth: '1px',  // Imposta lo spessore del bordo a 1px
+                    },
+                    '&:hover fieldset': {
+                        borderColor: theme.palette.logo.secondary, // Colore del bordo su hover
+                    },
+                    '&.Mui-focused fieldset': {
+                        borderColor: theme.palette.logo.secondary, // Colore del bordo su focus
+                        borderWidth: '1px', // Mantiene lo spessore del bordo a 1px anche in focus
+                    },
+                },
+                '& .MuiInputLabel-outlined': {
+                    transform: 'translate(14px, 8px) scale(1)', // Posizionamento centrato di default
+                },
+                '& .MuiInputLabel-outlined.MuiInputLabel-shrink': {
+                    transform: 'translate(14px, -8px) scale(0.75)', // Posizionamento della label ridotta
+                }
+            }}
+        >
+            <InputLabel id="sesso-input-label">Sesso</InputLabel>
+            <CssSelect
+                labelId="sesso-input-label"
+                id="sesso-select"
+                value={parteAttuale.sesso ? parteAttuale.sesso : ""}
+                onChange={(event) => setParteAttuale({ ...parteAttuale, sesso: event.target.value })}
+                disabled={anagraficiDisabilitati}
+                label="Sesso"
+                MenuProps={{
+                    PaperProps: {
+                        sx: {
+                            bgcolor: theme.palette.dropdown.primary, // Sfondo delle opzioni come in ProvinciaSelect
+                        },
+                    },
+                    MenuListProps: {
+                        sx: {
+                            '& .MuiMenuItem-root': {
+                                color: theme.palette.primary.main, // Colore del testo delle opzioni
+                                bgcolor: theme.palette.dropdown.primary, // Sfondo predefinito delle opzioni
+                                '&:hover': {
+                                    bgcolor: theme.palette.dropdown.hover, // Sfondo quando viene passato il mouse
+                                    color: theme.palette.primary.main, // Cambia il colore del testo su hover
+                                },
+                                '&.Mui-selected': {
+                                    bgcolor: theme.palette.dropdown.hover, // Sfondo quando un'opzione è selezionata
+                                    color: theme.palette.primary.main, // Colore del testo quando selezionato
+                                },
+                                '&.Mui-selected:hover': {
+                                    bgcolor: theme.palette.dropdown.hover, // Sfondo mantenuto in hover quando selezionato
+                                    color: theme.palette.primary.main, // Colore del testo su hover quando selezionato
+                                },
+                            },
+                        },
+                    },
                 }}
-                defaultValue=""
-                sx={{ ...textFieldSx, minWidth: '350px', maxWidth: '350px' }}
-                />
+            >
+                <MenuItem value={'M'}>UOMO</MenuItem>
+                <MenuItem value={'F'}>DONNA</MenuItem>
+            </CssSelect>
+        </FormControl>
 
-                </Grid>
+        {/* Provincia di nascita */}
+        <ProvinciaSelect
+            ref={provinciaNascitaRef}
+            sx={{ ...textFieldSx(theme), minWidth: '246px', maxWidth: '250px' }}
+            label="Provincia di nascita"
+            disabled={anagraficiDisabilitati}
+            helperText={anagraficaHelperText}
+            onChange={(value) => {
+                comuneNascitaRef.current.setProvincia(value);
+                setParteAttuale({ ...parteAttuale, luogoDiNascita: { ...new Comune(), provincia: value } });
+            }}
+        />
 
-            {/* Ditta individule */}
-            <Grid xs={12} sx={{width: '100%', minheight: '80rem'}}>
-                <Grid xs={12} sx={{width: '100%', borderBottom:'1px solid #467bae61',}}><Typography sx={{fontWeight: '400', fontSize: formLabelFontSize, color: '#467bae'}}>Ditta individuale</Typography></Grid>
-                
-                <CssTextField
-                size='small'
-                id="outlined-required-piva"
-                label="Partita IVA"
-                error={parteAttuale.partitaIVA ? !validatePartitaIVA(parteAttuale.partitaIVA) : false}
-                helperText={parteAttuale.partitaIVA && !validatePartitaIVA(parteAttuale.partitaIVA) ? "Partita IVA non valida" : ""}
-                onChange={(event) => {
-                    const value = event.currentTarget.value;
-                    parteAttuale.partitaIVA = value;
-                    setParteAttuale({ ...parteAttuale });
-                }}
-                defaultValue=""
-                sx={{ ...textFieldSx, minWidth: '246px', maxWidth: '250px' }}
-                />
+        {/* Comune di nascita */}
+        <ComuneSelect
+            ref={comuneNascitaRef}
+            provincia={parteAttuale.provinciaNascita}
+            label="Comune di nascita"
+            disabled={anagraficiDisabilitati}
+            onChange={(value) => setParteAttuale({ ...parteAttuale, luogoDiNascita: value })}
+            sx={{ ...textFieldSx(theme), minWidth: '246px', maxWidth: '250px' }}
+        />
+      </Grid>
 
+      {/* Dati demografici */}
+      <Grid xs={12} sx={{ width: '100%', minHeight: `${gridRowHeight}px` }}>
+      <Grid xs={12} sx={{ width: '100%', borderBottom: '1px solid #467bae61' }}>
+          <Typography sx={{ fontWeight: '400', fontSize: '1rem', color: '#467bae' }}>Dati demografici</Typography>
+        </Grid>
+        <ProvinciaSelect
+          ref={provinciaResidenzaRef}
+          label="Provincia di residenza"
+          onChange={(value) => {
+            comuneResidenzaRef.current.setProvincia(value);
+            setParteAttuale({ ...parteAttuale, residenza: { ...new Comune(), provincia: value } });
+          }}
+          sx={{ ...textFieldSx(theme), minWidth: '246px', maxWidth: '250px' }}
+        />
+        <ComuneSelect
+          ref={comuneResidenzaRef}
+          provincia={parteAttuale.provinciaResidenza}
+          label="Comune di residenza"
+          onChange={(value) => {
+            const comuneInstance = Object.assign(new Comune(), value);
+            setCapResidenza(value?.cap || '');
+            setParteAttuale({ ...parteAttuale, residenza: comuneInstance });
+          }}
+          sx={{ ...textFieldSx(theme), minWidth: '246px', maxWidth: '250px' }}
+        />
+        <CssTextField
+          size="small"
+          id="outlined-required-indirizzo"
+          label="Indirizzo"
+          onChange={(event) => setParteAttuale({ ...parteAttuale, indirizzo: event.target.value.toLocaleUpperCase() })}
+          sx={{ ...textFieldSx(theme), minWidth: '246px', maxWidth: '250px' }}
+        />
+        <CssTextField
+          size="small"
+          id="outlined-required-cup"
+          label="CAP"
+          disabled={true}
+          value={capResidenza}
+          sx={{ ...textFieldSx(theme), minWidth: '246px', maxWidth: '250px' }}
+        />
+      </Grid>
 
-                <CssTextField
-                size='small'
-                id="outlined-required-denominazione"
-                label="Denominazione"
-                error={parteAttuale.denominazione ? !validateDenominazione(parteAttuale.denominazione) : false}
-                helperText={parteAttuale.denominazione && !validateDenominazione(parteAttuale.denominazione) ? "Denominazione non valida" : ""}
-                onChange={(event) => {
-                    parteAttuale.denominazione = event.currentTarget.value.toLocaleUpperCase();
-                    setParteAttuale({ ...parteAttuale });
-                }}
-                defaultValue=""
-                sx={{ ...textFieldSx, minWidth: '400px', maxWidth: '420px' }}
-                />
+      {/* Recapiti */}
+      <Grid xs={12} sx={{ width: '100%', minHeight: `${gridRowHeight}px` }}>
+        <Grid xs={12} sx={{ width: '100%', borderBottom: '1px solid #467bae61' }}>
+          <Typography sx={{ fontWeight: '400', fontSize: '1rem', color: '#467bae' }}>Recapiti</Typography>
+        </Grid>
+        <CssTextField
+          size="small"
+          id="outlined-required-pec"
+          label="PEC"
+          error={parteAttuale.pec && !validateEmail(parteAttuale.pec)}
+          helperText={parteAttuale.pec && !validateEmail(parteAttuale.pec) ? 'PEC non valida' : ''}
+          onChange={(event) => setParteAttuale({ ...parteAttuale, pec: event.currentTarget.value.toLocaleUpperCase() })}
+          sx={{ ...textFieldSx(theme), minWidth: '350px', maxWidth: '350px' }}
+        />
+        <CssTextField
+          size="small"
+          id="outlined-required-email"
+          label="Email"
+          error={parteAttuale.email && !validateEmail(parteAttuale.email)}
+          helperText={parteAttuale.email && !validateEmail(parteAttuale.email) ? 'Email non valida' : ''}
+          onChange={(event) => setParteAttuale({ ...parteAttuale, email: event.currentTarget.value.toLocaleUpperCase() })}
+          sx={{ ...textFieldSx(theme), minWidth: '350px', maxWidth: '350px' }}
+        />
+      </Grid>
 
+      {/* Ditta individuale */}
+      <Grid xs={12} sx={{ width: '100%', minHeight: `${gridRowHeight}px` }}>
+        <Grid xs={12} sx={{ width: '100%', borderBottom: '1px solid #467bae61' }}>
+          <Typography sx={{ fontWeight: '400', fontSize: '1rem', color: '#467bae' }}>Ditta individuale</Typography>
+        </Grid>
+        <CssTextField
+          size="small"
+          id="outlined-required-piva"
+          label="Partita IVA"
+          error={parteAttuale.partitaIVA && !validatePartitaIVA(parteAttuale.partitaIVA)}
+          helperText={parteAttuale.partitaIVA && !validatePartitaIVA(parteAttuale.partitaIVA) ? 'Partita IVA non valida' : ''}
+          onChange={(event) => setParteAttuale({ ...parteAttuale, partitaIVA: event.currentTarget.value })}
+          sx={{ ...textFieldSx(theme), minWidth: '246px', maxWidth: '250px' }}
+        />
+        <CssTextField
+          size="small"
+          id="outlined-required-denominazione"
+          label="Denominazione"
+          error={parteAttuale.denominazione && !validateDenominazione(parteAttuale.denominazione)}
+          helperText={parteAttuale.denominazione && !validateDenominazione(parteAttuale.denominazione) ? 'Denominazione non valida' : ''}
+          onChange={(event) => setParteAttuale({ ...parteAttuale, denominazione: event.currentTarget.value.toLocaleUpperCase() })}
+          sx={{ ...textFieldSx(theme), minWidth: '400px', maxWidth: '420px' }}
+        />
+      </Grid>
 
-            </Grid>
+      {/* Assistenza legale */}
+      <Grid xs={12} sx={{ width: '100%', minHeight: `${gridRowHeight}px` }}>
+        <Grid xs={12} sx={{ width: '100%', borderBottom: '1px solid #467bae61' }}>
+          <Typography sx={{ fontWeight: '400', fontSize: '1rem', color: '#467bae' }}>Rappresentante legale</Typography>
+        </Grid>
+        <CssTextField
+          required
+          size="small"
+          id="outlined-required-avvocato"
+          label="Avvocato"
+          error={parteAttuale.assistenzaLegale && !validateAvvocato(parteAttuale.assistenzaLegale)}
+          helperText={parteAttuale.assistenzaLegale && !validateAvvocato(parteAttuale.assistenzaLegale) ? 'Nome non valido' : ''}
+          onChange={(event) => setParteAttuale({ ...parteAttuale, assistenzaLegale: event.currentTarget.value.toLocaleUpperCase() })}
+          sx={{ ...textFieldSx(theme), minWidth: '246px', maxWidth: '250px' }}
+        />
+      </Grid>
 
-             {/* Assistenza legale */}
-            <Grid xs={12} sx={{width: '100%', minHeight: `${gridRowHeight}px`}}>
-            <Grid xs={12} sx={{borderBottom:'1px solid #467bae61',}}><Typography sx={{fontWeight: '400', fontSize: formLabelFontSize, color: '#467bae'}}>Rappresentante legale</Typography></Grid>
-                <CssTextField
-                required
-                size='small'
-                id="outlined-required-avvocato"
-                label="Avvocato"
-                error={parteAttuale.assistenzaLegale ? !validateAvvocato(parteAttuale.assistenzaLegale) : false}
-                helperText={parteAttuale.assistenzaLegale && !validateAvvocato(parteAttuale.assistenzaLegale) ? "Nome non valido" : ""}
-                onChange={(event) => {
-                    parteAttuale.assistenzaLegale = event.currentTarget.value.toLocaleUpperCase();
-                    setParteAttuale({ ...parteAttuale });
-                }}
-                defaultValue=""
-                sx={{ ...textFieldSx, minWidth: '246px', maxWidth: '250px' }}
-                />
-            </Grid>
+      {/* Spese di mediazione */}
+      <Grid xs={12} sx={{ width: '100%', minHeight: `${gridRowHeight}px` }}>
+        <Grid xs={12} sx={{ width: '100%', borderBottom: '1px solid #467bae61' }}>
+          <Typography sx={{ fontWeight: '400', fontSize: '1rem', color: '#467bae' }}>Spese di mediazione</Typography>
+        </Grid>
+        <ImportoField importo={'0,00'} sx={textFieldSx(theme)} label={"Spese di avvio"} required={true} />
+        <ImportoField importo={'0,00'} sx={textFieldSx(theme)} label={"Spese postali"} required={true} />
+        <ImportoField importo={'0,00'} sx={textFieldSx(theme)} label={"Pagamento indennità"} required={true} />
+      </Grid>
 
-            {/* Spese di mediazione */}
-            <Grid xs={12} sx={{width: '100%', minHeight: `${gridRowHeight}px`}}>
-                <Grid xs={12} sx={{borderBottom:'1px solid #467bae61',}}><Typography sx={{fontWeight: '400', fontSize: formLabelFontSize, color: '#467bae'}}>Spese di mediazione</Typography></Grid>
-                <ImportoField importo={'0,00'} sx={inputSx} label={"Spese di avvio"} required={true}></ImportoField>
-                <ImportoField importo={'0,00'} sx={inputSx} label={"Spese postali"} required={true}></ImportoField>
-                <ImportoField importo={'0,00'} sx={inputSx} label={"Pagamento indennità"} required={true}></ImportoField>
-            </Grid>
-
-            {/* Note */}
-            <Grid xs={12} sx={{width: '100%', minHeight: `${gridRowHeight+80}px`}}>
-                <Grid xs={12} sx={{borderBottom:'1px solid #467bae61',}}><Typography sx={{fontWeight: '400', fontSize: formLabelFontSize, color: '#467bae'}}>Informazioni aggiuntive</Typography></Grid>
-                <CssTextField
-                    id="outlined-required-note"
-                    label="Note"
-                    multiline
-                    rows={3}
-                    sx={{...textFieldSx, minWidth: '100%'}}
-                    onChange={(event) => {
-                        event.target.value = event.target.value.trim() == '' ? '' : event.target.value.toLocaleUpperCase()
-                        parteAttuale.note = event.target.value
-                        setParteAttuale({...parteAttuale})
-                    }}
-                />
-            </Grid>
-
-        </div>
-    )
+      {/* Note */}
+      <Grid xs={12} sx={{ width: '100%', minHeight: `${gridRowHeight + 80}px` }}>
+        <Grid xs={12} sx={{ width: '100%', borderBottom: '1px solid #467bae61' }}>
+          <Typography sx={{ fontWeight: '400', fontSize: '1rem', color: '#467bae' }}>Informazioni aggiuntive</Typography>
+        </Grid>
+        <CssTextField
+          id="outlined-required-note"
+          label="Note"
+          multiline
+          rows={3}
+          sx={{ ...textFieldSx(theme), minWidth: '100%' }}
+          onChange={(event) => setParteAttuale({ ...parteAttuale, note: event.target.value.trim() || '' })}
+        />
+      </Grid>
+    </div>
+  );
 }
 
-const CssTextField = styled(TextField)(({ theme }) => ({
+export default React.forwardRef(FormPersonaFisica);
 
-    //  '& .MuiInputLabel-root[data-shrink="true"]':{
-    //     color: theme.palette.logo.secondary,
-  
-    //     '& ~ .MuiInputBase-root fieldset':{ borderColor: theme.palette.logo.secondary,}
-    //   },
-      '& .MuiInputLabel-root.Mui-focused:not(.Mui-error), & .MuiFormLabel-root.Mui-focused:not(.Mui-error)':{ color: theme.palette.logo.secondary,},
-      '& .MuiOutlinedInput-root': {
-          'input':{textTransform: 'uppercase'},
-          '&.Mui-disabled':{backgroundColor: '#efefef73'},
-          '&.Mui-disabled fieldset':{borderColor: '#eaeaea'},
-          '&:hover:not(.Mui-disabled, .Mui-error) fieldset': {
-              borderColor: theme.palette.logo.secondary,
-          },
-          '&.Mui-focused.Mui-error fieldset': {
-            borderWidth: '1.2px'
-          },
-          '&.Mui-focused:not(.Mui-error) fieldset': {
-              border: `1.2px solid ${theme.palette.logo.secondary}`,
-          },
-          '&.Mui-focused:not(.Mui-error) .MuiInputAdornment-root .MuiSvgIcon-root': {
-              fill: `${theme.palette.logo.secondary} !important`,
-          },
-      },
-}));
-
-const CssSelect = styled(Select)(({ theme }) => ({
-    '&.Mui-disabled':{backgroundColor: '#efefef73'},
-    '&.Mui-disabled fieldset':{borderColor: '#eaeaea !important'},
-    '&:hover:not(.Mui-disabled) .MuiOutlinedInput-notchedOutline': {
-      borderColor: `${theme.palette.logo.secondary}`,
-    },
-    '&:hover:not(.Mui-disabled) .MuiSvgIcon-root, &.Mui-focused .MuiSvgIcon-root': {
-      fill: `${theme.palette.logo.secondary} !important`,
-    },
-    '& .MuiInputLabel-root.Mui-focused':{ color: `${theme.palette.logo.secondary} !important`,},
-    '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
-      border: `1.2px solid ${theme.palette.logo.secondary}`,
-  },
-}));
-
-export default React.forwardRef(FormPersonaFisica)

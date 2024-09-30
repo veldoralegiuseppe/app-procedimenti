@@ -7,7 +7,7 @@ import { useTheme } from '@mui/material/styles';
 import ProvinciaSelect from '/src/components/provinciaSelect/ProvinciaSelect.jsx';
 import ComuneSelect from '/src/components/comuneSelect/ComuneSelect.jsx';
 import ImportoField from '/src/components/importoField/ImportoField.jsx';
-import { PersonaGiuridica } from '../../vo/personaGiuridica';
+import { PersonaGiuridica } from '/src/vo/personaGiuridica.js';
 
 // Funzioni di validazione
 const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -46,7 +46,6 @@ function FormPersonaGiuridica(props, ref) {
                 </Grid>
 
                 <CssTextField
-                    required
                     size='small'
                     label="Partita IVA"
                     error={parteAttuale.partitaIVA ? !validatePartitaIVA(parteAttuale.partitaIVA) : false}

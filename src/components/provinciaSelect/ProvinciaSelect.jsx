@@ -103,39 +103,29 @@ function ProvinciaSelect(props, ref) {
 }
 
 const CssTextField = styled(TextField)(({ theme }) => ({
-
-    //  '& .MuiInputLabel-root[data-shrink="true"]':{
-    //     //color: theme.palette.logo.secondary,
-  
-    //     '& ~ .MuiInputBase-root fieldset':{ borderColor: 'red',}
-    //   },
-    '&.Mui-disabled': {
-        backgroundColor: '#efefef73',
-        '&:hover .MuiOutlinedInput-notchedOutline': {
-          borderColor: 'transparent', // Nessun effetto hover quando disabilitato
-        },
+    '& .MuiInputLabel-root.Mui-focused:not(.Mui-error), & .MuiFormLabel-root.Mui-focused:not(.Mui-error)': {
+      color: theme.palette.logo.secondary,
     },
-    '&.Mui-disabled fieldset': {
-        borderColor: '#eaeaea !important',
-    },
-
-    '& .MuiInputLabel-root.Mui-focused, & .MuiFormLabel-root.Mui-focused':{ color: theme.palette.logo.secondary,},
-    
     '& .MuiOutlinedInput-root': {
-          'input':{textTransform: 'uppercase'},
-          '&.Mui-disabled':{backgroundColor: '#efefef73'},
-          '&.Mui-disabled fieldset':{borderColor: '#eaeaea'},
-          '&:hover:not(.Mui-disabled) fieldset': {
-              borderColor: theme.palette.logo.secondary,
-          },
-          '&.Mui-focused fieldset': {
-              border: `1.2px solid ${theme.palette.logo.secondary}`,
-          },
-          '&.Mui-focused .MuiInputAdornment-root .MuiSvgIcon-root': {
-              fill: `${theme.palette.logo.secondary} !important`,
-          },
+      input: { textTransform: 'uppercase' },
+      '&.Mui-disabled': { backgroundColor: '#efefef73' },
+      '&.Mui-disabled fieldset': { borderColor: '#eaeaea' },
+      '&:hover:not(.Mui-disabled, .Mui-error) fieldset': {
+        borderColor: theme.palette.logo.secondary,
+      },
+      '&.Mui-focused.Mui-error fieldset': { borderWidth: '1.2px' },
+      '&.Mui-focused:not(.Mui-error) fieldset': { border: `1.2px solid ${theme.palette.logo.secondary}` },
+      '&.Mui-focused:not(.Mui-error) .MuiInputAdornment-root .MuiSvgIcon-root': {
+        fill: `${theme.palette.logo.secondary} !important`,
+      },
+      '& .MuiSvgIcon-root': {
+        fill: theme.palette.text.primary, // Colore di default della freccia
+      },
+      '&:hover .MuiSvgIcon-root, &.Mui-focused .MuiSvgIcon-root': {
+        fill: theme.palette.logo.secondary, // Colore secondario quando selezionato o su hover
+      },
     },
-}));
+  }));
 
 
 export default React.forwardRef(ProvinciaSelect)
