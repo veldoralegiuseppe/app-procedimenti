@@ -171,14 +171,14 @@ function FormPersonaFisica(props, ref) {
     <div style={{ position: 'relative', marginTop: '1rem', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', rowGap: '2.8rem' }}>
       
       {/* Codice fiscale */}
-      <Grid container xs={12} sx={{ width: '100%', minHeight: `${gridRowHeight}px` }}>
+      <Grid xs={12} sx={{ width: '100%', minHeight: `${gridRowHeight}px` }}>
         {/* Titolo */}
         <Grid xs={12} sx={{ width: '100%', borderBottom: '1px solid #467bae61' }}>
             <Typography sx={{ fontWeight: '400', fontSize: '1rem', color: '#467bae' }}>Codice fiscale</Typography>
         </Grid>
 
         {/* Campo Codice Fiscale */}
-        <Grid item xs={12} sx={{ display: 'flex', alignItems: 'center', columnGap: '7rem' }}>
+        <Grid xs={12} sx={{ display: 'flex', alignItems: 'center', columnGap: '7rem' }}>
             <CssTextField
                 error={erroreCf}
                 helperText={helperTextCf}
@@ -303,7 +303,24 @@ function FormPersonaFisica(props, ref) {
                 }
             }}
         >
-            <InputLabel id="sesso-input-label">Sesso</InputLabel>
+            <InputLabel 
+              id="sesso-input-label" 
+              sx={{
+                color: labelColor,
+                '&.Mui-disabled': {
+                  color: labelColor,
+                },
+                '&:hover': {
+                  //color: 'blue', // Cambia colore su hover
+                },
+                '&.Mui-focused': {
+                  //color: 'orange',
+                }
+              }}
+            >
+            Sesso
+            </InputLabel>
+
             <CssSelect
                 labelId="sesso-input-label"
                 id="sesso-select"

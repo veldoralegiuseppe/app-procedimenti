@@ -16,7 +16,7 @@ function StepParti(props, ref){
     return(
         <div style={{display: 'flex', flexDirection:'column', alignItems: 'center', justifyContent:'center', rowGap:'4rem', padding: '4.5rem 0'}}>
             {/* Lista delle parti */}
-            <Grid container xs={12}>
+            <Grid xs={12}>
                 <Grid xs={12} sx={{borderBottom:'1px solid #467bae61', margin: '0 0 0 1rem', width: 'calc(100% - 1rem)'}}><Typography sx={{fontWeight: '400', fontSize: formLabelFontSize, color: '#467bae'}}>Lista delle parti</Typography></Grid>
                 <TabellaParti onSelect={(index) => setParteSelezionata(index)}></TabellaParti>
                 <div style={{margin: '0 0 0 1rem', width: 'calc(100% - 1rem)'}}>
@@ -26,7 +26,7 @@ function StepParti(props, ref){
             </Grid>
 
             {/* Dettaglio */}
-            <Grid container xs={12} sx={{display: parteSelezionata == -1 ? 'none' : 'flex'}}>
+            <Grid xs={12} sx={{display: parteSelezionata == -1 ? 'none' : 'flex'}}>
                 <Grid xs={12} sx={{borderBottom:'1px solid #467bae61', margin: '0 0 0 1rem', width: 'calc(100% - 1rem)'}}><Typography sx={{fontWeight: '400', fontSize: formLabelFontSize, color: '#467bae'}}>Dettaglio soggetto</Typography></Grid>
                 <div style={{margin: '0 0 0 1rem', width: 'calc(100% - 1rem)'}}>
                     <DettaglioParte/>

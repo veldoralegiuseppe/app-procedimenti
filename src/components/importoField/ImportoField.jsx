@@ -231,6 +231,19 @@ export default function ImportoField(props) {
                     color: labelColor,
                 },
                 '& .MuiOutlinedInput-input': { fontWeight: '500', color: theme.palette.text.primary },
+                '&:hover .MuiSvgIcon-root': {
+                    color: theme.palette.logo.secondary, // Colore dell'icona su hover
+                },
+                '&.Mui-focused .MuiSvgIcon-root': {
+                    color: theme.palette.logo.secondary, // Colore dell'icona in focus
+                },
+                // Colore della label su hover
+                '&:hover .MuiInputLabel-root': {
+                    color: theme.palette.logo.secondary,
+                },
+                '&.Mui-focused .MuiInputLabel-root': {
+                    color: theme.palette.logo.secondary, // Colore della label in focus
+                },
             }}
             label={props.label}
             variant="outlined"
