@@ -4,9 +4,9 @@ export class PersonaGiuridica {
     partitaIVA;
     denominazione;
     sedeLegale = new Comune(); 
-    email;
-    pec;
-    assistenzaLegale;
+    pecEmail;
+    rappresentanteLegale;
+    rappresentanteLegalePecEmail;
     speseAvvio = 0;
     spesePostali = 0;
     pagamentoIndennita = 0;

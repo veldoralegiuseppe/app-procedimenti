@@ -105,37 +105,42 @@ function FormPersonaGiuridica(props, ref) {
 
                 <CssTextField
                     size='small'
-                    label="Email"
-                    error={parteAttuale.email ? !validateEmail(parteAttuale.email) : false}
-                    helperText={parteAttuale.email && !validateEmail(parteAttuale.email) ? "Email non valida" : ""}
-                    onChange={(event) => setParteAttuale({ ...parteAttuale, email: event.target.value })}
-                    sx={textFieldSx}
-                />
-
-                <CssTextField
-                    size='small'
-                    label="PEC"
-                    onChange={(event) => setParteAttuale({ ...parteAttuale, pec: event.target.value.toUpperCase() })}
+                    label="PEC / Email"
+                    error={parteAttuale.pecEmail ? !validateEmail(parteAttuale.pecEmail) : false}
+                    helperText={parteAttuale.pecEmail && !validateEmail(parteAttuale.pecEmail) ? "Indirizzo non valido" : ""}
+                    onChange={(event) => setParteAttuale({ ...parteAttuale, pecEmail: event.target.value.toLocaleUpperCase() })}
                     sx={textFieldSx}
                 />
             </Grid>
 
              {/* Assistenza legale */}
             <Grid xs={12} sx={{width: '100%', minHeight: `${gridRowHeight}px`}}>
-            <Grid xs={12} sx={{borderBottom:'1px solid #467bae61',}}><Typography sx={{fontWeight: '400', fontSize: '1rem', color: '#467bae'}}>Rappresentante legale</Typography></Grid>
+                <Grid xs={12} sx={{borderBottom:'1px solid #467bae61',}}><Typography sx={{fontWeight: '400', fontSize: '1rem', color: '#467bae'}}>Rappresentante legale</Typography></Grid>
+                
+                {/* Avvocato */}
                 <CssTextField
                 required
                 size='small'
                 id="outlined-required-avvocato"
                 label="Avvocato"
-                error={parteAttuale.assistenzaLegale ? !validateAvvocato(parteAttuale.assistenzaLegale) : false}
-                helperText={parteAttuale.assistenzaLegale && !validateAvvocato(parteAttuale.assistenzaLegale) ? "Nome non valido" : ""}
+                error={parteAttuale.rappresentanteLegale ? !validateAvvocato(parteAttuale.rappresentanteLegale) : false}
+                helperText={parteAttuale.rappresentanteLegale && !validateAvvocato(parteAttuale.rappresentanteLegale) ? "Nome non valido" : ""}
                 onChange={(event) => {
-                    parteAttuale.assistenzaLegale = event.currentTarget.value.toLocaleUpperCase();
+                    parteAttuale.rappresentanteLegale = event.currentTarget.value.toLocaleUpperCase();
                     setParteAttuale({ ...parteAttuale });
                 }}
                 defaultValue=""
                 sx={{ ...textFieldSx, minWidth: '246px', maxWidth: '250px' }}
+                />
+
+                {/* PEC / Email */}
+                <CssTextField
+                    size='small'
+                    label="PEC / Email"
+                    error={parteAttuale.rappresentanteLegalePecEmail ? !validateEmail(parteAttuale.rappresentanteLegalePecEmail) : false}
+                    helperText={parteAttuale.rappresentanteLegalePecEmail && !validateEmail(parteAttuale.rappresentanteLegalePecEmail) ? "Indirizzo non valido" : ""}
+                    onChange={(event) => setParteAttuale({ ...parteAttuale, rappresentanteLegalePecEmail: event.target.value.toLocaleUpperCase() })}
+                    sx={textFieldSx}
                 />
             </Grid>
 

@@ -104,24 +104,37 @@ function FormPersonaFisica(props, ref) {
   const comuneResidenzaRef = React.useRef();
   const provinciaResidenzaRef = React.useRef();
 
+  // Metodo onSubmit che ritorna i dati di `parteAttuale`
+  const onSubmit = () => {
+    return parteAttuale;
+  };
+
+  // Esponiamo `onSubmit` tramite il `ref`
+  React.useImperativeHandle(ref, () => ({
+    onSubmit,
+  }));
+  
   React.useEffect(() => {
     ComuniUtils.initialize();
     window.AgenziaEntrateAPI.onCaptcha((url) => setCaptcha(url));
   }, []);
 
+  // Utility function 
+  const validateEmail = (email) => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+  };
   const resetAnagrafici = () => {
         setParteAttuale({ ...parteAttuale, dataNascita: null, luogoDiNascita: null, sesso: null });
         provinciaNascitaRef.current.setProvincia(null);
         comuneNascitaRef.current.setComune(null);
         setAnagraficiDisabilitati(false);
   };
-
   const handleInvalidCodiceFiscale = (message) => {
         setErroreCf(true);
         setHelperTextCf(message);
         resetAnagrafici();
   };
-
   const handleValidCodiceFiscale = (cf) => {
         const comuneNascita = CodiceFiscaleUtils.comuneCf(cf);
         setParteAttuale({
@@ -137,7 +150,6 @@ function FormPersonaFisica(props, ref) {
         setErroreCf(false);
         setHelperTextCf('');
   };
-
   const handleCodiceFiscaleChange = (event) => {
         let cf = event.currentTarget.value.toLocaleUpperCase();
 
@@ -207,8 +219,6 @@ function FormPersonaFisica(props, ref) {
             </div>
             
         </Grid>
-
-       
       </Grid>
 
       {/* Dati anagrafici */}
@@ -429,27 +439,21 @@ function FormPersonaFisica(props, ref) {
 
       {/* Recapiti */}
       <Grid xs={12} sx={{ width: '100%', minHeight: `${gridRowHeight}px` }}>
+
         <Grid xs={12} sx={{ width: '100%', borderBottom: '1px solid #467bae61' }}>
           <Typography sx={{ fontWeight: '400', fontSize: '1rem', color: '#467bae' }}>Recapiti</Typography>
         </Grid>
+
         <CssTextField
           size="small"
           id="outlined-required-pec"
-          label="PEC"
-          error={parteAttuale.pec && !validateEmail(parteAttuale.pec)}
-          helperText={parteAttuale.pec && !validateEmail(parteAttuale.pec) ? 'PEC non valida' : ''}
-          onChange={(event) => setParteAttuale({ ...parteAttuale, pec: event.currentTarget.value.toLocaleUpperCase() })}
+          label="PEC / Email"
+          error={parteAttuale.pecEmail && !validateEmail(parteAttuale.pecEmail)}
+          helperText={parteAttuale.pecEmail && !validateEmail(parteAttuale.pecEmail) ? 'Indirizzo non valido' : ''}
+          onChange={(event) => setParteAttuale({ ...parteAttuale, pecEmail: event.currentTarget.value.toLocaleUpperCase() })}
           sx={{ ...textFieldSx(theme), minWidth: '350px', maxWidth: '350px' }}
         />
-        <CssTextField
-          size="small"
-          id="outlined-required-email"
-          label="Email"
-          error={parteAttuale.email && !validateEmail(parteAttuale.email)}
-          helperText={parteAttuale.email && !validateEmail(parteAttuale.email) ? 'Email non valida' : ''}
-          onChange={(event) => setParteAttuale({ ...parteAttuale, email: event.currentTarget.value.toLocaleUpperCase() })}
-          sx={{ ...textFieldSx(theme), minWidth: '350px', maxWidth: '350px' }}
-        />
+  
       </Grid>
 
       {/* Ditta individuale */}
@@ -479,19 +483,34 @@ function FormPersonaFisica(props, ref) {
 
       {/* Assistenza legale */}
       <Grid xs={12} sx={{ width: '100%', minHeight: `${gridRowHeight}px` }}>
+
         <Grid xs={12} sx={{ width: '100%', borderBottom: '1px solid #467bae61' }}>
           <Typography sx={{ fontWeight: '400', fontSize: '1rem', color: '#467bae' }}>Rappresentante legale</Typography>
         </Grid>
+
+        {/* Avvocato */}
         <CssTextField
           required
           size="small"
           id="outlined-required-avvocato"
           label="Avvocato"
-          error={parteAttuale.assistenzaLegale && !validateAvvocato(parteAttuale.assistenzaLegale)}
-          helperText={parteAttuale.assistenzaLegale && !validateAvvocato(parteAttuale.assistenzaLegale) ? 'Nome non valido' : ''}
-          onChange={(event) => setParteAttuale({ ...parteAttuale, assistenzaLegale: event.currentTarget.value.toLocaleUpperCase() })}
+          error={parteAttuale.rappresentanteLegale && !validateAvvocato(parteAttuale.rappresentanteLegale)}
+          helperText={parteAttuale.rappresentanteLegale && !validateAvvocato(parteAttuale.rappresentanteLegale) ? 'Nome non valido' : ''}
+          onChange={(event) => setParteAttuale({ ...parteAttuale, rappresentanteLegale: event.currentTarget.value.toLocaleUpperCase() })}
           sx={{ ...textFieldSx(theme), minWidth: '246px', maxWidth: '250px' }}
         />
+
+        {/* Email/PEC */}
+        <CssTextField
+          size="small"
+          id="outlined-required-pec"
+          label="PEC / Email"
+          error={parteAttuale.rappresentanteLegalePecEmail && !validateEmail(parteAttuale.rappresentanteLegalePecEmail)}
+          helperText={parteAttuale.rappresentanteLegalePecEmail && !validateEmail(parteAttuale.rappresentanteLegalePecEmail) ? 'Indirizzo non valido' : ''}
+          onChange={(event) => setParteAttuale({ ...parteAttuale, rappresentanteLegalePecEmail: event.currentTarget.value.toLocaleUpperCase() })}
+          sx={{ ...textFieldSx(theme), minWidth: '350px', maxWidth: '350px' }}
+        />
+
       </Grid>
 
       {/* Spese di mediazione */}
