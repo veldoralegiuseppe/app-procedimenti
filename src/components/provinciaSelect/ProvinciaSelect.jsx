@@ -1,9 +1,8 @@
 import * as React from 'react';
-import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import { useTheme } from '@mui/material/styles';
-import { styled } from '@mui/material/styles';
 import Paper from "@mui/material/Paper";
+import {CssTextField, labelColor, labelDisableColor} from "/src/components/Theming.jsx"
 
 function ProvinciaSelect(props, ref) {
     const [error, setError] = React.useState(null);
@@ -11,9 +10,7 @@ function ProvinciaSelect(props, ref) {
     const [items, setItems] = React.useState([]);
     const [value, setValue] = React.useState(null)
     const theme = useTheme()
-    const labelColor = 'rgb(105 105 105 / 60%)'
-    const labelDisableColor = 'rgb(148 148 148 / 60%)'
-
+    
     React.useEffect(() => {
         fetch("https://axqvoqvbfjpaamphztgd.functions.supabase.co/province")
           .then(res => res.json())
@@ -98,31 +95,5 @@ function ProvinciaSelect(props, ref) {
         )
 
 }
-
-const CssTextField = styled(TextField)(({ theme }) => ({
-    '& .MuiInputLabel-root.Mui-focused:not(.Mui-error), & .MuiFormLabel-root.Mui-focused:not(.Mui-error)': {
-      color: theme.palette.logo.secondary,
-    },
-    '& .MuiOutlinedInput-root': {
-      input: { textTransform: 'uppercase' },
-      '&.Mui-disabled': { backgroundColor: '#efefef73' },
-      '&.Mui-disabled fieldset': { borderColor: '#eaeaea' },
-      '&:hover:not(.Mui-disabled, .Mui-error) fieldset': {
-        borderColor: theme.palette.logo.secondary,
-      },
-      '&.Mui-focused.Mui-error fieldset': { borderWidth: '1.2px' },
-      '&.Mui-focused:not(.Mui-error) fieldset': { border: `1.2px solid ${theme.palette.logo.secondary}` },
-      '&.Mui-focused:not(.Mui-error) .MuiInputAdornment-root .MuiSvgIcon-root': {
-        fill: `${theme.palette.logo.secondary} !important`,
-      },
-      '& .MuiSvgIcon-root': {
-        fill: theme.palette.text.primary, // Colore di default della freccia
-      },
-      '&:hover .MuiSvgIcon-root, &.Mui-focused .MuiSvgIcon-root': {
-        fill: theme.palette.logo.secondary, // Colore secondario quando selezionato o su hover
-      },
-    },
-  }));
-
 
 export default React.forwardRef(ProvinciaSelect)

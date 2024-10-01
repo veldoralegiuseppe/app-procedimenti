@@ -2,8 +2,6 @@ import * as React from 'react';
 import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
 import Grid from '@mui/material/Unstable_Grid2';
-import TextField from '@mui/material/TextField';
-import { styled } from '@mui/material/styles';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { itIT } from '@mui/x-date-pickers/locales';
@@ -12,7 +10,6 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import ImportoField from '/src/components/importoField/ImportoField.jsx';
 import ProvinciaSelect from '/src/components/provinciaSelect/ProvinciaSelect.jsx';
 import ComuneSelect from '/src/components/comuneSelect/ComuneSelect.jsx';
-import Select from '@mui/material/Select';
 import MenuItem from '@mui/material/MenuItem';
 import * as CodiceFiscaleUtils from '/src/assets/js/convalidaCodiceFiscale.js';
 import { Comune } from '/src/vo/comune.js';
@@ -22,13 +19,11 @@ import InputLabel from '@mui/material/InputLabel';
 import { PersonaFisica } from '/src/vo/personaFisica.js';
 import Alert from '@mui/material/Alert';
 import ReadOnlyAmountField from '/src/components/readOnlyAmountField/ReadonlyAmountField.jsx';
+import {CssTextField, labelColor, labelDisableColor, CssSelect, formControlStyles} from "/src/components/Theming.jsx"
 
 // Constants
-const labelColor = 'rgb(105 105 105 / 60%)';
-const labelDisableColor = 'rgb(148 148 148 / 60%)'
 const inputHeight = 35;
 const gridRowHeight = inputHeight + 34 + 3;
-const anagraficaHelperText = '';
 
 // Styling
 const textFieldSx = (theme) => ({
@@ -49,45 +44,6 @@ const textFieldSx = (theme) => ({
   },
 });
 
-const CssTextField = styled(TextField)(({ theme }) => ({
-  '& .MuiInputLabel-root.Mui-focused:not(.Mui-error), & .MuiFormLabel-root.Mui-focused:not(.Mui-error)': {
-    color: theme.palette.logo.secondary,
-  },
-  '& .MuiOutlinedInput-root': {
-    input: { textTransform: 'uppercase' },
-    '&.Mui-disabled': { backgroundColor: '#efefef73' },
-    '&.Mui-disabled fieldset': { borderColor: '#eaeaea' },
-    '&:hover:not(.Mui-disabled, .Mui-error) fieldset': {
-      borderColor: theme.palette.logo.secondary,
-    },
-    '&.Mui-focused.Mui-error fieldset': { borderWidth: '1.2px' },
-    '&.Mui-focused:not(.Mui-error) fieldset': { border: `1.2px solid ${theme.palette.logo.secondary}` },
-    '&.Mui-focused:not(.Mui-error) .MuiInputAdornment-root .MuiSvgIcon-root': {
-      fill: `${theme.palette.logo.secondary} !important`,
-    },
-  },
-}));
-
-const CssSelect = styled(Select)(({ theme }) => ({
-    '&.Mui-disabled': {
-      backgroundColor: '#efefef73',
-    },
-    '& .MuiSvgIcon-root': {
-      fill: theme.palette.text.primary, // Colore di default della freccia
-    },
-    '&:hover .MuiSvgIcon-root, &.Mui-focused .MuiSvgIcon-root': {
-      fill: theme.palette.logo.secondary, // Colore secondario quando selezionato o su hover
-    },
-    '& .MuiOutlinedInput-root': {
-      '&:hover fieldset': {
-        borderColor: theme.palette.logo.secondary, // Colore del bordo su hover
-      },
-      '&.Mui-focused fieldset': {
-        borderColor: theme.palette.logo.secondary, // Colore del bordo quando in focus
-      },
-    },
-}));
-  
 // Main Component
 function FormPersonaFisica(props, ref) {
   const theme = useTheme();
@@ -129,8 +85,8 @@ function FormPersonaFisica(props, ref) {
       pecEmail: 'PEC / Email',
       partitaIVA: 'Partita IVA',
       denominazione: 'Denominazione',
-      rappresentanteLegale: 'Rappresentante legale',
-      rappresentanteLegalePecEmail: 'PEC del rappresentante legale'
+      rappresentanteLegale: 'Avvocato',
+      rappresentanteLegalePecEmail: 'PEC / Email del rappresentante legale'
     };
   
     let updatedErrors = { ...errors };
@@ -268,6 +224,7 @@ function FormPersonaFisica(props, ref) {
       
       {/* Codice fiscale */}
       <Grid xs={12} sx={{ width: '100%', minHeight: `${gridRowHeight}px` }}>
+
         {/* Titolo */}
         <Grid xs={12} sx={{ width: '100%', borderBottom: '1px solid #467bae61' }}>
             <Typography sx={{ fontWeight: '400', fontSize: '1rem', color: '#467bae' }}>Codice fiscale</Typography>
@@ -337,39 +294,57 @@ function FormPersonaFisica(props, ref) {
 
         {/* Data di nascita */}
         <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='it' localeText={itIT.components.MuiLocalizationProvider.defaultProps.localeText}>
-            <DatePicker
-                disabled={anagraficiDisabilitati}
-                label="Data di nascita"
-                value={parteAttuale.dataNascita ? dayjs(parteAttuale.dataNascita) : null}
-                onChange={(value) => setParteAttuale({ ...parteAttuale, dataNascita: new Date(value) })}
-                slotProps={{
-                    textField: {
-                        helperText: anagraficaHelperText,
-                        size: 'small',
-                        sx: {
-                            ...textFieldSx(theme),
-                            minWidth: '246px',
-                            maxWidth: '250px',
-                            '& .MuiOutlinedInput-root': {
-                                '&:hover fieldset': {
-                                    borderColor: theme.palette.logo.secondary, // Colore del bordo su hover (arancione)
-                                },
-                                '&.Mui-focused fieldset': {
-                                    borderColor: theme.palette.logo.secondary, // Colore del bordo su focus
-                                },
-                            },
-
-                            '&:hover .MuiSvgIcon-root': {
-                                color: theme.palette.logo.secondary, // Colore dell'icona su hover (arancione)
-                            },
-                            '&.Mui-focused .MuiSvgIcon-root': {
-                                color: theme.palette.logo.secondary, // Colore dell'icona in focus (arancione)
-                            },
-                        },
-                        disabled: anagraficiDisabilitati,
+          <DatePicker
+            disabled={anagraficiDisabilitati}
+            label="Data di nascita"
+            value={parteAttuale.dataNascita ? dayjs(parteAttuale.dataNascita) : null}
+            onChange={(value) => setParteAttuale({ ...parteAttuale, dataNascita: new Date(value) })}
+            slotProps={{
+              textField: {
+                size: 'small',
+                sx: {
+                  ...textFieldSx(theme),
+                  minWidth: '246px',
+                  maxWidth: '250px',
+                  '& .MuiOutlinedInput-root': {
+                    '& fieldset': {
+                      borderWidth: '1px', // Imposta lo spessore del bordo a 1px
                     },
-                }}
-            />
+                    '&:hover fieldset': {
+                      borderColor: theme.palette.logo.secondary, // Colore del bordo su hover
+                    },
+                    '&.Mui-focused fieldset': {
+                      borderColor: theme.palette.logo.secondary, // Colore del bordo su focus
+                      borderWidth: '1px', // Mantiene lo spessore del bordo a 1px anche in focus
+                    },
+                  },
+                  '& .MuiInputLabel-outlined': {
+                    color: labelColor, // Colore di default della label
+                    transform: 'translate(14px, 8px) scale(1)', // Posizionamento centrato di default
+                  },
+                  '&:hover .MuiInputLabel-root:not(.Mui-disabled)': {
+                    color: theme.palette.logo.secondary, // Cambia il colore della label su hover
+                  },
+                  '& .MuiInputLabel-outlined.Mui-focused': {
+                    color: theme.palette.logo.secondary, // Cambia il colore della label quando è in focus
+                  },
+                  '& .MuiInputLabel-outlined.Mui-disabled': {
+                    color: theme.palette.text.disabled, // Colore della label quando è disabilitata
+                  },
+                  '& .MuiInputLabel-outlined.MuiInputLabel-shrink': {
+                    transform: 'translate(14px, -8px) scale(0.75)', // Posizionamento della label ridotta
+                  },
+                  '& .MuiSvgIcon-root': {
+                    color: labelColor, // Colore di default dell'icona del calendario
+                  },
+                  '&:hover .MuiSvgIcon-root, &.Mui-focused .MuiSvgIcon-root': {
+                    color: theme.palette.logo.secondary, // Cambia il colore dell'icona su hover e focus
+                  },
+                },
+                disabled: anagraficiDisabilitati,
+              },
+            }}
+          />
         </LocalizationProvider>
 
         {/* Sesso */}
@@ -377,86 +352,53 @@ function FormPersonaFisica(props, ref) {
             variant="outlined"  
             size="small"
             disabled={anagraficiDisabilitati}
-            sx={{
-                minWidth: '133.5px',
-                maxWidth: '168px',
-                margin: '14px 20px 10px 0px',
-                '& .MuiOutlinedInput-root': {
-                    '& fieldset': {
-                        borderWidth: '1px',  // Imposta lo spessore del bordo a 1px
-                    },
-                    '&:hover fieldset': {
-                        borderColor: theme.palette.logo.secondary, // Colore del bordo su hover
-                    },
-                    '&.Mui-focused fieldset': {
-                        borderColor: theme.palette.logo.secondary, // Colore del bordo su focus
-                        borderWidth: '1px', // Mantiene lo spessore del bordo a 1px anche in focus
-                    },
-                },
-                '& .MuiInputLabel-outlined': {
-                    transform: 'translate(14px, 8px) scale(1)', // Posizionamento centrato di default
-                },
-                '& .MuiInputLabel-outlined.MuiInputLabel-shrink': {
-                    transform: 'translate(14px, -8px) scale(0.75)', // Posizionamento della label ridotta
-                }
-            }}
+            sx={formControlStyles(theme, labelColor)} // Usa la funzione per applicare lo stile
         >
             <InputLabel 
               id="sesso-input-label" 
-              sx={{
-                color: labelColor,
-                '&.Mui-disabled': {
-                  color: labelColor,
-                },
-                '&:hover': {
-                  //color: 'blue', // Cambia colore su hover
-                },
-                '&.Mui-focused': {
-                  //color: 'orange',
-                }
-              }}
+              sx={{ color: labelColor }}
             >
-            Sesso
+              Sesso
             </InputLabel>
 
             <CssSelect
-                labelId="sesso-input-label"
-                id="sesso-select"
-                value={parteAttuale.sesso ? parteAttuale.sesso : ""}
-                onChange={(event) => setParteAttuale({ ...parteAttuale, sesso: event.target.value })}
-                disabled={anagraficiDisabilitati}
-                label="Sesso"
-                MenuProps={{
-                    PaperProps: {
-                        sx: {
-                            bgcolor: theme.palette.dropdown.primary, // Sfondo delle opzioni come in ProvinciaSelect
-                        },
+              labelId="sesso-input-label"
+              id="sesso-select"
+              value={parteAttuale.sesso ? parteAttuale.sesso : ""}
+              onChange={(event) => setParteAttuale({ ...parteAttuale, sesso: event.target.value })}
+              disabled={anagraficiDisabilitati}
+              label="Sesso"
+              MenuProps={{
+                PaperProps: {
+                  sx: {
+                    bgcolor: theme.palette.dropdown.primary, // Sfondo delle opzioni
+                  },
+                },
+                MenuListProps: {
+                  sx: {
+                    '& .MuiMenuItem-root': {
+                      color: theme.palette.primary.main, // Colore del testo delle opzioni
+                      bgcolor: theme.palette.dropdown.primary, // Sfondo predefinito delle opzioni
+                      '&:hover': {
+                        bgcolor: theme.palette.dropdown.hover, // Sfondo quando viene passato il mouse
+                        color: theme.palette.primary.main, // Cambia il colore del testo su hover
+                      },
+                      '&.Mui-selected': {
+                        bgcolor: theme.palette.dropdown.hover, // Sfondo quando un'opzione è selezionata
+                        color: theme.palette.primary.main, // Colore del testo quando selezionato
+                      },
+                      '&.Mui-selected:hover': {
+                        bgcolor: theme.palette.dropdown.hover, // Sfondo mantenuto in hover quando selezionato
+                        color: theme.palette.primary.main, // Colore del testo su hover quando selezionato
+                      },
                     },
-                    MenuListProps: {
-                        sx: {
-                            '& .MuiMenuItem-root': {
-                                color: theme.palette.primary.main, // Colore del testo delle opzioni
-                                bgcolor: theme.palette.dropdown.primary, // Sfondo predefinito delle opzioni
-                                '&:hover': {
-                                    bgcolor: theme.palette.dropdown.hover, // Sfondo quando viene passato il mouse
-                                    color: theme.palette.primary.main, // Cambia il colore del testo su hover
-                                },
-                                '&.Mui-selected': {
-                                    bgcolor: theme.palette.dropdown.hover, // Sfondo quando un'opzione è selezionata
-                                    color: theme.palette.primary.main, // Colore del testo quando selezionato
-                                },
-                                '&.Mui-selected:hover': {
-                                    bgcolor: theme.palette.dropdown.hover, // Sfondo mantenuto in hover quando selezionato
-                                    color: theme.palette.primary.main, // Colore del testo su hover quando selezionato
-                                },
-                            },
-                        },
-                    },
-                }}
-            >
-                <MenuItem value={'M'}>UOMO</MenuItem>
-                <MenuItem value={'F'}>DONNA</MenuItem>
-            </CssSelect>
+                  },
+                },
+              }}
+          >
+            <MenuItem value={'M'}>UOMO</MenuItem>
+            <MenuItem value={'F'}>DONNA</MenuItem>
+          </CssSelect>
         </FormControl>
 
         {/* Provincia di nascita */}
@@ -465,7 +407,6 @@ function FormPersonaFisica(props, ref) {
           sx={{ ...textFieldSx(theme), minWidth: '246px', maxWidth: '250px' }}
           label="Provincia di nascita"
           disabled={anagraficiDisabilitati}
-          helperText={anagraficaHelperText}
           onChange={(value) => {
               comuneNascitaRef.current.setProvincia(value);
               setParteAttuale({ ...parteAttuale, luogoDiNascita: { ...new Comune(), provincia: value } });
@@ -519,7 +460,7 @@ function FormPersonaFisica(props, ref) {
           size="small"
           id="outlined-required-indirizzo"
           label="Indirizzo"
-          onChange={(event) => setParteAttuale({ ...parteAttuale, indirizzo: event.target.value.toLocaleUpperCase() })}
+          onChange={(event) => handleInputChange(event, 'indirizzo')}
           sx={{ ...textFieldSx(theme), minWidth: '246px', maxWidth: '250px' }}
         />
 
@@ -549,7 +490,18 @@ function FormPersonaFisica(props, ref) {
           error={errors.pecEmail}
           helperText={errors.pecEmail ? 'Indirizzo non valido' : ''}
           onChange={(event) => handleInputChange(event, 'pecEmail')}
-          sx={{ ...textFieldSx(theme), minWidth: '350px', maxWidth: '350px' }}
+          sx={{ 
+              ...textFieldSx(theme), 
+              minWidth: '350px', 
+              maxWidth: '350px',
+              // Colore della label su hover
+              '&:hover .MuiInputLabel-root': {
+                color: theme.palette.logo.secondary,
+              },
+              '&.Mui-focused .MuiInputLabel-root': {
+                color: theme.palette.logo.secondary, // Colore della label in focus
+              },
+          }}
         />
   
       </Grid>

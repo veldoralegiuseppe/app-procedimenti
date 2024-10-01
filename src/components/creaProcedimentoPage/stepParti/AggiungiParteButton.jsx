@@ -45,8 +45,9 @@ export default function AggiungiParteButton(props) {
     };
     const buttonColor = '#467bae'
     const buttonHoverColor = '#7cb8f2'
-    const [errorMessage, setErrorMessage] = React.useState(null)
-    const handleFormSubmit = (message) => { setErrorMessage(message) }
+    const [alertOpen, setAlertOpen] = React.useState(false);
+    const [errorMessage, setErrorMessage] = React.useState(null);
+    const handleFormSubmit = (message) => { setAlertOpen(true); setErrorMessage(message); }
       
     return(
         <div style={{display: 'inline-block', ...props.sx}}>
@@ -70,7 +71,7 @@ export default function AggiungiParteButton(props) {
                         <Typography id="keep-mounted-modal-title" variant="h5" component="h2" sx={{color: '#fff3e6', marginLeft: '32px'}}>Nuova Anagrafica</Typography>
                     </div>
                     <Creazione onSubmit={handleFormSubmit} sx={{margin: '3rem 0 0 0'}}/>
-                    {errorMessage && <ErrorAlert isOpen={errorMessage} message={errorMessage}/>}    
+                    {alertOpen && <ErrorAlert isOpen={alertOpen} onClose= {() => {setAlertOpen(false)}} message={errorMessage}/>}    
                 </Box>
             </Modal>
         </div>
@@ -86,11 +87,17 @@ function Creazione(props){
     const handleSubmit = (e) => {
         e.preventDefault()
 
-        const { hasErrors, message } = ruolo === 'PARTE_ISTANTE' 
+        const { hasErrors, message } = tipologiaPersona === 'PERSONA_FISICA' 
         ? formPersonaFisicaRef.current?.getErrors() 
         : formPersonaGiuridicaRef.current?.getErrors();
 
-        if(props.onSubmit) props.onSubmit(hasErrors ? message : null);
+        if(hasErrors){
+            console.log('Errori rilevati')
+            if(props.onSubmit) props.onSubmit(message)
+        } 
+        else {
+            // Creazione
+        }
     };
     
     return (
@@ -232,14 +239,7 @@ function Creazione(props){
 }
 
 function ErrorAlert({ isOpen, message, onClose }) {
-    const [open, setOpen] = React.useState(isOpen ? isOpen : false);
-  
-    React.useEffect(() => {
-      setOpen(isOpen);
-    }, [isOpen]);
-  
     const handleClose = () => {
-      setOpen(false);
       if (onClose) onClose();
     };
   
@@ -251,31 +251,29 @@ function ErrorAlert({ isOpen, message, onClose }) {
           position: 'sticky',
           bottom: '0',
           display: 'flex',
-          alignItems: 'center'
+          alignItems: 'center',
         }}
         spacing={2}
       >
-        {open && (
+        {isOpen && (
           <Alert
             onClose={handleClose}
             severity="error"
             sx={{
               width: '60%',
-              //backgroundColor: '#ffebcc', // Colore di sfondo personalizzato
-              borderRadius: '8px', // Arrotondare gli angoli
-              boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)', // Ombra per un effetto più moderno
+              borderRadius: '8px',
+              boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
               '& .MuiAlert-message': {
-                color: '#d32f2f', // Colore del testo personalizzato (es. rosso)
-                fontSize: '1rem', // Cambia la dimensione del font se necessario
-                //fontWeight: 'bold', // Aggiunge il grassetto
+                color: '#d32f2f',
+                fontSize: '1rem',
                 display: 'flex',
                 justifyItems: 'center',
                 alignItems: 'center',
-                whiteSpace: 'pre-line', // Mantiene gli a capo
+                whiteSpace: 'pre-line',
               },
               '& .MuiAlert-icon': {
-                //color: '#d32f2f' // Colore dell'icona personalizzato per allinearlo al testo
-              }
+                //color: '#d32f2f'
+              },
             }}
           >
             {message}
@@ -283,7 +281,8 @@ function ErrorAlert({ isOpen, message, onClose }) {
         )}
       </Stack>
     );
-}
+  }
+  
 
 
   

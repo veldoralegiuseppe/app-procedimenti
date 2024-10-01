@@ -1,12 +1,11 @@
 import * as React from 'react';
-import TextField from '@mui/material/TextField';
 import Autocomplete from '@mui/material/Autocomplete';
 import { useTheme } from '@mui/material/styles';
-import { styled } from '@mui/material/styles';
 import Paper from "@mui/material/Paper";
 import {COMUNI_ESTERI} from "/src/assets/js/comuni.js"
 import { Comune } from '/src/vo/comune.js';
 import { Provincia } from '/src/vo/provincia.js';
+import {CssTextField, labelColor, labelDisableColor} from "/src/components/Theming.jsx"
 
 function ComuneSelect(props, ref) {
     const [error, setError] = React.useState(null)
@@ -15,8 +14,6 @@ function ComuneSelect(props, ref) {
     const [items, setItems] = React.useState([])
     const [value, setValue] = React.useState(null)
     const theme = useTheme()
-    const labelColor = 'rgb(105 105 105 / 60%)'
-    const labelDisableColor = 'rgb(148 148 148 / 60%)'
     const options = {method: 'GET', headers: {accept: 'application/json'}};
     
     React.useImperativeHandle(ref, () => ({
@@ -131,29 +128,4 @@ function ComuneSelect(props, ref) {
         )
 
 }
-
-const CssTextField = styled(TextField)(({ theme }) => ({
-  '& .MuiOutlinedInput-root': {
-    input: { textTransform: 'uppercase' },
-    '&.Mui-disabled': {
-      backgroundColor: '#efefef73',
-      pointerEvents: 'none', // Disabilita l'interazione hover
-      '& fieldset': {
-        borderColor: '#eaeaea !important',
-      },
-      '&:hover fieldset': {
-        borderColor: '#eaeaea !important', // Nessun effetto hover
-      },
-    },
-    '&:hover:not(.Mui-disabled) fieldset': {
-      borderColor: theme.palette.logo.secondary,
-    },
-    '&.Mui-focused fieldset': {
-      border: `1.2px solid ${theme.palette.logo.secondary}`,
-    },
-  },
-}));
-
-
-
 export default React.forwardRef(ComuneSelect)

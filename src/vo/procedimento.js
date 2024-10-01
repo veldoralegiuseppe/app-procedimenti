@@ -4,6 +4,7 @@ export class Procedimento {
     dataDeposito = new Date().toDateString()
     dataDepositoLocale 
     sede
+    sedeSvolgimento
     dataOraIncontro
     dataIncontroLocale
     oraIncontroLocale

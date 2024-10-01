@@ -3,7 +3,8 @@ import { Comune } from '/src/vo/comune.js';
 export class PersonaGiuridica {
     partitaIVA;
     denominazione;
-    sedeLegale = new Comune(); 
+    sedeLegale = new Comune();
+    indirizzoSedeLegale 
     pecEmail;
     rappresentanteLegale;
     rappresentanteLegalePecEmail;
