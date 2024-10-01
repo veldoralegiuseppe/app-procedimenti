@@ -185,7 +185,7 @@ function FormPersonaGiuridica(props, ref) {
                     label="Totale Spese"
                     backgroundColor="#d7ebff0f"  
                     textColor="#467bae"         
-                    labelColor="rgb(105 105 105 / 60%)"        
+                    labelColor="#467bae"        
                     borderColor="#467bae38"      
                     euroIconColor="#467bae"
                     helperTextColor='rgb(105 105 105 / 60%)'
