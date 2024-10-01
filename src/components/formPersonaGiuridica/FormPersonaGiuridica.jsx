@@ -53,7 +53,7 @@ function FormPersonaGiuridica(props, ref) {
     }, [parteAttuale]);
 
     const parseImporto = (importo) => {
-        console.log(`importoInput: ${importo} - importoNumber: ${Number(importo)}`)
+        //console.log(`importoInput: ${importo} - importoNumber: ${Number(importo)}`)
         return Number(importo);
       };
 
