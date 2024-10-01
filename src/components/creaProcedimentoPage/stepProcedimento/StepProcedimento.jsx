@@ -34,7 +34,6 @@ const oggettiControversia = [
   {value: 'SOCIETA DI PERSONE', view:'SOCIETÀ DI PERSONE'}, 
   {value: 'SUBFORNITURA', view: 'SUBFORNITURA'}
 ]
-
 const inputStyles = (theme, inputWidth, minWidth, maxWidth, margin, backgroundColor) => ({
   margin,
   backgroundColor,
