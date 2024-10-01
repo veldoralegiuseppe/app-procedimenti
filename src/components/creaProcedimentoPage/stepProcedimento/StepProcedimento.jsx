@@ -13,7 +13,7 @@ import RegistroProcedimentoButton from './RegistroProcedimentoButton.jsx';
 import ImportoField from '/src/components/importoField/ImportoField.jsx';
 import { CssTextField, ClearButton, labelColor } from '/src/components/Theming.jsx';
 import { Procedimento } from '/src/vo/procedimento.js';
-import SelectForm from '/src/components/selectForm/SelectForm.jsx';
+import SelectForm from '@components/selectForm/SelectForm';
 
 const oggettiControversia = [
   {value: 'ALTRE NATURE DELLA CONTROVERSIA', view: 'ALTRE NATURE DELLA CONTROVERSIA'}, 
