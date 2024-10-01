@@ -273,7 +273,7 @@ export default function TabellaParti(props) {
                 padding: '4px'
               }}
               key={headCell.id}
-              align={headCell.numeric ? 'right' : 'left'}
+              align={headCell.numeric ? 'left' : 'left'}
               padding={headCell.disablePadding ? 'none' : 'normal'}
               sortDirection={orderBy === headCell.id ? order : false}
             >

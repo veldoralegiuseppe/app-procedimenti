@@ -41,7 +41,7 @@ export default function AggiungiParteButton(props) {
         bgcolor: 'background.default',
         border: 'unset',
         boxShadow: 24,
-        p: 4,
+        padding: '32px',
     };
     const buttonColor = '#467bae'
     const buttonHoverColor = '#7cb8f2'
@@ -65,7 +65,9 @@ export default function AggiungiParteButton(props) {
                 aria-describedby="keep-mounted-modal-description"
             >
                 <Box sx={style}>
-                    <div style={{borderBottom: '1px solid #f1f1f1', paddingBottom: '16px'}}><Typography id="keep-mounted-modal-title" variant="h5" component="h2">Nuova Anagrafica</Typography></div>
+                    <div style={{backgroundColor: '#ed9747', height: '50px', marginLeft: '-32px', marginRight: '-32px', marginTop: '-32px', display: 'flex', alignItems: 'center'}}>
+                        <Typography id="keep-mounted-modal-title" variant="h5" component="h2" sx={{color: '#fff3e6', marginLeft: '32px'}}>Nuova Anagrafica</Typography>
+                    </div>
                     <Creazione sx={{margin: '3rem 0 0 0'}}/>
                     <CompilaCampiObbligatoriAlert/>
                 </Box>
@@ -77,12 +79,41 @@ export default function AggiungiParteButton(props) {
 function Creazione(props){
     const theme = useTheme()
     var [tipologiaPersona, setTipologiaPersona] = React.useState('PERSONA_FISICA')
+    var [ruolo, setRuolo] = React.useState('PARTE_ISTANTE')
     const formPersonaFisicaRef = React.useRef()
     const formPersonaGiuridicaRef = React.useRef()
 
     return (
         <div style={{position: 'relative', display: 'flex', flexDirection:'column', alignItems: 'flex-start', justifyContent:'center', rowGap:'3rem', padding: '0', ...props.sx}}>       
             
+
+            {/* Ruolo */}
+            <Grid  xs={12} sx={{width: '100%'}}>
+                <Grid xs={12} sx={{borderBottom:'1px solid #467bae61',}}><Typography sx={{fontWeight: '400', fontSize: formLabelFontSize, color: '#467bae'}}>Ruolo</Typography></Grid>
+                <FormControl sx={{marginTop: '4px'}}>
+                    <RadioGroup
+                    row
+                    aria-labelledby="demo-row-radio-buttons-group-label"
+                    name="row-radio-buttons-group"
+                    value={ruolo}
+                    onChange={(event) => setRuolo(event.target.value)}
+                    >
+                    <FormControlLabel 
+                    value="PARTE_ISTANTE" 
+                    control={<Radio />} 
+                    label="PARTE ISTANTE" 
+                    sx={{marginRight: '4.5rem', '& .MuiTypography-root':{color: theme.palette.text.primary, fontWeight: '500'}, '& .MuiRadio-root:not(.Mui-checked) span':{color: labelColor}}}/>
+                    
+                    <FormControlLabel 
+                    value="CONTROPARTE" 
+                    control={<Radio />} 
+                    label="CONTROPARTE" 
+                    sx={{ '& .MuiTypography-root':{color: theme.palette.text.primary, fontWeight: '500', }, '& .MuiRadio-root:not(.Mui-checked) span':{color: labelColor} }}/>
+                    
+                    </RadioGroup>
+                </FormControl>
+            </Grid>
+
             {/* Tipologia */}
             <Grid  xs={12} sx={{width: '100%'}}>
                 <Grid xs={12} sx={{borderBottom:'1px solid #467bae61',}}><Typography sx={{fontWeight: '400', fontSize: formLabelFontSize, color: '#467bae'}}>Tipologia</Typography></Grid>
