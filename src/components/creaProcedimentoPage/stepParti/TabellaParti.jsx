@@ -26,13 +26,10 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import Collapse from '@mui/material/Collapse';
 
-const headerBackgroundColor = '#4a769b'
 const headerBackgroundColor2 = '#ffffff8f'
 const footerBackgroundColor = '#4a769b'
 const rowBackgroundColor = '#ffe5c89c'
-const bodyTableCellSx = {borderColor: '#eeeeee', fontWeight: '500', color: 'inherit', borderBottom: 'none'}
-
-
+const bodyTableCellSx = {borderColor: '#eeeeee', fontWeight: '500', color: 'inherit', borderBottom: 'none', padding: '4px'}
 
 function descendingComparator(a, b, orderBy) {
   //console.log(`a: ${JSON.stringify(a)}, b: ${JSON.stringify(b)}, orderBy: ${orderBy}`)
@@ -65,44 +62,56 @@ function stableSort(array, comparator) {
 
 const headCells = [
   {
-    id: 'cognome',
+    id: 'anagrafica',
     numeric: false,
     disablePadding: true,
-    label: 'Cognome',
+    label: 'Anagrafica',
   },
   {
-    id: 'nome',
+    id: 'tipo',
     numeric: false,
     disablePadding: false,
-    label: 'Nome',
-  },
-  {
-    id: 'cf',
-    numeric: false,
-    disablePadding: false,
-    label: 'Codice fiscale',
+    label: 'Ruolo',
   },
   {
     id: 'speseAvvio',
-    numeric: false,
+    numeric: true,
     disablePadding: false,
     label: 'Spese avvio',
   },
   {
     id: 'spesePostali',
-    numeric: false,
+    numeric: true,
     disablePadding: false,
     label: 'Spese postali',
   },
   {
     id: 'pagamentoIndennita',
-    numeric: false,
+    numeric: true,
     disablePadding: false,
     label: 'Pagamento indennità',
   },
   {
+    id: 'importoMancatoAccordo',
+    numeric: true,
+    disablePadding: false,
+    label: 'Mancato accordo',
+  },
+  {
+    id: 'importoPositivoPrimoIncontro',
+    numeric: true,
+    disablePadding: false,
+    label: 'Positivo primo incontro',
+  },
+  {
+    id: 'importoPositivoOltrePrimoIncontro',
+    numeric: true,
+    disablePadding: false,
+    label: 'Positivo oltre primo incontro',
+  },
+  {
     id: 'totale',
-    numeric: false,
+    numeric: true,
     disablePadding: false,
     label: 'Totale',
   },
@@ -110,39 +119,47 @@ const headCells = [
 
 export default function TabellaParti(props) {
   const [order, setOrder] = React.useState('asc');
-  const [orderBy, setOrderBy] = React.useState('cognome');
+  const [orderBy, setOrderBy] = React.useState('anagrafica');
   const [selected, setSelected] = React.useState(-1);
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
   const [isEmpty, setIsEmpty] = React.useState(false)
-  var [rows, setRows] = React.useState(rows = isEmpty ? [createData(1, 'Nessuna parte inserita', '', '', '', '','')] : [
-    createData(1, 'ROSSI', 'MARIO', 'ALDGPP97E16F138C', '€10,00', '€10,00','€10,00'),
-    createData(2, 'NERI', 'LUIGI', 'VLDGPP97E16F138C', '€100,00', '€100,00','€100,00'),
-  ])
+  var [rows, setRows] = React.useState(rows = isEmpty ? [createData(null)] : [
+    createData(1, 'ROSSI', 'MARIO', 'PARTE', 1,1,1,1,1,1),
+    createData(2, 'NERI', 'LUIGI', 'PARTE', 2,2,2,2,2,2),
+  ].sort((a,b) => - descendingComparator(a,b,0)))
   const theme = useTheme()
 
-  function createData(id, cognome, nome, cf, speseAvvio, spesePostali, pagamentoIndennita) {
-    let totale = ''
+  function formatImporto(value) {
+    const [integerPart, decimalPart] = value.toString().split('.');
+    const formattedIntegerPart = Number(integerPart.replace(/\./g, '')).toLocaleString('it-IT');
+    const formattedDecimalPart = decimalPart ? decimalPart.padEnd(2, '0') : '00';
+    return `€ ${formattedIntegerPart},${formattedDecimalPart}`;
+  }
 
-    if(speseAvvio && spesePostali && pagamentoIndennita){ 
-      totale = Number(speseAvvio.replace('€','').replaceAll('.','').replace(',','.')) + Number(spesePostali.replace('€','').replaceAll('.','').replace(',','.')) + Number(pagamentoIndennita.replace('€','').replaceAll('.','').replace(',','.'))
-      totale = '€' + totale.toLocaleString('it-IT',{
-        style: 'decimal', 
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      })
-    }
-
+  function createData(id, cognome="", nome="", tipo="PARTE", speseAvvio=0, spesePostali=0, pagamentoIndennita=0, importoMancatoAccordo=0, importoPositivoPrimoIncontro=0, importoPositivoOltrePrimoIncontro=0) {
+    
+    if(!id) return {id: 1, anagrafica: 'Nessuna parte inserita', tipo: '', speseAvvio: '', spesePostali: '', pagamentoIndennita: '', importoMancatoAccordo: '', importoPositivoPrimoIncontro: '',importoPositivoOltrePrimoIncontro: '', open: false}
+    
+    let totale = 0
+    let spese = [speseAvvio, spesePostali, pagamentoIndennita, importoMancatoAccordo, importoPositivoPrimoIncontro, importoPositivoOltrePrimoIncontro]
+    
+    spese.forEach(importo => {
+        totale += Number(importo) 
+    });
+    
     return {
       id,
-      cognome,
-      nome,
-      cf,
-      speseAvvio,
-      spesePostali,
-      pagamentoIndennita,
-      totale,
+      anagrafica: `${nome} ${cognome}`,
+      tipo,
+      speseAvvio: formatImporto(speseAvvio),
+      spesePostali: formatImporto(spesePostali),
+      pagamentoIndennita: formatImporto(pagamentoIndennita),
+      importoMancatoAccordo: formatImporto(importoMancatoAccordo),
+      importoPositivoPrimoIncontro: formatImporto(importoPositivoPrimoIncontro),
+      importoPositivoOltrePrimoIncontro: formatImporto(importoPositivoOltrePrimoIncontro),
+      totale: formatImporto(totale),
       open: false
     };
   }
@@ -192,9 +209,12 @@ export default function TabellaParti(props) {
   const isSelected = (id) => selected == id;
 
   const handleDelete = (event) => {
-    let newRows = rows.splice(selected-1, 1)
-    if (newRows.length == 0){
-      newRows = [createData(1, 'Nessuna parte inserita', '', '', '', '','')]
+    
+    let newRows = rows.filter((row, index) => row.id !== selected);
+
+    console.log(`handleDelete: selected:${selected} - newRows: ${JSON.stringify(newRows)}`)
+    if (newRows.length <= 0){
+      newRows = [createData(null)]
       setIsEmpty(true)
     } 
     else 
@@ -223,34 +243,60 @@ export default function TabellaParti(props) {
           {/* Checkbox */}
           {/* <TableCell padding="checkbox" sx={{color: theme.palette.logo.secondary, backgroundColor: headerBackgroundColor2,  borderBottom: '1px solid #3e678f4d'}}/> */}
           
-          {headCells.map((headCell) => (
+          {headCells.map((headCell) => {
+          // Definire etichetta abbreviata
+          let label = headCell.label;
+          let displayLabel = label;  // Default: etichetta completa
+          
+          // Se la label è troppo lunga, abbreviare
+          if (label.toLocaleLowerCase() === "positivo oltre primo incontro") {
+            displayLabel = "Pos. Oltre 1°";  // Abbreviazione specifica
+          }
+          else if(label.toLocaleLowerCase() === "positivo primo incontro"){
+            displayLabel = "Pos. 1°";  // Abbreviazione specifica
+          }
+          else if(label.toLocaleLowerCase() === "pagamento indennità"){
+            displayLabel = "Indennità";  // Abbreviazione specifica
+          }
+          else if(label.toLocaleLowerCase() === "mancato accordo"){
+            displayLabel = "Manc. accordo";  // Abbreviazione specifica
+          }
+
+          return (
             <TableCell
               sx={{
-                color: footerBackgroundColor, 
-                backgroundColor: headerBackgroundColor2,  
+                color: footerBackgroundColor,
+                backgroundColor: headerBackgroundColor2,
                 borderBottom: '1px solid #3e678f4d',
-                '& .MuiButtonBase-root:hover':{ color: '#ff9f32a8'},
-                '& .MuiButtonBase-root.Mui-active':{ color: theme.palette.logo.secondary, '& svg':{color: theme.palette.logo.secondary}},
+                '& .MuiButtonBase-root:hover': { color: '#ff9f32a8' },
+                '& .MuiButtonBase-root.Mui-active': { color: theme.palette.logo.secondary, '& svg': { color: theme.palette.logo.secondary } },
+                padding: '4px'
               }}
               key={headCell.id}
               align={headCell.numeric ? 'right' : 'left'}
               padding={headCell.disablePadding ? 'none' : 'normal'}
               sortDirection={orderBy === headCell.id ? order : false}
             >
-              <TableSortLabel
-                active={orderBy === headCell.id}
-                direction={orderBy === headCell.id ? order : 'asc'}
-                onClick={createSortHandler(headCell.id)}
-              >
-                {headCell.label}
-                {orderBy === headCell.id ? (
-                  <Box component="span" sx={visuallyHidden}>
-                    {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
-                  </Box>
-                ) : null}
-              </TableSortLabel>
+              <Tooltip title={label} arrow>
+                  {/* Usa un singolo span come contenitore per garantire che Tooltip riceva un solo figlio */}
+                  <span>
+                    <TableSortLabel
+                      active={orderBy === headCell.id}
+                      direction={orderBy === headCell.id ? order : 'asc'}
+                      onClick={createSortHandler(headCell.id)}
+                    >
+                      {displayLabel} {/* Mostra l'etichetta abbreviata */}
+                      {orderBy === headCell.id ? (
+                        <Box component="span" sx={visuallyHidden}>
+                          {order === 'desc' ? 'sorted descending' : 'sorted ascending'}
+                        </Box>
+                      ) : null}
+                    </TableSortLabel>
+                  </span>
+              </Tooltip>
             </TableCell>
-          ))}
+          );
+        })}
         </TableRow>
       </TableHead>
     );
@@ -314,7 +360,6 @@ export default function TabellaParti(props) {
     numSelected: PropTypes.number.isRequired,
   };
 
-  // Avoid a layout jump when reaching the last page with empty rows.
   const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
   const visibleRows = React.useMemo(
@@ -350,7 +395,6 @@ export default function TabellaParti(props) {
 
                 return (
                   <React.Fragment key={labelId + 'fragment'}>
-
                     {/* Table row */}
                     <TableRow
                     hover
@@ -388,26 +432,28 @@ export default function TabellaParti(props) {
                     }
                     </TableCell> */}
                     <TableCell
-                      sx={{transform: isEmpty ? 'translateX(292%)' : 'unset', color: isEmpty ? theme.palette.text.disabled : theme.palette.text.primary, ...bodyTableCellSx}}
+                      sx={{transform: isEmpty ? 'translateX(260%)' : 'unset', color: isEmpty ? theme.palette.text.disabled : theme.palette.text.primary, ...bodyTableCellSx}}
                       component="th"
                       id={labelId}
                       scope="row"
                       padding="none"
                     >
-                      {row.cognome}
+                      {row.anagrafica}
                     </TableCell>
                     
-                    <TableCell sx={bodyTableCellSx} align="left">{row.nome}</TableCell>
-                    <TableCell sx={bodyTableCellSx} align="left">{row.cf}</TableCell>
-                    <TableCell sx={bodyTableCellSx} align="left">{row.speseAvvio}</TableCell>
-                    <TableCell sx={bodyTableCellSx} align="left">{row.spesePostali}</TableCell>
-                    <TableCell sx={bodyTableCellSx} align="left">{row.pagamentoIndennita}</TableCell>
-                    <TableCell sx={bodyTableCellSx} align="left">{row.totale}</TableCell>
+                    <TableCell sx={{...bodyTableCellSx,}} align="left">{row.tipo}</TableCell>
+                    <TableCell sx={{...bodyTableCellSx,}} align="left">{row.speseAvvio}</TableCell>
+                    <TableCell sx={{...bodyTableCellSx,}} align="left">{row.spesePostali}</TableCell>
+                    <TableCell sx={{...bodyTableCellSx,}} align="left">{row.pagamentoIndennita}</TableCell>
+                    <TableCell sx={{...bodyTableCellSx,}} align="left">{row.importoMancatoAccordo}</TableCell>
+                    <TableCell sx={{...bodyTableCellSx,}} align="left">{row.importoPositivoPrimoIncontro}</TableCell>
+                    <TableCell sx={{...bodyTableCellSx,}} align="left">{row.importoPositivoOltrePrimoIncontro}</TableCell>
+                    <TableCell sx={{...bodyTableCellSx,}} align="left">{row.totale}</TableCell>
                     </TableRow>
 
                     {/* Collapsibile */}
                     <TableRow key={`${row.id}-collapse`} sx={{backgroundColor: 'rgb(245 209 178 / 8%)'}}>
-                      <TableCell id={labelId + '-collapse'} style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={8}>
+                      <TableCell id={labelId + '-collapse'} style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={10}>
                         <Collapse in={isItemSelected} timeout="auto" unmountOnExit>
                           <Box sx={{ margin: 1}}>
                             <Typography variant="h6" gutterBottom component="div">
@@ -432,10 +478,7 @@ export default function TabellaParti(props) {
                         </Collapse>
                       </TableCell>
                     </TableRow>
-
-
                   </React.Fragment>
-                  
                 );
               })}
               {emptyRows > 0 && (
@@ -444,7 +487,7 @@ export default function TabellaParti(props) {
                     height: (dense ? 33 : 53) * emptyRows,
                   }}
                 >
-                  <TableCell colSpan={8} />
+                <TableCell colSpan={10} />
                 </TableRow>
               )}
             </TableBody>
