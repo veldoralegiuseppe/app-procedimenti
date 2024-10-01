@@ -22,11 +22,16 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import FilterListIcon from '@mui/icons-material/FilterList';
 import { visuallyHidden } from '@mui/utils';
 import { useTheme } from '@mui/material/styles';
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
+import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
+import Collapse from '@mui/material/Collapse';
 
 const headerBackgroundColor = '#4a769b'
 const headerBackgroundColor2 = '#ffffff8f'
 const footerBackgroundColor = '#4a769b'
-const bodyTableCellSx = {borderColor: '#eeeeee', fontWeight: '500', color: '#707070'}
+const rowBackgroundColor = '#ffe5c89c'
+const bodyTableCellSx = {borderColor: '#eeeeee', fontWeight: '500', color: 'inherit', borderBottom: 'none'}
+
 
 
 function descendingComparator(a, b, orderBy) {
@@ -46,10 +51,6 @@ function getComparator(order, orderBy) {
     : (a, b) => -descendingComparator(a, b, orderBy);
 }
 
-// Since 2020 all major browsers ensure sort stability with Array.prototype.sort().
-// stableSort() brings sort stability to non-modern browsers (notably IE11). If you
-// only support modern browsers you can replace stableSort(exampleArray, exampleComparator)
-// with exampleArray.slice().sort(exampleComparator)
 function stableSort(array, comparator) {
   const stabilizedThis = array.map((el, index) => [el, index]);
   stabilizedThis.sort((a, b) => {
@@ -107,8 +108,6 @@ const headCells = [
   },
 ];
 
-
-
 export default function TabellaParti(props) {
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('cognome');
@@ -143,7 +142,8 @@ export default function TabellaParti(props) {
       speseAvvio,
       spesePostali,
       pagamentoIndennita,
-      totale
+      totale,
+      open: false
     };
   }
   
@@ -216,17 +216,13 @@ export default function TabellaParti(props) {
   
     return (
       <TableHead sx={{color: theme.palette.background.default}}> 
-        {/* <TableRow sx={{backgroundColor: headerBackgroundColor, fontFamily: 'Public Sans'}}>
-          <TableCell align="center" colSpan={4} sx={{color: 'white', borderBottom: 'none', fontFamily: 'Public Sans', lineHeight: '1rem'}}>
-            REFERENZE
-          </TableCell>
-          <TableCell align="center" colSpan={3} sx={{color: 'white', borderBottom: 'none', fontFamily: 'Public Sans', lineHeight: '1rem'}}>
-            IMPORTI
-          </TableCell>
-        </TableRow> */}
         <TableRow>
-          <TableCell padding="checkbox" sx={{color: theme.palette.logo.secondary, backgroundColor: headerBackgroundColor2,  borderBottom: '1px solid #3e678f4d'}}>
-          </TableCell>
+          {/* Collapsible */}
+          <TableCell sx={{color: theme.palette.logo.secondary, backgroundColor: headerBackgroundColor2,  borderBottom: '1px solid #3e678f4d'}}/>
+          
+          {/* Checkbox */}
+          {/* <TableCell padding="checkbox" sx={{color: theme.palette.logo.secondary, backgroundColor: headerBackgroundColor2,  borderBottom: '1px solid #3e678f4d'}}/> */}
+          
           {headCells.map((headCell) => (
             <TableCell
               sx={{
@@ -319,8 +315,7 @@ export default function TabellaParti(props) {
   };
 
   // Avoid a layout jump when reaching the last page with empty rows.
-  const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
+  const emptyRows = page > 0 ? Math.max(0, (1 + page) * rowsPerPage - rows.length) : 0;
 
   const visibleRows = React.useMemo(
     () =>
@@ -354,7 +349,10 @@ export default function TabellaParti(props) {
                 const labelId = `enhanced-table-checkbox-${index}`;
 
                 return (
-                  <TableRow
+                  <React.Fragment key={labelId + 'fragment'}>
+
+                    {/* Table row */}
+                    <TableRow
                     hover
                     onClick={(event) => handleClick(event, row.id)}
                     role="checkbox"
@@ -362,9 +360,22 @@ export default function TabellaParti(props) {
                     tabIndex={-1}
                     key={row.id}
                     selected={isItemSelected}
-                    sx={{ pointerEvents: isEmpty ? 'none' : 'auto', cursor: isEmpty ? 'default' : 'pointer', '&.MuiTableRow-hover:hover':{backgroundColor: '#f6dbbc52'}, '&.Mui-selected':{backgroundColor: '#ffe5c8', '&:hover':{backgroundColor: '#ffe5c8'}} }}
+                    sx={{ color: isItemSelected ? '#ed9747' : '#656565', pointerEvents: isEmpty ? 'none' : 'auto', cursor: isEmpty ? 'default' : 'pointer', '&.MuiTableRow-hover:hover':{backgroundColor: rowBackgroundColor}, '&.Mui-selected':{backgroundColor: rowBackgroundColor, '&:hover':{backgroundColor: rowBackgroundColor}} }}
                   >
-                    <TableCell padding="checkbox" sx={bodyTableCellSx}>
+                    <TableCell sx={{ ...bodyTableCellSx }}>
+                      {isEmpty ? <></> : (
+                        <IconButton
+                          aria-label="expand row"
+                          size="small"
+                          id={labelId}
+                          onClick={(event) => handleClick(event, row.id)}
+                        >
+                          {isItemSelected ? <KeyboardArrowUpIcon sx={{fill: isItemSelected ? '#ed9747' : '#656565' }}/> : <KeyboardArrowDownIcon sx={{fill: isItemSelected ? '#ed9747' : '#656565' }}/>}
+                        </IconButton>
+                      )}
+                    </TableCell>
+
+                    {/* <TableCell padding="checkbox" sx={bodyTableCellSx}>
                       {isEmpty ? <></> :
                         <Checkbox
                         sx={{'&:hover':{backgroundColor: 'unset'}}}
@@ -375,7 +386,7 @@ export default function TabellaParti(props) {
                         }}
                       />
                     }
-                    </TableCell>
+                    </TableCell> */}
                     <TableCell
                       sx={{transform: isEmpty ? 'translateX(292%)' : 'unset', color: isEmpty ? theme.palette.text.disabled : theme.palette.text.primary, ...bodyTableCellSx}}
                       component="th"
@@ -392,7 +403,39 @@ export default function TabellaParti(props) {
                     <TableCell sx={bodyTableCellSx} align="left">{row.spesePostali}</TableCell>
                     <TableCell sx={bodyTableCellSx} align="left">{row.pagamentoIndennita}</TableCell>
                     <TableCell sx={bodyTableCellSx} align="left">{row.totale}</TableCell>
-                  </TableRow>
+                    </TableRow>
+
+                    {/* Collapsibile */}
+                    <TableRow key={`${row.id}-collapse`} sx={{backgroundColor: 'rgb(245 209 178 / 8%)'}}>
+                      <TableCell id={labelId + '-collapse'} style={{ paddingBottom: 0, paddingTop: 0 }} colSpan={8}>
+                        <Collapse in={isItemSelected} timeout="auto" unmountOnExit>
+                          <Box sx={{ margin: 1}}>
+                            <Typography variant="h6" gutterBottom component="div">
+                              History
+                            </Typography>
+                            <Table size="small" aria-label="purchases">
+                              <TableHead>
+                                <TableRow>
+                                  <TableCell sx={bodyTableCellSx}>Date</TableCell>
+                                  <TableCell sx={bodyTableCellSx}>Customer</TableCell>
+                                  <TableCell sx={bodyTableCellSx} align="right">Amount</TableCell>
+                                  <TableCell sx={bodyTableCellSx} align="right">Total price ($)</TableCell>
+                                </TableRow>
+                              </TableHead>
+                              <TableBody>
+                                <TableRow key={`${row.id}-body-collapse`}>
+                                  <TableCell sx={bodyTableCellSx}>Prova</TableCell>
+                                </TableRow>
+                              </TableBody>
+                            </Table>
+                          </Box>
+                        </Collapse>
+                      </TableCell>
+                    </TableRow>
+
+
+                  </React.Fragment>
+                  
                 );
               })}
               {emptyRows > 0 && (
