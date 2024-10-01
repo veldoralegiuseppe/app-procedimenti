@@ -35,7 +35,16 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
   },
 }));
 
-// Componente ReadOnlyAmountField con colori personalizzabili
+// Funzione per formattare l'importo in migliaia e decimali
+function formatCurrency(value) {
+  //console.log(`value.toString: ${value.toString()}`)
+  const [integerPart, decimalPart] = value.toString().split('.');
+  const formattedIntegerPart = Number(integerPart.replace(/\./g, '')).toLocaleString('it-IT');
+  const formattedDecimalPart = decimalPart ? decimalPart.padEnd(2, '0') : '00';
+  return `${formattedIntegerPart},${formattedDecimalPart}`;
+}
+
+// Componente ReadOnlyAmountField con formattazione e personalizzazione dell'helperText
 export default function ReadOnlyAmountField({
   value,
   label,
@@ -44,11 +53,21 @@ export default function ReadOnlyAmountField({
   labelColor = '#000000',      // Colore della label personalizzabile
   borderColor = '#ccc',        // Colore del bordo personalizzabile
   euroIconColor = '#000000',   // Colore personalizzabile per l'icona Euro
+  helperText,                  // Testo di aiuto personalizzabile
+  helperTextColor = '#888888', // Colore personalizzabile per l'helperText
   sx,
 }) {
+  const [formattedValue, setFormattedValue] = React.useState(formatCurrency(value));
+
+  // Effetto per aggiornare il valore formattato quando cambia il prop value
+  React.useEffect(() => {
+    console.log(value)
+    setFormattedValue(formatCurrency(value));
+  }, [value]);
+
   return (
     <StyledTextField
-      value={value}
+      value={formattedValue}  // Importo formattato
       InputProps={{
         startAdornment: (
           <InputAdornment position="start">
@@ -93,6 +112,10 @@ export default function ReadOnlyAmountField({
       label={label}
       variant="outlined"
       size="small"
+      helperText={helperText || "Calcolato automaticamente"}
+      FormHelperTextProps={{
+        sx: { color: helperTextColor },
+      }}
     />
   );
 }

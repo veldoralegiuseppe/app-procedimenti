@@ -8,6 +8,7 @@ import ProvinciaSelect from '/src/components/provinciaSelect/ProvinciaSelect.jsx
 import ComuneSelect from '/src/components/comuneSelect/ComuneSelect.jsx';
 import ImportoField from '/src/components/importoField/ImportoField.jsx';
 import { PersonaGiuridica } from '/src/vo/personaGiuridica.js';
+import ReadOnlyAmountField from '/src/components/readOnlyAmountField/ReadonlyAmountField.jsx';
 
 // Funzioni di validazione
 const validateEmail = (email) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
@@ -34,8 +35,28 @@ function FormPersonaGiuridica(props, ref) {
         maxWidth: '300px', margin: '14px 20px 10px 0px', width: '40%', height: `${inputHeight}px`
     };
     const [parteAttuale, setParteAttuale] = React.useState(new PersonaGiuridica());
+    const [totaleSpese, setTotaleSpese] = React.useState(0);
 
     React.useImperativeHandle(ref, () => ({onSubmit(){ return parteAttuale}}),)
+
+    // Effetto che calcola il totale quando cambiano gli importi
+    React.useEffect(() => {
+        const totale =
+        parseImporto(parteAttuale.speseAvvio) +
+        parseImporto(parteAttuale.spesePostali) +
+        parseImporto(parteAttuale.pagamentoIndennita) +
+        parseImporto(parteAttuale.importoMancatoAccordo) +
+        parseImporto(parteAttuale.importoPositivoPrimoIncontro) +
+        parseImporto(parteAttuale.importoPositivoOltrePrimoIncontro);
+
+        setTotaleSpese(totale.toFixed(2)); // Fissa il totale a due decimali
+    }, [parteAttuale]);
+
+    const parseImporto = (importo) => {
+        console.log(`importoInput: ${importo} - importoNumber: ${Number(importo)}`)
+        return Number(importo);
+      };
+
 
     return (
         <div style={{ position: 'relative', marginTop: '1rem', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', justifyContent: 'center', rowGap: '2.8rem', padding: '0' }}>
@@ -148,28 +169,27 @@ function FormPersonaGiuridica(props, ref) {
             <Grid xs={12} sx={{width: '100%', minHeight: `${gridRowHeight}px`}}>
                 <Grid xs={12} sx={{borderBottom:'1px solid #467bae61',}}><Typography sx={{fontWeight: '400', fontSize: '1rem', color: '#467bae'}}>Spese di mediazione</Typography></Grid>
                 
-                <ImportoField 
-                    importo={'0,00'} 
-                    onChange={(value) => setParteAttuale({ ...parteAttuale, speseAvvio: value })} 
-                    sx={{...textFieldSx, maxWidth: "168px",}} 
-                    label={"Spese di avvio"} 
-                    required={true}
-                />
+                {/* Spese */}
+                <Grid xs={12} >
+                    <ImportoField importo={'0,00'}  sx={{...textFieldSx, maxWidth: "168px",}}  onChange={(importo) => setParteAttuale({ ...parteAttuale, speseAvvio: importo })} label={"Spese di avvio"} required={true} />
+                    <ImportoField importo={'0,00'}  sx={{...textFieldSx, maxWidth: "168px",}}  onChange={(importo) => setParteAttuale({ ...parteAttuale, spesePostali: importo })} label={"Spese postali"} required={true} />
+                    <ImportoField importo={'0,00'}  sx={{...textFieldSx, maxWidth: "168px",}}  onChange={(importo) => setParteAttuale({ ...parteAttuale, pagamentoIndennita: importo })} label={"Pagamento indennità"} required={true} />
+                    <ImportoField importo={'0,00'}  sx={{...textFieldSx, maxWidth: "168px",}}  onChange={(importo) => setParteAttuale({ ...parteAttuale, importoMancatoAccordo: importo })} label={"Mancato accordo"} required={true} />
+                    <ImportoField importo={'0,00'}  sx={{...textFieldSx, maxWidth: "168px",}}  onChange={(importo) => setParteAttuale({ ...parteAttuale, importoPositivoPrimoIncontro: importo })} label={"Positivo primo incontro"} required={true} />
+                    <ImportoField importo={'0,00'}  sx={{...textFieldSx, maxWidth: "168px",}}  onChange={(importo) => setParteAttuale({ ...parteAttuale, importoPositivoOltrePrimoIncontro: importo })} label={"Positivo oltre primo incontro"} required={true} />
+                </Grid>
 
-                <ImportoField 
-                    importo={'0,00'} 
-                    onChange={(value) => setParteAttuale({ ...parteAttuale, spesePostali: value })} 
-                    sx={{...textFieldSx, maxWidth: "168px",}} 
-                    label={"Spese postali"} 
-                    required={true}
-                />
-
-<               ImportoField 
-                    importo={'0,00'} 
-                    onChange={(value) => setParteAttuale({ ...parteAttuale, pagamentoIndennita: value })} 
-                    sx={{...textFieldSx, maxWidth: "168px",}} 
-                    label={"Pagamento indennità"} 
-                    required={true}
+                {/* Totale */}
+                <ReadOnlyAmountField
+                    value={totaleSpese}
+                    label="Totale Spese"
+                    backgroundColor="#d7ebff0f"  
+                    textColor="#467bae"         
+                    labelColor="rgb(105 105 105 / 60%)"        
+                    borderColor="#467bae38"      
+                    euroIconColor="#467bae"
+                    helperTextColor='rgb(105 105 105 / 60%)'
+                    sx={{ margin: '4rem 20px 10px 0px' }}     
                 />
 
             </Grid>

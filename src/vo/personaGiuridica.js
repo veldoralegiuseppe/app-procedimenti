@@ -10,6 +10,9 @@ export class PersonaGiuridica {
     speseAvvio = 0;
     spesePostali = 0;
     pagamentoIndennita = 0;
+    importoMancatoAccordo = 0;
+    importoPositivoPrimoIncontro = 0;
+    importoPositivoOltrePrimoIncontro = 0;
     note;
 
     equals = (p) => {

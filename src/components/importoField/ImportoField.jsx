@@ -32,7 +32,7 @@ export default function ImportoField(props) {
         var inputValido = /(?<![\D*\w*])(\d+,{1}\d{2})(?![\D*\d*,*])/g;
 
         importoCorrente.split(',').forEach(s => {
-            console.log(`Token: ${s}, isNumber: ${!/[^\d+]/g.test(s)}`)
+            //console.log(`Token: ${s}, isNumber: ${!/[^\d+]/g.test(s)}`)
             if (s !== "" && /[^\d+]/g.test(s)) {
                 let currentPosition = input.selectionStart;
                 input.value = importoAttuale;
@@ -190,7 +190,7 @@ export default function ImportoField(props) {
         let currentPosition = input.selectionStart
         importoCorrente = formattedNumber
         input.value = formattedNumber
-
+       
         let numPunti = (formattedNumber.match(/\./g) || []).length
         if(activateLog) console.log(`prevPosition: ${currentPosition}, numPunti: ${numPunti}`)
 

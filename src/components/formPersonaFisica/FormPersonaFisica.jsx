@@ -99,6 +99,20 @@ function FormPersonaFisica(props, ref) {
   const [helperTextCf, setHelperTextCf] = React.useState('');
   const [capResidenza, setCapResidenza] = React.useState('');
   const [anagraficiDisabilitati, setAnagraficiDisabilitati] = React.useState(false);
+  const [totaleSpese, setTotaleSpese] = React.useState(0);
+
+  // Effetto che calcola il totale quando cambiano gli importi
+  React.useEffect(() => {
+    const totale =
+      parseImporto(parteAttuale.speseAvvio) +
+      parseImporto(parteAttuale.spesePostali) +
+      parseImporto(parteAttuale.pagamentoIndennita) +
+      parseImporto(parteAttuale.importoMancatoAccordo) +
+      parseImporto(parteAttuale.importoPositivoPrimoIncontro) +
+      parseImporto(parteAttuale.importoPositivoOltrePrimoIncontro);
+
+    setTotaleSpese(totale.toFixed(2)); // Fissa il totale a due decimali
+  }, [parteAttuale]);
 
   const comuneNascitaRef = React.useRef();
   const provinciaNascitaRef = React.useRef();
@@ -178,6 +192,10 @@ function FormPersonaFisica(props, ref) {
         } else {
             handleInvalidCodiceFiscale('Codice fiscale incompleto');
         }
+  };
+  const parseImporto = (importo) => {
+    console.log(`importoInput: ${importo} - importoNumber: ${Number(importo)}`)
+    return Number(importo);
   };
 
   return (
@@ -516,24 +534,33 @@ function FormPersonaFisica(props, ref) {
 
       {/* Spese di mediazione */}
       <Grid xs={12} sx={{ width: '100%', minHeight: `${gridRowHeight}px` }}>
+
         <Grid xs={12} sx={{ width: '100%', borderBottom: '1px solid #467bae61' }}>
           <Typography sx={{ fontWeight: '400', fontSize: '1rem', color: '#467bae' }}>Spese di mediazione</Typography>
         </Grid>
-        <ImportoField importo={'0,00'} sx={textFieldSx(theme)} label={"Spese di avvio"} required={true} />
-        <ImportoField importo={'0,00'} sx={textFieldSx(theme)} label={"Spese postali"} required={true} />
-        <ImportoField importo={'0,00'} sx={textFieldSx(theme)} label={"Pagamento indennità"} required={true} />
+        
+        {/* Spese */}
+        <Grid xs={12} >
+          <ImportoField importo={'0,00'} sx={textFieldSx(theme)} onChange={(importo) => setParteAttuale({ ...parteAttuale, speseAvvio: importo })} label={"Spese di avvio"} required={true} />
+          <ImportoField importo={'0,00'} sx={textFieldSx(theme)} onChange={(importo) => setParteAttuale({ ...parteAttuale, spesePostali: importo })} label={"Spese postali"} required={true} />
+          <ImportoField importo={'0,00'} sx={textFieldSx(theme)} onChange={(importo) => setParteAttuale({ ...parteAttuale, pagamentoIndennita: importo })} label={"Pagamento indennità"} required={true} />
+          <ImportoField importo={'0,00'} sx={textFieldSx(theme)} onChange={(importo) => setParteAttuale({ ...parteAttuale, importoMancatoAccordo: importo })} label={"Mancato accordo"} required={true} />
+          <ImportoField importo={'0,00'} sx={textFieldSx(theme)} onChange={(importo) => setParteAttuale({ ...parteAttuale, importoPositivoPrimoIncontro: importo })} label={"Positivo primo incontro"} required={true} />
+          <ImportoField importo={'0,00'} sx={textFieldSx(theme)} onChange={(importo) => setParteAttuale({ ...parteAttuale, importoPositivoOltrePrimoIncontro: importo })} label={"Positivo oltre primo incontro"} required={true} />
+        </Grid>
+
+        {/* Totale */}
         <ReadOnlyAmountField
-        value="1.234,56"
-        label="Totale Spese"
-        backgroundColor="#d7ebff0f"   // Sfondo personalizzato
-        textColor="#467bae"         // Testo rosso
-        labelColor="#467bae"        // Label blu
-        borderColor="#467bae38"       // Bordo rosso
-        euroIconColor="#467bae"
-        sx={{ margin: '14px 20px 10px 0px' }}     // Stili extra tramite sx
-      />
-
-
+          value={totaleSpese}
+          label="Totale Spese"
+          backgroundColor="#d7ebff0f"  
+          textColor="#467bae"         
+          labelColor="#467bae"        
+          borderColor="#467bae38"      
+          euroIconColor="#467bae"
+          helperTextColor={labelColor}
+          sx={{ margin: '4rem 20px 10px 0px' }}     
+        />
 
 
       </Grid>
