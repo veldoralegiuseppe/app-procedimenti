@@ -61,7 +61,6 @@ export default function ReadOnlyAmountField({
 
   // Effetto per aggiornare il valore formattato quando cambia il prop value
   React.useEffect(() => {
-    console.log(value)
     setFormattedValue(formatCurrency(value));
   }, [value]);
 

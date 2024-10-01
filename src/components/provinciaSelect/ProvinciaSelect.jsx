@@ -35,7 +35,6 @@ function ProvinciaSelect(props, ref) {
 
     React.useImperativeHandle(ref, () => ({
             setProvincia(value){
-                console.log('Value: ' + value)
                 let result = null
                 
                 if(!value)
@@ -47,7 +46,6 @@ function ProvinciaSelect(props, ref) {
                 else if(!value.nome && value.sigla)
                     result = items.filter(p => p.sigla.toLocaleUpperCase() == value.sigla.toLocaleUpperCase())[0]
 
-                console.log(`Result: ${JSON.stringify(result)}`)
                 setValue(result)
             }
         })
@@ -80,7 +78,6 @@ function ProvinciaSelect(props, ref) {
             renderOption={(props, option) =>  <li {...props} style={{color: theme.palette.primary.main, fontSize: '.9rem', fontWeight:'400'}}>{String(option.nome).toLocaleUpperCase()}</li>}
             sx={{...props.sx, display:'inline-block', }}
             onChange={(event, value) => {
-                console.log(value)
                 setValue(value)
                 props.onChange(value)
             }}

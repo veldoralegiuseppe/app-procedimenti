@@ -28,7 +28,6 @@ const labelColor = 'rgb(105 105 105 / 60%)';
 const labelDisableColor = 'rgb(148 148 148 / 60%)'
 const inputHeight = 35;
 const gridRowHeight = inputHeight + 34 + 3;
-const formLabelFontSize = '1rem';
 const anagraficaHelperText = '';
 
 // Styling
@@ -87,21 +86,20 @@ const CssSelect = styled(Select)(({ theme }) => ({
         borderColor: theme.palette.logo.secondary, // Colore del bordo quando in focus
       },
     },
-  }));
+}));
   
-
 // Main Component
 function FormPersonaFisica(props, ref) {
   const theme = useTheme();
   const [captcha, setCaptcha] = React.useState(null);
   const [parteAttuale, setParteAttuale] = React.useState(new PersonaFisica());
-  const [erroreCf, setErroreCf] = React.useState(false);
   const [helperTextCf, setHelperTextCf] = React.useState('');
   const [capResidenza, setCapResidenza] = React.useState('');
   const [anagraficiDisabilitati, setAnagraficiDisabilitati] = React.useState(false);
   const [totaleSpese, setTotaleSpese] = React.useState(0);
+  const [errors, setErrors] = React.useState({ codiceFiscale: false, cognome: false, nome: false, email: false, pecEmail: false, partitaIVA: false, denominazione: false, rappresentanteLegale: false,  rappresentanteLegalePecEmail: false});
 
-  // Effetto che calcola il totale quando cambiano gli importi
+  // Calcola il totale quando cambiano gli importi
   React.useEffect(() => {
     const totale =
       parseImporto(parteAttuale.speseAvvio) +
@@ -119,26 +117,67 @@ function FormPersonaFisica(props, ref) {
   const comuneResidenzaRef = React.useRef();
   const provinciaResidenzaRef = React.useRef();
 
-  // Metodo onSubmit che ritorna i dati di `parteAttuale`
-  const onSubmit = () => {
-    return parteAttuale;
+  // Metodi di React.useImperativeHandle
+  const onSubmit = () => {  return parteAttuale }
+  const getErrors = () => {
+    const requiredFields = ['cognome', 'nome', 'rappresentanteLegale'];
+    const fieldLabels = {
+      codiceFiscale: 'Codice fiscale',
+      cognome: 'Cognome',
+      nome: 'Nome',
+      email: 'Email',
+      pecEmail: 'PEC / Email',
+      partitaIVA: 'Partita IVA',
+      denominazione: 'Denominazione',
+      rappresentanteLegale: 'Rappresentante legale',
+      rappresentanteLegalePecEmail: 'PEC del rappresentante legale'
+    };
+  
+    let updatedErrors = { ...errors };
+    let hasErrors = false;
+    let message = '';
+  
+    // Controllo dei campi obbligatori mancanti
+    const missingRequiredFields = requiredFields.filter(field => !parteAttuale[field] || parteAttuale[field].trim() === '');
+  
+    if (missingRequiredFields.length > 0) {
+      hasErrors = true;
+      message = 'Campi obbligatori assenti: ' + missingRequiredFields.map(field => fieldLabels[field]).join(', ');
+  
+      // Aggiorna gli errori per i campi obbligatori mancanti
+      missingRequiredFields.forEach(field => {
+        updatedErrors[field] = true;  
+      });
+    }
+  
+    // Controllo degli errori di altri campi che non sono tra i mancanti
+    const fieldsWithErrors = Object.keys(updatedErrors)
+      .filter(field => updatedErrors[field] && !missingRequiredFields.includes(field));  // Non verificare i campi obbligatori mancanti
+  
+    if (fieldsWithErrors.length > 0) {
+      hasErrors = true;
+      const errorFields = fieldsWithErrors.map(field => fieldLabels[field]).join(', ');
+      message += (message ? '\n' : '') + `Errore di compilazione dei seguenti campi: ${errorFields}`;
+    }
+  
+    // Aggiorna lo stato degli errors
+    setErrors(updatedErrors);
+  
+    return { hasErrors, message };
   };
-
-  // Esponiamo `onSubmit` tramite il `ref`
+  
   React.useImperativeHandle(ref, () => ({
     onSubmit,
+    getErrors,
   }));
   
+  // ADER
   React.useEffect(() => {
     ComuniUtils.initialize();
     window.AgenziaEntrateAPI.onCaptcha((url) => setCaptcha(url));
   }, []);
 
   // Utility function 
-  const validateEmail = (email) => {
-    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    return regex.test(email);
-  };
   const resetAnagrafici = () => {
         setParteAttuale({ ...parteAttuale, dataNascita: null, luogoDiNascita: null, sesso: null });
         provinciaNascitaRef.current.setProvincia(null);
@@ -146,9 +185,9 @@ function FormPersonaFisica(props, ref) {
         setAnagraficiDisabilitati(false);
   };
   const handleInvalidCodiceFiscale = (message) => {
-        setErroreCf(true);
-        setHelperTextCf(message);
-        resetAnagrafici();
+    setErrors({...errors, codiceFiscale: true});
+    setHelperTextCf(message);
+    resetAnagrafici();
   };
   const handleValidCodiceFiscale = (cf) => {
         const comuneNascita = CodiceFiscaleUtils.comuneCf(cf);
@@ -162,7 +201,7 @@ function FormPersonaFisica(props, ref) {
         provinciaNascitaRef.current.setProvincia(comuneNascita.provincia);
         comuneNascitaRef.current.setComune(comuneNascita);
         setAnagraficiDisabilitati(true);
-        setErroreCf(false);
+        setErrors({...errors, codiceFiscale: false});
         setHelperTextCf('');
   };
   const handleCodiceFiscaleChange = (event) => {
@@ -176,7 +215,7 @@ function FormPersonaFisica(props, ref) {
 
         // Se il campo è vuoto, rimuovi eventuali errori e resetta i campi
         if (cf === '') {
-            setErroreCf(false);
+            setErrors({...errors, codiceFiscale: false});
             setHelperTextCf('');
             resetAnagrafici();
             return;
@@ -197,6 +236,32 @@ function FormPersonaFisica(props, ref) {
     //console.log(`importoInput: ${importo} - importoNumber: ${Number(importo)}`)
     return Number(importo);
   };
+  
+  // Validator
+  const validatePartitaIVA = (piva) => /^[0-9]{11}$/.test(piva)
+  const validateAnagrafica = (anagrafica) => {
+    const regex = /^[A-Za-zÀ-ÖØ-öø-ÿ]+(?: [A-Za-zÀ-ÖØ-öø-ÿ]+)*$/
+    return regex.test(anagrafica);
+  }
+  const validateEmail = (email) => {
+    const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    return regex.test(email);
+  }
+  const validationRules = {
+    nome: validateAnagrafica,
+    cognome: validateAnagrafica,
+    pecEmail: validateEmail,
+    partitaIVA: validatePartitaIVA,
+    rappresentanteLegale: validateAnagrafica,
+    rappresentanteLegalePecEmail: validateEmail
+  }
+  const handleInputChange = (event, campoModel) => {
+    const valore = event.target.value.toUpperCase()
+    const isValid = valore ? validationRules[campoModel]?.(valore) : true
+
+    setParteAttuale({ ...parteAttuale, [campoModel]: valore })
+    isValid ? setErrors({...errors, [campoModel]: false,}) :  setErrors({...errors, [campoModel]: true,})
+ }
 
   return (
     <div style={{ position: 'relative', marginTop: '1rem', width: '100%', display: 'flex', flexDirection: 'column', alignItems: 'flex-start', rowGap: '2.8rem' }}>
@@ -211,7 +276,7 @@ function FormPersonaFisica(props, ref) {
         {/* Campo Codice Fiscale */}
         <Grid xs={12} sx={{ display: 'flex', alignItems: 'center', columnGap: '7rem' }}>
             <CssTextField
-                error={erroreCf}
+                error={errors.codiceFiscale}
                 helperText={helperTextCf}
                 size='small'
                 id="outlined-required-cf-piva"
@@ -251,8 +316,10 @@ function FormPersonaFisica(props, ref) {
             required
             size='small'
             id="outlined-required-cognome"
+            error={errors.cognome}
+            helperText={ errors.cognome ? (parteAttuale.cognome ? 'Cognome non valido' : 'Campo obbligatorio') : '' }
             label="Cognome"
-            onChange={(event) => setParteAttuale({ ...parteAttuale, cognome: event.target.value.toLocaleUpperCase() })}
+            onChange={(event) => handleInputChange(event, 'cognome')}
             sx={{ ...textFieldSx(theme), minWidth: '246px', maxWidth: '250px' }}
         />
 
@@ -261,8 +328,10 @@ function FormPersonaFisica(props, ref) {
             required
             size='small'
             id="outlined-required-nome"
+            error={errors.nome}
+            helperText={ errors.nome ? (parteAttuale.nome ? 'Nome non valido' : 'Campo obbligatorio') : ''}
             label="Nome"
-            onChange={(event) => setParteAttuale({ ...parteAttuale, nome: event.target.value.toLocaleUpperCase() })}
+            onChange={(event) => handleInputChange(event, 'nome')}
             sx={{ ...textFieldSx(theme), minWidth: '246px', maxWidth: '250px' }}
         />
 
@@ -392,15 +461,15 @@ function FormPersonaFisica(props, ref) {
 
         {/* Provincia di nascita */}
         <ProvinciaSelect
-            ref={provinciaNascitaRef}
-            sx={{ ...textFieldSx(theme), minWidth: '246px', maxWidth: '250px' }}
-            label="Provincia di nascita"
-            disabled={anagraficiDisabilitati}
-            helperText={anagraficaHelperText}
-            onChange={(value) => {
-                comuneNascitaRef.current.setProvincia(value);
-                setParteAttuale({ ...parteAttuale, luogoDiNascita: { ...new Comune(), provincia: value } });
-            }}
+          ref={provinciaNascitaRef}
+          sx={{ ...textFieldSx(theme), minWidth: '246px', maxWidth: '250px' }}
+          label="Provincia di nascita"
+          disabled={anagraficiDisabilitati}
+          helperText={anagraficaHelperText}
+          onChange={(value) => {
+              comuneNascitaRef.current.setProvincia(value);
+              setParteAttuale({ ...parteAttuale, luogoDiNascita: { ...new Comune(), provincia: value } });
+          }}
         />
 
         {/* Comune di nascita */}
@@ -416,9 +485,12 @@ function FormPersonaFisica(props, ref) {
 
       {/* Dati demografici */}
       <Grid xs={12} sx={{ width: '100%', minHeight: `${gridRowHeight}px` }}>
-      <Grid xs={12} sx={{ width: '100%', borderBottom: '1px solid #467bae61' }}>
+
+        <Grid xs={12} sx={{ width: '100%', borderBottom: '1px solid #467bae61' }}>
           <Typography sx={{ fontWeight: '400', fontSize: '1rem', color: '#467bae' }}>Dati demografici</Typography>
         </Grid>
+
+        {/* Provincia  */}
         <ProvinciaSelect
           ref={provinciaResidenzaRef}
           label="Provincia di residenza"
@@ -428,6 +500,8 @@ function FormPersonaFisica(props, ref) {
           }}
           sx={{ ...textFieldSx(theme), minWidth: '246px', maxWidth: '250px' }}
         />
+
+        {/* Comune */}
         <ComuneSelect
           ref={comuneResidenzaRef}
           provincia={parteAttuale.provinciaResidenza}
@@ -439,6 +513,8 @@ function FormPersonaFisica(props, ref) {
           }}
           sx={{ ...textFieldSx(theme), minWidth: '246px', maxWidth: '250px' }}
         />
+
+        {/* Indirizzo */}
         <CssTextField
           size="small"
           id="outlined-required-indirizzo"
@@ -446,6 +522,8 @@ function FormPersonaFisica(props, ref) {
           onChange={(event) => setParteAttuale({ ...parteAttuale, indirizzo: event.target.value.toLocaleUpperCase() })}
           sx={{ ...textFieldSx(theme), minWidth: '246px', maxWidth: '250px' }}
         />
+
+        {/* CAP */}
         <CssTextField
           size="small"
           id="outlined-required-cup"
@@ -463,13 +541,14 @@ function FormPersonaFisica(props, ref) {
           <Typography sx={{ fontWeight: '400', fontSize: '1rem', color: '#467bae' }}>Recapiti</Typography>
         </Grid>
 
+        {/* PEC / Email */}
         <CssTextField
           size="small"
           id="outlined-required-pec"
           label="PEC / Email"
-          error={parteAttuale.pecEmail && !validateEmail(parteAttuale.pecEmail)}
-          helperText={parteAttuale.pecEmail && !validateEmail(parteAttuale.pecEmail) ? 'Indirizzo non valido' : ''}
-          onChange={(event) => setParteAttuale({ ...parteAttuale, pecEmail: event.currentTarget.value.toLocaleUpperCase() })}
+          error={errors.pecEmail}
+          helperText={errors.pecEmail ? 'Indirizzo non valido' : ''}
+          onChange={(event) => handleInputChange(event, 'pecEmail')}
           sx={{ ...textFieldSx(theme), minWidth: '350px', maxWidth: '350px' }}
         />
   
@@ -480,22 +559,26 @@ function FormPersonaFisica(props, ref) {
         <Grid xs={12} sx={{ width: '100%', borderBottom: '1px solid #467bae61' }}>
           <Typography sx={{ fontWeight: '400', fontSize: '1rem', color: '#467bae' }}>Ditta individuale</Typography>
         </Grid>
+
+        {/* Partita IVA */}
         <CssTextField
           size="small"
           id="outlined-required-piva"
           label="Partita IVA"
-          error={parteAttuale.partitaIVA && !validatePartitaIVA(parteAttuale.partitaIVA)}
-          helperText={parteAttuale.partitaIVA && !validatePartitaIVA(parteAttuale.partitaIVA) ? 'Partita IVA non valida' : ''}
-          onChange={(event) => setParteAttuale({ ...parteAttuale, partitaIVA: event.currentTarget.value })}
+          error={errors.partitaIVA}
+          helperText={errors.partitaIVA ? 'Formato invalido' : ''}
+          onChange={(event) => handleInputChange(event, 'partitaIVA')}
           sx={{ ...textFieldSx(theme), minWidth: '246px', maxWidth: '250px' }}
         />
+
+        {/* Denominazione */}
         <CssTextField
           size="small"
           id="outlined-required-denominazione"
           label="Denominazione"
-          error={parteAttuale.denominazione && !validateDenominazione(parteAttuale.denominazione)}
-          helperText={parteAttuale.denominazione && !validateDenominazione(parteAttuale.denominazione) ? 'Denominazione non valida' : ''}
-          onChange={(event) => setParteAttuale({ ...parteAttuale, denominazione: event.currentTarget.value.toLocaleUpperCase() })}
+          error={errors.denominazione}
+          helperText={errors.denominazione ? 'Denominazione invalida' : ''}
+          onChange={(event) => handleInputChange(event, 'denominazione')}
           sx={{ ...textFieldSx(theme), minWidth: '400px', maxWidth: '420px' }}
         />
       </Grid>
@@ -513,9 +596,9 @@ function FormPersonaFisica(props, ref) {
           size="small"
           id="outlined-required-avvocato"
           label="Avvocato"
-          error={parteAttuale.rappresentanteLegale && !validateAvvocato(parteAttuale.rappresentanteLegale)}
-          helperText={parteAttuale.rappresentanteLegale && !validateAvvocato(parteAttuale.rappresentanteLegale) ? 'Nome non valido' : ''}
-          onChange={(event) => setParteAttuale({ ...parteAttuale, rappresentanteLegale: event.currentTarget.value.toLocaleUpperCase() })}
+          error={errors.rappresentanteLegale}
+          helperText={ errors.rappresentanteLegale ? (parteAttuale.rappresentanteLegale ? 'Anagrafica invalida' : 'Campo obbligatorio') : ''}
+          onChange={(event) => handleInputChange(event, 'rappresentanteLegale')}
           sx={{ ...textFieldSx(theme), minWidth: '246px', maxWidth: '250px' }}
         />
 
@@ -524,10 +607,21 @@ function FormPersonaFisica(props, ref) {
           size="small"
           id="outlined-required-pec"
           label="PEC / Email"
-          error={parteAttuale.rappresentanteLegalePecEmail && !validateEmail(parteAttuale.rappresentanteLegalePecEmail)}
-          helperText={parteAttuale.rappresentanteLegalePecEmail && !validateEmail(parteAttuale.rappresentanteLegalePecEmail) ? 'Indirizzo non valido' : ''}
-          onChange={(event) => setParteAttuale({ ...parteAttuale, rappresentanteLegalePecEmail: event.currentTarget.value.toLocaleUpperCase() })}
-          sx={{ ...textFieldSx(theme), minWidth: '350px', maxWidth: '350px' }}
+          error={errors.rappresentanteLegalePecEmail}
+          helperText={errors.rappresentanteLegalePecEmail ? 'Indirizzo invalido' : ''}
+          onChange={(event) => handleInputChange(event, 'rappresentanteLegalePecEmail')}
+          sx={{ 
+            ...textFieldSx(theme), 
+            minWidth: '350px', 
+            maxWidth: '350px',
+            // Colore della label su hover
+            '&:hover .MuiInputLabel-root': {
+              color: theme.palette.logo.secondary,
+            },
+            '&.Mui-focused .MuiInputLabel-root': {
+              color: theme.palette.logo.secondary, // Colore della label in focus
+            },
+          }}
         />
 
       </Grid>
@@ -541,12 +635,12 @@ function FormPersonaFisica(props, ref) {
         
         {/* Spese */}
         <Grid xs={12} >
-          <ImportoField importo={'0,00'} sx={textFieldSx(theme)} onChange={(importo) => setParteAttuale({ ...parteAttuale, speseAvvio: importo })} label={"Spese di avvio"} required={true} />
-          <ImportoField importo={'0,00'} sx={textFieldSx(theme)} onChange={(importo) => setParteAttuale({ ...parteAttuale, spesePostali: importo })} label={"Spese postali"} required={true} />
-          <ImportoField importo={'0,00'} sx={textFieldSx(theme)} onChange={(importo) => setParteAttuale({ ...parteAttuale, pagamentoIndennita: importo })} label={"Pagamento indennità"} required={true} />
-          <ImportoField importo={'0,00'} sx={textFieldSx(theme)} onChange={(importo) => setParteAttuale({ ...parteAttuale, importoMancatoAccordo: importo })} label={"Mancato accordo"} required={true} />
-          <ImportoField importo={'0,00'} sx={textFieldSx(theme)} onChange={(importo) => setParteAttuale({ ...parteAttuale, importoPositivoPrimoIncontro: importo })} label={"Positivo primo incontro"} required={true} />
-          <ImportoField importo={'0,00'} sx={textFieldSx(theme)} onChange={(importo) => setParteAttuale({ ...parteAttuale, importoPositivoOltrePrimoIncontro: importo })} label={"Positivo oltre primo incontro"} required={true} />
+          <ImportoField importo={'0,00'} sx={textFieldSx(theme)} onChange={(importo) => setParteAttuale({ ...parteAttuale, speseAvvio: importo })} label={"Spese di avvio"}/>
+          <ImportoField importo={'0,00'} sx={textFieldSx(theme)} onChange={(importo) => setParteAttuale({ ...parteAttuale, spesePostali: importo })} label={"Spese postali"}/>
+          <ImportoField importo={'0,00'} sx={textFieldSx(theme)} onChange={(importo) => setParteAttuale({ ...parteAttuale, pagamentoIndennita: importo })} label={"Pagamento indennità"}/>
+          <ImportoField importo={'0,00'} sx={textFieldSx(theme)} onChange={(importo) => setParteAttuale({ ...parteAttuale, importoMancatoAccordo: importo })} label={"Mancato accordo"}/>
+          <ImportoField importo={'0,00'} sx={textFieldSx(theme)} onChange={(importo) => setParteAttuale({ ...parteAttuale, importoPositivoPrimoIncontro: importo })} label={"Positivo primo incontro"}/>
+          <ImportoField importo={'0,00'} sx={textFieldSx(theme)} onChange={(importo) => setParteAttuale({ ...parteAttuale, importoPositivoOltrePrimoIncontro: importo })} label={"Positivo oltre primo incontro"}/>
         </Grid>
 
         {/* Totale */}
@@ -561,8 +655,6 @@ function FormPersonaFisica(props, ref) {
           helperTextColor={labelColor}
           sx={{ margin: '4rem 20px 10px 0px' }}     
         />
-
-
       </Grid>
 
       {/* Note */}

@@ -45,8 +45,9 @@ export default function AggiungiParteButton(props) {
     };
     const buttonColor = '#467bae'
     const buttonHoverColor = '#7cb8f2'
+    const [errorMessage, setErrorMessage] = React.useState(null)
+    const handleFormSubmit = (message) => { setErrorMessage(message) }
       
-
     return(
         <div style={{display: 'inline-block', ...props.sx}}>
             <Button 
@@ -68,8 +69,8 @@ export default function AggiungiParteButton(props) {
                     <div style={{backgroundColor: '#ed9747', height: '50px', marginLeft: '-32px', marginRight: '-32px', marginTop: '-32px', display: 'flex', alignItems: 'center'}}>
                         <Typography id="keep-mounted-modal-title" variant="h5" component="h2" sx={{color: '#fff3e6', marginLeft: '32px'}}>Nuova Anagrafica</Typography>
                     </div>
-                    <Creazione sx={{margin: '3rem 0 0 0'}}/>
-                    <CompilaCampiObbligatoriAlert/>
+                    <Creazione onSubmit={handleFormSubmit} sx={{margin: '3rem 0 0 0'}}/>
+                    {errorMessage && <ErrorAlert isOpen={errorMessage} message={errorMessage}/>}    
                 </Box>
             </Modal>
         </div>
@@ -82,11 +83,19 @@ function Creazione(props){
     var [ruolo, setRuolo] = React.useState('PARTE_ISTANTE')
     const formPersonaFisicaRef = React.useRef()
     const formPersonaGiuridicaRef = React.useRef()
+    const handleSubmit = (e) => {
+        e.preventDefault()
 
+        const { hasErrors, message } = ruolo === 'PARTE_ISTANTE' 
+        ? formPersonaFisicaRef.current?.getErrors() 
+        : formPersonaGiuridicaRef.current?.getErrors();
+
+        if(props.onSubmit) props.onSubmit(hasErrors ? message : null);
+    };
+    
     return (
         <div style={{position: 'relative', display: 'flex', flexDirection:'column', alignItems: 'flex-start', justifyContent:'center', rowGap:'3rem', padding: '0', ...props.sx}}>       
-            
-
+    
             {/* Ruolo */}
             <Grid  xs={12} sx={{width: '100%'}}>
                 <Grid xs={12} sx={{borderBottom:'1px solid #467bae61',}}><Typography sx={{fontWeight: '400', fontSize: formLabelFontSize, color: '#467bae'}}>Ruolo</Typography></Grid>
@@ -207,7 +216,11 @@ function Creazione(props){
 
                 <Button 
                     variant='contained'
-                    onClick={() => {console.log(`personaFisica: ${JSON.stringify(formPersonaFisicaRef.current?.onSubmit())}, personaGiuridica: ${JSON.stringify(formPersonaGiuridicaRef.current?.onSubmit())}`)}}
+                    onClick={(e) => {
+                            console.log(`personaFisica: ${JSON.stringify(formPersonaFisicaRef.current?.onSubmit())}, personaGiuridica: ${JSON.stringify(formPersonaGiuridicaRef.current?.onSubmit())}`)
+                            handleSubmit(e)
+                        }
+                    }
                     sx={{width: '90px', color: 'white', backgroundColor: '#108d10', '&:hover, &:hover svg':{backgroundColor: '#119c11', color: 'white'}}}
                     startIcon={<AddIcon sx={{color: 'white', transition: 'background-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,box-shadow 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,border-color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms,color 250ms cubic-bezier(0.4, 0, 0.2, 1) 0ms'}}/>}
                 >
@@ -218,15 +231,60 @@ function Creazione(props){
     )
 }
 
-function CompilaCampiObbligatoriAlert() {
-    var [isOpen, setIsOpen] = React.useState(false)
-
+function ErrorAlert({ isOpen, message, onClose }) {
+    const [open, setOpen] = React.useState(isOpen ? isOpen : false);
+  
+    React.useEffect(() => {
+      setOpen(isOpen);
+    }, [isOpen]);
+  
+    const handleClose = () => {
+      setOpen(false);
+      if (onClose) onClose();
+    };
+  
     return (
-      <Stack sx={{ width: '100%', zIndex: '99', position: 'sticky', bottom: '0', display: 'flex', alignItems: 'center'}} spacing={2}>
-        { isOpen && <Alert open onClose={() => {setIsOpen(false)}} severity="warning" sx={{width: '60%', '& .MuiAlert-message':{display: 'flex', justifyItems: 'center', alignItems: 'center'}}}>
-          Per procedere all verifica compila i campi 'Nome', 'Cognome', 'Codice fiscale'
-        </Alert> }
+      <Stack
+        sx={{
+          width: '100%',
+          zIndex: '99',
+          position: 'sticky',
+          bottom: '0',
+          display: 'flex',
+          alignItems: 'center'
+        }}
+        spacing={2}
+      >
+        {open && (
+          <Alert
+            onClose={handleClose}
+            severity="error"
+            sx={{
+              width: '60%',
+              //backgroundColor: '#ffebcc', // Colore di sfondo personalizzato
+              borderRadius: '8px', // Arrotondare gli angoli
+              boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)', // Ombra per un effetto più moderno
+              '& .MuiAlert-message': {
+                color: '#d32f2f', // Colore del testo personalizzato (es. rosso)
+                fontSize: '1rem', // Cambia la dimensione del font se necessario
+                //fontWeight: 'bold', // Aggiunge il grassetto
+                display: 'flex',
+                justifyItems: 'center',
+                alignItems: 'center',
+                whiteSpace: 'pre-line', // Mantiene gli a capo
+              },
+              '& .MuiAlert-icon': {
+                //color: '#d32f2f' // Colore dell'icona personalizzato per allinearlo al testo
+              }
+            }}
+          >
+            {message}
+          </Alert>
+        )}
       </Stack>
     );
 }
+
+
+  
 
