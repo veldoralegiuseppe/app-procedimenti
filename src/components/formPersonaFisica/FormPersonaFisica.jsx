@@ -7,7 +7,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { itIT } from '@mui/x-date-pickers/locales';
 import dayjs from 'dayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import ImportoField from '/src/components/importoField/ImportoField.jsx';
+import ImportoInput from '/src/components/importoInput/ImportoInput.jsx';
 import ProvinciaSelect from '/src/components/provinciaSelect/ProvinciaSelect.jsx';
 import ComuneSelect from '/src/components/comuneSelect/ComuneSelect.jsx';
 import MenuItem from '@mui/material/MenuItem';
@@ -715,7 +715,7 @@ function FormPersonaFisica(props, ref) {
 
         {/* Spese */}
         <Grid xs={12}>
-          <ImportoField
+          <ImportoInput
             importo={'0,00'}
             sx={textFieldSx(theme)}
             onChange={(importo) =>
@@ -723,7 +723,7 @@ function FormPersonaFisica(props, ref) {
             }
             label={'Spese di avvio'}
           />
-          <ImportoField
+          <ImportoInput
             importo={'0,00'}
             sx={textFieldSx(theme)}
             onChange={(importo) =>
@@ -731,7 +731,7 @@ function FormPersonaFisica(props, ref) {
             }
             label={'Spese postali'}
           />
-          <ImportoField
+          <ImportoInput
             importo={'0,00'}
             sx={textFieldSx(theme)}
             onChange={(importo) =>
@@ -739,7 +739,7 @@ function FormPersonaFisica(props, ref) {
             }
             label={'Pagamento indennità'}
           />
-          <ImportoField
+          <ImportoInput
             importo={'0,00'}
             sx={textFieldSx(theme)}
             onChange={(importo) =>
@@ -750,7 +750,7 @@ function FormPersonaFisica(props, ref) {
             }
             label={'Mancato accordo'}
           />
-          <ImportoField
+          <ImportoInput
             importo={'0,00'}
             sx={textFieldSx(theme)}
             onChange={(importo) =>
@@ -761,7 +761,7 @@ function FormPersonaFisica(props, ref) {
             }
             label={'Positivo primo incontro'}
           />
-          <ImportoField
+          <ImportoInput
             importo={'0,00'}
             sx={textFieldSx(theme)}
             onChange={(importo) =>

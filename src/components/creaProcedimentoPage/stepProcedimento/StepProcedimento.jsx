@@ -12,7 +12,7 @@ import { MobileDateTimePicker } from '@mui/x-date-pickers/MobileDateTimePicker';
 import CloseIcon from '@mui/icons-material/Close';
 
 import ProtocolloInputField from '../../protocolloInputField/ProtocolloInputField.jsx';
-import ImportoField from '/src/components/importoField/ImportoField.jsx';
+import ImportoInput from '/src/components/importoInput/ImportoInput.jsx';
 import {
   CssTextField,
   ClearButton,
@@ -340,7 +340,7 @@ function StepProcedimento() {
           />
 
           {/* Valore della controversia */}
-          <ImportoField
+          <ImportoInput
             importo={procedimento.valoreControversia}
             onChange={(valore) => {
               setProcedimento((prev) => ({

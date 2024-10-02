@@ -5,7 +5,7 @@ import { useTheme } from '@mui/material/styles';
 
 import { CssTextField } from '/src/components/Theming.jsx';
 
-export default function ImportoField(props) {
+export default function ImportoInput(props) {
   const importoFieldRef = React.useRef(null);
   const theme = useTheme();
   const labelColor = 'rgb(105 105 105 / 60%)';
