@@ -10,9 +10,9 @@ export class PersonaFisica {
     sesso;
     residenza = new Comune();  
     indirizzo;
-    pecEmail;
     partitaIVA;
     denominazione;
+    pecEmail;
     rappresentanteLegale;
     rappresentanteLegalePecEmail;
     speseAvvio = 0;
