@@ -1,11 +1,25 @@
+const path = require('path');
+
 module.exports = {
-  /**
-   * This is the main entry point for your application, it's the first file
-   * that runs in the main process.
-   */
+  // Entry point per il processo main
   entry: './src/main.js',
-  // Put your normal webpack config below here
+
+  output: {
+    // Genera il bundle nella cartella attesa da Electron Forge
+    path: path.resolve(__dirname, '.webpack/main'),
+    filename: 'main.bundle.js',
+  },
+
   module: {
     rules: require('./webpack.rules'),
   },
+
+  resolve: {
+    extensions: ['.js', '.json'],
+    alias: {
+      '@preload': path.resolve(__dirname, 'src/'),
+    },
+  },
+
+  target: 'electron-main',
 };

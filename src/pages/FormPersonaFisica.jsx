@@ -156,12 +156,6 @@ function FormPersonaFisica(props, ref) {
     getErrors,
   }));
 
-  // ADER
-  React.useEffect(() => {
-    ComuniUtils.initialize();
-    window.AgenziaEntrateAPI.onCaptcha((url) => setCaptcha(url));
-  }, []);
-
   // Utility function
   const resetAnagrafici = () => {
     setParteAttuale({

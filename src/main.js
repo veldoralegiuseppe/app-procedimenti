@@ -54,27 +54,4 @@ app.on('activate', () => {
   }
 });
 
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and import them here.
-
-function invisibleWindow(callback) {
-  //console.log(`MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: ${MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY}\nINVISIBLE_WINDOW_WEBPACK_ENTRY: ${INVISIBLE_WINDOW_WEBPACK_ENTRY}\nINVISIBLE_WINDOW_WEBPACK_PRELOAD_ENTRY: ${INVISIBLE_WINDOW_PRELOAD_WEBPACK_ENTRY}`)
-  let pathAgenziaDelleEntrate = 'https://telematici.agenziaentrate.gov.it/VerificaCF/Scegli.do?parameter=verificaCfPf'
-  
-  let win = new BrowserWindow({ width: 400, height: 400, show: false, webPreferences: {
-    preload: INVISIBLE_WINDOW_PRELOAD_WEBPACK_ENTRY,
-  }})
-
-  win.loadURL(pathAgenziaDelleEntrate)
-  //win.webContents.openDevTools()
-
-  ipcMain.on('start::screenshot', (event) => {
-    win.webContents.capturePage({x: 0, y: 0, width:150, height: 75}, {stayHidden: false}).then(img => {
-      win.webContents.send('restore')
-      callback(img.toDataURL())
-    })
-  })
-
-}
-
 
