@@ -11,7 +11,7 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 
-import ImportoInput from '@components/importoInput/ImportoInput';
+import ImportoInput from '@components/ImportoInput';
 import ProvinciaSelect from '@components/ProvinciaSelect';
 import ComuneSelect from '@components/ComuneSelect';
 import * as CodiceFiscaleUtils from '@assets/js/convalidaCodiceFiscale';

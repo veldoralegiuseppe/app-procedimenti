@@ -13,8 +13,9 @@ import Button from '@mui/material/Button';
 import ArrowBackOutlinedIcon from '@mui/icons-material/ArrowBackOutlined';
 import AddIcon from '@mui/icons-material/Add';
 import { useTheme } from '@mui/material/styles';
-import FormPersonaFisica from '/src/components/formPersonaFisica/FormPersonaFisica';
-import FormPersonaGiuridica from '/src/components/formPersonaGiuridica/FormPersonaGiuridica';
+
+import FormPersonaFisica from '@pages/FormPersonaFisica';
+import FormPersonaGiuridica from '@pages/FormPersonaGiuridica';
 
 const formLabelFontSize = '1rem';
 const labelColor = 'rgb(105 105 105 / 60%)';

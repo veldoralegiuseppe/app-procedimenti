@@ -12,7 +12,7 @@ import { MobileDateTimePicker } from '@mui/x-date-pickers/MobileDateTimePicker';
 import CloseIcon from '@mui/icons-material/Close';
 
 import ProtocolloInput from '@components/ProtocolloInput';
-import ImportoInput from '@components/importoInput/ImportoInput';
+import ImportoInput from '@components/ImportoInput';
 import {
   CssTextField,
   ClearButton,

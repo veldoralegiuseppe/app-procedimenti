@@ -5,7 +5,7 @@ import { useTheme } from '@mui/material/styles';
 
 import ProvinciaSelect from '@components/ProvinciaSelect';
 import ComuneSelect from '@components/ComuneSelect';
-import ImportoInput from '@components/importoInput/ImportoInput';
+import ImportoInput from '@components/ImportoInput';
 import { PersonaGiuridica } from '@model/personaGiuridica';
 import ImportoReadOnly from '@components/ImportoReadOnly';
 import { CssTextField } from '@theme/MainTheme';
