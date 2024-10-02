@@ -3,7 +3,7 @@ import { FormControl, InputLabel, MenuItem, FormHelperText } from '@mui/material
 import { CssSelect, formControlStyles, labelColor as defaultLabelColor } from '/src/components/Theming.jsx';
 import { useTheme } from '@mui/material/styles';
 
-function SelectForm({ 
+function Select({ 
   label, 
   value, 
   onChange, 
@@ -105,4 +105,4 @@ function SelectForm({
   );
 }
 
-export default SelectForm;
+export default Select;

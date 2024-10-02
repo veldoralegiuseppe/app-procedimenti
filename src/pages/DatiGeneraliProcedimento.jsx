@@ -19,7 +19,7 @@ import {
   labelColor,
 } from '@components/Theming.jsx';
 import { Procedimento } from '@model/procedimento.js';
-import SelectForm from '@components/selectForm/SelectForm';
+import Select from '@components/Select';
 
 const oggettiControversia = [
   {
@@ -327,7 +327,7 @@ function DatiGeneraliProcedimento() {
 
         <Grid xs={12} sx={{ paddingLeft: '1rem' }}>
           {/* Oggetto di controversia */}
-          <SelectForm
+          <Select
             label="Oggetto di controversia"
             value={procedimento.oggettoControversia || ''}
             onChange={(event) => {
