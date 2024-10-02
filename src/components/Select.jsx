@@ -1,6 +1,6 @@
 import React from 'react';
 import { FormControl, InputLabel, MenuItem, FormHelperText } from '@mui/material';
-import { CssSelect, formControlStyles, labelColor as defaultLabelColor } from '/src/components/Theming.jsx';
+import { CssSelect, formControlStyles, labelColor as defaultLabelColor } from '@theme/MainTheme';
 import { useTheme } from '@mui/material/styles';
 
 function Select({ 

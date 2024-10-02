@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { createRoot } from 'react-dom/client';
 import {ThemeProvider } from '@mui/material/styles';
-import ResponsiveAppBar from './components/navbar/Navbar.jsx';
-import {themeOne, ContentGrid} from '/src/components/Theming.jsx';
 import { CssBaseline } from '@mui/material/';
+
+import ResponsiveAppBar from '@components/Navbar';
+import {themeOne, ContentGrid} from '@theme/MainTheme';
 import { AppContext, routes, getRoute } from '/src/store/app-context.jsx';
 
 const root = createRoot(document.getElementById('mainContainer'));

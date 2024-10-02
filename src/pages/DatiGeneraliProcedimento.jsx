@@ -17,7 +17,7 @@ import {
   CssTextField,
   ClearButton,
   labelColor,
-} from '@components/Theming';
+} from '@theme/MainTheme';
 import { Procedimento } from '@model/procedimento';
 import Select from '@components/Select';
 

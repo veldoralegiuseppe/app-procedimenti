@@ -10,7 +10,7 @@ import {
   CssTextField,
   labelColor,
   labelDisableColor,
-} from '@components/Theming';
+} from '@theme/MainTheme';
 
 function ComuneSelect(props, ref) {
   const [error, setError] = React.useState(null);

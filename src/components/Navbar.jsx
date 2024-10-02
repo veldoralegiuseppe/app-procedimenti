@@ -7,7 +7,6 @@ import Drawer from '@mui/material/Drawer';
 import Divider from '@mui/material/Divider';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
-import CollapsableListButton from '/src/components/collapsableListButton/CollapsableListButton.jsx'
 import GridViewIcon from '@mui/icons-material/GridView';
 import SourceOutlinedIcon from '@mui/icons-material/SourceOutlined';
 import PeopleOutlineIcon from '@mui/icons-material/PeopleOutline';
@@ -15,12 +14,24 @@ import PersonAddAltIcon from '@mui/icons-material/PersonAddAlt';
 import PersonSearchOutlinedIcon from '@mui/icons-material/PersonSearchOutlined';
 import PostAddOutlinedIcon from '@mui/icons-material/PostAddOutlined';
 import FindInPageOutlinedIcon from '@mui/icons-material/FindInPageOutlined';
-import { Header, HamburgerButton, ReactiveToolbar, SectionText} from '/src/components/navbar/NavbarTheming.jsx';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
 import { useTheme } from '@mui/material/styles';
-import logoM from '/src/assets/img/logo-m.png';
-import NavbarButton from '/src/components/navbar/NavbarButton.jsx';
-import { AppContext, routes } from '/src/store/app-context.jsx';
 
+import { AppContext, routes } from '/src/store/app-context.jsx';
+import CollapsableListButton from '@components/collapsableListButton/CollapsableListButton.jsx'
+import { Header, HamburgerButton, ReactiveToolbar, SectionText, NavbarListItemButton } from '@theme/Navbar';
+
+function NavbarButton({icon, label, isActive, handleClick}){
+  const theme = useTheme()
+
+  return (
+      <NavbarListItemButton selected={isActive} key={`provvedimenti`}  onClick={handleClick}>
+          <ListItemIcon sx={{minWidth: '24px', color: theme.palette.text.secondary}}> {icon} </ListItemIcon>
+          <ListItemText primary={label} sx={ {'& .MuiTypography-root':{fontSize: '0.9rem'}} }/>
+      </NavbarListItemButton>
+  )
+}
 
 export default function ResponsiveAppBar({drawerWidth, onButtonClick}) {
 

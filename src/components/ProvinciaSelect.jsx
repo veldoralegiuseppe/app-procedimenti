@@ -2,7 +2,7 @@ import * as React from 'react';
 import Autocomplete from '@mui/material/Autocomplete';
 import { useTheme } from '@mui/material/styles';
 import Paper from "@mui/material/Paper";
-import {CssTextField, labelColor, labelDisableColor} from "/src/components/Theming.jsx"
+import {CssTextField, labelColor, labelDisableColor} from '@theme/MainTheme';
 
 function ProvinciaSelect(props, ref) {
     const [error, setError] = React.useState(null);

@@ -8,7 +8,7 @@ import ComuneSelect from '@components/ComuneSelect';
 import ImportoInput from '@components/importoInput/ImportoInput';
 import { PersonaGiuridica } from '@model/personaGiuridica';
 import ImportoReadOnly from '@components/ImportoReadOnly';
-import { CssTextField } from '@components/Theming';
+import { CssTextField } from '@theme/MainTheme';
 
 function FormPersonaGiuridica(props, ref) {
   // Ref

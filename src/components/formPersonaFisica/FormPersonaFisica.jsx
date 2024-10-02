@@ -26,7 +26,7 @@ import {
   labelDisableColor,
   CssSelect,
   formControlStyles,
-} from '@components/Theming';
+} from '@theme/MainTheme';
 
 // Constants
 const inputHeight = 35;
