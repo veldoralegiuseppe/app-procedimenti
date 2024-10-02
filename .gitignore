@@ -90,3 +90,6 @@ typings/
 
 # Electron-Forge
 out/
+.eslintrc.json
+.prettierrc
+setting.json
