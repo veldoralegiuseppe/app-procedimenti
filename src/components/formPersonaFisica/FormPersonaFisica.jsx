@@ -19,14 +19,14 @@ import { Comune } from '@model/comune';
 import * as ComuniUtils from '@assets/js/comuni';
 import { PersonaFisica } from '@model/personaFisica';
 import Alert from '@mui/material/Alert';
-import ImportoReadOnly from '@components/importoReadOnly/ImportoReadOnly';
+import ImportoReadOnly from '@components/ImportoReadOnly';
 import {
   CssTextField,
   labelColor,
   labelDisableColor,
   CssSelect,
   formControlStyles,
-} from '@components/Theming.jsx';
+} from '@components/Theming';
 
 // Constants
 const inputHeight = 35;
