@@ -18,7 +18,7 @@ import {
   ClearButton,
   labelColor,
 } from '@components/Theming.jsx';
-import { Procedimento } from '@src/vo/procedimento.js';
+import { Procedimento } from '@model/procedimento.js';
 import SelectForm from '@components/selectForm/SelectForm';
 
 const oggettiControversia = [

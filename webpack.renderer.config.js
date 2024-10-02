@@ -18,7 +18,8 @@ module.exports = {
     // Aggiunge un alias per risolvere i percorsi più facilmente
     alias: {
       '@components': path.resolve(__dirname, 'src/components/'), // Alias per components
-      '@pages': path.resolve(__dirname, 'src/pages/'), // Alias per pages
+      '@pages': path.resolve(__dirname, 'src/pages/'), // Alias per page
+      '@model': path.resolve(__dirname, 'src/model/'), // Alias per model
       '@assets': path.resolve(__dirname, 'src/assets/'), // Alias per assets
       '@src': path.resolve(__dirname, 'src/'), // Alias per src
     },

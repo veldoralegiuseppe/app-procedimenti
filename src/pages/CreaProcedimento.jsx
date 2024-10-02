@@ -6,7 +6,7 @@ import Breadcrumbs from "@components/breadcrumbs/Breadcrumbs.jsx";
 import HorizontalLinearStepper from '@components/stepper/Stepper.jsx';
 import { ProcedimentoContext } from '@src/store/procedimento-context.jsx';
 import DatiGeneraliProcedimento from '@pages/DatiGeneraliProcedimento';
-import { Procedimento } from '@src/vo/procedimento.js';
+import { Procedimento } from '@model/procedimento.js';
 import PartiControparti from '@pages/PartiControparti';
 
 export default function CreaProcedimento(){

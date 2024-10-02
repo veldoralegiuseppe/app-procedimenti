@@ -7,25 +7,26 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { itIT } from '@mui/x-date-pickers/locales';
 import dayjs from 'dayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import ImportoInput from '/src/components/importoInput/ImportoInput.jsx';
-import ProvinciaSelect from '/src/components/provinciaSelect/ProvinciaSelect.jsx';
-import ComuneSelect from '/src/components/comuneSelect/ComuneSelect.jsx';
 import MenuItem from '@mui/material/MenuItem';
-import * as CodiceFiscaleUtils from '/src/assets/js/convalidaCodiceFiscale.js';
-import { Comune } from '/src/vo/comune.js';
-import * as ComuniUtils from '/src/assets/js/comuni.js';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
-import { PersonaFisica } from '/src/vo/personaFisica.js';
+
+import ImportoInput from '@components/importoInput/ImportoInput.jsx';
+import ProvinciaSelect from '@components/provinciaSelect/ProvinciaSelect.jsx';
+import ComuneSelect from '@components/ComuneSelect.jsx';
+import * as CodiceFiscaleUtils from '@assets/js/convalidaCodiceFiscale.js';
+import { Comune } from '@model/comune.js';
+import * as ComuniUtils from '@assets/js/comuni.js';
+import { PersonaFisica } from '@model/personaFisica.js';
 import Alert from '@mui/material/Alert';
-import ImportoReadOnly from '/src/components/importoReadOnly/ImportoReadOnly.jsx';
+import ImportoReadOnly from '@components/importoReadOnly/ImportoReadOnly.jsx';
 import {
   CssTextField,
   labelColor,
   labelDisableColor,
   CssSelect,
   formControlStyles,
-} from '/src/components/Theming.jsx';
+} from '@components/Theming.jsx';
 
 // Constants
 const inputHeight = 35;

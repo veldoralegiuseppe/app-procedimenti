@@ -1,5 +1,5 @@
 import { createContext } from 'react';
-import { Procedimento } from '/src/vo/procedimento.js';
+import { Procedimento } from '@model/procedimento.js';
 
 export const ProcedimentoContext = createContext({
   // Procedimento

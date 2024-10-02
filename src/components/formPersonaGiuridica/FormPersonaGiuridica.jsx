@@ -2,12 +2,13 @@ import * as React from 'react';
 import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
-import ProvinciaSelect from '/src/components/provinciaSelect/ProvinciaSelect.jsx';
-import ComuneSelect from '/src/components/comuneSelect/ComuneSelect.jsx';
-import ImportoInput from '/src/components/importoInput/ImportoInput.jsx';
-import { PersonaGiuridica } from '/src/vo/personaGiuridica.js';
-import ImportoReadOnly from '/src/components/importoReadOnly/ImportoReadOnly.jsx';
-import { CssTextField } from '/src/components/Theming.jsx';
+
+import ProvinciaSelect from '@components/provinciaSelect/ProvinciaSelect.jsx';
+import ComuneSelect from '@components/ComuneSelect.jsx';
+import ImportoInput from '@components/importoInput/ImportoInput.jsx';
+import { PersonaGiuridica } from '@model/personaGiuridica.js';
+import ImportoReadOnly from '@components/importoReadOnly/ImportoReadOnly.jsx';
+import { CssTextField } from '@components/Theming.jsx';
 
 function FormPersonaGiuridica(props, ref) {
   // Ref
