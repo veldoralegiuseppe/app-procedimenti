@@ -1,9 +1,52 @@
 import * as React from 'react';
 import Grid from '@mui/material/Unstable_Grid2';
-import { Typography } from '@mui/material';
+import { Typography, Button } from '@mui/material';
+import AddIcon from '@mui/icons-material/Add';
+
 import TabellaParti from './TabellaParti.jsx';
-import AggiungiParteButton from './AggiungiParteButton.jsx';
 import CollegaParteButton from './CollegaParteButton.jsx';
+import ParteControparteForm from './ParteControparteForm.jsx';
+import FormModal from './FormModal.jsx';
+
+function AggiungiParteButton(props) {
+    const [open, setOpen] = React.useState(false);
+  
+    const handleOpen = () => setOpen(true);
+    const handleClose = () => setOpen(false);
+  
+    const buttonColor = '#467bae';
+    const buttonHoverColor = '#7cb8f2';
+  
+    return (
+      <div style={{ display: 'inline-block', ...props.sx }}>
+        <Button
+          onClick={handleOpen}
+          variant="text"
+          sx={{
+            color: buttonColor,
+            '&:hover, &:hover svg': {
+              backgroundColor: 'unset',
+              color: buttonHoverColor,
+            },
+          }}
+          startIcon={
+            <AddIcon
+              sx={{
+                color: buttonColor,
+                transition: 'color 250ms',
+              }}
+            />
+          }
+        >
+          Crea nuova parte
+        </Button>
+        {/* Modal separato per gestire la creazione */}
+        <FormModal title='Aggiungi parte/controparte' open={open} handleClose={handleClose}>
+            <ParteControparteForm/>
+        </FormModal>
+      </div>
+    );
+}
 
 function StepParti(props, ref){
 
@@ -17,7 +60,7 @@ function StepParti(props, ref){
                 <TabellaParti/>
                 <div style={{margin: '0 0 0 1rem', width: 'calc(100% - 1rem)'}}>
                     <AggiungiParteButton sx={{marginRight: '10rem'}}/>
-                    <CollegaParteButton/>
+                    {/* <CollegaParteButton/> */}
                 </div>
             </Grid>
         </div>
