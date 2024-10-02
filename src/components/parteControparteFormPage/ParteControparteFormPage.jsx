@@ -19,7 +19,7 @@ import FormPersonaGiuridica from '/src/components/formPersonaGiuridica/FormPerso
 const formLabelFontSize = '1rem';
 const labelColor = 'rgb(105 105 105 / 60%)';
 
-export default function ParteControparteForm({ handleClose, onError }) {
+export default function ParteControparteFormPage({ handleClose, onError }) {
   const theme = useTheme();
   const [tipologiaPersona, setTipologiaPersona] = React.useState('PERSONA_FISICA');
   const [ruolo, setRuolo] = React.useState('PARTE_ISTANTE');

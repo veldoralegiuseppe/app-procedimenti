@@ -3,10 +3,10 @@ import Grid from '@mui/material/Unstable_Grid2';
 import { Typography, Button } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 
-import TabellaParti from './TabellaParti.jsx';
+import TabellaPartiControparti from '../../tabellaPartiControparti/TabellaPartiControparti.jsx';
 import CollegaParteButton from './CollegaParteButton.jsx';
-import ParteControparteForm from './ParteControparteForm.jsx';
-import FormModal from './FormModal.jsx';
+import ParteControparteFormPage from '../../parteControparteFormPage/ParteControparteFormPage.jsx';
+import FormModal from '../../formModal/FormModal.jsx';
 
 function AggiungiParteButton(props) {
     const [open, setOpen] = React.useState(false);
@@ -42,7 +42,7 @@ function AggiungiParteButton(props) {
         </Button>
         {/* Modal separato per gestire la creazione */}
         <FormModal title='Aggiungi parte/controparte' open={open} handleClose={handleClose}>
-            <ParteControparteForm/>
+            <ParteControparteFormPage/>
         </FormModal>
       </div>
     );
@@ -57,7 +57,7 @@ function StepParti(props, ref){
             {/* Lista delle parti */}
             <Grid xs={12}>
                 <Grid xs={12} sx={{borderBottom:'1px solid #467bae61', margin: '0 0 0 1rem', width: 'calc(100% - 1rem)'}}><Typography sx={{fontWeight: '400', fontSize: formLabelFontSize, color: '#467bae'}}>Lista delle parti</Typography></Grid>
-                <TabellaParti/>
+                <TabellaPartiControparti/>
                 <div style={{margin: '0 0 0 1rem', width: 'calc(100% - 1rem)'}}>
                     <AggiungiParteButton sx={{marginRight: '10rem'}}/>
                     {/* <CollegaParteButton/> */}

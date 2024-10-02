@@ -118,7 +118,7 @@ const headCells = [
   },
 ];
 
-export default function TabellaParti(props) {
+export default function TabellaPartiControparti(props) {
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('anagrafica');
   const [selected, setSelected] = React.useState(-1);
