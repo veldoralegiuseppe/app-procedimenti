@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { createContext } from "react";
 import CreaProcedimentoPage from '/src/components/creaProcedimentoPage/CreaProcedimentoPage.jsx';
+import Dashboard from '@pages/Dashboard';
 
 export const routes = [
     {
         path: '/dashboard', 
-        component: 'dashboard', 
+        component: <Dashboard/>, 
     },
     {
         path: '/procedimenti', 
