@@ -45,7 +45,7 @@ function formatCurrency(value) {
 }
 
 // Componente ReadOnlyAmountField con formattazione e personalizzazione dell'helperText
-export default function ReadOnlyAmountField({
+export default function ImportoReadOnly({
   value,
   label,
   backgroundColor = '#d7ebff',
