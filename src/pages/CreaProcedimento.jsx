@@ -3,7 +3,7 @@ import { Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 
 import Breadcrumbs from "@components/breadcrumbs/Breadcrumbs.jsx";
-import HorizontalLinearStepper from '@components/stepper/Stepper.jsx';
+import Stepper from '@components/Stepper';
 import { ProcedimentoContext } from '@src/store/procedimento-context.jsx';
 import DatiGeneraliProcedimento from '@pages/DatiGeneraliProcedimento';
 import { Procedimento } from '@model/procedimento.js';
@@ -30,7 +30,7 @@ export default function CreaProcedimento(){
                     <Breadcrumbs></Breadcrumbs>
                 </div>
 
-                <HorizontalLinearStepper steps={steps}></HorizontalLinearStepper>
+                <Stepper steps={steps}></Stepper>
             </div>
         </ProcedimentoContext.Provider>
     )

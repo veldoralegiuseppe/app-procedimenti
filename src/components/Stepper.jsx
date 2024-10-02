@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Box from '@mui/material/Box';
-import Stepper from '@mui/material/Stepper';
+import {Stepper as MuiStepper} from '@mui/material';
 import Step from '@mui/material/Step';
 import StepLabel from '@mui/material/StepLabel';
 import Button from '@mui/material/Button';
@@ -8,7 +8,7 @@ import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
 import Grid from '@mui/material/Unstable_Grid2';
 
-export default function HorizontalLinearStepper({ steps }) {
+export default function Stepper({ steps }) {
   const [activeStep, setActiveStep] = React.useState(0);
   const [skipped, setSkipped] = React.useState(new Set());
   const [disableNext, setDisableNext] = React.useState(true); // Modificato per essere gestito in modo sicuro
@@ -46,7 +46,7 @@ export default function HorizontalLinearStepper({ steps }) {
 
   return (
     <Box sx={{ width: '100%', backgroundColor: theme.palette.background.default, borderRadius: '8px', padding: '16px 16px', alignItems: 'center' }}>
-      <Stepper activeStep={activeStep} sx={{ paddingBottom: '2rem', borderBottom: '1px solid #f1f1f1' }}>
+      <MuiStepper activeStep={activeStep} sx={{ paddingBottom: '2rem', borderBottom: '1px solid #f1f1f1' }}>
         {steps.map((step, index) => {
           const stepProps = {};
           const labelProps = {};
@@ -64,7 +64,7 @@ export default function HorizontalLinearStepper({ steps }) {
             </Step>
           );
         })}
-      </Stepper>
+      </MuiStepper>
 
       <div style={{ display: 'flex', flexDirection: 'column', rowGap: '0' }}>
         {activeStep === steps.length ? (
