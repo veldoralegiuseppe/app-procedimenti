@@ -44,7 +44,7 @@ function formatCurrency(value) {
   return `${formattedIntegerPart},${formattedDecimalPart}`;
 }
 
-// Componente ReadOnlyAmountField con formattazione e personalizzazione dell'helperText
+// Componente ImportoReadOnly con formattazione e personalizzazione dell'helperText
 export default function ImportoReadOnly({
   value,
   label,

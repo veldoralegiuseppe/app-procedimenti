@@ -18,7 +18,7 @@ import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import { PersonaFisica } from '/src/vo/personaFisica.js';
 import Alert from '@mui/material/Alert';
-import ReadOnlyAmountField from '/src/components/readOnlyAmountField/ReadonlyAmountField.jsx';
+import ImportoReadOnly from '/src/components/ImportoReadOnly/ImportoReadOnly.jsx';
 import {
   CssTextField,
   labelColor,
@@ -775,7 +775,7 @@ function FormPersonaFisica(props, ref) {
         </Grid>
 
         {/* Totale */}
-        <ReadOnlyAmountField
+        <ImportoReadOnly
           value={totaleSpese}
           label="Totale Spese"
           backgroundColor="#d7ebff0f"

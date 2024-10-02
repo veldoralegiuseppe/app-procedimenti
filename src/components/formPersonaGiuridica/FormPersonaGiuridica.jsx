@@ -6,7 +6,7 @@ import ProvinciaSelect from '/src/components/provinciaSelect/ProvinciaSelect.jsx
 import ComuneSelect from '/src/components/comuneSelect/ComuneSelect.jsx';
 import ImportoInput from '/src/components/importoInput/ImportoInput.jsx';
 import { PersonaGiuridica } from '/src/vo/personaGiuridica.js';
-import ReadOnlyAmountField from '/src/components/readOnlyAmountField/ReadonlyAmountField.jsx';
+import ImportoReadOnly from '/src/components/importoReadOnly/ImportoReadOnly.jsx';
 import { CssTextField } from '/src/components/Theming.jsx';
 
 function FormPersonaGiuridica(props, ref) {
@@ -422,7 +422,7 @@ function FormPersonaGiuridica(props, ref) {
         </Grid>
 
         {/* Totale */}
-        <ReadOnlyAmountField
+        <ImportoReadOnly
           value={totaleSpese}
           label="Totale Spese"
           backgroundColor="#d7ebff0f"
