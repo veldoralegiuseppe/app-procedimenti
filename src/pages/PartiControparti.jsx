@@ -3,7 +3,7 @@ import Grid from '@mui/material/Unstable_Grid2';
 import { Typography, Button } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 
-import TabellaPartiControparti from '@components/tabellaPartiControparti/TabellaPartiControparti.jsx';
+import TabellaPartiControparti from '@components/TabellaPartiControparti.jsx';
 import ParteControparteFormPage from '@components/parteControparteFormPage/ParteControparteFormPage.jsx';
 import FormModal from '@components/formModal/FormModal.jsx';
 
