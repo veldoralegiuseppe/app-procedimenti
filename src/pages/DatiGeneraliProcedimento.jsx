@@ -11,14 +11,14 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { MobileDateTimePicker } from '@mui/x-date-pickers/MobileDateTimePicker';
 import CloseIcon from '@mui/icons-material/Close';
 
-import ProtocolloInput from '../../protocolloInput/ProtocolloInput.jsx';
-import ImportoInput from '/src/components/importoInput/ImportoInput.jsx';
+import ProtocolloInput from '@components/protocolloInput/ProtocolloInput.jsx';
+import ImportoInput from '@components/importoInput/ImportoInput.jsx';
 import {
   CssTextField,
   ClearButton,
   labelColor,
-} from '/src/components/Theming.jsx';
-import { Procedimento } from '/src/vo/procedimento.js';
+} from '@components/Theming.jsx';
+import { Procedimento } from '@src/vo/procedimento.js';
 import SelectForm from '@components/selectForm/SelectForm';
 
 const oggettiControversia = [
@@ -67,7 +67,7 @@ const inputStyles = (
   '&.Mui-focused .MuiSvgIcon-root': { color: theme.palette.logo.secondary },
 });
 
-function StepProcedimento() {
+function DatiGeneraliProcedimento() {
   const theme = useTheme();
   const inputWidth = '168px';
   const minWidth = '133px';
@@ -406,4 +406,4 @@ function ClearBtn({ onReset, isDisabled }) {
   );
 }
 
-export default React.forwardRef(StepProcedimento);
+export default React.forwardRef(DatiGeneraliProcedimento);

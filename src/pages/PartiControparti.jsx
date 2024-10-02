@@ -3,10 +3,9 @@ import Grid from '@mui/material/Unstable_Grid2';
 import { Typography, Button } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 
-import TabellaPartiControparti from '../../tabellaPartiControparti/TabellaPartiControparti.jsx';
-import CollegaParteButton from './CollegaParteButton.jsx';
-import ParteControparteFormPage from '../../parteControparteFormPage/ParteControparteFormPage.jsx';
-import FormModal from '../../formModal/FormModal.jsx';
+import TabellaPartiControparti from '@components/tabellaPartiControparti/TabellaPartiControparti.jsx';
+import ParteControparteFormPage from '@components/parteControparteFormPage/ParteControparteFormPage.jsx';
+import FormModal from '@components/formModal/FormModal.jsx';
 
 function AggiungiParteButton(props) {
     const [open, setOpen] = React.useState(false);
@@ -48,7 +47,7 @@ function AggiungiParteButton(props) {
     );
 }
 
-function StepParti(props, ref){
+function PartiControparti(props, ref){
 
     const formLabelFontSize = '1rem'
     
@@ -68,4 +67,4 @@ function StepParti(props, ref){
 
 }
 
-export default React.forwardRef(StepParti)
+export default React.forwardRef(PartiControparti)

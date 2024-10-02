@@ -1,12 +1,13 @@
 import * as React from 'react';
-import Breadcrumbs from "/src/components/breadcrumbs/Breadcrumbs.jsx";
 import { Typography } from '@mui/material';
-import HorizontalLinearStepper from '/src/components/stepper/Stepper.jsx';
 import { useTheme } from '@mui/material/styles';
-import { ProcedimentoContext } from '/src/store/procedimento-context.jsx';
-import StepProcedimento from './stepProcedimento/StepProcedimento.jsx';
-import { Procedimento } from '/src/vo/procedimento.js';
-import StepParti from './stepParti/StepParti.jsx';
+
+import Breadcrumbs from "@components/breadcrumbs/Breadcrumbs.jsx";
+import HorizontalLinearStepper from '@components/stepper/Stepper.jsx';
+import { ProcedimentoContext } from '@src/store/procedimento-context.jsx';
+import DatiGeneraliProcedimento from '@pages/DatiGeneraliProcedimento';
+import { Procedimento } from '@src/vo/procedimento.js';
+import PartiControparti from '@pages/PartiControparti';
 
 export default function CreaProcedimento(){
 
@@ -15,8 +16,8 @@ export default function CreaProcedimento(){
     const stepProcRef = React.useRef()
 
     const steps = [
-        {label: 'Definisci il procedimento', component: <StepProcedimento procedimento={procedimento} ref={stepProcRef}/>}, 
-        {label: 'Definisci le parti', component: <StepParti></StepParti>}, 
+        {label: 'Dati generali', component: <DatiGeneraliProcedimento procedimento={procedimento} ref={stepProcRef}/>}, 
+        {label: 'Parti e controparti', component: <PartiControparti/>}, 
         {label: 'Riepilogo', component: 'Finale'}
     ];  
 
@@ -34,5 +35,3 @@ export default function CreaProcedimento(){
         </ProcedimentoContext.Provider>
     )
 }
-
-
