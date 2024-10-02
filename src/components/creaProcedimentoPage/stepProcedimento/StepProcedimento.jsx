@@ -11,7 +11,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { MobileDateTimePicker } from '@mui/x-date-pickers/MobileDateTimePicker';
 import CloseIcon from '@mui/icons-material/Close';
 
-import ProtocolloInputField from '../../protocolloInputField/ProtocolloInputField.jsx';
+import ProtocolloInput from '../../protocolloInput/ProtocolloInput.jsx';
 import ImportoInput from '/src/components/importoInput/ImportoInput.jsx';
 import {
   CssTextField,
@@ -126,7 +126,7 @@ function StepProcedimento() {
 
         <Grid xs={12} sx={{ paddingLeft: '1rem' }}>
           {/* Numero di procedimento */}
-          <ProtocolloInputField
+          <ProtocolloInput
             onChange={(numProtocollo, anno) => {
               setProcedimento((prev) => ({
                 ...prev,

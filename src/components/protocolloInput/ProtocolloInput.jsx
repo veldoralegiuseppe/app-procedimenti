@@ -7,7 +7,7 @@ const isNumber = (str) => /^[0-9]+$/g.test(str.trim());
 
 const fillProtocollo = (numProtocollo) => numProtocollo.padStart(6, '0');
 
-export default function ProtocolloInputField({
+export default function ProtocolloInput({
   onChange,
   numProtocollo = '',
   anno = new Date().getFullYear(),
