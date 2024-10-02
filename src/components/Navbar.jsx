@@ -18,8 +18,8 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import { useTheme } from '@mui/material/styles';
 
-import { AppContext, routes } from '/src/store/app-context.jsx';
-import CollapsableListButton from '@components/collapsableListButton/CollapsableListButton.jsx'
+import { AppContext, routes } from '/src/store/app-context';
+import CollapsableListButton from '@components/CollapsableListButton'
 import { Header, HamburgerButton, ReactiveToolbar, SectionText, NavbarListItemButton } from '@theme/Navbar';
 
 function NavbarButton({icon, label, isActive, handleClick}){

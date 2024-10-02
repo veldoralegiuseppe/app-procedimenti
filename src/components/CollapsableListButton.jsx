@@ -7,7 +7,7 @@ import ExpandLess from '@mui/icons-material/ExpandLess';
 import ExpandMore from '@mui/icons-material/ExpandMore';
 import Collapse from '@mui/material/Collapse';
 import { useTheme } from '@mui/material/styles';
-import { CollapsableListItemButton } from '/src/components/collapsableListButton/CollapsableListButtonTheming.jsx';
+import { CollapsableListItemButton } from '@theme/CollapsableListButton';
 
 export default function CollapsableListButton({label, children, icon}){
     const theme = useTheme()

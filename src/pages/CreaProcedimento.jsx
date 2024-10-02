@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 
-import Breadcrumbs from "@components/breadcrumbs/Breadcrumbs.jsx";
+import Breadcrumbs from "@components/Breadcrumbs.jsx";
 import Stepper from '@components/Stepper';
 import { ProcedimentoContext } from '@src/store/procedimento-context.jsx';
 import DatiGeneraliProcedimento from '@pages/DatiGeneraliProcedimento';
