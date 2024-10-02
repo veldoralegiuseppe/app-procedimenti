@@ -41,14 +41,6 @@ module.exports = {
                 js: './src/preload.js',
               },
             },
-            {
-              html: './src/agenzia-entrate.html',
-              js: './src/agenzia-entrate-renderer.js',
-              name: 'invisible_window',
-              preload: {
-                js: './src/agenzia-entrate-preload.js',
-              },
-            },
           ],
         },
       },
