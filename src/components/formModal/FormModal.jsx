@@ -4,7 +4,7 @@ import Modal from '@mui/material/Modal';
 import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
 
-import NotificationAlert from '@components/notificationAlert/NotificationAlert';
+import NotificationAlert from '@components/NotificationAlert';
 
 export default function FormModal({ open, handleClose, title = "", children}) {
   const theme = useTheme();
