@@ -18,7 +18,7 @@ import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 import { PersonaFisica } from '/src/vo/personaFisica.js';
 import Alert from '@mui/material/Alert';
-import ImportoReadOnly from '/src/components/ImportoReadOnly/ImportoReadOnly.jsx';
+import ImportoReadOnly from '/src/components/importoReadOnly/ImportoReadOnly.jsx';
 import {
   CssTextField,
   labelColor,
