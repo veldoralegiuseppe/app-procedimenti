@@ -23,6 +23,7 @@ module.exports = {
       '@assets': path.resolve(__dirname, 'src/assets/'), // Alias per assets
       '@src': path.resolve(__dirname, 'src/'), // Alias per src
       '@theme': path.resolve(__dirname, 'src/theme/'), // Alias per theme
+      '@context': path.resolve(__dirname, 'src/context/'), // Alias per theme
     },
   },
 };

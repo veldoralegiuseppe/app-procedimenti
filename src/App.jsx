@@ -5,7 +5,7 @@ import { CssBaseline } from '@mui/material/';
 
 import ResponsiveAppBar from '@components/Navbar';
 import {themeOne, ContentGrid} from '@theme/MainTheme';
-import { AppContext, routes, getRoute } from '/src/store/app-context.jsx';
+import { RouteContext, routes, getRoute } from '@context/Route';
 
 const root = createRoot(document.getElementById('mainContainer'));
 const sideMenuWidth = '16rem'
@@ -16,11 +16,11 @@ root.render(
 
 function App(){
  
-  var {currentPath} = React.useContext(AppContext);
+  var {currentPath} = React.useContext(RouteContext);
   const [path, setPath] = React.useState(currentPath);
 
   return (
-    <AppContext.Provider value={{currentPath: path, setCurrentPath: setPath}}>
+    <RouteContext.Provider value={{currentPath: path, setCurrentPath: setPath}}>
         <ThemeProvider theme={themeOne}>
             <CssBaseline/>
             <ResponsiveAppBar drawerWidth={sideMenuWidth} onButtonClick={ setPath }></ResponsiveAppBar>
@@ -28,6 +28,6 @@ function App(){
               {getRoute(path).component} 
             </ContentGrid>
         </ThemeProvider>
-    </AppContext.Provider>
+    </RouteContext.Provider>
   )
 }

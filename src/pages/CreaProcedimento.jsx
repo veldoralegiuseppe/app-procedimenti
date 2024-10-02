@@ -4,7 +4,7 @@ import { useTheme } from '@mui/material/styles';
 
 import Breadcrumbs from "@components/Breadcrumbs.jsx";
 import Stepper from '@components/Stepper';
-import { ProcedimentoContext } from '@src/store/procedimento-context.jsx';
+import { ProcedimentoContext } from '@context/Procedimento';
 import DatiGeneraliProcedimento from '@pages/DatiGeneraliProcedimento';
 import { Procedimento } from '@model/procedimento.js';
 import PartiControparti from '@pages/PartiControparti';

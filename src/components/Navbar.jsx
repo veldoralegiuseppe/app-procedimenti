@@ -18,7 +18,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import { useTheme } from '@mui/material/styles';
 
-import { AppContext, routes } from '/src/store/app-context';
+import { RouteContext, routes } from '@context/Route';
 import CollapsableListButton from '@components/CollapsableListButton'
 import { Header, HamburgerButton, ReactiveToolbar, SectionText, NavbarListItemButton } from '@theme/Navbar';
 
@@ -35,7 +35,7 @@ function NavbarButton({icon, label, isActive, handleClick}){
 
 export default function ResponsiveAppBar({drawerWidth, onButtonClick}) {
 
-  var {currentPath} = React.useContext(AppContext);
+  var {currentPath} = React.useContext(RouteContext);
   const theme = useTheme()
 
   /**

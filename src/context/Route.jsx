@@ -37,7 +37,7 @@ export const routes = [
   },
 ];
 
-export const AppContext = createContext({
+export const RouteContext = createContext({
   currentPath: '/dashboard',
   setCurrentPath: undefined,
 });
