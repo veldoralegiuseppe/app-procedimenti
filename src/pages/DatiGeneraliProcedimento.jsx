@@ -11,14 +11,14 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { MobileDateTimePicker } from '@mui/x-date-pickers/MobileDateTimePicker';
 import CloseIcon from '@mui/icons-material/Close';
 
-import ProtocolloInput from '@components/protocolloInput/ProtocolloInput.jsx';
-import ImportoInput from '@components/importoInput/ImportoInput.jsx';
+import ProtocolloInput from '@components/ProtocolloInput';
+import ImportoInput from '@components/importoInput/ImportoInput';
 import {
   CssTextField,
   ClearButton,
   labelColor,
-} from '@components/Theming.jsx';
-import { Procedimento } from '@model/procedimento.js';
+} from '@components/Theming';
+import { Procedimento } from '@model/procedimento';
 import Select from '@components/Select';
 
 const oggettiControversia = [
