@@ -11,15 +11,15 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import InputLabel from '@mui/material/InputLabel';
 
-import ImportoInput from '@components/importoInput/ImportoInput.jsx';
-import ProvinciaSelect from '@components/provinciaSelect/ProvinciaSelect.jsx';
-import ComuneSelect from '@components/ComuneSelect.jsx';
-import * as CodiceFiscaleUtils from '@assets/js/convalidaCodiceFiscale.js';
-import { Comune } from '@model/comune.js';
-import * as ComuniUtils from '@assets/js/comuni.js';
-import { PersonaFisica } from '@model/personaFisica.js';
+import ImportoInput from '@components/importoInput/ImportoInput';
+import ProvinciaSelect from '@components/ProvinciaSelect';
+import ComuneSelect from '@components/ComuneSelect';
+import * as CodiceFiscaleUtils from '@assets/js/convalidaCodiceFiscale';
+import { Comune } from '@model/comune';
+import * as ComuniUtils from '@assets/js/comuni';
+import { PersonaFisica } from '@model/personaFisica';
 import Alert from '@mui/material/Alert';
-import ImportoReadOnly from '@components/importoReadOnly/ImportoReadOnly.jsx';
+import ImportoReadOnly from '@components/importoReadOnly/ImportoReadOnly';
 import {
   CssTextField,
   labelColor,

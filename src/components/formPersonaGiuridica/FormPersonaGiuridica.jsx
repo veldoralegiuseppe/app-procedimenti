@@ -3,12 +3,12 @@ import Grid from '@mui/material/Unstable_Grid2';
 import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
 
-import ProvinciaSelect from '@components/provinciaSelect/ProvinciaSelect.jsx';
-import ComuneSelect from '@components/ComuneSelect.jsx';
-import ImportoInput from '@components/importoInput/ImportoInput.jsx';
-import { PersonaGiuridica } from '@model/personaGiuridica.js';
-import ImportoReadOnly from '@components/importoReadOnly/ImportoReadOnly.jsx';
-import { CssTextField } from '@components/Theming.jsx';
+import ProvinciaSelect from '@components/ProvinciaSelect';
+import ComuneSelect from '@components/ComuneSelect';
+import ImportoInput from '@components/importoInput/ImportoInput';
+import { PersonaGiuridica } from '@model/personaGiuridica';
+import ImportoReadOnly from '@components/importoReadOnly/ImportoReadOnly';
+import { CssTextField } from '@components/Theming';
 
 function FormPersonaGiuridica(props, ref) {
   // Ref
