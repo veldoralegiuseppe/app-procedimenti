@@ -19,6 +19,7 @@ import Alert from '@mui/material/Alert';
 import Stack from '@mui/material/Stack';
 import FormPersonaFisica from '/src/components/formPersonaFisica/FormPersonaFisica.jsx';
 import FormPersonaGiuridica from '/src/components/formPersonaGiuridica/FormPersonaGiuridica.jsx';
+import NotificationAlert from '../../notificationAlert/NotificationAlert';
 
 const formLabelFontSize = '1rem'
 const labelColor = 'rgb(105 105 105 / 60%)'
@@ -71,7 +72,7 @@ export default function AggiungiParteButton(props) {
                         <Typography id="keep-mounted-modal-title" variant="h5" component="h2" sx={{color: '#fff3e6', marginLeft: '32px'}}>Nuova Anagrafica</Typography>
                     </div>
                     <Creazione onSubmit={handleFormSubmit} sx={{margin: '3rem 0 0 0'}}/>
-                    {alertOpen && <ErrorAlert isOpen={alertOpen} onClose= {() => {setAlertOpen(false)}} message={errorMessage}/>}    
+                    {alertOpen && <NotificationAlert severity='error' isOpen={alertOpen} onClose= {() => {setAlertOpen(false)}} message={errorMessage}/>}    
                 </Box>
             </Modal>
         </div>
@@ -236,53 +237,7 @@ function Creazione(props){
             </Grid>
         </div>
     )
-}
-
-function ErrorAlert({ isOpen, message, onClose }) {
-    const handleClose = () => {
-      if (onClose) onClose();
-    };
-  
-    return (
-      <Stack
-        sx={{
-          width: '100%',
-          zIndex: '99',
-          position: 'sticky',
-          bottom: '0',
-          display: 'flex',
-          alignItems: 'center',
-        }}
-        spacing={2}
-      >
-        {isOpen && (
-          <Alert
-            onClose={handleClose}
-            severity="error"
-            sx={{
-              width: '60%',
-              borderRadius: '8px',
-              boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)',
-              '& .MuiAlert-message': {
-                color: '#d32f2f',
-                fontSize: '1rem',
-                display: 'flex',
-                justifyItems: 'center',
-                alignItems: 'center',
-                whiteSpace: 'pre-line',
-              },
-              '& .MuiAlert-icon': {
-                //color: '#d32f2f'
-              },
-            }}
-          >
-            {message}
-          </Alert>
-        )}
-      </Stack>
-    );
-  }
-  
+}  
 
 
   
