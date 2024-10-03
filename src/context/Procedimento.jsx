@@ -7,9 +7,16 @@ import { Comune } from '@model/comune.js';
 
 export const ProcedimentoContext = createContext();
 
-export const ProcedimentoProvider = ({ children }) => {
-  // Stato per gestire il procedimento e le persone
-  const [procedimento, setProcedimento] = useState(new Procedimento());
+const mockProcedimento = Object.assign(new Procedimento(), {
+  numProtocollo: '000001',
+  annoProtocollo: '2024',
+  dataDeposito: '23/01/2024',
+  sede: 'Roma',
+  sedeSvolgimento: 'Roma - Sede Centrale',
+  dataOraIncontro: '23/02/2024 10:30',
+  oggettoControversia: 'Controversia per mancato pagamento',
+  valoreControversia: 15000
+});
 
   // Mock per Comune (per PersonaFisica e PersonaGiuridica)
   const mockComuneRoma = new Comune({
@@ -42,7 +49,9 @@ export const ProcedimentoProvider = ({ children }) => {
     coordinate: { lat: 45.4642035, lng: 9.189982 },
   });
 
-  // Stato delle persone
+export const ProcedimentoProvider = ({ children }) => {
+
+  const [procedimento, setProcedimento] = useState(mockProcedimento);
   const [persone, setPersone] = useState([
     Object.assign(new PersonaFisica(), {
       nome: 'MARIO',
@@ -62,6 +71,52 @@ export const ProcedimentoProvider = ({ children }) => {
       importoPositivoOltrePrimoIncontro: 7000,
       note: 'Nota di prova',
       isParteIstante: true,
+      rappresentanteLegale: 'RAIMONDO GIUDICE',
+      rappresentanteLegalePecEmail: 'raimondo.giudice@gmail.com',
+      sesso: 'UOMO',
+    }),
+
+    Object.assign(new PersonaFisica(), {
+      nome: 'MARIO',
+      cognome: 'ROSSI',
+      codiceFiscale: 'RSSMRA85M01H501Z',
+      partitaIVA: '12345678911',
+      dataNascitaLocale: '01/01/1985',
+      luogoDiNascita: mockComuneRoma,
+      residenza: mockComuneRoma,
+      indirizzo: 'Via Roma, 1',
+      pecEmail: 'mario.rossi@pec.it',
+      speseAvvio: 1000,
+      spesePostali: 50,
+      pagamentoIndennita: 200,
+      importoMancatoAccordo: 5000,
+      importoPositivoPrimoIncontro: 3000,
+      importoPositivoOltrePrimoIncontro: 7000,
+      note: 'Nota di prova',
+      isParteIstante: true,
+      rappresentanteLegale: 'RAIMONDO GIUDICE',
+      rappresentanteLegalePecEmail: 'raimondo.giudice@gmail.com',
+      sesso: 'UOMO',
+    }),
+
+    Object.assign(new PersonaFisica(), {
+      nome: 'MARIO',
+      cognome: 'ROSSI',
+      codiceFiscale: 'RSSMRA85M01H501Z',
+      partitaIVA: '12345678911',
+      dataNascitaLocale: '01/01/1985',
+      luogoDiNascita: mockComuneRoma,
+      residenza: mockComuneRoma,
+      indirizzo: 'Via Roma, 1',
+      pecEmail: 'mario.rossi@pec.it',
+      speseAvvio: 1000,
+      spesePostali: 50,
+      pagamentoIndennita: 200,
+      importoMancatoAccordo: 5000,
+      importoPositivoPrimoIncontro: 3000,
+      importoPositivoOltrePrimoIncontro: 7000,
+      note: 'Nota di prova',
+      isParteIstante: false,
       rappresentanteLegale: 'RAIMONDO GIUDICE',
       rappresentanteLegalePecEmail: 'raimondo.giudice@gmail.com',
       sesso: 'UOMO',
