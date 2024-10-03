@@ -315,6 +315,7 @@ function DatiGeneraliProcedimento() {
             variant="h6"
             sx={{
               fontSize: formLabelFontSize,
+              fontWeight: '400',
               color: `#467bae`,
             }}
           >
