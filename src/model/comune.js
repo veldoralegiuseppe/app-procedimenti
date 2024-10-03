@@ -8,6 +8,7 @@ export class Comune {
     provincia = class {
       nome
       regione
+      sigla
     }
     email
     pec

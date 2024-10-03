@@ -37,8 +37,9 @@ export default function CreaParteControparte({ handleClose, onError }) {
       console.log('Errori rilevati:', message);
       onError(message);
     } else {
+      // TODO: Inserisco le informazioni relative al ruolo nella persona
       console.log('Form inviato con successo');
-      handleClose(); // Chiude il modale
+      handleClose(); 
     }
   };
 

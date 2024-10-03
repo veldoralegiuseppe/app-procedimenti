@@ -20,6 +20,9 @@ import { useTheme } from '@mui/material/styles';
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import Collapse from '@mui/material/Collapse';
+import { ProcedimentoContext } from '@context/Procedimento';
+import { PersonaFisica } from '../model/personaFisica';
+import { PersonaGiuridica } from '../model/personaGiuridica';
 
 const headerBackgroundColor2 = '#ffffff8f';
 const footerBackgroundColor = '#4a769b';
@@ -93,12 +96,6 @@ const headCells = [
     label: 'Pagamento indennità',
   },
   {
-    id: 'importoMancatoAccordo',
-    numeric: true,
-    disablePadding: false,
-    label: 'Mancato accordo',
-  },
-  {
     id: 'importoPositivoPrimoIncontro',
     numeric: true,
     disablePadding: false,
@@ -111,6 +108,12 @@ const headCells = [
     label: 'Positivo oltre primo incontro',
   },
   {
+    id: 'importoMancatoAccordo',
+    numeric: true,
+    disablePadding: false,
+    label: 'Mancato accordo',
+  },
+  {
     id: 'totale',
     numeric: true,
     disablePadding: false,
@@ -118,21 +121,23 @@ const headCells = [
   },
 ];
 
-export default function TabellaPartiControparti(props) {
+export default function TabellaPartiControparti() {
+  const { persone, setPersone } = React.useContext(ProcedimentoContext);
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('anagrafica');
   const [selected, setSelected] = React.useState(-1);
   const [page, setPage] = React.useState(0);
   const [dense, setDense] = React.useState(false);
   const [rowsPerPage, setRowsPerPage] = React.useState(5);
-  const [isEmpty, setIsEmpty] = React.useState(false);
+  const [isEmpty, setIsEmpty] = React.useState(
+    persone && persone.length == 0 ? true : false
+  );
   var [rows, setRows] = React.useState(
     (rows = isEmpty
-      ? [createData(null)]
-      : [
-          createData(1, 'ROSSI', 'MARIO', 'PARTE', 1, 1, 1, 1, 1, 1),
-          createData(2, 'NERI', 'LUIGI', 'PARTE', 2, 2, 2, 2, 2, 2),
-        ].sort((a, b) => -descendingComparator(a, b, 0)))
+      ? createRowFromModel(null)
+      : createRowFromModel(persone).sort(
+          (a, b) => -descendingComparator(a, b, 0)
+        ))
   );
   const theme = useTheme();
 
@@ -147,20 +152,16 @@ export default function TabellaPartiControparti(props) {
     return `€ ${formattedIntegerPart},${formattedDecimalPart}`;
   }
 
-  function createData(
-    id,
-    cognome = '',
-    nome = '',
-    tipo = 'PARTE',
-    speseAvvio = 0,
-    spesePostali = 0,
-    pagamentoIndennita = 0,
-    importoMancatoAccordo = 0,
-    importoPositivoPrimoIncontro = 0,
-    importoPositivoOltrePrimoIncontro = 0
-  ) {
-    if (!id)
-      return {
+  function createRowFromModel(persone) {
+    if (persone && !Array.isArray(persone)) {
+      console.error('Il parametro in input non è nel formato opportuno');
+      return [];
+    }
+
+    let rows = [];
+
+    if (!persone || persone.length === 0) {
+      rows.push({
         id: 1,
         anagrafica: 'Nessuna parte inserita',
         tipo: '',
@@ -170,38 +171,65 @@ export default function TabellaPartiControparti(props) {
         importoMancatoAccordo: '',
         importoPositivoPrimoIncontro: '',
         importoPositivoOltrePrimoIncontro: '',
+        totale: '',
         open: false,
-      };
+      });
+      return rows;
+    }
 
-    let totale = 0;
-    let spese = [
-      speseAvvio,
-      spesePostali,
-      pagamentoIndennita,
-      importoMancatoAccordo,
-      importoPositivoPrimoIncontro,
-      importoPositivoOltrePrimoIncontro,
-    ];
+    persone.forEach((persona, index) => {
+      if (!persona || !( persona instanceof PersonaFisica || persona instanceof PersonaGiuridica)) 
+        console.error(`L'elemento ${JSON.stringify(persona )} non è una persona fisica o giuridica`);
+      else {
+        
+        let commonFields = {
+          id: index + 1,
+          tipo: persona.isParteIstante ? 'PARTE' : 'CONTROPARTE',
+          speseAvvio: formatImporto(persona.speseAvvio),
+          spesePostali: formatImporto(persona.spesePostali),
+          pagamentoIndennita: formatImporto(persona.pagamentoIndennita),
+          importoMancatoAccordo: formatImporto(persona.importoMancatoAccordo),
+          importoPositivoPrimoIncontro: formatImporto(
+            persona.importoPositivoPrimoIncontro
+          ),
+          importoPositivoOltrePrimoIncontro: formatImporto(
+            persona.importoPositivoOltrePrimoIncontro
+          ),
+          totale: formatImporto(persona.getTotaleSpese()),
+          open: false,
+          note: persona.note,
+          pecEmail: persona.pecEmail,
+          rappresentanteLegale: persona.rappresentanteLegale,
+          rappresentanteLegalePecEmail: persona.rappresentanteLegalePecEmail,
+          partitaIVA: persona.partitaIVA
+        };
 
-    spese.forEach((importo) => {
-      totale += Number(importo);
+        if (persona instanceof PersonaFisica) {
+          rows.push({
+            ...commonFields, 
+            isPersonaFisica: true,
+            anagrafica: `${persona.nome} ${persona.cognome}`,
+            codiceFiscale: persona.codiceFiscale,
+            dataNascita: persona.dataNascitaLocale,
+            luogoDiNascita: `${persona.luogoDiNascita.nome} (${persona.luogoDiNascita.provincia.nome}) ${persona.luogoDiNascita.cap}`,
+            sesso: persona.sesso,
+            residenza: `${persona.indirizzo ? persona.indirizzo +' -' : ''}  ${persona.residenza.cap} ${persona.residenza.nome} (${persona.residenza.provincia.sigla})`,
+          });
+        }
+
+        if (persona instanceof PersonaGiuridica) {
+          rows.push({
+            ...commonFields, 
+            isPersonaFisica: false,
+            anagrafica: persona.denominazione,
+            partitaIVA: persona.partitaIVA,
+            sedeLegale: `${persona.indirizzoSedeLegale ? persona.indirizzoSedeLegale +' -' : ''}  ${persona.sedeLegale.cap} ${persona.sedeLegale.nome} (${persona.sedeLegale.provincia.sigla})`,
+          });
+        }
+      }
     });
 
-    return {
-      id,
-      anagrafica: `${nome} ${cognome}`,
-      tipo,
-      speseAvvio: formatImporto(speseAvvio),
-      spesePostali: formatImporto(spesePostali),
-      pagamentoIndennita: formatImporto(pagamentoIndennita),
-      importoMancatoAccordo: formatImporto(importoMancatoAccordo),
-      importoPositivoPrimoIncontro: formatImporto(importoPositivoPrimoIncontro),
-      importoPositivoOltrePrimoIncontro: formatImporto(
-        importoPositivoOltrePrimoIncontro
-      ),
-      totale: formatImporto(totale),
-      open: false,
-    };
+    return rows;
   }
 
   const handleRequestSort = (event, property) => {
@@ -249,7 +277,7 @@ export default function TabellaPartiControparti(props) {
     let newRows = rows.filter((row, index) => row.id !== selected);
 
     if (newRows.length <= 0) {
-      newRows = [createData(null)];
+      newRows = createRowFromModel(null);
       setIsEmpty(true);
     } else setIsEmpty(false);
 
@@ -282,9 +310,6 @@ export default function TabellaPartiControparti(props) {
               borderBottom: '1px solid #3e678f4d',
             }}
           />
-
-          {/* Checkbox */}
-          {/* <TableCell padding="checkbox" sx={{color: theme.palette.logo.secondary, backgroundColor: headerBackgroundColor2,  borderBottom: '1px solid #3e678f4d'}}/> */}
 
           {headCells.map((headCell) => {
             // Definire etichetta abbreviata
@@ -421,6 +446,128 @@ export default function TabellaPartiControparti(props) {
     [rows, order, orderBy, page, rowsPerPage]
   );
 
+  function CollapsibleContent({ row }) {
+    return (
+      <Box sx={{ margin: 1 }}>
+        <Typography variant="h6" gutterBottom component="div">
+          Dettagli{' '}
+          {row.isPersonaFisica ? 'Persona Fisica' : 'Persona Giuridica'}
+        </Typography>
+        <Table size="small" aria-label="details">
+          <TableHead>
+            <TableRow>
+              <TableCell sx={bodyTableCellSx}></TableCell>
+              <TableCell sx={bodyTableCellSx}></TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {/* Se persona fisica */}
+            {row.isPersonaFisica ? (
+              <>
+                <TableRow>
+                  <TableCell sx={bodyTableCellSx}>Codice Fiscale</TableCell>
+                  <TableCell sx={bodyTableCellSx}>
+                    {row.codiceFiscale}
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell sx={bodyTableCellSx}>Partita IVA</TableCell>
+                  <TableCell sx={bodyTableCellSx}>
+                    {row.partitaIVA}
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell sx={bodyTableCellSx}>Data di Nascita</TableCell>
+                  <TableCell sx={bodyTableCellSx}>{row.dataNascita}</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell sx={bodyTableCellSx}>Luogo di Nascita</TableCell>
+                  <TableCell sx={bodyTableCellSx}>
+                    {row.luogoDiNascita}
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell sx={bodyTableCellSx}>Sesso</TableCell>
+                  <TableCell sx={bodyTableCellSx}>{row.sesso}</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell sx={bodyTableCellSx}>Residenza</TableCell>
+                  <TableCell sx={bodyTableCellSx}>
+                    {row.residenza}
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell sx={bodyTableCellSx}>Email/PEC</TableCell>
+                  <TableCell sx={bodyTableCellSx}>
+                    {row.pecEmail}
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell sx={bodyTableCellSx}>Rappresentante Legale</TableCell>
+                  <TableCell sx={bodyTableCellSx}>
+                    {row.rappresentanteLegale}
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell sx={bodyTableCellSx}>Email/PEC del Rappresentante Legale</TableCell>
+                  <TableCell sx={bodyTableCellSx}>
+                    {row.rappresentanteLegalePecEmail}
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell sx={bodyTableCellSx}>Note</TableCell>
+                  <TableCell sx={bodyTableCellSx}>
+                    {row.note}
+                  </TableCell>
+                </TableRow>
+                {/* Altri campi per persona fisica */}
+              </>
+            ) : (
+              <>
+                {/* Se persona giuridica */}
+                <TableRow>
+                  <TableCell sx={bodyTableCellSx}>Partita IVA</TableCell>
+                  <TableCell sx={bodyTableCellSx}>{row.partitaIVA}</TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell sx={bodyTableCellSx}>Sede Legale</TableCell>
+                  <TableCell sx={bodyTableCellSx}>
+                    {row.sedeLegale}
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell sx={bodyTableCellSx}>Email/PEC</TableCell>
+                  <TableCell sx={bodyTableCellSx}>
+                    {row.pecEmail}
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell sx={bodyTableCellSx}>Rappresentante Legale</TableCell>
+                  <TableCell sx={bodyTableCellSx}>
+                    {row.rappresentanteLegale}
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell sx={bodyTableCellSx}>Email/PEC del Rappresentante Legale</TableCell>
+                  <TableCell sx={bodyTableCellSx}>
+                    {row.rappresentanteLegalePecEmail}
+                  </TableCell>
+                </TableRow>
+                <TableRow>
+                  <TableCell sx={bodyTableCellSx}>Note</TableCell>
+                  <TableCell sx={bodyTableCellSx}>
+                    {row.note}
+                  </TableCell>
+                </TableRow>
+                {/* Altri campi per persona giuridica */}
+              </>
+            )}
+          </TableBody>
+        </Table>
+      </Box>
+    );
+  }
+
   return (
     <Box sx={{ margin: '18px 0 0 1rem', width: 'calc(100% - 1rem)' }}>
       <Paper sx={{ width: '100%', mb: 2, boxShadow: 'unset' }}>
@@ -553,40 +700,8 @@ export default function TabellaPartiControparti(props) {
                           timeout="auto"
                           unmountOnExit
                         >
-                          <Box sx={{ margin: 1 }}>
-                            <Typography
-                              variant="h6"
-                              gutterBottom
-                              component="div"
-                            >
-                              History
-                            </Typography>
-                            <Table size="small" aria-label="purchases">
-                              <TableHead>
-                                <TableRow>
-                                  <TableCell sx={bodyTableCellSx}>
-                                    Date
-                                  </TableCell>
-                                  <TableCell sx={bodyTableCellSx}>
-                                    Customer
-                                  </TableCell>
-                                  <TableCell sx={bodyTableCellSx} align="right">
-                                    Amount
-                                  </TableCell>
-                                  <TableCell sx={bodyTableCellSx} align="right">
-                                    Total price ($)
-                                  </TableCell>
-                                </TableRow>
-                              </TableHead>
-                              <TableBody>
-                                <TableRow key={`${row.id}-body-collapse`}>
-                                  <TableCell sx={bodyTableCellSx}>
-                                    Prova
-                                  </TableCell>
-                                </TableRow>
-                              </TableBody>
-                            </Table>
-                          </Box>
+                          <CollapsibleContent row={row} />{' '}
+                          {/* Usa il nuovo componente */}
                         </Collapse>
                       </TableCell>
                     </TableRow>
