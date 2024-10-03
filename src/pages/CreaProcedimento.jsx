@@ -4,10 +4,10 @@ import { useTheme } from '@mui/material/styles';
 
 import Breadcrumbs from "@components/Breadcrumbs.jsx";
 import Stepper from '@components/Stepper';
-import { ProcedimentoContext, ProcedimentoProvider } from '@context/Procedimento';
+import { ProcedimentoProvider } from '@context/Procedimento';
 import DatiGeneraliProcedimento from '@pages/DatiGeneraliProcedimento';
-import { Procedimento } from '@model/procedimento.js';
 import PartiControparti from '@pages/PartiControparti';
+import RiepilogoProcedimento from '@pages/RiepilogoProcedimento';
 
 export default function CreaProcedimento() {
 
@@ -17,7 +17,7 @@ export default function CreaProcedimento() {
     const steps = [
         {label: 'Dati generali', component: <DatiGeneraliProcedimento ref={stepProcRef}/>}, 
         {label: 'Parti e controparti', component: <PartiControparti/>}, 
-        {label: 'Riepilogo', component: 'Finale'}
+        {label: 'Riepilogo', component: <RiepilogoProcedimento/>}
     ];  
 
     return (
