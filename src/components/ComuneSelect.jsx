@@ -155,12 +155,6 @@ function ComuneSelect(props, ref) {
             }
             label={props.label ? props.label : 'Comune'}
             size="small"
-            sx={{
-              '& .MuiOutlinedInput-input': { fontWeight: '500' },
-              '& .MuiFormLabel-root:not(.Mui-error, .Mui-focused, .Mui-disabled)':
-                { color: labelColor },
-              '& .MuiFormLabel-root.Mui-disabled': { color: labelDisableColor },
-            }}
           />
         )}
       />

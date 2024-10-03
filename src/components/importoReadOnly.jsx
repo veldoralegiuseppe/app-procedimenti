@@ -21,7 +21,6 @@ const StyledTextField = styled(TextField)(({ theme }) => ({
     },
   },
   '& .MuiOutlinedInput-input': {
-    fontWeight: '500',  // Stile del testo di default
     userSelect: 'none', // Previene la selezione del testo
     color: theme.palette.text.primary,  // Imposta il colore del testo di default
     cursor: 'not-allowed',  // Mostra il cursore not-allowed anche sul testo

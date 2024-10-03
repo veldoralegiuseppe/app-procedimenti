@@ -61,8 +61,6 @@ export default function ProtocolloInput({
         backgroundColor: theme.palette.background.default,
         width: '160px', // Assicura che il campo si estenda su tutto il contenitore
         '& .MuiInputBase-root': { position: 'relative' },
-        '& .MuiFormLabel-root': { color: 'rgb(105 105 105 / 60%)' },
-        '& .MuiOutlinedInput-input': { fontWeight: '500' },
         '& .MuiInputBase-adornedStart': { paddingLeft: '0px' }, // Rimuove padding-left
         ...sx,
       }}
@@ -85,7 +83,6 @@ export default function ProtocolloInput({
                   width: '60%', // Lo spazio occupato dal numero di protocollo
                   textAlign: 'right',
                   fontFamily: 'Roboto',
-                  fontWeight: '500',
                   fontSize: '1rem',
                   color: theme.palette.text.primary,
                   border: 'none',
@@ -123,7 +120,6 @@ export default function ProtocolloInput({
                   width: '30%', // Lo spazio occupato dall'anno
                   textAlign: 'left',
                   fontFamily: 'Roboto',
-                  fontWeight: '500',
                   fontSize: '1rem',
                   color: theme.palette.text.primary,
                   border: 'none',

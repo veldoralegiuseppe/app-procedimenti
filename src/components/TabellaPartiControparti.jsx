@@ -24,12 +24,12 @@ import { ProcedimentoContext } from '@context/Procedimento';
 import { PersonaFisica } from '../model/personaFisica';
 import { PersonaGiuridica } from '../model/personaGiuridica';
 
-const headerBackgroundColor2 = '#ffffff8f';
+const headerBackgroundColor2 = '#ecf6ff';
 const footerBackgroundColor = '#4a769b';
 const rowBackgroundColor = '#ffe5c89c';
+const collapsibleSectionBackgroundColor = '#ecf6ff2e';
 const bodyTableCellSx = {
   borderColor: '#eeeeee',
-  fontWeight: '500',
   color: 'inherit',
   borderBottom: 'none',
   padding: '4px',
@@ -329,6 +329,8 @@ export default function TabellaPartiControparti() {
               displayLabel = 'Manc. accordo'; // Abbreviazione specifica
             }
 
+            displayLabel = displayLabel.toLocaleUpperCase()
+
             return (
               <TableCell
                 sx={{
@@ -447,9 +449,13 @@ export default function TabellaPartiControparti() {
   );
 
   function CollapsibleContent({ row }) {
+
+    const collapsibleLabelCellSx = {color: '#4a769b'}
+    const collapsibleValueCellSx = {color: '#inherit'}
+    
     return (
       <Box sx={{ margin: 1 }}>
-        <Typography variant="h6" gutterBottom component="div">
+        <Typography variant="h6" gutterBottom component="div" sx={{...bodyTableCellSx, ...collapsibleLabelCellSx}}>
           Dettagli{' '}
           {row.isPersonaFisica ? 'Persona Fisica' : 'Persona Giuridica'}
         </Typography>
@@ -465,58 +471,58 @@ export default function TabellaPartiControparti() {
             {row.isPersonaFisica ? (
               <>
                 <TableRow>
-                  <TableCell sx={bodyTableCellSx}>Codice Fiscale</TableCell>
-                  <TableCell sx={bodyTableCellSx}>
+                  <TableCell sx={{...bodyTableCellSx, ...collapsibleLabelCellSx}}>Codice Fiscale</TableCell>
+                  <TableCell sx={{...bodyTableCellSx, ...collapsibleValueCellSx}}>
                     {row.codiceFiscale}
                   </TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell sx={bodyTableCellSx}>Partita IVA</TableCell>
-                  <TableCell sx={bodyTableCellSx}>
+                  <TableCell sx={{...bodyTableCellSx, ...collapsibleLabelCellSx}}>Partita IVA</TableCell>
+                  <TableCell sx={{...bodyTableCellSx, ...collapsibleValueCellSx}}>
                     {row.partitaIVA}
                   </TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell sx={bodyTableCellSx}>Data di Nascita</TableCell>
-                  <TableCell sx={bodyTableCellSx}>{row.dataNascita}</TableCell>
+                  <TableCell sx={{...bodyTableCellSx, ...collapsibleLabelCellSx}}>Data di Nascita</TableCell>
+                  <TableCell sx={{...bodyTableCellSx, ...collapsibleValueCellSx}}>{row.dataNascita}</TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell sx={bodyTableCellSx}>Luogo di Nascita</TableCell>
-                  <TableCell sx={bodyTableCellSx}>
+                  <TableCell sx={{...bodyTableCellSx, ...collapsibleLabelCellSx}}>Luogo di Nascita</TableCell>
+                  <TableCell sx={{...bodyTableCellSx, ...collapsibleValueCellSx}}>
                     {row.luogoDiNascita}
                   </TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell sx={bodyTableCellSx}>Sesso</TableCell>
-                  <TableCell sx={bodyTableCellSx}>{row.sesso}</TableCell>
+                  <TableCell sx={{...bodyTableCellSx, ...collapsibleLabelCellSx}}>Sesso</TableCell>
+                  <TableCell sx={{...bodyTableCellSx, ...collapsibleValueCellSx}}>{row.sesso}</TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell sx={bodyTableCellSx}>Residenza</TableCell>
-                  <TableCell sx={bodyTableCellSx}>
+                  <TableCell sx={{...bodyTableCellSx, ...collapsibleLabelCellSx}}>Residenza</TableCell>
+                  <TableCell sx={{...bodyTableCellSx, ...collapsibleValueCellSx}}>
                     {row.residenza}
                   </TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell sx={bodyTableCellSx}>Email/PEC</TableCell>
-                  <TableCell sx={bodyTableCellSx}>
+                  <TableCell sx={{...bodyTableCellSx, ...collapsibleLabelCellSx}}>Email/PEC</TableCell>
+                  <TableCell sx={{...bodyTableCellSx, ...collapsibleValueCellSx}}>
                     {row.pecEmail}
                   </TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell sx={bodyTableCellSx}>Rappresentante Legale</TableCell>
-                  <TableCell sx={bodyTableCellSx}>
+                  <TableCell sx={{...bodyTableCellSx, ...collapsibleLabelCellSx}}>Rappresentante Legale</TableCell>
+                  <TableCell sx={{...bodyTableCellSx, ...collapsibleValueCellSx}}>
                     {row.rappresentanteLegale}
                   </TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell sx={bodyTableCellSx}>Email/PEC del Rappresentante Legale</TableCell>
-                  <TableCell sx={bodyTableCellSx}>
+                  <TableCell sx={{...bodyTableCellSx, ...collapsibleLabelCellSx}}>Email/PEC del Rappresentante Legale</TableCell>
+                  <TableCell sx={{...bodyTableCellSx, ...collapsibleValueCellSx}}>
                     {row.rappresentanteLegalePecEmail}
                   </TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell sx={bodyTableCellSx}>Note</TableCell>
-                  <TableCell sx={bodyTableCellSx}>
+                  <TableCell sx={{...bodyTableCellSx, ...collapsibleLabelCellSx}}>Note</TableCell>
+                  <TableCell sx={{...bodyTableCellSx, ...collapsibleValueCellSx}}>
                     {row.note}
                   </TableCell>
                 </TableRow>
@@ -526,36 +532,36 @@ export default function TabellaPartiControparti() {
               <>
                 {/* Se persona giuridica */}
                 <TableRow>
-                  <TableCell sx={bodyTableCellSx}>Partita IVA</TableCell>
-                  <TableCell sx={bodyTableCellSx}>{row.partitaIVA}</TableCell>
+                  <TableCell sx={{...bodyTableCellSx, ...collapsibleLabelCellSx}}>Partita IVA</TableCell>
+                  <TableCell sx={{...bodyTableCellSx, ...collapsibleValueCellSx}}>{row.partitaIVA}</TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell sx={bodyTableCellSx}>Sede Legale</TableCell>
-                  <TableCell sx={bodyTableCellSx}>
+                  <TableCell sx={{...bodyTableCellSx, ...collapsibleLabelCellSx}}>Sede Legale</TableCell>
+                  <TableCell sx={{...bodyTableCellSx, ...collapsibleValueCellSx}}>
                     {row.sedeLegale}
                   </TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell sx={bodyTableCellSx}>Email/PEC</TableCell>
-                  <TableCell sx={bodyTableCellSx}>
+                  <TableCell sx={{...bodyTableCellSx, ...collapsibleLabelCellSx}}>Email/PEC</TableCell>
+                  <TableCell sx={{...bodyTableCellSx, ...collapsibleValueCellSx}}>
                     {row.pecEmail}
                   </TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell sx={bodyTableCellSx}>Rappresentante Legale</TableCell>
-                  <TableCell sx={bodyTableCellSx}>
+                  <TableCell sx={{...bodyTableCellSx, ...collapsibleLabelCellSx}}>Rappresentante Legale</TableCell>
+                  <TableCell sx={{...bodyTableCellSx, ...collapsibleValueCellSx}}>
                     {row.rappresentanteLegale}
                   </TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell sx={bodyTableCellSx}>Email/PEC del Rappresentante Legale</TableCell>
-                  <TableCell sx={bodyTableCellSx}>
+                  <TableCell sx={{...bodyTableCellSx, ...collapsibleLabelCellSx}}>Email/PEC del Rappresentante Legale</TableCell>
+                  <TableCell sx={{...bodyTableCellSx, ...collapsibleValueCellSx}}>
                     {row.rappresentanteLegalePecEmail}
                   </TableCell>
                 </TableRow>
                 <TableRow>
-                  <TableCell sx={bodyTableCellSx}>Note</TableCell>
-                  <TableCell sx={bodyTableCellSx}>
+                  <TableCell sx={{...bodyTableCellSx, ...collapsibleLabelCellSx}}>Note</TableCell>
+                  <TableCell sx={{...bodyTableCellSx, ...collapsibleValueCellSx}}>
                     {row.note}
                   </TableCell>
                 </TableRow>
@@ -688,7 +694,7 @@ export default function TabellaPartiControparti() {
                     {/* Collapsibile */}
                     <TableRow
                       key={`${row.id}-collapse`}
-                      sx={{ backgroundColor: 'rgb(245 209 178 / 8%)' }}
+                      sx={{ backgroundColor: collapsibleSectionBackgroundColor }}
                     >
                       <TableCell
                         id={labelId + '-collapse'}

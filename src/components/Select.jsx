@@ -89,7 +89,6 @@ function Select({
             },
           },
         }}
-        sx={{ '& .MuiOutlinedInput-input': { fontWeight: '500', color: theme.palette.text.primary } }}
       >
         {options.map((option, index) => (
           <MenuItem key={`${label}-item-${index}`} value={option.value}>

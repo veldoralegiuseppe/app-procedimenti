@@ -118,7 +118,7 @@ export const CssSelect = styled(Select)(({ theme }) => ({
 }));
 
 export const CssTextField = styled(TextField)(({ theme }) => ({
-  '& .MuiInputLabel-root': {
+  '& .MuiInputLabel-root:not(.Mui-error, .Mui-disabled, .Mui-focused)': {
     color: labelColor, // Colore di default della label
   },
   '& .MuiInputLabel-root.Mui-error': {
@@ -205,7 +205,7 @@ export const formControlStyles = (theme, labelColor) => ({
       borderWidth: '1px', // Mantiene lo spessore del bordo a 1px anche in focus
     },
   },
-  '&:hover .MuiInputLabel-root:not(.Mui-disabled)': {
+  '&:hover .MuiInputLabel-root:not(.Mui-disabled, .Mui-error)': {
     color: theme.palette.logo.secondary, // Cambia il colore della label su hover
   },
   '& .MuiInputLabel-outlined.Mui-focused': {

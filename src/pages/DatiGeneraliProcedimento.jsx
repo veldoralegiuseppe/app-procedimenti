@@ -62,7 +62,6 @@ const inputStyles = (
   width: inputWidth,
   maxWidth,
   minWidth,
-  '& .MuiOutlinedInput-input': { fontWeight: '500' },
   '&:hover .MuiSvgIcon-root': { color: theme.palette.logo.secondary },
   '&.Mui-focused .MuiSvgIcon-root': { color: theme.palette.logo.secondary },
 });
@@ -115,7 +114,6 @@ function DatiGeneraliProcedimento() {
         >
           <Typography
             sx={{
-              fontWeight: '400',
               fontSize: formLabelFontSize,
               color: '#467bae',
             }}
@@ -316,7 +314,6 @@ function DatiGeneraliProcedimento() {
           <Typography
             variant="h6"
             sx={{
-              fontWeight: '400',
               fontSize: formLabelFontSize,
               color: `#467bae`,
             }}
@@ -395,8 +392,7 @@ function ClearBtn({ onReset, isDisabled }) {
       sx={{
         fontSize: '.9rem',
         '&.Mui-disabled': {
-          color: theme.palette.text.disabled,
-          fontWeight: '400',
+          color: theme.palette.text.disable
         },
       }}
       disabled={isDisabled}

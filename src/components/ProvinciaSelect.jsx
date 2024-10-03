@@ -72,7 +72,7 @@ function ProvinciaSelect(props, ref) {
             PaperComponent={({ children }) => (
                 <Paper sx={{backgroundColor: theme.palette.dropdown.primary}}>{children}</Paper>
             )}
-            renderOption={(props, option) =>  <li {...props} style={{color: theme.palette.primary.main, fontSize: '.9rem', fontWeight:'400'}}>{String(option.nome).toLocaleUpperCase()}</li>}
+            renderOption={(props, option) =>  <li {...props} style={{color: theme.palette.primary.main, fontSize: '.9rem',}}>{String(option.nome).toLocaleUpperCase()}</li>}
             sx={{...props.sx, display:'inline-block', }}
             onChange={(event, value) => {
                 setValue(value)
@@ -86,7 +86,6 @@ function ProvinciaSelect(props, ref) {
                 label={props.label ? props.label : "Provincia"}
                 size='small'
                 disabled={props.disabled}
-                sx={{'& .MuiOutlinedInput-input':{fontWeight: '500'}, '& .MuiFormLabel-root:not(.Mui-error, .Mui-focused, .Mui-disabled)':{color: labelColor}, '& .MuiFormLabel-root.Mui-disabled':{color: labelDisableColor},}}
                 helperText={props.helperText}
                 //defaultValue={reset ? resetSede() : ""}
                 />

@@ -33,7 +33,6 @@ function FormPersonaGiuridica(props, ref) {
       color: labelDisableColor,
     },
     '& .MuiOutlinedInput-input': {
-      fontWeight: '500',
       color: theme.palette.text.primary,
     },
   });
@@ -182,7 +181,7 @@ function FormPersonaGiuridica(props, ref) {
           sx={{ width: '100%', borderBottom: '1px solid #467bae61' }}
         >
           <Typography
-            sx={{ fontWeight: '400', fontSize: '1rem', color: '#467bae' }}
+            sx={{fontSize: '1rem', color: '#467bae' }}
           >
             Dati societari
           </Typography>
@@ -221,7 +220,7 @@ function FormPersonaGiuridica(props, ref) {
           sx={{ width: '100%', borderBottom: '1px solid #467bae61' }}
         >
           <Typography
-            sx={{ fontWeight: '400', fontSize: '1rem', color: '#467bae' }}
+            sx={{ fontSize: '1rem', color: '#467bae' }}
           >
             Sede Legale
           </Typography>
@@ -274,7 +273,7 @@ function FormPersonaGiuridica(props, ref) {
           sx={{ width: '100%', borderBottom: '1px solid #467bae61' }}
         >
           <Typography
-            sx={{ fontWeight: '400', fontSize: '1rem', color: '#467bae' }}
+            sx={{fontSize: '1rem', color: '#467bae' }}
           >
             Recapiti
           </Typography>
@@ -294,7 +293,7 @@ function FormPersonaGiuridica(props, ref) {
       <Grid xs={12} sx={{ width: '100%', minHeight: `${gridRowHeight}px` }}>
         <Grid xs={12} sx={{ borderBottom: '1px solid #467bae61' }}>
           <Typography
-            sx={{ fontWeight: '400', fontSize: '1rem', color: '#467bae' }}
+            sx={{ fontSize: '1rem', color: '#467bae' }}
           >
             Rappresentante legale
           </Typography>
@@ -334,13 +333,6 @@ function FormPersonaGiuridica(props, ref) {
             ...textFieldSx(theme),
             minWidth: '350px',
             maxWidth: '350px',
-            // Colore della label su hover
-            '&:hover .MuiInputLabel-root': {
-              color: theme.palette.logo.secondary,
-            },
-            '&.Mui-focused .MuiInputLabel-root': {
-              color: theme.palette.logo.secondary, // Colore della label in focus
-            },
           }}
         />
       </Grid>
@@ -349,7 +341,7 @@ function FormPersonaGiuridica(props, ref) {
       <Grid xs={12} sx={{ width: '100%', minHeight: `${gridRowHeight}px` }}>
         <Grid xs={12} sx={{ borderBottom: '1px solid #467bae61' }}>
           <Typography
-            sx={{ fontWeight: '400', fontSize: '1rem', color: '#467bae' }}
+            sx={{ fontSize: '1rem', color: '#467bae' }}
           >
             Spese di mediazione
           </Typography>
@@ -443,7 +435,7 @@ function FormPersonaGiuridica(props, ref) {
       >
         <Grid xs={12} sx={{ borderBottom: '1px solid #467bae61' }}>
           <Typography
-            sx={{ fontWeight: '400', fontSize: '1rem', color: '#467bae' }}
+            sx={{fontSize: '1rem', color: '#467bae' }}
           >
             Informazioni aggiuntive
           </Typography>

@@ -46,7 +46,6 @@ const textFieldSx = (theme) => ({
     color: labelDisableColor,
   },
   '& .MuiOutlinedInput-input': {
-    fontWeight: '500',
     color: theme.palette.text.primary,
   },
 });
@@ -269,7 +268,7 @@ function FormPersonaFisica(props, ref) {
           sx={{ width: '100%', borderBottom: '1px solid #467bae61' }}
         >
           <Typography
-            sx={{ fontWeight: '400', fontSize: '1rem', color: '#467bae' }}
+            sx={{  fontSize: '1rem', color: '#467bae' }}
           >
             Codice fiscale
           </Typography>
@@ -317,7 +316,7 @@ function FormPersonaFisica(props, ref) {
           sx={{ width: '100%', borderBottom: '1px solid #467bae61' }}
         >
           <Typography
-            sx={{ fontWeight: '400', fontSize: '1rem', color: '#467bae' }}
+            sx={{  fontSize: '1rem', color: '#467bae' }}
           >
             Dati anagrafici
           </Typography>
@@ -512,7 +511,7 @@ function FormPersonaFisica(props, ref) {
           sx={{ width: '100%', borderBottom: '1px solid #467bae61' }}
         >
           <Typography
-            sx={{ fontWeight: '400', fontSize: '1rem', color: '#467bae' }}
+            sx={{  fontSize: '1rem', color: '#467bae' }}
           >
             Dati demografici
           </Typography>
@@ -572,7 +571,7 @@ function FormPersonaFisica(props, ref) {
           sx={{ width: '100%', borderBottom: '1px solid #467bae61' }}
         >
           <Typography
-            sx={{ fontWeight: '400', fontSize: '1rem', color: '#467bae' }}
+            sx={{  fontSize: '1rem', color: '#467bae' }}
           >
             Recapiti
           </Typography>
@@ -590,13 +589,6 @@ function FormPersonaFisica(props, ref) {
             ...textFieldSx(theme),
             minWidth: '350px',
             maxWidth: '350px',
-            // Colore della label su hover
-            '&:hover .MuiInputLabel-root': {
-              color: theme.palette.logo.secondary,
-            },
-            '&.Mui-focused .MuiInputLabel-root': {
-              color: theme.palette.logo.secondary, // Colore della label in focus
-            },
           }}
         />
       </Grid>
@@ -608,7 +600,7 @@ function FormPersonaFisica(props, ref) {
           sx={{ width: '100%', borderBottom: '1px solid #467bae61' }}
         >
           <Typography
-            sx={{ fontWeight: '400', fontSize: '1rem', color: '#467bae' }}
+            sx={{  fontSize: '1rem', color: '#467bae' }}
           >
             Ditta individuale
           </Typography>
@@ -644,7 +636,7 @@ function FormPersonaFisica(props, ref) {
           sx={{ width: '100%', borderBottom: '1px solid #467bae61' }}
         >
           <Typography
-            sx={{ fontWeight: '400', fontSize: '1rem', color: '#467bae' }}
+            sx={{  fontSize: '1rem', color: '#467bae' }}
           >
             Rappresentante legale
           </Typography>
@@ -684,13 +676,6 @@ function FormPersonaFisica(props, ref) {
             ...textFieldSx(theme),
             minWidth: '350px',
             maxWidth: '350px',
-            // Colore della label su hover
-            '&:hover .MuiInputLabel-root': {
-              color: theme.palette.logo.secondary,
-            },
-            '&.Mui-focused .MuiInputLabel-root': {
-              color: theme.palette.logo.secondary, // Colore della label in focus
-            },
           }}
         />
       </Grid>
@@ -702,7 +687,7 @@ function FormPersonaFisica(props, ref) {
           sx={{ width: '100%', borderBottom: '1px solid #467bae61' }}
         >
           <Typography
-            sx={{ fontWeight: '400', fontSize: '1rem', color: '#467bae' }}
+            sx={{  fontSize: '1rem', color: '#467bae' }}
           >
             Spese di mediazione
           </Typography>
@@ -793,7 +778,7 @@ function FormPersonaFisica(props, ref) {
           sx={{ width: '100%', borderBottom: '1px solid #467bae61' }}
         >
           <Typography
-            sx={{ fontWeight: '400', fontSize: '1rem', color: '#467bae' }}
+            sx={{  fontSize: '1rem', color: '#467bae' }}
           >
             Informazioni aggiuntive
           </Typography>

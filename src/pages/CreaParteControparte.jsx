@@ -60,7 +60,7 @@ export default function CreaParteControparte({ handleClose, onError }) {
       <Grid xs={12} sx={{ width: '100%' }}>
         <Grid xs={12} sx={{ borderBottom: '1px solid #467bae61' }}>
           <Typography
-            sx={{ fontWeight: '400', fontSize: formLabelFontSize, color: '#467bae' }}
+            sx={{fontSize: formLabelFontSize, color: '#467bae' }}
           >
             Ruolo
           </Typography>
@@ -79,7 +79,6 @@ export default function CreaParteControparte({ handleClose, onError }) {
                 marginRight: '4.5rem',
                 '& .MuiTypography-root': {
                   color: theme.palette.text.primary,
-                  fontWeight: '500',
                 },
                 '& .MuiRadio-root:not(.Mui-checked) span': { color: labelColor },
               }}
@@ -91,7 +90,6 @@ export default function CreaParteControparte({ handleClose, onError }) {
               sx={{
                 '& .MuiTypography-root': {
                   color: theme.palette.text.primary,
-                  fontWeight: '500',
                 },
                 '& .MuiRadio-root:not(.Mui-checked) span': { color: labelColor },
               }}
@@ -104,7 +102,7 @@ export default function CreaParteControparte({ handleClose, onError }) {
       <Grid xs={12} sx={{ width: '100%' }}>
         <Grid xs={12} sx={{ borderBottom: '1px solid #467bae61' }}>
           <Typography
-            sx={{ fontWeight: '400', fontSize: formLabelFontSize, color: '#467bae' }}
+            sx={{fontSize: formLabelFontSize, color: '#467bae' }}
           >
             Tipologia
           </Typography>
@@ -123,7 +121,6 @@ export default function CreaParteControparte({ handleClose, onError }) {
                 marginRight: '4.5rem',
                 '& .MuiTypography-root': {
                   color: theme.palette.text.primary,
-                  fontWeight: '500',
                 },
                 '& .MuiRadio-root:not(.Mui-checked) span': { color: labelColor },
               }}
@@ -135,7 +132,6 @@ export default function CreaParteControparte({ handleClose, onError }) {
               sx={{
                 '& .MuiTypography-root': {
                   color: theme.palette.text.primary,
-                  fontWeight: '500',
                 },
                 '& .MuiRadio-root:not(.Mui-checked) span': { color: labelColor },
               }}
