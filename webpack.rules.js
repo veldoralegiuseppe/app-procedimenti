@@ -40,16 +40,8 @@ module.exports = [
   },
   // Regola per i font
   {
-    test: /\.(woff|woff2|eot|ttf|otf)$/,
-    use: [
-      {
-        loader: 'file-loader',
-        options: {
-          name: '[name].[ext]', // Mantieni il nome e l'estensione originale
-          outputPath: 'assets/fonts/', // Salva i font nella cartella assets/fonts
-          publicPath: 'assets/fonts/', // Assicura che gli asset vengano referenziati correttamente
-        },
-      },
-    ],
-  },
+    test: /\.woff2?$/i,
+    type: 'asset/resource',
+    dependency: { not: ['url'] },
+  }, 
 ];
