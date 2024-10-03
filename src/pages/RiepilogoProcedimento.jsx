@@ -304,7 +304,7 @@ const RiepilogoSpese = ({ persone }) => {
                   color: '#3a6c9d', // Colore del testo
                 }}
               >
-                Totale Spese Complessivo:
+                Totale Complessivo:
               </td>
               <td
                 className="L UT"
