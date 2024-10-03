@@ -1,8 +1,6 @@
 module.exports = [
-  // Add support for native node modules
+  // Supporto per i moduli nativi
   {
-    // We're specifying native_modules in the test because the asset relocator loader generates a
-    // "fake" .node file which is really a cjs file.
     test: /native_modules[/\\].+\.node$/,
     use: 'node-loader',
   },
@@ -16,38 +14,41 @@ module.exports = [
       },
     },
   },
-  // Put your webpack loader rules in this array.  This is where you would put
-  // your ts-loader configuration for instance:
-  /**
-   * Typescript Example:
-   *
-   * {
-   *   test: /\.tsx?$/,
-   *   exclude: /(node_modules|.webpack)/,
-   *   loaders: [{
-   *     loader: 'ts-loader',
-   *     options: {
-   *       transpileOnly: true
-   *     }
-   *   }]
-   * }
-   */
   {
     test: /\.jsx?$/,
+    exclude: /node_modules/,
     use: {
       loader: 'babel-loader',
       options: {
-        exclude: /node_modules/,
-        presets: ['@babel/preset-react']
-      }
-    }
+        presets: ['@babel/preset-react'],
+      },
+    },
   },
-
+  // Regola per le immagini
   {
-    test: /\.(png|jpe?g|gif)$/i,
+    test: /\.(png|jpe?g|gif|svg)$/i,
     use: [
       {
         loader: 'file-loader',
+        options: {
+          name: '[name].[ext]', // Mantieni il nome e l'estensione originale
+          outputPath: 'assets/images/', // Salva le immagini nella cartella assets/images
+          publicPath: 'assets/images/', // Assicura che gli asset vengano referenziati correttamente
+        },
+      },
+    ],
+  },
+  // Regola per i font
+  {
+    test: /\.(woff|woff2|eot|ttf|otf)$/,
+    use: [
+      {
+        loader: 'file-loader',
+        options: {
+          name: '[name].[ext]', // Mantieni il nome e l'estensione originale
+          outputPath: 'assets/fonts/', // Salva i font nella cartella assets/fonts
+          publicPath: 'assets/fonts/', // Assicura che gli asset vengano referenziati correttamente
+        },
       },
     ],
   },
