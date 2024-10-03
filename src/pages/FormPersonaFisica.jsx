@@ -602,7 +602,7 @@ function FormPersonaFisica(props, ref) {
           <Typography
             sx={{  fontSize: '1rem', color: '#467bae' }}
           >
-            Ditta individuale
+            Ditta individuale / Professionista autonomo
           </Typography>
         </Grid>
 
@@ -615,17 +615,6 @@ function FormPersonaFisica(props, ref) {
           helperText={errors.partitaIVA ? 'Formato invalido' : ''}
           onChange={(event) => handleInputChange(event, 'partitaIVA')}
           sx={{ ...textFieldSx(theme), minWidth: '246px', maxWidth: '250px' }}
-        />
-
-        {/* Denominazione */}
-        <CssTextField
-          size="small"
-          id="outlined-required-denominazione"
-          label="Denominazione"
-          error={errors.denominazione}
-          helperText={errors.denominazione ? 'Denominazione invalida' : ''}
-          onChange={(event) => handleInputChange(event, 'denominazione')}
-          sx={{ ...textFieldSx(theme), minWidth: '400px', maxWidth: '420px' }}
         />
       </Grid>
 

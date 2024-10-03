@@ -1,209 +1,321 @@
 import React from 'react';
+import Grid from '@mui/material/Unstable_Grid2';
+import { useTheme } from '@mui/material/styles';
+import useMediaQuery from '@mui/material/useMediaQuery';
+
 import { ProcedimentoContext } from '@context/Procedimento';
-import {PersonaGiuridica} from '@model/personaGiuridica';
-import {PersonaFisica} from '@model/personaFisica';
+import { PersonaGiuridica } from '@model/personaGiuridica';
+import { PersonaFisica } from '@model/personaFisica';
 
 function formatImporto(importo) {
   const [integerPart, decimalPart] = importo.toString().split('.');
   const formattedIntegerPart = Number(
     integerPart.replace(/\./g, '')
   ).toLocaleString('it-IT');
-  const formattedDecimalPart = decimalPart
-    ? decimalPart.padEnd(2, '0')
-    : '00';
+  const formattedDecimalPart = decimalPart ? decimalPart.padEnd(2, '0') : '00';
 
-  return (<span style={{ whiteSpace: 'nowrap' }}>€ {`${formattedIntegerPart},${formattedDecimalPart}`}</span>)
+  return (
+    <span style={{ whiteSpace: 'nowrap' }}>
+      € {`${formattedIntegerPart},${formattedDecimalPart}`}
+    </span>
+  );
 }
 
 const Procedimento = ({ procedimento }) => {
-
-
   return (
-    <div>
-      <h2 style={{textAlign: 'left', }}>Procedimento</h2>
-      <div style={{ display: 'flex', flexWrap: 'wrap', alignContent: 'center', alignItems: 'center' }}>
-        <div style={{ flex: '1 1 33%', padding: '10px 10px 5px 10px', }}>
-          <strong>Numero Protocollo:</strong> {procedimento.getProtocollo()}
-        </div>
-        <div style={{ flex: '1 1 33%', padding: '10px 10px 5px 10px', }}>
+    <div style={{ marginBottom: '2rem',}}>
+      {/* Titolo principale */}
+      <h1 style={{ textAlign: 'left', fontSize: '2rem', marginBottom: '0.3rem' }}>
+        Procedimento di Mediazione
+      </h1>
+
+      {/* Numero Protocollo */}
+      <h2 style={{ textAlign: 'left', fontSize: '1.8rem', marginBottom: '2rem' }}>
+        {procedimento.getProtocollo()}
+      </h2>
+
+      {/* Informazioni disposte con il sistema a griglia di MUI */}
+      <Grid container spacing={2}>
+        <Grid item xs={12} md={6} xl={2}>
           <strong>Data Deposito:</strong> {procedimento.dataDeposito}
-        </div>
-        <div style={{ flex: '1 1 33%', padding: '10px 10px 5px 10px', }}>
+        </Grid>
+        <Grid item xs={12} md={6} xl={2}>
           <strong>Sede Caricamento:</strong> {procedimento.sede}
-        </div>
-        <div style={{ flex: '1 1 33%', padding: '10px 10px 0 10px', }}>
+        </Grid>
+        <Grid item xs={12} md={6} xl={2}>
           <strong>Sede Svolgimento:</strong> {procedimento.sedeSvolgimento}
-        </div>
-        <div style={{ flex: '1 1 33%', padding: '10px 10px 0 10px', }}>
-          <strong>Oggetto della Controversia:</strong> {procedimento.oggettoControversia}
-        </div>
-        <div style={{ flex: '1 1 33%', padding: '10px 10px 0 10px', }}>
+        </Grid>
+        <Grid item xs={12} md={6} xl={2}>
           <strong>Valore della Lite:</strong> {formatImporto(procedimento.valoreControversia)}
-        </div>
-      </div>
+        </Grid>
+        <Grid item xs={12} md={6} xl={2}>
+          <strong>Oggetto della Controversia:</strong> {procedimento.oggettoControversia}
+        </Grid>
+      </Grid>
     </div>
   );
 };
 
 const PartiControparti = ({ persone }) => {
-  // Separiamo le persone tra parti e controparti
-  const parti = persone.filter(persona => persona.isParteIstante);
-  const controparti = persone.filter(persona => !persona.isParteIstante);
+  const parti = persone.filter((persona) => persona.isParteIstante);
+  const controparti = persone.filter((persona) => !persona.isParteIstante);
+  const theme = useTheme();
+  const isXs = useMediaQuery(theme.breakpoints.down('md')); // Rileva se lo schermo è xs
 
-  // Funzione per renderizzare persone fisiche
+
   const renderPersonaFisica = (persona, index) => (
-    <div key={index} style={{ flex: '1 1 300px', padding: '10px', boxSizing: 'border-box' }}>
-      <table className="result w100 shs2 rad10">
+    <Grid item xs={12} md={6} key={index} sx={{marginBottom: isXs ? '1.5rem' : '0'}}>
+      <table className="result w100 shs2 rad10" style={{tableLayout: 'fixed' }}>
         <tbody>
           <tr>
-            <td className="R U" width="35%">Persona Fisica:</td>
-            <td className="L U" width="65%">
-              <b>{`${persona.nome} ${persona.cognome} (CF: ${persona.codiceFiscale})`}</b>
+            <td className="R U" style={{ paddingRight: '10px' }}>Persona Fisica:</td>
+            <td className="L U" style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              <b>{`${persona.nome} ${persona.cognome} (CF: ${persona.codiceFiscale ? persona.codiceFiscale : " "})`}</b>
             </td>
           </tr>
           <tr>
-            <td className="R U">Data di nascita:</td>
-            <td className="L U"><b>{persona.dataNascitaLocale}</b></td>
+            <td className="R U" style={{ paddingRight: '10px' }}>Data di nascita:</td>
+            <td className="L U"><b>{persona.dataNascitaLocale ? persona.dataNascitaLocale : ""}</b></td>
           </tr>
           <tr>
-            <td className="R U">Luogo di nascita:</td>
+            <td className="R U" style={{ paddingRight: '10px' }}>Luogo di nascita:</td>
             <td className="L U">
-              <b>{`${persona.luogoDiNascita.nome} (${persona.luogoDiNascita.provincia.sigla})`}</b>
+              <b>{persona.luogoDiNascita ?  `${persona.luogoDiNascita.nome} (${persona.luogoDiNascita.provincia.sigla})` : ""}</b>
             </td>
           </tr>
           <tr>
-            <td className="R U">Sesso:</td>
-            <td className="L U"><b>{persona.sesso}</b></td>
+            <td className="R U" style={{ paddingRight: '10px' }}>Sesso:</td>
+            <td className="L U"><b>{persona.sesso ? persona.sesso : ""}</b></td>
           </tr>
           <tr>
-            <td className="R U">Residenza:</td>
+            <td className="R U" style={{ paddingRight: '10px' }}>Residenza:</td>
             <td className="L U">
-              <b>{`${persona.indirizzo}, ${persona.residenza.nome} (${persona.residenza.provincia.sigla})`}</b>
+              <b>{persona.residenza ? `${persona.indirizzo ? persona.indirizzo +' -' : ''}  ${persona.residenza.cap} ${persona.residenza.nome} (${persona.residenza.provincia.sigla})` : ""}</b>
             </td>
           </tr>
           <tr>
-            <td className="R U">PEC Email:</td>
-            <td className="L U"><b>{persona.pecEmail}</b></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-  );
-
-  // Funzione per renderizzare persone giuridiche
-  const renderPersonaGiuridica = (persona, index) => (
-    <div key={index} style={{ flex: '1 1 300px', padding: '10px', boxSizing: 'border-box' }}>
-      <table className="result w100 shs2 rad10">
-        <tbody>
-          <tr>
-            <td className="R U" width="35%">Persona Giuridica:</td>
-            <td className="L U" width="65%">
-              <b>{`${persona.denominazione} (P.IVA: ${persona.partitaIVA})`}</b>
+            <td className="R U" style={{ paddingRight: '10px' }}>Partita IVA:</td>
+            <td className="L U" style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              <b>{persona.partitaIVA ? persona.partitaIVA : ""}</b>
             </td>
           </tr>
           <tr>
-            <td className="R U">Indirizzo Sede Legale:</td>
-            <td className="L U">
-              <b>{`${persona.indirizzoSedeLegale}, ${persona.sedeLegale.nome} (${persona.sedeLegale.provincia.sigla})`}</b>
-            </td>
-          </tr>
-          <tr>
-            <td className="R U">PEC Email:</td>
+            <td className="R U" style={{ paddingRight: '10px' }}>PEC/Email:</td>
             <td className="L U"><b>{persona.pecEmail}</b></td>
           </tr>
           <tr>
-            <td className="R U">Rappresentante Legale:</td>
+            <td className="R U" style={{ paddingRight: '10px' }}>Rappresentante Legale:</td>
             <td className="L U"><b>{persona.rappresentanteLegale}</b></td>
           </tr>
           <tr>
-            <td className="R U">Rappresentante Legale PEC Email:</td>
-            <td className="L U"><b>{persona.rappresentanteLegalePecEmail}</b></td>
+            <td className="R U" style={{ paddingRight: '10px' }}>PEC/Email del Rappresentante Legale:</td>
+            <td className="L U"><b>{persona.rappresentanteLegalePecEmail ? persona.rappresentanteLegalePecEmail : ""}</b></td>
           </tr>
         </tbody>
       </table>
-    </div>
+    </Grid>
   );
 
-  // Funzione per renderizzare una sezione (Parti o Controparti) suddivisa tra fisiche e giuridiche
+  const renderPersonaGiuridica = (persona, index) => (
+    <Grid item xs={12} md={6} key={index} sx={{marginBottom: isXs ? '1.5rem' : '0'}}>
+      <table className="result w100 shs2 rad10" style={{ tableLayout: 'fixed' }}>
+        <tbody>
+          <tr>
+            <td className="R U" style={{ paddingRight: '10px' }}>Persona Giuridica:</td>
+            <td className="L U" style={{ overflow: 'hidden', textOverflow: 'ellipsis' }}>
+              <b>{`${persona.denominazione} (P.IVA: ${persona.partitaIVA ? persona.partitaIVA : " "})`}</b>
+            </td>
+          </tr>
+          <tr>
+            <td className="R U" style={{ paddingRight: '10px' }}>Sede Legale:</td>
+            <td className="L U">
+              <b>{persona.sedeLegale ? `${persona.indirizzoSedeLegale ? persona.indirizzoSedeLegale +' -' : ''}  ${persona.sedeLegale.cap} ${persona.sedeLegale.nome} (${persona.sedeLegale.provincia.sigla})` : ""}</b>
+            </td>
+          </tr>
+          <tr>
+            <td className="R U" style={{ paddingRight: '10px' }}>PEC/Email:</td>
+            <td className="L U"><b>{persona.pecEmail ? persona.pecEmail : ""}</b></td>
+          </tr>
+          <tr>
+            <td className="R U" style={{ paddingRight: '10px' }}>Rappresentante Legale:</td>
+            <td className="L U"><b>{persona.rappresentanteLegale ? persona.rappresentanteLegale : ""}</b></td>
+          </tr>
+          <tr>
+            <td className="R U" style={{ paddingRight: '10px' }}>PEC/Email del Rappresentante Legale:</td>
+            <td className="L U"><b>{persona.rappresentanteLegalePecEmail ? persona.rappresentanteLegalePecEmail : ""}</b></td>
+          </tr>
+        </tbody>
+      </table>
+    </Grid>
+  );
+
   const renderSezione = (titolo, persone) => {
-    const personeFisiche = persone.filter(persona => persona instanceof PersonaFisica);
-    const personeGiuridiche = persone.filter(persona => persona instanceof PersonaGiuridica);
+    const personeFisiche = persone.filter((persona) => persona instanceof PersonaFisica);
+    const personeGiuridiche = persone.filter((persona) => persona instanceof PersonaGiuridica);
 
     return (
-      <div style={{marginTop: '10px'}}>
-        <h2>{titolo}</h2>
-        <div style={{ display: 'flex', flexWrap: 'wrap' }}>
-          {/* Renderizza sia persone fisiche che giuridiche insieme */}
+      <div style={{ marginBottom: '1rem' }}>
+        <h3 style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>{titolo}</h3>
+        <Grid container >
           {personeFisiche.map(renderPersonaFisica)}
           {personeGiuridiche.map(renderPersonaGiuridica)}
-        </div>
+        </Grid>
       </div>
     );
   };
 
   return (
-    <div style={{marginTop: '10px'}}>
-      {/* Sezione Parti */}
+    <div>
       {renderSezione('Parti istanti', parti)}
-
-      {/* Sezione Controparti */}
       {renderSezione('Controparti', controparti)}
     </div>
   );
 };
 
 const RiepilogoSpese = ({ persone }) => {
-  // Variabile globale per il fontSize
   const fontSize = '0.9em';
-  
-  // Etichette delle colonne per le spese
+
   const colonneSpese = [
     { nome: 'Avvio', campo: 'speseAvvio' },
     { nome: 'Postali', campo: 'spesePostali' },
     { nome: 'Indennità', campo: 'pagamentoIndennita' },
     { nome: 'Mancato Accordo', campo: 'importoMancatoAccordo' },
     { nome: 'Positivo primo incontro', campo: 'importoPositivoPrimoIncontro' },
-    { nome: 'Oltre primo incontro', campo: 'importoPositivoOltrePrimoIncontro' },
+    {
+      nome: 'Positivo oltre primo incontro',
+      campo: 'importoPositivoOltrePrimoIncontro',
+    },
   ];
 
-  // Calcolo del totale complessivo delle spese
-  const totaleSpeseComplessivo = persone.reduce((acc, persona) => acc + persona.getTotaleSpese(), 0);
+  const totaleSpeseComplessivo = persone.reduce(
+    (acc, persona) => acc + persona.getTotaleSpese(),
+    0
+  );
 
   return (
-    <div style={{marginTop: '10px'}}>
-      <h2>Riepilogo Spese</h2>
-      <div style={{ fontSize, padding: '10px 0 0 10px' }}>
-        <table className="result w95 shs2 rad10 mt30" style={{ width: '100%', tableLayout: 'auto', borderSpacing: '0px' }}>
+    <div>
+      <h3 style={{ fontSize: '1.5rem', marginBottom: '1rem' }}>Riepilogo Spese</h3>
+      <div style={{ fontSize, padding: '.5rem 0' }}>
+        <table
+          className="result w95 shs2 rad10 mt30"
+          style={{
+            width: '100%',
+            tableLayout: 'auto',
+            borderCollapse: 'collapse',
+          }}
+        >
           <thead>
             <tr>
-              <th className="L UT" style={{ textAlign: 'left', padding: '5px' }}>Nome/Denominazione</th>
+              <th
+                className="L UT"
+                style={{
+                  textAlign: 'left',
+                  padding: '12px 5px',
+                  backgroundColor: '#467bae', // Blu sobrio per l'header
+                  color: 'white', // Testo bianco per contrasto
+                  fontWeight: 'bold',
+                  borderBottom: '2px solid #ddd', // Bordo inferiore più evidente
+                }}
+              >
+                Nome/Denominazione
+              </th>
               {colonneSpese.map((colonna, index) => (
-                <th key={index} className="L UT" style={{ textAlign: 'left', padding: '5px' }}>
+                <th
+                  key={index}
+                  className="L UT"
+                  style={{
+                    textAlign: 'left',
+                    padding: '12px 5px',
+                    backgroundColor: '#467bae', // Blu sobrio
+                    color: 'white', // Testo bianco
+                    fontWeight: 'bold',
+                    borderBottom: '2px solid #ddd', // Bordo inferiore
+                  }}
+                >
                   {colonna.nome}
                 </th>
               ))}
-              <th className="L UT" style={{ textAlign: 'left', padding: '5px' }}><b>Totale</b></th>
+              <th
+                className="L UT"
+                style={{
+                  textAlign: 'left',
+                  padding: '12px 5px',
+                  backgroundColor: '#467bae', // Blu sobrio
+                  color: 'white', // Testo bianco
+                  fontWeight: 'bold',
+                  borderBottom: '2px solid #ddd', // Bordo inferiore
+                }}
+              >
+                <b>Totale</b>
+              </th>
             </tr>
           </thead>
           <tbody>
             {persone.map((persona, index) => (
               <tr key={index}>
-                <td className="L U" style={{ wordWrap: 'break-word', whiteSpace: 'normal', padding: '5px' }}>
-                  <b>{persona instanceof PersonaGiuridica ? persona.denominazione : `${persona.nome} ${persona.cognome}`}</b>
+                <td
+                  className="L U"
+                  style={{
+                    wordWrap: 'break-word',
+                    whiteSpace: 'normal',
+                    padding: '10px 5px',
+                    borderBottom: '1px solid #ddd', // Bordi sottili per le righe
+                  }}
+                >
+                  <b>
+                    {persona instanceof PersonaGiuridica
+                      ? persona.denominazione
+                      : `${persona.nome} ${persona.cognome}`}
+                  </b>
                 </td>
                 {colonneSpese.map((colonna, colIndex) => (
-                  <td key={colIndex} className="L U" style={{ wordWrap: 'break-word', padding: '5px' }}>
+                  <td
+                    key={colIndex}
+                    className="L U"
+                    style={{
+                      wordWrap: 'break-word',
+                      padding: '10px 5px',
+                      borderBottom: '1px solid #ddd', // Bordi sottili per le righe
+                    }}
+                  >
                     {formatImporto(persona[colonna.campo].toFixed(2))}
                   </td>
                 ))}
-                <td className="L U" style={{ wordWrap: 'break-word', padding: '5px' }}>
+                <td
+                  className="L U"
+                  style={{
+                    wordWrap: 'break-word',
+                    padding: '10px 5px',
+                    borderBottom: '1px solid #ddd', // Bordi sottili per le righe
+                  }}
+                >
                   <b>{formatImporto(persona.getTotaleSpese().toFixed(2))}</b>
                 </td>
               </tr>
             ))}
             <tr>
-              <td className="L UT" colSpan="7" style={{ padding: '5px' }}><b>Totale Spese Complessivo:</b></td>
-              <td className="L UT" style={{ wordWrap: 'break-word', padding: '5px' }}>
+              <td
+                className="L UT"
+                colSpan={colonneSpese.length + 1}
+                style={{
+                  padding: '10px 5px',
+                  backgroundColor: '#e1f0ff59', // Colore di sfondo per il totale
+                  fontWeight: 'bold',
+                  color: '#3a6c9d', // Colore del testo
+                }}
+              >
+                Totale Spese Complessivo:
+              </td>
+              <td
+                className="L UT"
+                style={{
+                  wordWrap: 'break-word',
+                  padding: '10px 5px',
+                  backgroundColor: '#e1f0ff59', // Colore di sfondo per il totale
+                  fontWeight: 'bold',
+                  color: '#3a6c9d', // Colore del testo
+                }}
+              >
                 <b>{formatImporto(totaleSpeseComplessivo.toFixed(2))}</b>
               </td>
             </tr>
@@ -214,15 +326,13 @@ const RiepilogoSpese = ({ persone }) => {
   );
 };
 
-
-
 export default function RiepilogoProcedimento() {
-  let {procedimento, persone} = React.useContext(ProcedimentoContext)
+  let { procedimento, persone } = React.useContext(ProcedimentoContext);
   return (
-    <React.Fragment>
-       <Procedimento procedimento={procedimento} />
-       <PartiControparti persone={persone} />
-       <RiepilogoSpese persone={persone}/>
-    </React.Fragment>
+    <div style={{marginTop: '2rem'}}>
+      <Procedimento procedimento={procedimento} />
+      <PartiControparti persone={persone} />
+      <RiepilogoSpese persone={persone} />
+    </div>
   );
 }

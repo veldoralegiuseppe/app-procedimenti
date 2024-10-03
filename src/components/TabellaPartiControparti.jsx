@@ -197,11 +197,11 @@ export default function TabellaPartiControparti() {
           ),
           totale: formatImporto(persona.getTotaleSpese()),
           open: false,
-          note: persona.note,
-          pecEmail: persona.pecEmail,
+          note: persona.note ? persona.note : "",
+          pecEmail: persona.pecEmail ? persona.pecEmail : "",
           rappresentanteLegale: persona.rappresentanteLegale,
-          rappresentanteLegalePecEmail: persona.rappresentanteLegalePecEmail,
-          partitaIVA: persona.partitaIVA
+          rappresentanteLegalePecEmail: persona.rappresentanteLegalePecEmail ? persona.rappresentanteLegalePecEmail : "",
+          partitaIVA: persona.partitaIVA ? persona.partitaIVA : "",
         };
 
         if (persona instanceof PersonaFisica) {
@@ -209,11 +209,11 @@ export default function TabellaPartiControparti() {
             ...commonFields, 
             isPersonaFisica: true,
             anagrafica: `${persona.nome} ${persona.cognome}`,
-            codiceFiscale: persona.codiceFiscale,
-            dataNascita: persona.dataNascitaLocale,
-            luogoDiNascita: `${persona.luogoDiNascita.nome} (${persona.luogoDiNascita.provincia.nome}) ${persona.luogoDiNascita.cap}`,
-            sesso: persona.sesso,
-            residenza: `${persona.indirizzo ? persona.indirizzo +' -' : ''}  ${persona.residenza.cap} ${persona.residenza.nome} (${persona.residenza.provincia.sigla})`,
+            codiceFiscale: persona.codiceFiscale ? persona.codiceFiscale : "",
+            dataNascita: persona.dataNascitaLocale ? persona.dataNascitaLocale : "",
+            luogoDiNascita: persona.luogoDiNascita ? `${persona.luogoDiNascita.nome} (${persona.luogoDiNascita.provincia.sigla})` : "",
+            sesso: persona.sesso ? persona.sesso : "",
+            residenza:  persona.residenza ? `${persona.indirizzo ? persona.indirizzo +' -' : ''}  ${persona.residenza.cap} ${persona.residenza.nome} (${persona.residenza.provincia.sigla})` : "",
           });
         }
 
@@ -222,8 +222,8 @@ export default function TabellaPartiControparti() {
             ...commonFields, 
             isPersonaFisica: false,
             anagrafica: persona.denominazione,
-            partitaIVA: persona.partitaIVA,
-            sedeLegale: `${persona.indirizzoSedeLegale ? persona.indirizzoSedeLegale +' -' : ''}  ${persona.sedeLegale.cap} ${persona.sedeLegale.nome} (${persona.sedeLegale.provincia.sigla})`,
+            partitaIVA: persona.partitaIVA ? persona.partitaIVA : "",
+            sedeLegale: persona.sedeLegale ? `${persona.indirizzoSedeLegale ? persona.indirizzoSedeLegale +' -' : ''}  ${persona.sedeLegale.cap} ${persona.sedeLegale.nome} (${persona.sedeLegale.provincia.sigla})` : "",
           });
         }
       }

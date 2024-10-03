@@ -11,7 +11,6 @@ export class PersonaFisica {
   residenza = new Comune();
   indirizzo;
   partitaIVA;
-  denominazione;
   pecEmail;
   rappresentanteLegale;
   rappresentanteLegalePecEmail;
