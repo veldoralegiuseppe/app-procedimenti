@@ -13,9 +13,9 @@ export default function CreaProcedimento() {
 
     const theme = useTheme();
     const stepProcRef = React.useRef();
-
+    
     const steps = [
-        {label: 'Dati generali', component: <DatiGeneraliProcedimento ref={stepProcRef}/>}, 
+        {label: 'Dati generali', component: <DatiGeneraliProcedimento/>}, 
         {label: 'Parti e controparti', component: <PartiControparti/>}, 
         {label: 'Riepilogo', component: <RiepilogoProcedimento/>}
     ];  

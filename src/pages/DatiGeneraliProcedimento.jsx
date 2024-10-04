@@ -13,11 +13,7 @@ import CloseIcon from '@mui/icons-material/Close';
 
 import ProtocolloInput from '@components/ProtocolloInput';
 import ImportoInput from '@components/ImportoInput';
-import {
-  CssTextField,
-  ClearButton,
-  labelColor,
-} from '@theme/MainTheme';
+import { CssTextField, ClearButton, labelColor } from '@theme/MainTheme';
 import { Procedimento } from '@model/procedimento';
 import Select from '@components/Select';
 
@@ -49,6 +45,11 @@ const oggettiControversia = [
   { value: 'SOCIETA DI PERSONE', view: 'SOCIETÀ DI PERSONE' },
   { value: 'SUBFORNITURA', view: 'SUBFORNITURA' },
 ];
+
+// Constants
+const inputHeight = 56;
+const gridRowHeight = inputHeight + 34 + 3;
+
 const inputStyles = (
   theme,
   inputWidth,
@@ -62,11 +63,12 @@ const inputStyles = (
   width: inputWidth,
   maxWidth,
   minWidth,
+  height: `${inputHeight}px`,
   '&:hover .MuiSvgIcon-root': { color: theme.palette.logo.secondary },
   '&.Mui-focused .MuiSvgIcon-root': { color: theme.palette.logo.secondary },
 });
 
-function DatiGeneraliProcedimento() {
+const DatiGeneraliProcedimento = React.forwardRef(({ enableNextStep }, ref) => {
   const theme = useTheme();
   const inputWidth = '168px';
   const minWidth = '133px';
@@ -81,13 +83,169 @@ function DatiGeneraliProcedimento() {
     numProtocollo: false,
     sede: false,
     oggettoControversia: false,
+    annoProtocollo: false,
+    dataDeposito: false,
+    sede: false,
+    sedeSvolgimento: false,
+    dataOraIncontro: false,
+    oggettoControversia: false,
+    valoreControversia: false,
   });
+  const [touchedFields, setTouchedFields] = React.useState({
+    numProtocollo: false,
+    sede: false,
+    oggettoControversia: false,
+    annoProtocollo: false,
+    dataDeposito: false,
+    sede: false,
+    sedeSvolgimento: false,
+    dataOraIncontro: false,
+    oggettoControversia: false,
+    valoreControversia: false,
+  });
+  const requiredFields = [
+    'sede',
+    'numProtocollo',
+    'annoProtocollo',
+    'oggettoControversia',
+  ];
 
+  const requiredFieldsFilled = () => {
+    return requiredFields.every(
+      (field) => !!procedimento[field] && procedimento[field].trim() !== ''
+    );
+  };
+
+  // Validazione iniziale usata dallo stepper
+  React.useImperativeHandle(ref, () => ({
+    validate: () => {
+      let hasErrors = Object.entries(errors).some(([, hasError]) => hasError);
+      let allRequiredFieldsFilled = requiredFieldsFilled();
+      return !hasErrors && allRequiredFieldsFilled; 
+    },
+  }));
+
+  // Abilitazione step successivo in funzione degli errori e dei campi obbligatori
+  React.useEffect(() => {
+    let hasErrors = Object.entries(errors).some(([, hasError]) => hasError);
+    let allRequiredFieldsFilled = requiredFieldsFilled();
+
+    if (typeof enableNextStep === 'function') {
+      enableNextStep(!hasErrors && allRequiredFieldsFilled); 
+    }
+  }, [errors, enableNextStep, procedimento]);
+
+  // Reset delle form
   const handleReset = () => {
     setProcedimento(new Procedimento());
+    setTouchedFields({
+      numProtocollo: false,
+      sede: false,
+      oggettoControversia: false,
+      annoProtocollo: false,
+      dataDeposito: false,
+      sede: false,
+      sedeSvolgimento: false,
+      dataOraIncontro: false,
+      oggettoControversia: false,
+      valoreControversia: false,
+    });
+    setErrors({
+      numProtocollo: false,
+      sede: false,
+      oggettoControversia: false,
+      annoProtocollo: false,
+      dataDeposito: false,
+      sede: false,
+      sedeSvolgimento: false,
+      dataOraIncontro: false,
+      oggettoControversia: false,
+      valoreControversia: false,
+    });
   };
+
   const isModified = () => {
     return JSON.stringify(procedimento) !== JSON.stringify(initialProc);
+  };
+
+  // Validazione delle form
+  function validateSedeProcedimento(sede) {
+    if (sede.startsWith(' ') || sede.endsWith(' ') || /\s{3,}/.test(sede)) {
+      return false;
+    }
+    const validPattern = /^[a-zA-Z0-9\s!@#\$%\^\&*\)\(+=._-]+$/;
+    return validPattern.test(sede);
+  }
+
+  const validationRules = {
+    sede: validateSedeProcedimento,
+    sedeSvolgimento: (sede) => (sede ? validateSedeProcedimento(sede) : true),
+    numProtocollo: (value) => !!value,
+    annoProtocollo: (value) => !!value && !isNaN(value),
+    dataDeposito: () => true,
+    dataOraIncontro: () => true,
+    oggettoControversia: (value) => !!value,
+    valoreControversia: (value) => !isNaN(value) && value >= 0,
+  };
+
+  const handleInputChange = (valueOrEvent, campoModel) => {
+    const valore =
+      typeof valueOrEvent === 'object' && valueOrEvent.target
+        ? valueOrEvent.target.value.toUpperCase()
+        : String(valueOrEvent).toUpperCase();
+
+    const isValid = valore ? validationRules[campoModel]?.(valore) : true;
+
+    setProcedimento((prev) => {
+      const updatedProcedimento = { ...prev, [campoModel]: valore };
+
+      // Aggiorna il campo "touched"
+      setTouchedFields((prevTouched) => ({
+        ...prevTouched,
+        [campoModel]: true,
+      }));
+
+      const { updatedErrors, hasErrors } = getErrors(
+        { ...errors, [campoModel]: !isValid },
+        updatedProcedimento
+      );
+      setErrors(updatedErrors);
+
+      return updatedProcedimento;
+    });
+  };
+
+  const getErrors = (currentErrors, updatedProcedimento = procedimento) => {
+    const fieldLabels = {
+      sede: 'Sede',
+      numProtocollo: 'Numero di protocollo',
+      annoProtocollo: 'Anno numero di protocollo',
+      oggettoControversia: 'Oggetto di controversia',
+    };
+
+    let updatedErrors = { ...currentErrors };
+    let hasErrors = false;
+    let message = '';
+
+    requiredFields.forEach((field) => {
+      if (
+        !updatedProcedimento[field] ||
+        updatedProcedimento[field].trim() === ''
+      ) {
+        updatedErrors[field] = true;
+        hasErrors = true;
+        message += `${fieldLabels[field]} è obbligatorio.\n`;
+      } else {
+        updatedErrors[field] = false;
+      }
+    });
+
+    Object.keys(validationRules).forEach((field) => {
+      const isValid = validationRules[field](updatedProcedimento[field] || '');
+      updatedErrors[field] = !isValid;
+    });
+
+    return { updatedErrors, hasErrors, message };
   };
 
   return (
@@ -103,7 +261,7 @@ function DatiGeneraliProcedimento() {
       }}
     >
       {/* Procedimento di mediazione */}
-      <Grid xs={12}>
+      <Grid size={{xs: 12}} sx={{ width: '100%', minHeight: `${gridRowHeight}px` }}>
         <Grid
           xs={12}
           sx={{
@@ -112,28 +270,31 @@ function DatiGeneraliProcedimento() {
             width: 'calc(100% - 1rem)',
           }}
         >
-          <Typography
-            sx={{
-              fontSize: formLabelFontSize,
-              color: '#467bae',
-            }}
-          >
+          <Typography sx={{ fontSize: formLabelFontSize, color: '#467bae' }}>
             Procedimento di mediazione
           </Typography>
         </Grid>
 
         <Grid xs={12} sx={{ paddingLeft: '1rem' }}>
-          {/* Numero di procedimento */}
           <ProtocolloInput
             onChange={(numProtocollo, anno) => {
-              setProcedimento((prev) => ({
-                ...prev,
-                numProtocollo,
-                annoProtocollo: anno,
-              }));
+              handleInputChange(numProtocollo, 'numProtocollo');
+              handleInputChange(anno, 'annoProtocollo');
             }}
             numProtocollo={procedimento.numProtocollo}
             anno={procedimento.annoProtocollo}
+            error={
+              (touchedFields.numProtocollo && errors.numProtocollo) ||
+              (touchedFields.annoProtocollo && errors.annoProtocollo)
+            }
+            helperText={
+              (touchedFields.numProtocollo || touchedFields.annoProtocollo) &&
+              (errors.numProtocollo || errors.annoProtocollo)
+                ? procedimento.numProtocollo && procedimento.annoProtocollo
+                  ? 'Protocollo non valido'
+                  : 'Campo obbligatorio'
+                : ''
+            }
             sx={inputStyles(
               theme,
               inputWidth,
@@ -155,12 +316,7 @@ function DatiGeneraliProcedimento() {
             <MobileDatePicker
               label="Data deposito"
               value={dayjs(procedimento.dataDeposito)}
-              onChange={(value) => {
-                setProcedimento((prev) => ({
-                  ...prev,
-                  dataDeposito: new Date(value),
-                }));
-              }}
+              onChange={(event) => handleInputChange(event, 'dataDeposito')}
               sx={inputStyles(
                 theme,
                 inputWidth,
@@ -176,13 +332,7 @@ function DatiGeneraliProcedimento() {
                   InputProps: {
                     endAdornment: (
                       <InputAdornment position="end">
-                        <CalendarMonthOutlinedIcon
-                          sx={{
-                            color: false
-                              ? theme.palette.error.main
-                              : labelColor,
-                          }}
-                        />
+                        <CalendarMonthOutlinedIcon sx={{ color: labelColor }} />
                       </InputAdornment>
                     ),
                   },
@@ -203,12 +353,7 @@ function DatiGeneraliProcedimento() {
             <MobileDateTimePicker
               label="Data e ora incontro"
               value={procedimento.dataOraIncontro || null}
-              onChange={(value) => {
-                setProcedimento((prev) => ({
-                  ...prev,
-                  dataOraIncontro: value ? new Date(value) : null,
-                }));
-              }}
+              onChange={(event) => handleInputChange(event, 'dataOraIncontro')}
               sx={inputStyles(
                 theme,
                 inputWidth,
@@ -240,9 +385,7 @@ function DatiGeneraliProcedimento() {
                           />
                         ) : (
                           <CalendarMonthOutlinedIcon
-                            sx={{
-                              color: labelColor,
-                            }}
+                            sx={{ color: labelColor }}
                           />
                         )}
                       </InputAdornment>
@@ -254,19 +397,22 @@ function DatiGeneraliProcedimento() {
             />
           </LocalizationProvider>
 
-          {/* Sede caricamento */}
+          {/* Sede */}
           <CssTextField
             required
             size="small"
             id="outlined-required-sede"
             label="Sede"
             value={procedimento.sede || ''}
-            onChange={(event) => {
-              setProcedimento((prev) => ({
-                ...prev,
-                sede: event.target.value,
-              }));
-            }}
+            error={touchedFields.sede && errors.sede}
+            helperText={
+              touchedFields.sede && errors.sede
+                ? procedimento.sede
+                  ? 'Sede non valida'
+                  : 'Campo obbligatorio'
+                : ''
+            }
+            onChange={(event) => handleInputChange(event, 'sede')}
             sx={inputStyles(
               theme,
               inputWidth,
@@ -283,12 +429,13 @@ function DatiGeneraliProcedimento() {
             id="outlined-required-sede-svolgimento"
             label="Sede svolgimento"
             value={procedimento.sedeSvolgimento || ''}
-            onChange={(event) => {
-              setProcedimento((prev) => ({
-                ...prev,
-                sedeSvolgimento: event.target.value,
-              }));
-            }}
+            onChange={(event) => handleInputChange(event, 'sedeSvolgimento')}
+            error={touchedFields.sedeSvolgimento && errors.sedeSvolgimento}
+            helperText={
+              touchedFields.sedeSvolgimento && errors.sedeSvolgimento
+                ? 'Sede non valida'
+                : ''
+            }
             sx={inputStyles(
               theme,
               inputWidth,
@@ -302,7 +449,7 @@ function DatiGeneraliProcedimento() {
       </Grid>
 
       {/* Controversia */}
-      <Grid xs={12} sx={{width: '100%'}}>
+      <Grid size={{xs: 12}} sx={{ width: '100%', minHeight: `${gridRowHeight}px` }}>
         <Grid
           xs={12}
           sx={{
@@ -324,28 +471,27 @@ function DatiGeneraliProcedimento() {
         </Grid>
 
         <Grid xs={12} sx={{ paddingLeft: '1rem' }}>
-          {/* Oggetto di controversia */}
           <Select
             label="Oggetto di controversia"
             value={procedimento.oggettoControversia || ''}
-            onChange={(event) => {
-              setProcedimento((prev) => ({
-                ...prev,
-                oggettoControversia: event.target.value,
-              }));
-            }}
+            onChange={(event) =>
+              handleInputChange(event, 'oggettoControversia')
+            }
+            error={
+              touchedFields.oggettoControversia && errors.oggettoControversia
+            }
+            helperText={
+              touchedFields.oggettoControversia && errors.oggettoControversia
+                ? 'Campo obbligatorio'
+                : ''
+            }
             options={oggettiControversia}
           />
 
           {/* Valore della controversia */}
           <ImportoInput
             importo={procedimento.valoreControversia}
-            onChange={(valore) => {
-              setProcedimento((prev) => ({
-                ...prev,
-                valoreControversia: valore,
-              }));
-            }}
+            onChange={(event) => handleInputChange(event, 'valoreControversia')}
             sx={{
               margin,
               backgroundColor,
@@ -360,7 +506,7 @@ function DatiGeneraliProcedimento() {
 
       {/* Reset button */}
       <Grid
-        xs={12}
+        size={{xs: 12}}
         sx={{
           display: 'flex',
           justifyContent: 'start',
@@ -372,7 +518,7 @@ function DatiGeneraliProcedimento() {
       </Grid>
     </form>
   );
-}
+});
 
 function ClearBtn({ onReset, isDisabled }) {
   const theme = useTheme();
@@ -392,9 +538,7 @@ function ClearBtn({ onReset, isDisabled }) {
       }
       sx={{
         fontSize: '.9rem',
-        '&.Mui-disabled': {
-          color: theme.palette.text.disable
-        },
+        '&.Mui-disabled': { color: theme.palette.text.disable },
       }}
       disabled={isDisabled}
     >
@@ -403,4 +547,4 @@ function ClearBtn({ onReset, isDisabled }) {
   );
 }
 
-export default React.forwardRef(DatiGeneraliProcedimento);
+export default DatiGeneraliProcedimento;

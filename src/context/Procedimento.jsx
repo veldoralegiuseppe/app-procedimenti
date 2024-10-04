@@ -1,23 +1,15 @@
 import * as React from 'react';
 import { createContext, useState } from 'react';
+
 import { Procedimento } from '@model/procedimento.js';
 import { PersonaFisica } from '@model/personaFisica';
 import { PersonaGiuridica } from '@model/personaGiuridica';
 import { Comune } from '@model/comune.js';
+import NotificationAlert from '@components/NotificationAlert';
 
 export const ProcedimentoContext = createContext();
 
-const mockProcedimento = Object.assign(new Procedimento(), {
-  numProtocollo: '000001',
-  annoProtocollo: '2024',
-  dataDeposito: '23/01/2024',
-  sede: 'Roma',
-  sedeSvolgimento: 'Roma - Sede Centrale',
-  dataOraIncontro: '23/02/2024 10:30',
-  oggettoControversia: 'Controversia per mancato pagamento',
-  valoreControversia: 15000
-});
-
+function mockedPersone() {
   // Mock per Comune (per PersonaFisica e PersonaGiuridica)
   const mockComuneRoma = new Comune({
     codice: '001',
@@ -49,10 +41,7 @@ const mockProcedimento = Object.assign(new Procedimento(), {
     coordinate: { lat: 45.4642035, lng: 9.189982 },
   });
 
-export const ProcedimentoProvider = ({ children }) => {
-
-  const [procedimento, setProcedimento] = useState(mockProcedimento);
-  const [persone, setPersone] = useState([
+  return [
     Object.assign(new PersonaFisica(), {
       nome: 'MARIO',
       cognome: 'ROSSI',
@@ -141,13 +130,50 @@ export const ProcedimentoProvider = ({ children }) => {
       rappresentanteLegalePecEmail: 'raimondo.giudice@gmail.com',
       isParteIstante: false,
     }),
-  ]);
+  ];
+}
+
+function mockedProcedimento() {
+  const mockProcedimento = Object.assign(new Procedimento(), {
+    numProtocollo: '000001',
+    annoProtocollo: '2024',
+    dataDeposito: '23/01/2024',
+    sede: 'Roma',
+    sedeSvolgimento: 'Roma - Sede Centrale',
+    dataOraIncontro: '23/02/2024 10:30',
+    oggettoControversia: 'Controversia per mancato pagamento',
+    valoreControversia: 15000,
+  });
+}
+
+export const ProcedimentoProvider = ({ children }) => {
+  const [procedimento, setProcedimento] = useState(mockedProcedimento());
+  const [persone, setPersone] = useState(mockedPersone());
+  const [showAlert, setShowAlert] = React.useState(false);
+  const [alertSeverity, setAlertSeverity] = React.useState('error');
+  const [alertMessage, setAlertMessage] = React.useState(null);
+
+  const notify = (message, severity) => {
+    setShowAlert(true);
+    setAlertMessage(message);
+    setAlertSeverity(severity);
+  };
 
   return (
     <ProcedimentoContext.Provider
-      value={{ procedimento, setProcedimento, persone, setPersone }}
+      value={{ procedimento, setProcedimento, persone, setPersone, notify }}
     >
       {children}
+     
+      <NotificationAlert
+        isOpen={showAlert}
+        message={alertMessage}
+        severity={alertSeverity}
+        onClose={() => {
+          setShowAlert(false);
+          setAlertMessage(null);
+        }}
+      />
     </ProcedimentoContext.Provider>
   );
 };

@@ -3,6 +3,8 @@ const path = require('path');
 module.exports = {
   // Entry point per il processo main
   entry: './src/main.js',
+  devtool: 'cheap-module-source-map', // O 'inline-source-map' se preferisci
+
 
   output: {
     // Genera il bundle nella cartella attesa da Electron Forge
