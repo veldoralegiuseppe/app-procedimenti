@@ -1,11 +1,12 @@
 import { Comune } from '@model/comune.js';
+import dayjs from 'dayjs';
+import 'dayjs/locale/it';
 
 export class PersonaFisica {
   codiceFiscale;
   cognome;
   nome;
   dataNascita;
-  dataNascitaLocale;
   luogoDiNascita = new Comune();
   sesso;
   residenza = new Comune();
@@ -38,4 +39,8 @@ export class PersonaFisica {
       Number(this.importoPositivoOltrePrimoIncontro)
     );
   };
+
+  getDataNascitaLocale = () => {
+    return dayjs(dataNascita).format('DD/MM/YYYY');
+  }
 }

@@ -75,7 +75,7 @@ const PartiControparti = ({ persone }) => {
           </tr>
           <tr>
             <td className="R U" style={{ paddingRight: '10px' }}>Data di nascita:</td>
-            <td className="L U"><b>{persona.dataNascitaLocale ? persona.dataNascitaLocale : ""}</b></td>
+            <td className="L U"><b>{persona.dataNascita ? persona.getDataNascitaLocale() : ""}</b></td>
           </tr>
           <tr>
             <td className="R U" style={{ paddingRight: '10px' }}>Luogo di nascita:</td>

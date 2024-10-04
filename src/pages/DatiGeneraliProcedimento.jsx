@@ -121,7 +121,7 @@ const DatiGeneraliProcedimento = React.forwardRef(({ enableNextStep }, ref) => {
     validate: () => {
       let hasErrors = Object.entries(errors).some(([, hasError]) => hasError);
       let allRequiredFieldsFilled = requiredFieldsFilled();
-      return !hasErrors && allRequiredFieldsFilled; 
+      return !hasErrors && allRequiredFieldsFilled;
     },
   }));
 
@@ -131,7 +131,7 @@ const DatiGeneraliProcedimento = React.forwardRef(({ enableNextStep }, ref) => {
     let allRequiredFieldsFilled = requiredFieldsFilled();
 
     if (typeof enableNextStep === 'function') {
-      enableNextStep(!hasErrors && allRequiredFieldsFilled); 
+      enableNextStep(!hasErrors && allRequiredFieldsFilled);
     }
   }, [errors, enableNextStep, procedimento]);
 
@@ -198,7 +198,7 @@ const DatiGeneraliProcedimento = React.forwardRef(({ enableNextStep }, ref) => {
 
     setProcedimento((prev) => {
       const updatedProcedimento = { ...prev, [campoModel]: valore };
-
+      
       // Aggiorna il campo "touched"
       setTouchedFields((prevTouched) => ({
         ...prevTouched,
@@ -261,7 +261,10 @@ const DatiGeneraliProcedimento = React.forwardRef(({ enableNextStep }, ref) => {
       }}
     >
       {/* Procedimento di mediazione */}
-      <Grid size={{xs: 12}} sx={{ width: '100%', minHeight: `${gridRowHeight}px` }}>
+      <Grid
+        size={{ xs: 12 }}
+        sx={{ width: '100%', minHeight: `${gridRowHeight}px` }}
+      >
         <Grid
           xs={12}
           sx={{
@@ -275,6 +278,7 @@ const DatiGeneraliProcedimento = React.forwardRef(({ enableNextStep }, ref) => {
           </Typography>
         </Grid>
 
+        {/* Protocollo */}
         <Grid xs={12} sx={{ paddingLeft: '1rem' }}>
           <ProtocolloInput
             onChange={(numProtocollo, anno) => {
@@ -315,8 +319,15 @@ const DatiGeneraliProcedimento = React.forwardRef(({ enableNextStep }, ref) => {
           >
             <MobileDatePicker
               label="Data deposito"
-              value={dayjs(procedimento.dataDeposito)}
-              onChange={(event) => handleInputChange(event, 'dataDeposito')}
+              value={
+                procedimento.dataDeposito
+                  ? dayjs(procedimento.dataDeposito)
+                  : null
+              }
+              onChange={(date) => {
+                const formattedDate = date ? date.format('YYYY-MM-DD') : null;
+                handleInputChange(formattedDate, 'dataDeposito');
+              }}
               sx={inputStyles(
                 theme,
                 inputWidth,
@@ -352,8 +363,17 @@ const DatiGeneraliProcedimento = React.forwardRef(({ enableNextStep }, ref) => {
           >
             <MobileDateTimePicker
               label="Data e ora incontro"
-              value={procedimento.dataOraIncontro || null}
-              onChange={(event) => handleInputChange(event, 'dataOraIncontro')}
+              value={
+                procedimento.dataOraIncontro
+                  ? dayjs(procedimento.dataOraIncontro)
+                  : null
+              }
+              onChange={(date) => {
+                const formattedDate = date
+                  ? date.format('YYYY-MM-DDTHH:mm')
+                  : null;
+                handleInputChange(formattedDate, 'dataOraIncontro');
+              }}
               sx={inputStyles(
                 theme,
                 inputWidth,
@@ -449,7 +469,10 @@ const DatiGeneraliProcedimento = React.forwardRef(({ enableNextStep }, ref) => {
       </Grid>
 
       {/* Controversia */}
-      <Grid size={{xs: 12}} sx={{ width: '100%', minHeight: `${gridRowHeight}px` }}>
+      <Grid
+        size={{ xs: 12 }}
+        sx={{ width: '100%', minHeight: `${gridRowHeight}px` }}
+      >
         <Grid
           xs={12}
           sx={{
@@ -506,7 +529,7 @@ const DatiGeneraliProcedimento = React.forwardRef(({ enableNextStep }, ref) => {
 
       {/* Reset button */}
       <Grid
-        size={{xs: 12}}
+        size={{ xs: 12 }}
         sx={{
           display: 'flex',
           justifyContent: 'start',
