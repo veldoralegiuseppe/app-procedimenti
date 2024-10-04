@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Typography, InputAdornment, useTheme } from '@mui/material';
-import Grid from '@mui/material/Unstable_Grid2';
+import Grid from '@mui/material/Grid2';
 import { LocalizationProvider, MobileDatePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { itIT } from '@mui/x-date-pickers/locales';
@@ -302,7 +302,7 @@ function DatiGeneraliProcedimento() {
       </Grid>
 
       {/* Controversia */}
-      <Grid xs={12}>
+      <Grid xs={12} sx={{width: '100%'}}>
         <Grid
           xs={12}
           sx={{

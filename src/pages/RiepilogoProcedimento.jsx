@@ -1,5 +1,5 @@
 import React from 'react';
-import Grid from '@mui/material/Unstable_Grid2';
+import Grid from '@mui/material/Grid2';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
@@ -64,7 +64,7 @@ const PartiControparti = ({ persone }) => {
 
 
   const renderPersonaFisica = (persona, index) => (
-    <Grid item xs={12} md={6} key={index} sx={{marginBottom: isXs ? '1.5rem' : '0'}}>
+    <Grid item size={{xs: 12, md: 6}} key={index} sx={{marginBottom: isXs ? '1.5rem' : '0'}}>
       <table className="result w100 shs2 rad10" style={{tableLayout: 'fixed' }}>
         <tbody>
           <tr>
@@ -108,7 +108,7 @@ const PartiControparti = ({ persone }) => {
             <td className="L U"><b>{persona.rappresentanteLegale}</b></td>
           </tr>
           <tr>
-            <td className="R U" style={{ paddingRight: '10px' }}>PEC/Email del Rappresentante Legale:</td>
+            <td className="R U" style={{ paddingRight: '10px' }}>PEC/Email del Legale:</td>
             <td className="L U"><b>{persona.rappresentanteLegalePecEmail ? persona.rappresentanteLegalePecEmail : ""}</b></td>
           </tr>
         </tbody>
@@ -117,7 +117,7 @@ const PartiControparti = ({ persone }) => {
   );
 
   const renderPersonaGiuridica = (persona, index) => (
-    <Grid item xs={12} md={6} key={index} sx={{marginBottom: isXs ? '1.5rem' : '0'}}>
+    <Grid item size={{xs: 12, md: 6}} key={index} sx={{marginBottom: isXs ? '1.5rem' : '0'}}>
       <table className="result w100 shs2 rad10" style={{ tableLayout: 'fixed' }}>
         <tbody>
           <tr>
@@ -141,7 +141,7 @@ const PartiControparti = ({ persone }) => {
             <td className="L U"><b>{persona.rappresentanteLegale ? persona.rappresentanteLegale : ""}</b></td>
           </tr>
           <tr>
-            <td className="R U" style={{ paddingRight: '10px' }}>PEC/Email del Rappresentante Legale:</td>
+            <td className="R U" style={{ paddingRight: '10px' }}>PEC/Email del Legale:</td>
             <td className="L U"><b>{persona.rappresentanteLegalePecEmail ? persona.rappresentanteLegalePecEmail : ""}</b></td>
           </tr>
         </tbody>

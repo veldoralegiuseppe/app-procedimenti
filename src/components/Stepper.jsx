@@ -6,7 +6,7 @@ import StepLabel from '@mui/material/StepLabel';
 import Button from '@mui/material/Button';
 import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
-import Grid from '@mui/material/Unstable_Grid2';
+import Grid from '@mui/material/Grid2';
 
 export default function Stepper({ steps }) {
   const [activeStep, setActiveStep] = React.useState(0);

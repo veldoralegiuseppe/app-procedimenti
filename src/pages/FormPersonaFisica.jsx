@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
-import Grid from '@mui/material/Unstable_Grid2';
+import Grid from '@mui/material/Grid2';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { itIT } from '@mui/x-date-pickers/locales';

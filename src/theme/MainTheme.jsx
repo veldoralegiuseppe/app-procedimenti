@@ -1,6 +1,6 @@
 import { createTheme } from '@mui/material/styles';
 import { styled } from '@mui/system';
-import Grid from '@mui/material/Unstable_Grid2';
+import Grid from '@mui/material/Grid2';
 import { itIT as coreItIT } from '@mui/material/locale';
 import { itIT } from '@mui/x-date-pickers/locales';
 import TextField from '@mui/material/TextField';
