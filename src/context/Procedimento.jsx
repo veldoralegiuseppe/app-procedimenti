@@ -137,13 +137,15 @@ function mockedProcedimento() {
   const mockProcedimento = Object.assign(new Procedimento(), {
     numProtocollo: '000001',
     annoProtocollo: '2024',
-    dataDeposito: '23/01/2024',
+    dataDeposito: new Date(),
     sede: 'Roma',
     sedeSvolgimento: 'Roma - Sede Centrale',
     dataOraIncontro: '23/02/2024 10:30',
     oggettoControversia: 'Controversia per mancato pagamento',
     valoreControversia: 15000,
   });
+
+  return mockProcedimento;
 }
 
 export const ProcedimentoProvider = ({ children }) => {

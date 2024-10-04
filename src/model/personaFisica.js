@@ -41,6 +41,6 @@ export class PersonaFisica {
   };
 
   getDataNascitaLocale = () => {
-    return dayjs(dataNascita).format('DD/MM/YYYY');
+    return this.dataNascita ? dayjs(this.dataNascita).format('DD/MM/YYYY') : null;
   }
 }

@@ -8,7 +8,8 @@ import { PersonaGiuridica } from '@model/personaGiuridica';
 import { PersonaFisica } from '@model/personaFisica';
 
 function formatImporto(importo) {
-  const [integerPart, decimalPart] = importo.toString().split('.');
+
+  const [integerPart, decimalPart] = importo ? importo.toString().split('.') : '0.00'.toString().split('.');
   const formattedIntegerPart = Number(
     integerPart.replace(/\./g, '')
   ).toLocaleString('it-IT');
@@ -31,25 +32,25 @@ const Procedimento = ({ procedimento }) => {
 
       {/* Numero Protocollo */}
       <h2 style={{ textAlign: 'left', fontSize: '1.8rem', marginBottom: '2rem' }}>
-        {procedimento.getProtocollo()}
+        {procedimento?.getProtocollo()}
       </h2>
 
       {/* Informazioni disposte con il sistema a griglia di MUI */}
       <Grid container spacing={2}>
-        <Grid item xs={12} md={6} xl={2}>
-          <strong>Data Deposito:</strong> {procedimento.dataDeposito}
+        <Grid  xs={12} md={6} xl={2}>
+          <strong>Data Deposito:</strong> {procedimento?.getDataDepositoLocale()}
         </Grid>
-        <Grid item xs={12} md={6} xl={2}>
-          <strong>Sede Caricamento:</strong> {procedimento.sede}
+        <Grid  xs={12} md={6} xl={2}>
+          <strong>Sede Caricamento:</strong> {procedimento?.sede}
         </Grid>
-        <Grid item xs={12} md={6} xl={2}>
-          <strong>Sede Svolgimento:</strong> {procedimento.sedeSvolgimento}
+        <Grid  xs={12} md={6} xl={2}>
+          <strong>Sede Svolgimento:</strong> {procedimento?.sedeSvolgimento}
         </Grid>
-        <Grid item xs={12} md={6} xl={2}>
-          <strong>Valore della Lite:</strong> {formatImporto(procedimento.valoreControversia)}
+        <Grid  xs={12} md={6} xl={2}>
+          <strong>Valore della Lite:</strong> {formatImporto(procedimento?.valoreControversia)}
         </Grid>
-        <Grid item xs={12} md={6} xl={2}>
-          <strong>Oggetto della Controversia:</strong> {procedimento.oggettoControversia}
+        <Grid  xs={12} md={6} xl={2}>
+          <strong>Oggetto della Controversia:</strong> {procedimento?.oggettoControversia}
         </Grid>
       </Grid>
     </div>
@@ -64,7 +65,7 @@ const PartiControparti = ({ persone }) => {
 
 
   const renderPersonaFisica = (persona, index) => (
-    <Grid item size={{xs: 12, md: 6}} key={index} sx={{marginBottom: isXs ? '1.5rem' : '0'}}>
+    <Grid  size={{xs: 12, md: 6}} key={index} sx={{marginBottom: isXs ? '1.5rem' : '0'}}>
       <table className="result w100 shs2 rad10" style={{tableLayout: 'fixed' }}>
         <tbody>
           <tr>
@@ -117,7 +118,7 @@ const PartiControparti = ({ persone }) => {
   );
 
   const renderPersonaGiuridica = (persona, index) => (
-    <Grid item size={{xs: 12, md: 6}} key={index} sx={{marginBottom: isXs ? '1.5rem' : '0'}}>
+    <Grid  size={{xs: 12, md: 6}} key={index} sx={{marginBottom: isXs ? '1.5rem' : '0'}}>
       <table className="result w100 shs2 rad10" style={{ tableLayout: 'fixed' }}>
         <tbody>
           <tr>
@@ -326,13 +327,17 @@ const RiepilogoSpese = ({ persone }) => {
   );
 };
 
-export default function RiepilogoProcedimento() {
+const RiepilogoProcedimento = React.forwardRef((props, ref) => {
   let { procedimento, persone } = React.useContext(ProcedimentoContext);
+  console.log(procedimento)
+  
   return (
-    <div style={{marginTop: '2rem'}}>
+    <div ref={ref} style={{marginTop: '2rem'}}>
       <Procedimento procedimento={procedimento} />
       <PartiControparti persone={persone} />
       <RiepilogoSpese persone={persone} />
     </div>
   );
-}
+});
+
+export default RiepilogoProcedimento;
