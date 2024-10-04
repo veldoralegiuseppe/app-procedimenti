@@ -210,7 +210,7 @@ export default function TabellaPartiControparti() {
             isPersonaFisica: true,
             anagrafica: `${persona.nome} ${persona.cognome}`,
             codiceFiscale: persona.codiceFiscale ? persona.codiceFiscale : "",
-            dataNascita: persona.dataNascitaLocale ? persona.dataNascitaLocale : "",
+            dataNascita: persona.dataNascita ? persona.getDataNascitaLocale() : "",
             luogoDiNascita: persona.luogoDiNascita ? `${persona.luogoDiNascita.nome} (${persona.luogoDiNascita.provincia.sigla})` : "",
             sesso: persona.sesso ? persona.sesso : "",
             residenza:  persona.residenza ? `${persona.indirizzo ? persona.indirizzo +' -' : ''}  ${persona.residenza.cap} ${persona.residenza.nome} (${persona.residenza.provincia.sigla})` : "",
