@@ -68,7 +68,6 @@ export default function Stepper({ steps }) {
           display: 'flex',
           justifyContent: 'center', // Center the stepper horizontally
           alignItems: 'center',
-          //boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)', // Subtle shadow for depth
         }}
       >
         <MuiStepper
@@ -94,12 +93,11 @@ export default function Stepper({ steps }) {
                   sx={{
                     '& .MuiStepLabel-label': {
                       fontSize: '1rem', // Step label font size
-                      fontWeight: '500', // Make it bold for clarity
+                      fontWeight: '400', // Ensure font weight is 400 for all step labels
                     },
-                    '& .MuiStepLabel-label.Mui-active, & .MuiStepLabel-label.Mui-completed':
-                      {
-                        color: '#ED9747', // Color for active/completed step labels
-                      },
+                    '& .MuiStepLabel-label.Mui-active, & .MuiStepLabel-label.Mui-completed': {
+                      color: '#ED9747', // Color for active/completed step labels
+                    },
                     '& .MuiStepIcon-root': {
                       width: '2.5rem', // Enlarged step icons
                       height: '2.5rem',
@@ -114,7 +112,15 @@ export default function Stepper({ steps }) {
                         activeStep > index
                           ? theme.palette.primary.main
                           : 'transparent',
-                      color: activeStep > index ? '#ffffff' : '#b0b0b0',
+                      color: activeStep > index ? '#ffffff' : '#b0b0b0', // Default color for completed steps
+
+                      // Change text color to white for active and "to-do" steps
+                      '& .MuiStepIcon-text': {
+                        fill: activeStep === index || activeStep < index ? '#ffffff' : undefined, // White for active and to-do steps
+                      },
+                    },
+                    '& .MuiStepIcon-root.Mui-completed .MuiStepIcon-text': {
+                      color: '#ED9747', // Keep the default color when step is completed
                     },
                   }}
                 >
@@ -135,9 +141,9 @@ export default function Stepper({ steps }) {
           rowGap: '0',
           width: '100%',
           borderRadius: '12px',
-          border: '1px solid rgb(198 196 193 / 80%)',
+          border: '1px solid rgb(198, 196, 193 / 80%)',
           padding: '2rem',
-          boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)'
+          boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
         }}
       >
         {activeStep === steps.length ? (
@@ -161,56 +167,59 @@ export default function Stepper({ steps }) {
         )}
       </div>
 
-       {/* Control buttons */}
-       <Grid size={{xs: 12}} sx={{ borderTop: '1px solid rgba(198, 196, 193, 0.8)' }}>
-              <Box
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'row',
-                  pt: 3,
-                  justifyContent: 'space-around',
-                  alignItems: 'center',
-                }}
-              >
-                <Button
-                  color="inherit"
-                  disabled={activeStep === 0}
-                  onClick={handleBack}
-                  sx={{
-                    '&.Mui-disabled': {
-                      backgroundColor: 'unset',
-                      border: `.9px solid rgb(199 199 199 / 60%)`,
-                      color: theme.palette.text.disabled,
-                    },
-                    backgroundColor: 'unset',
-                    border: `.9px solid ${theme.palette.logo.primary}`,
-                    color: theme.palette.logo.primary,
-                    '&:hover': { backgroundColor: '#6ea5da29' },
-                  }}
-                >
-                  Indietro
-                </Button>
-                <Box sx={{ flex: '1 1 auto' }} />
-                <Button
-                  onClick={handleNext}
-                  disabled={disableNext}
-                  sx={{
-                    '&.Mui-disabled': {
-                      backgroundColor: '#f4f4f4',
-                      color: theme.palette.text.disabled,
-                    },
-                    backgroundColor: theme.palette.primary.light,
-                    color: theme.palette.primary.main,
-                    '&:hover': {
-                      backgroundColor: theme.palette.primary.light,
-                      color: theme.palette.primary.main,
-                    },
-                  }}
-                >
-                  {activeStep === steps.length - 1 ? 'Crea' : 'Avanti'}
-                </Button>
-              </Box>
-        </Grid>
+      {/* Control buttons */}
+      <Grid
+        size={{ xs: 12 }}
+        sx={{ borderTop: '1px solid rgba(198, 196, 193, 0.8)' }}
+      >
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'row',
+            pt: 3,
+            justifyContent: 'space-around',
+            alignItems: 'center',
+          }}
+        >
+          <Button
+            color="inherit"
+            disabled={activeStep === 0}
+            onClick={handleBack}
+            sx={{
+              '&.Mui-disabled': {
+                backgroundColor: 'unset',
+                border: `.9px solid rgb(199 199 199 / 60%)`,
+                color: theme.palette.text.disabled,
+              },
+              backgroundColor: 'unset',
+              border: `.9px solid ${theme.palette.logo.primary}`,
+              color: theme.palette.logo.primary,
+              '&:hover': { backgroundColor: '#6ea5da29' },
+            }}
+          >
+            Indietro
+          </Button>
+          <Box sx={{ flex: '1 1 auto' }} />
+          <Button
+            onClick={handleNext}
+            disabled={disableNext}
+            sx={{
+              '&.Mui-disabled': {
+                backgroundColor: '#f4f4f4',
+                color: theme.palette.text.disabled,
+              },
+              backgroundColor: theme.palette.primary.light,
+              color: theme.palette.primary.main,
+              '&:hover': {
+                backgroundColor: theme.palette.primary.light,
+                color: theme.palette.primary.main,
+              },
+            }}
+          >
+            {activeStep === steps.length - 1 ? 'Crea' : 'Avanti'}
+          </Button>
+        </Box>
+      </Grid>
     </Box>
   );
 }
