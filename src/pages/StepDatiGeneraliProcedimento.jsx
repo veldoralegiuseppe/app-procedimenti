@@ -68,7 +68,7 @@ const inputStyles = (
   '&.Mui-focused .MuiSvgIcon-root': { color: theme.palette.logo.secondary },
 });
 
-const DatiGeneraliProcedimento = React.forwardRef(({ enableNextStep }, ref) => {
+const StepDatiGeneraliProcedimento = React.forwardRef(({ enableNextStep }, ref) => {
   const theme = useTheme();
   const inputWidth = '168px';
   const minWidth = '133px';
@@ -570,4 +570,4 @@ function ClearBtn({ onReset, isDisabled }) {
   );
 }
 
-export default DatiGeneraliProcedimento;
+export default StepDatiGeneraliProcedimento;

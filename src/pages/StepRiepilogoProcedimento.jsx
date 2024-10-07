@@ -327,7 +327,7 @@ const RiepilogoSpese = ({ persone }) => {
   );
 };
 
-const RiepilogoProcedimento = React.forwardRef((props, ref) => {
+const StepRiepilogoProcedimento = React.forwardRef((props, ref) => {
   let { procedimento, persone } = React.useContext(ProcedimentoContext);
   console.log(procedimento)
   
@@ -340,4 +340,4 @@ const RiepilogoProcedimento = React.forwardRef((props, ref) => {
   );
 });
 
-export default RiepilogoProcedimento;
+export default StepRiepilogoProcedimento;

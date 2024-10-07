@@ -47,7 +47,7 @@ function AggiungiParteButton(props) {
     );
 }
 
-function PartiControparti(props, ref){
+function StepPartiControparti(props, ref){
 
     const formLabelFontSize = '1.2rem'
     
@@ -67,4 +67,4 @@ function PartiControparti(props, ref){
 
 }
 
-export default React.forwardRef(PartiControparti)
+export default React.forwardRef(StepPartiControparti)

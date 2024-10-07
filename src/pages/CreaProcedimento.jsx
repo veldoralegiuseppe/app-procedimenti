@@ -5,9 +5,9 @@ import { useTheme } from '@mui/material/styles';
 import Breadcrumbs from "@components/Breadcrumbs.jsx";
 import Stepper from '@components/Stepper';
 import { ProcedimentoProvider } from '@context/Procedimento';
-import DatiGeneraliProcedimento from '@pages/DatiGeneraliProcedimento';
-import PartiControparti from '@pages/PartiControparti';
-import RiepilogoProcedimento from '@pages/RiepilogoProcedimento';
+import DatiGeneraliProcedimento from '@pages/StepDatiGeneraliProcedimento';
+import PartiControparti from '@pages/StepPartiControparti';
+import RiepilogoProcedimento from '@pages/StepRiepilogoProcedimento';
 
 export default function CreaProcedimento() {
 
