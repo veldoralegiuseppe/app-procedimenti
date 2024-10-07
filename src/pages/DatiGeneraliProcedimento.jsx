@@ -122,8 +122,7 @@ const DatiGeneraliProcedimento = React.forwardRef(({ enableNextStep }, ref) => {
     validate: () => {
       let hasErrors = Object.entries(errors).some(([, hasError]) => hasError);
       let allRequiredFieldsFilled = requiredFieldsFilled();
-      return true
-      //return !hasErrors && allRequiredFieldsFilled;
+      return !hasErrors && allRequiredFieldsFilled;
     },
   }));
 
