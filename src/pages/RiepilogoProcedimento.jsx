@@ -24,7 +24,7 @@ function formatImporto(importo) {
 
 const Procedimento = ({ procedimento }) => {
   return (
-    <div style={{ marginBottom: '2rem',}}>
+    <div style={{marginTop: '-2rem', marginBottom: '1rem'}}>
       {/* Titolo principale */}
       <h1 style={{ textAlign: 'left', fontSize: '2rem', marginBottom: '0.3rem' }}>
         Procedimento di Mediazione

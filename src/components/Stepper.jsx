@@ -11,9 +11,9 @@ import Grid from '@mui/material/Grid2';
 export default function Stepper({ steps }) {
   const [activeStep, setActiveStep] = React.useState(0);
   const [skipped, setSkipped] = React.useState(new Set());
-  const [disableNext, setDisableNext] = React.useState(true); 
+  const [disableNext, setDisableNext] = React.useState(true);
   const theme = useTheme();
-  const stepRef = React.useRef(null); 
+  const stepRef = React.useRef(null);
 
   React.useEffect(() => {
     const currentStepComponent = steps[activeStep].component;
@@ -53,11 +53,10 @@ export default function Stepper({ steps }) {
         width: '100%',
         backgroundColor: theme.palette.background.default,
         borderRadius: '8px',
-        padding: '1.5rem',
         alignItems: 'center',
         display: 'flex',
         flexDirection: 'column', // Stepper and content centered
-        gap: '1rem', // Space between stepper and form below
+        gap: '4rem', // Space between stepper and form below
       }}
     >
       {/* Stepper Container with background */}
@@ -66,7 +65,6 @@ export default function Stepper({ steps }) {
           width: '100%',
           maxWidth: '100rem', // Limit the max width for better centering
           backgroundColor: 'transparent', // Background color for the stepper
-          padding: '0 0 3rem 0', // Internal padding for the stepper container
           display: 'flex',
           justifyContent: 'center', // Center the stepper horizontally
           alignItems: 'center',
@@ -80,7 +78,7 @@ export default function Stepper({ steps }) {
             width: '100%', // Let the stepper take full width inside the container
             paddingBottom: '2rem',
             '& .MuiStepConnector-line': {
-              borderColor: '#c0784b',  // Line color between steps
+              borderColor: '#c96b00d4', // Line color between steps
             },
           }}
         >
@@ -98,20 +96,24 @@ export default function Stepper({ steps }) {
                       fontSize: '1rem', // Step label font size
                       fontWeight: '500', // Make it bold for clarity
                     },
-                    '& .MuiStepLabel-label.Mui-active, & .MuiStepLabel-label.Mui-completed': {
-                      color: '#b5651d', // Color for active/completed step labels
-                    },
+                    '& .MuiStepLabel-label.Mui-active, & .MuiStepLabel-label.Mui-completed':
+                      {
+                        color: '#ED9747', // Color for active/completed step labels
+                      },
                     '& .MuiStepIcon-root': {
-                      width: '2.5rem',  // Enlarged step icons
+                      width: '2.5rem', // Enlarged step icons
                       height: '2.5rem',
-                      fontSize: '1.8rem',  // Enlarged step numbers
+                      fontSize: '1.8rem', // Enlarged step numbers
                       borderRadius: '50%',
                       display: 'flex',
                       alignItems: 'center',
                       justifyContent: 'center',
 
                       // Background for active/completed steps
-                      backgroundColor: activeStep > index ? '#b5651d' : 'transparent',
+                      backgroundColor:
+                        activeStep > index
+                          ? theme.palette.primary.main
+                          : 'transparent',
                       color: activeStep > index ? '#ffffff' : '#b0b0b0',
                     },
                   }}
@@ -125,7 +127,19 @@ export default function Stepper({ steps }) {
       </Box>
 
       {/* Main content (form) below the stepper */}
-      <div style={{ display: 'flex', flexDirection: 'column', rowGap: '0' }}>
+      <div
+        id="stepper-content-container"
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          rowGap: '0',
+          width: '100%',
+          borderRadius: '12px',
+          border: '1px solid rgb(198 196 193 / 80%)',
+          padding: '2rem',
+          boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)'
+        }}
+      >
         {activeStep === steps.length ? (
           <React.Fragment>
             <Typography sx={{ mt: 2, mb: 1 }}>
@@ -143,9 +157,12 @@ export default function Stepper({ steps }) {
               ref: stepRef,
               enableNextStep,
             })}
+          </React.Fragment>
+        )}
+      </div>
 
-            {/* Control buttons */}
-            <Grid xs={12} sx={{ borderTop: '1px solid #f1f1f1' }}>
+       {/* Control buttons */}
+       <Grid size={{xs: 12}} sx={{ borderTop: '1px solid rgba(198, 196, 193, 0.8)' }}>
               <Box
                 sx={{
                   display: 'flex',
@@ -193,10 +210,7 @@ export default function Stepper({ steps }) {
                   {activeStep === steps.length - 1 ? 'Crea' : 'Avanti'}
                 </Button>
               </Box>
-            </Grid>
-          </React.Fragment>
-        )}
-      </div>
+        </Grid>
     </Box>
   );
 }

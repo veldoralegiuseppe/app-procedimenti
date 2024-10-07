@@ -24,7 +24,7 @@ export default function CreaProcedimento() {
         <ProcedimentoProvider>
             <div style={{display: 'flex', flexDirection: 'column', flex: '1', rowGap: '5rem'}}>
                 <div style={{display: 'flex', backgroundColor: theme.palette.background.default, justifyContent: 'space-between', height: '56px', alignItems: 'center', padding: '0', borderRadius: '8px'}}>
-                    <Typography variant="h4" sx={{color: theme.palette.text.primary, fontWeight: '500'}}>
+                    <Typography variant="h4" sx={{color: theme.palette.text.primary, fontSize: '2.5rem'}}>
                         Crea Procedimento
                     </Typography>
                     <Breadcrumbs />

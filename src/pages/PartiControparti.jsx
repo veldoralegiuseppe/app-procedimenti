@@ -49,13 +49,13 @@ function AggiungiParteButton(props) {
 
 function PartiControparti(props, ref){
 
-    const formLabelFontSize = '1rem'
+    const formLabelFontSize = '1.2rem'
     
     return(
-        <div style={{display: 'flex', flexDirection:'column', alignItems: 'center', justifyContent:'center', rowGap:'4rem', padding: '4.5rem 0'}}>
+        <div style={{display: 'flex', width: '100%', flexDirection:'column', alignItems: 'center', justifyContent:'center', rowGap:'4rem',}}>
             {/* Lista delle parti */}
-            <Grid xs={12}>
-                <Grid xs={12} sx={{borderBottom:'1px solid #467bae61', margin: '0 0 0 1rem', width: 'calc(100% - 1rem)'}}><Typography sx={{fontSize: formLabelFontSize, color: '#467bae'}}>Lista delle parti</Typography></Grid>
+            <Grid size={{xs: 12}}>
+                <Grid size={{xs: 12}} sx={{marginBottom: '1rem', borderBottom:'1px solid #467bae',}}><Typography sx={{fontSize: formLabelFontSize, color: '#467bae', margin: '0'}}>Lista delle parti</Typography></Grid>
                 <TabellaPartiControparti/>
                 <div style={{margin: '0 0 0 1rem', width: 'calc(100% - 1rem)'}}>
                     <AggiungiParteButton sx={{marginRight: '10rem'}}/>

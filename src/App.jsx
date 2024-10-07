@@ -40,7 +40,7 @@ function App() {
             borderRadius: '8px', // angoli arrotondati per un design simile ai tooltip
             boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)', // effetto ombra per dare la sensazione di sovrapposizione come i tooltip
             backgroundColor: 'background.paper', // colore di sfondo neutro
-            padding: '12px 25px', // ridotto leggermente il padding
+            padding: '12px 4rem', // ridotto leggermente il padding
           }}
         >
           {getRoute(path).component}

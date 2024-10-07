@@ -575,7 +575,7 @@ export default function TabellaPartiControparti() {
   }
 
   return (
-    <Box sx={{ margin: '18px 0 0 1rem', width: 'calc(100% - 1rem)' }}>
+    <Box sx={{ width: '100%' }}>
       <Paper sx={{ width: '100%', mb: 2, boxShadow: 'unset' }}>
         <TableContainer>
           <Table
