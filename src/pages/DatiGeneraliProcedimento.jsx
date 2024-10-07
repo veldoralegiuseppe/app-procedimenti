@@ -75,7 +75,7 @@ const DatiGeneraliProcedimento = React.forwardRef(({ enableNextStep }, ref) => {
   const maxWidth = '200px';
   const margin = '18px 20px 0px 0px';
   const backgroundColor = theme.palette.background.default;
-  const formLabelFontSize = '1rem';
+  const formLabelFontSize = '1.2rem';
 
   const [procedimento, setProcedimento] = React.useState(new Procedimento());
   const [initialProc] = React.useState(new Procedimento()); // Stato iniziale da comparare
@@ -256,8 +256,11 @@ const DatiGeneraliProcedimento = React.forwardRef(({ enableNextStep }, ref) => {
         flexDirection: 'column',
         alignItems: 'center',
         justifyContent: 'center',
+        borderRadius: '12px',
+        border: '1px solid rgb(198 196 193 / 80%)',
         rowGap: '4rem',
-        padding: '4.5rem 0',
+        padding: '4rem 2rem',
+        boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)'
       }}
     >
       {/* Procedimento di mediazione */}
@@ -268,7 +271,7 @@ const DatiGeneraliProcedimento = React.forwardRef(({ enableNextStep }, ref) => {
         <Grid
           xs={12}
           sx={{
-            borderBottom: '1px solid #467bae61',
+            borderBottom: '1px solid #467baea1',
             margin: '0 0 0 1rem',
             width: 'calc(100% - 1rem)',
           }}
@@ -476,7 +479,7 @@ const DatiGeneraliProcedimento = React.forwardRef(({ enableNextStep }, ref) => {
         <Grid
           xs={12}
           sx={{
-            borderBottom: '1px solid #467bae61',
+            borderBottom: '1px solid #467baea1',
             margin: '0 0 0 1rem',
             width: 'calc(100% - 1rem)',
           }}

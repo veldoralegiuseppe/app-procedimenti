@@ -140,7 +140,7 @@ export default function ResponsiveAppBar({ drawerWidth = 60, onButtonClick }) {
           height: '98vh',
           '& .MuiDrawer-paper': {
             width: '60px',
-            background: 'linear-gradient(180deg, #d79659 0%, #b5651d 100%); /* Gradient da arancione chiaro a scuro */', // Colore semi-trasparente della navbar
+            background: 'linear-gradient(180deg, #d79659 0%, #b5651de8 100%)', // Colore semi-trasparente della navbar
             boxShadow: '0px 8px 20px rgba(0, 0, 0, 0.15)', // Ombra per dare profondità
             height: '98vh',
             border: '1px solid rgba(0, 0, 0, 0.12)',

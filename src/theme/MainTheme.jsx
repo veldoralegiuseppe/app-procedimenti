@@ -16,7 +16,7 @@ export const themeOne = createTheme({
   palette: {
     mode: 'light',
     primary: {
-      main: '#ed9747',
+      main: '#b5651d',
       light: '#ffe5c8',
     },
     secondary: {

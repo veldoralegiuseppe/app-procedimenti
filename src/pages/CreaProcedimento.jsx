@@ -23,8 +23,8 @@ export default function CreaProcedimento() {
     return (
         <ProcedimentoProvider>
             <div style={{display: 'flex', flexDirection: 'column', flex: '1', rowGap: '5rem'}}>
-                <div style={{display: 'flex', backgroundColor: theme.palette.background.default, justifyContent: 'space-between', height: '56px', alignItems: 'center', padding: '0 16px', borderRadius: '8px'}}>
-                    <Typography variant="h5" sx={{fontSize: '1.4rem', color: theme.palette.text.primary}}>
+                <div style={{display: 'flex', backgroundColor: theme.palette.background.default, justifyContent: 'space-between', height: '56px', alignItems: 'center', padding: '0', borderRadius: '8px'}}>
+                    <Typography variant="h4" sx={{color: theme.palette.text.primary, fontWeight: '500'}}>
                         Crea Procedimento
                     </Typography>
                     <Breadcrumbs />

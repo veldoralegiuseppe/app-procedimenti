@@ -15,22 +15,18 @@ export default function Stepper({ steps }) {
   const theme = useTheme();
   const stepRef = React.useRef(null); 
 
-  // Effettua la validazione quando l'activeStep cambia
   React.useEffect(() => {
-    // Cerca di accedere al ref del componente attivo, se esiste
     const currentStepComponent = steps[activeStep].component;
 
     if (currentStepComponent && stepRef.current?.validate) {
       console.log('chiamo validate');
-      // Verifica se la funzione validate esiste
       setDisableNext(!stepRef.current.validate());
     } else {
-      setDisableNext(false); // Se non c'è validazione, abilita il pulsante Next
+      setDisableNext(false);
     }
   }, [activeStep, steps]);
 
   const enableNextStep = React.useCallback((isEnabled) => {
-    //console.log(`enableNextStep called with: ${isEnabled}`);
     setDisableNext(!isEnabled);
   }, []);
 
@@ -57,37 +53,78 @@ export default function Stepper({ steps }) {
         width: '100%',
         backgroundColor: theme.palette.background.default,
         borderRadius: '8px',
-        padding: '16px 16px',
+        padding: '1.5rem',
         alignItems: 'center',
+        display: 'flex',
+        flexDirection: 'column', // Stepper and content centered
+        gap: '1rem', // Space between stepper and form below
       }}
     >
-      <MuiStepper
-        activeStep={activeStep}
-        sx={{ paddingBottom: '2rem', borderBottom: '1px solid #f1f1f1' }}
+      {/* Stepper Container with background */}
+      <Box
+        sx={{
+          width: '100%',
+          maxWidth: '100rem', // Limit the max width for better centering
+          backgroundColor: 'transparent', // Background color for the stepper
+          padding: '0 0 3rem 0', // Internal padding for the stepper container
+          display: 'flex',
+          justifyContent: 'center', // Center the stepper horizontally
+          alignItems: 'center',
+          //boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.1)', // Subtle shadow for depth
+        }}
       >
-        {steps.map((step, index) => {
-          const stepProps = {};
-          const labelProps = {};
-          if (isStepSkipped(index)) stepProps.completed = false;
+        <MuiStepper
+          activeStep={activeStep}
+          alternativeLabel
+          sx={{
+            width: '100%', // Let the stepper take full width inside the container
+            paddingBottom: '2rem',
+            '& .MuiStepConnector-line': {
+              borderColor: '#c0784b',  // Line color between steps
+            },
+          }}
+        >
+          {steps.map((step, index) => {
+            const stepProps = {};
+            const labelProps = {};
+            if (isStepSkipped(index)) stepProps.completed = false;
 
-          return (
-            <Step key={step.label} {...stepProps}>
-              <StepLabel
-                {...labelProps}
-                sx={{
-                  '& .MuiStepLabel-label': { fontSize: '.9rem' },
-                  '& .MuiStepLabel-label.Mui-active, & .MuiStepLabel-label.Mui-completed':
-                    { color: theme.palette.primary.main },
-                  '& .MuiSvgIcon-root': { width: '2rem', height: '2rem' },
-                }}
-              >
-                {step.label}
-              </StepLabel>
-            </Step>
-          );
-        })}
-      </MuiStepper>
+            return (
+              <Step key={step.label} {...stepProps}>
+                <StepLabel
+                  {...labelProps}
+                  sx={{
+                    '& .MuiStepLabel-label': {
+                      fontSize: '1rem', // Step label font size
+                      fontWeight: '500', // Make it bold for clarity
+                    },
+                    '& .MuiStepLabel-label.Mui-active, & .MuiStepLabel-label.Mui-completed': {
+                      color: '#b5651d', // Color for active/completed step labels
+                    },
+                    '& .MuiStepIcon-root': {
+                      width: '2.5rem',  // Enlarged step icons
+                      height: '2.5rem',
+                      fontSize: '1.8rem',  // Enlarged step numbers
+                      borderRadius: '50%',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
 
+                      // Background for active/completed steps
+                      backgroundColor: activeStep > index ? '#b5651d' : 'transparent',
+                      color: activeStep > index ? '#ffffff' : '#b0b0b0',
+                    },
+                  }}
+                >
+                  {step.label}
+                </StepLabel>
+              </Step>
+            );
+          })}
+        </MuiStepper>
+      </Box>
+
+      {/* Main content (form) below the stepper */}
       <div style={{ display: 'flex', flexDirection: 'column', rowGap: '0' }}>
         {activeStep === steps.length ? (
           <React.Fragment>
@@ -101,19 +138,19 @@ export default function Stepper({ steps }) {
           </React.Fragment>
         ) : (
           <React.Fragment>
-            {/* Aggiungi il componente dello step attuale */}
+            {/* Add the current step component */}
             {React.cloneElement(steps[activeStep].component, {
               ref: stepRef,
               enableNextStep,
             })}
 
-            {/* Button di controllo */}
+            {/* Control buttons */}
             <Grid xs={12} sx={{ borderTop: '1px solid #f1f1f1' }}>
               <Box
                 sx={{
                   display: 'flex',
                   flexDirection: 'row',
-                  pt: 2,
+                  pt: 3,
                   justifyContent: 'space-around',
                   alignItems: 'center',
                 }}
