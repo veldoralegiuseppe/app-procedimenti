@@ -75,7 +75,7 @@ export default function ResponsiveAppBar({ drawerWidth = 60, onButtonClick }) {
         {/* Loop sugli elementi del menu */}
         {menuItems.map((item, index) => {
           const isHovered = hoverIndex === index; // L'icona su cui il mouse è attualmente
-          const iconScale = isHovered ? 'scale(1.5)' : 'scale(1)'; // Ingrandimento durante l'hover
+          const iconScale = isHovered ? 'scale(1.2)' : 'scale(1)'; // Ingrandimento durante l'hover
 
           return (
             <ListItemButton
