@@ -107,18 +107,16 @@ export default function ResponsiveAppBar({ drawerWidth = 60, onButtonClick }) {
                   sx={{
                     display: 'flex',
                     justifyContent: 'center',
-                    // Effetto di zoom in base all'hover del ListItemButton
-                    transform: iconScale, // Applica lo scaling dell'hover del ListItemButton
+                    transform: iconScale, 
                     transition: 'transform 0.2s ease-in-out',
-                    color: activeItem === item.label ? '#dce4ec' : '#263f51', // Colore fisso per le icone, con attiva bianco sporco blu
-                    minWidth: 0, // Ridurre larghezza minima
-                    cursor: 'pointer', // Solo l'icona mostra il puntatore pointer
+                    minWidth: 0, 
+                    cursor: 'pointer', 
                   }}
                 >
                   <Tooltip title={item.label} placement="right">
                     {React.cloneElement(item.icon, {
                       sx: {
-                        color: activeItem === item.label ? '#f7f2ee' : '#335271', // Colore coerente per icona attiva/inattiva
+                        color: activeItem === item.label ? '#f0f4f8' : '#3e3e3e', 
                         transition: 'color 0.3s ease-in-out, transform 0.2s ease-in-out',
                       },
                     })}
@@ -142,7 +140,7 @@ export default function ResponsiveAppBar({ drawerWidth = 60, onButtonClick }) {
           height: '98vh',
           '& .MuiDrawer-paper': {
             width: '60px',
-            backgroundColor: '#ed9747', // Colore semi-trasparente della navbar
+            background: 'linear-gradient(180deg, #d79659 0%, #b5651d 100%); /* Gradient da arancione chiaro a scuro */', // Colore semi-trasparente della navbar
             boxShadow: '0px 8px 20px rgba(0, 0, 0, 0.15)', // Ombra per dare profondità
             height: '98vh',
             border: '1px solid rgba(0, 0, 0, 0.12)',
