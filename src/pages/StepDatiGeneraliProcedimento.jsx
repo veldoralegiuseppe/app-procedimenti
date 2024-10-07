@@ -16,6 +16,7 @@ import ImportoInput from '@components/ImportoInput';
 import { CssTextField, ClearButton, labelColor } from '@theme/MainTheme';
 import { Procedimento } from '@model/procedimento';
 import Select from '@components/Select';
+import { ProcedimentoContext } from '@context/Procedimento';
 
 const oggettiControversia = [
   {
@@ -78,7 +79,7 @@ const StepDatiGeneraliProcedimento = React.forwardRef(({ enableNextStep }, ref) 
   const formLabelFontSize = '1.2rem';
   const formLabelColor = '#467bae';
 
-  const [procedimento, setProcedimento] = React.useState(new Procedimento());
+  const {procedimento, setProcedimento} = React.useContext(ProcedimentoContext);
   const [initialProc] = React.useState(new Procedimento()); // Stato iniziale da comparare
   const [errors, setErrors] = React.useState({
     numProtocollo: false,
@@ -132,7 +133,8 @@ const StepDatiGeneraliProcedimento = React.forwardRef(({ enableNextStep }, ref) 
     let allRequiredFieldsFilled = requiredFieldsFilled();
 
     if (typeof enableNextStep === 'function') {
-      enableNextStep(!hasErrors && allRequiredFieldsFilled);
+      let isEnabled = !hasErrors && allRequiredFieldsFilled;
+      enableNextStep(isEnabled);
     }
   }, [errors, enableNextStep, procedimento]);
 

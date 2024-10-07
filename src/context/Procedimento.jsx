@@ -149,7 +149,7 @@ function mockedProcedimento() {
 }
 
 export const ProcedimentoProvider = ({ children }) => {
-  const [procedimento, setProcedimento] = useState(mockedProcedimento());
+  const [procedimento, setProcedimento] = useState(new Procedimento());
   const [persone, setPersone] = useState(mockedPersone());
   const [showAlert, setShowAlert] = React.useState(false);
   const [alertSeverity, setAlertSeverity] = React.useState('error');

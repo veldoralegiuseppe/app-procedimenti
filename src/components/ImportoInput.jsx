@@ -5,13 +5,24 @@ import { useTheme } from '@mui/material/styles';
 
 import { CssTextField } from '@theme/MainTheme';
 
+// Funzione per formattare l'importo in parte intera e decimale
+function formatCurrency(value) {
+  //console.log(`value.toString: ${value.toString()}`)
+  const [integerPart, decimalPart] = value.toString().split('.');
+  const formattedIntegerPart = Number(
+    integerPart.replace(/\./g, '')
+  ).toLocaleString('it-IT');
+  const formattedDecimalPart = decimalPart ? decimalPart.padEnd(2, '0') : '00';
+  return `${formattedIntegerPart},${formattedDecimalPart}`;
+}
+
 export default function ImportoInput(props) {
   const importoFieldRef = React.useRef(null);
   const theme = useTheme();
   const labelColor = 'rgb(105 105 105 / 60%)';
   const [cursorShift, setCursorShift] = React.useState(0);
   const [importoAttuale, setImportoAttuale] = React.useState(
-    props.importo ? props.importo : '0,00'
+    props.importo ? formatCurrency(props.importo) : '0,00'
   );
 
   // Gestione reset del campo

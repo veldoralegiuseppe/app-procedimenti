@@ -3,7 +3,7 @@ import EuroSymbolIcon from '@mui/icons-material/EuroSymbol';
 import InputAdornment from '@mui/material/InputAdornment';
 import {StyledTextField} from '@theme/ImportoReadOnly';
 
-// Funzione per formattare l'importo in migliaia e decimali
+// Funzione per formattare l'importo in parte intera e decimale
 function formatCurrency(value) {
   //console.log(`value.toString: ${value.toString()}`)
   const [integerPart, decimalPart] = value.toString().split('.');
