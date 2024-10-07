@@ -39,7 +39,7 @@ export const themeOne = createTheme({
     },
     background: {
       default: 'rgb(255,255,255)',
-      paper: '#eef2f6',
+      paper: '#d6dfe81c',
     },
   },
   components: {
