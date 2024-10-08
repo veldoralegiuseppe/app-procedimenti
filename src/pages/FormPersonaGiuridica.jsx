@@ -9,11 +9,10 @@ import ImportoInput from '@components/ImportoInput';
 import { PersonaGiuridica } from '@model/personaGiuridica';
 import ImportoReadOnly from '@components/ImportoReadOnly';
 import { CssTextField } from '@theme/MainTheme';
+import { Provincia } from '@model/provincia';
+import { Comune } from '@model/comune';
 
 function FormPersonaGiuridica(props, ref) {
-  // Ref
-  var comuneSedeLegaleRef = React.useRef();
-
   // Costanti di layout
   const labelColor = 'rgb(105 105 105 / 60%)';
   const labelDisableColor = 'rgb(148 148 148 / 60%)';
@@ -51,9 +50,36 @@ function FormPersonaGiuridica(props, ref) {
     rappresentanteLegalePecEmail: false,
   });
 
+  // Ref
+  const provinciaSedeLegaleRef = React.useRef();
+  const comuneSedeLegaleRef = React.useRef();
+
+  const resetForm = () => {
+    setParteAttuale(new PersonaGiuridica()); // Reset dello stato a un nuovo oggetto PersonaFisica
+    setCapSedeLegale(''); // Reset CAP residenza
+    setErrors({
+      partitaIVA: false,
+      denominazione: false,
+      pecEmail: false,
+      rappresentanteLegale: false,
+      rappresentanteLegalePecEmail: false,
+    }); // Reset degli errori
+
+    // Reset delle referenze ai selettori di Comune e Provincia
+    if (provinciaSedeLegaleRef.current) {
+      provinciaSedeLegaleRef.current.setProvincia(null);
+    }
+    if (comuneSedeLegaleRef.current) {
+      comuneSedeLegaleRef.current.setComune(null);
+    }
+  };
+
   // Metodi di React.useImperativeHandle
   const onSubmit = () => {
-    return parteAttuale;
+    const parteCreata = Object.assign(new PersonaGiuridica(), parteAttuale);
+    console.log(parteCreata)
+    resetForm();
+    return parteCreata;
   };
   const getErrors = () => {
     const requiredFields = ['denominazione', 'rappresentanteLegale'];
@@ -180,9 +206,7 @@ function FormPersonaGiuridica(props, ref) {
           xs={12}
           sx={{ width: '100%', borderBottom: '1px solid #467bae61' }}
         >
-          <Typography
-            sx={{fontSize: '1rem', color: '#467bae' }}
-          >
+          <Typography sx={{ fontSize: '1rem', color: '#467bae' }}>
             Dati societari
           </Typography>
         </Grid>
@@ -190,6 +214,7 @@ function FormPersonaGiuridica(props, ref) {
         <CssTextField
           size="small"
           label="Partita IVA"
+          value={parteAttuale.partitaIVA || ''}
           error={errors.partitaIVA}
           helperText={errors.partitaIVA ? 'Formato invalido' : ''}
           onChange={(event) => handleInputChange(event, 'partitaIVA')}
@@ -200,6 +225,7 @@ function FormPersonaGiuridica(props, ref) {
           required
           size="small"
           label="Denominazione"
+          value={parteAttuale.denominazione || ''}
           error={errors.denominazione}
           helperText={
             errors.denominazione
@@ -219,17 +245,21 @@ function FormPersonaGiuridica(props, ref) {
           xs={12}
           sx={{ width: '100%', borderBottom: '1px solid #467bae61' }}
         >
-          <Typography
-            sx={{ fontSize: '1rem', color: '#467bae' }}
-          >
+          <Typography sx={{ fontSize: '1rem', color: '#467bae' }}>
             Sede Legale
           </Typography>
         </Grid>
 
         {/* Provincia */}
         <ProvinciaSelect
+          ref={provinciaSedeLegaleRef}
           label="Provincia"
-          onChange={(value) => comuneSedeLegaleRef.current.setProvincia(value)}
+          onChange={(provincia) => {
+            let comuneSedeLegale = new Comune();
+            comuneSedeLegale.provincia = Object.assign(new Provincia(), provincia)
+            comuneSedeLegaleRef.current.setProvincia(comuneSedeLegale.provincia);
+            setParteAttuale({...parteAttuale, sedeLegale: comuneSedeLegale })
+          }}
           sx={{ ...textFieldSx(theme), minWidth: '246px', maxWidth: '250px' }}
         />
 
@@ -238,9 +268,15 @@ function FormPersonaGiuridica(props, ref) {
           ref={comuneSedeLegaleRef}
           provincia={parteAttuale.provincia}
           label="Comune"
-          onChange={(value) => {
-            setCapSedeLegale(value && value.cap ? value.cap : '');
-            setParteAttuale({ ...parteAttuale, sedeLegale: value });
+          onChange={(comune) => {
+            let comuneSedeLegale = comune;
+            comuneSedeLegale.provincia = parteAttuale.sedeLegale.provincia;
+            setCapSedeLegale(
+              comuneSedeLegale && comuneSedeLegale.cap
+                ? comuneSedeLegale.cap
+                : ''
+            );
+            setParteAttuale({ ...parteAttuale, sedeLegale: comuneSedeLegale });
           }}
           sx={{ ...textFieldSx(theme), minWidth: '246px', maxWidth: '250px' }}
         />
@@ -250,6 +286,7 @@ function FormPersonaGiuridica(props, ref) {
           size="small"
           id="outlined-required-indirizzo"
           label="Indirizzo"
+          value={parteAttuale.indirizzoSedeLegale || ''}
           error={errors.indirizzoSedeLegale}
           helperText={errors.indirizzoSedeLegale ? 'Indirizzo non valido' : ''}
           onChange={(event) => handleInputChange(event, 'indirizzoSedeLegale')}
@@ -272,9 +309,7 @@ function FormPersonaGiuridica(props, ref) {
           xs={12}
           sx={{ width: '100%', borderBottom: '1px solid #467bae61' }}
         >
-          <Typography
-            sx={{fontSize: '1rem', color: '#467bae' }}
-          >
+          <Typography sx={{ fontSize: '1rem', color: '#467bae' }}>
             Recapiti
           </Typography>
         </Grid>
@@ -283,6 +318,7 @@ function FormPersonaGiuridica(props, ref) {
           size="small"
           label="PEC / Email"
           error={errors.pecEmail}
+          value={parteAttuale.pecEmail || ''}
           helperText={errors.pecEmail ? 'Indirizzo non valido' : ''}
           onChange={(event) => handleInputChange(event, 'pecEmail')}
           sx={{ ...textFieldSx(theme), minWidth: '350px', maxWidth: '350px' }}
@@ -292,9 +328,7 @@ function FormPersonaGiuridica(props, ref) {
       {/* Assistenza legale */}
       <Grid xs={12} sx={{ width: '100%', minHeight: `${gridRowHeight}px` }}>
         <Grid xs={12} sx={{ borderBottom: '1px solid #467bae61' }}>
-          <Typography
-            sx={{ fontSize: '1rem', color: '#467bae' }}
-          >
+          <Typography sx={{ fontSize: '1rem', color: '#467bae' }}>
             Rappresentante legale
           </Typography>
         </Grid>
@@ -305,6 +339,7 @@ function FormPersonaGiuridica(props, ref) {
           size="small"
           id="outlined-required-avvocato"
           label="Avvocato"
+          value={parteAttuale.rappresentanteLegale || ''}
           error={errors.rappresentanteLegale}
           helperText={
             errors.rappresentanteLegale
@@ -314,7 +349,6 @@ function FormPersonaGiuridica(props, ref) {
               : ''
           }
           onChange={(event) => handleInputChange(event, 'rappresentanteLegale')}
-          defaultValue=""
           sx={{ ...textFieldSx(theme), minWidth: '246px', maxWidth: '250px' }}
         />
 
@@ -322,6 +356,7 @@ function FormPersonaGiuridica(props, ref) {
         <CssTextField
           size="small"
           label="PEC / Email"
+          value={parteAttuale.rappresentanteLegalePecEmail || ''}
           error={errors.rappresentanteLegalePecEmail}
           helperText={
             errors.rappresentanteLegalePecEmail ? 'Indirizzo invalido' : ''
@@ -340,9 +375,7 @@ function FormPersonaGiuridica(props, ref) {
       {/* Spese di mediazione */}
       <Grid xs={12} sx={{ width: '100%', minHeight: `${gridRowHeight}px` }}>
         <Grid xs={12} sx={{ borderBottom: '1px solid #467bae61' }}>
-          <Typography
-            sx={{ fontSize: '1rem', color: '#467bae' }}
-          >
+          <Typography sx={{ fontSize: '1rem', color: '#467bae' }}>
             Spese di mediazione
           </Typography>
         </Grid>
@@ -350,7 +383,7 @@ function FormPersonaGiuridica(props, ref) {
         {/* Spese */}
         <Grid xs={12}>
           <ImportoInput
-            importo={'0,00'}
+            value={parteAttuale.speseAvvio}
             sx={textFieldSx(theme)}
             onChange={(importo) =>
               setParteAttuale({ ...parteAttuale, speseAvvio: importo })
@@ -359,7 +392,7 @@ function FormPersonaGiuridica(props, ref) {
             required={true}
           />
           <ImportoInput
-            importo={'0,00'}
+            value={parteAttuale.spesePostali}
             sx={textFieldSx(theme)}
             onChange={(importo) =>
               setParteAttuale({ ...parteAttuale, spesePostali: importo })
@@ -368,7 +401,7 @@ function FormPersonaGiuridica(props, ref) {
             required={true}
           />
           <ImportoInput
-            importo={'0,00'}
+            value={parteAttuale.pagamentoIndennita}
             sx={textFieldSx(theme)}
             onChange={(importo) =>
               setParteAttuale({ ...parteAttuale, pagamentoIndennita: importo })
@@ -377,7 +410,7 @@ function FormPersonaGiuridica(props, ref) {
             required={true}
           />
           <ImportoInput
-            importo={'0,00'}
+            value={parteAttuale.importoMancatoAccordo}
             sx={textFieldSx(theme)}
             onChange={(importo) =>
               setParteAttuale({
@@ -389,7 +422,7 @@ function FormPersonaGiuridica(props, ref) {
             required={true}
           />
           <ImportoInput
-            importo={'0,00'}
+            value={parteAttuale.importoPositivoPrimoIncontro}
             sx={textFieldSx(theme)}
             onChange={(importo) =>
               setParteAttuale({
@@ -401,7 +434,7 @@ function FormPersonaGiuridica(props, ref) {
             required={true}
           />
           <ImportoInput
-            importo={'0,00'}
+            value={parteAttuale.importoPositivoOltrePrimoIncontro}
             sx={textFieldSx(theme)}
             onChange={(importo) =>
               setParteAttuale({
@@ -434,9 +467,7 @@ function FormPersonaGiuridica(props, ref) {
         sx={{ width: '100%', minHeight: `${gridRowHeight + 80}px` }}
       >
         <Grid xs={12} sx={{ borderBottom: '1px solid #467bae61' }}>
-          <Typography
-            sx={{fontSize: '1rem', color: '#467bae' }}
-          >
+          <Typography sx={{ fontSize: '1rem', color: '#467bae' }}>
             Informazioni aggiuntive
           </Typography>
         </Grid>
@@ -444,6 +475,7 @@ function FormPersonaGiuridica(props, ref) {
           id="outlined-required-note"
           label="Note"
           multiline
+          value={parteAttuale.note || ''}
           rows={3}
           sx={{ ...textFieldSx(theme), minWidth: '100%' }}
           onChange={(event) => {
@@ -451,7 +483,7 @@ function FormPersonaGiuridica(props, ref) {
               event.target.value.trim() == ''
                 ? ''
                 : event.target.value.toLocaleUpperCase();
-            parteAttuale.note = event.target.value;
+            parteAttuale.note = event.target.value.toLocaleUpperCase();
             setParteAttuale({ ...parteAttuale });
           }}
         />

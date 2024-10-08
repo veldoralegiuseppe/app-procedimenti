@@ -599,7 +599,7 @@ function FormPersonaFisica(props, ref) {
           onChange={(comune) => {
             let comuneNascita = comune;
             comuneNascita.provincia = parteAttuale.luogoDiNascita.provincia;
-            console.log(comuneNascita);
+            //console.log(comuneNascita);
             setParteAttuale({ ...parteAttuale, luogoDiNascita: comuneNascita });
           }}
           sx={{ ...textFieldSx(theme), minWidth: '246px', maxWidth: '250px' }}
@@ -885,14 +885,15 @@ function FormPersonaFisica(props, ref) {
           sx={{
             ...textFieldSx(theme),
             minWidth: '100%',
-            textTransform: 'uppercase',
           }}
-          onChange={(event) =>
-            setParteAttuale({
-              ...parteAttuale,
-              note: event.target.value.trim().toLocaleUpperCase() || '',
-            })
-          }
+          onChange={(event) => {
+            event.target.value =
+              event.target.value.trim() == ''
+                ? ''
+                : event.target.value.toLocaleUpperCase();
+            parteAttuale.note = event.target.value.toLocaleUpperCase();
+            setParteAttuale({ ...parteAttuale });
+          }}
         />
       </Grid>
     </div>
