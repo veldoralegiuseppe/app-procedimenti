@@ -881,7 +881,7 @@ function FormPersonaFisica(props, ref) {
           label="Note"
           multiline
           rows={3}
-          value={parteAttuale.note}
+          value={parteAttuale.note || ''}
           sx={{
             ...textFieldSx(theme),
             minWidth: '100%',

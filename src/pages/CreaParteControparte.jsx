@@ -32,6 +32,11 @@ export default function CreaParteControparte({ handleClose, onError }) {
   const formPersonaGiuridicaRef = React.useRef();
   const { persone, setPersone } = React.useContext(ProcedimentoContext);
 
+  const resetForm = () => {
+    setRuolo('PARTE_ISTANTE');
+    setTipologiaPersona('PERSONA_FISICA');
+  }
+
   const handleSubmit = (e) => {
     e.preventDefault();
     const { hasErrors, message } =
@@ -60,6 +65,7 @@ export default function CreaParteControparte({ handleClose, onError }) {
       console.log(persona)
 
       if (persona) setPersone([...persone, persona]);
+      resetForm();
       handleClose();
     }
   };

@@ -77,7 +77,7 @@ function FormPersonaGiuridica(props, ref) {
   // Metodi di React.useImperativeHandle
   const onSubmit = () => {
     const parteCreata = Object.assign(new PersonaGiuridica(), parteAttuale);
-    console.log(parteCreata)
+    //console.log(parteCreata)
     resetForm();
     return parteCreata;
   };

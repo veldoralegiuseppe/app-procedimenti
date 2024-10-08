@@ -21,8 +21,8 @@ import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown';
 import KeyboardArrowUpIcon from '@mui/icons-material/KeyboardArrowUp';
 import Collapse from '@mui/material/Collapse';
 import { ProcedimentoContext } from '@context/Procedimento';
-import { PersonaFisica } from '../model/personaFisica';
-import { PersonaGiuridica } from '../model/personaGiuridica';
+import { PersonaFisica } from '@model/personaFisica';
+import { PersonaGiuridica } from '@model/personaGiuridica';
 
 const headerBackgroundColor2 = '#ecf6ff';
 const footerBackgroundColor = '#4a769b';
@@ -35,21 +35,23 @@ const bodyTableCellSx = {
   padding: '4px',
 };
 
-function descendingComparator(a, b, orderBy) {
-  //console.log(`a: ${JSON.stringify(a)}, b: ${JSON.stringify(b)}, orderBy: ${orderBy}`)
+function comparator(a, b, orderBy, order = 'asc') {
+  
+  let result = 0 
+
   if (b[orderBy] < a[orderBy]) {
-    return -1;
+    result = -1;
   }
   if (b[orderBy] > a[orderBy]) {
-    return 1;
+    result = 1;
   }
-  return 0;
+  return order === 'asc' ? result : -result;
 }
 
 function getComparator(order, orderBy) {
   return order === 'desc'
-    ? (a, b) => descendingComparator(a, b, orderBy)
-    : (a, b) => -descendingComparator(a, b, orderBy);
+    ? (a, b) => comparator(a, b, orderBy)
+    : (a, b) => -comparator(a, b, orderBy);
 }
 
 function stableSort(array, comparator) {
@@ -121,7 +123,7 @@ const headCells = [
   },
 ];
 
-export default function TabellaPartiControparti() {
+export default function TabellaPartiControparti({onDelete}) {
   const { persone, setPersone } = React.useContext(ProcedimentoContext);
   const [order, setOrder] = React.useState('asc');
   const [orderBy, setOrderBy] = React.useState('anagrafica');
@@ -136,7 +138,7 @@ export default function TabellaPartiControparti() {
     (rows = isEmpty
       ? createRowFromModel(null)
       : createRowFromModel(persone).sort(
-          (a, b) => -descendingComparator(a, b, 0)
+          (a, b) => -comparator(a, b, orderBy, order)
         ))
   );
   const theme = useTheme();
@@ -176,7 +178,7 @@ export default function TabellaPartiControparti() {
 
     if (!persone || persone.length === 0) {
       rows.push({
-        id: 1,
+        id: null,
         anagrafica: 'Nessuna parte inserita',
         tipo: '',
         speseAvvio: '',
@@ -241,7 +243,7 @@ export default function TabellaPartiControparti() {
       }
     });
 
-    return rows;
+    return rows.sort((a, b) => -comparator(a, b, orderBy, order));
   }
 
 
@@ -289,6 +291,7 @@ export default function TabellaPartiControparti() {
 
     setRows(newRows);
     setSelected(-1);
+    onDelete(newRows);
   };
 
   function EnhancedTableHead(props) {
