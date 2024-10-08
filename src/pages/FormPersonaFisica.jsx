@@ -20,6 +20,7 @@ import * as ComuniUtils from '@assets/js/comuni';
 import { PersonaFisica } from '@model/personaFisica';
 import Alert from '@mui/material/Alert';
 import ImportoReadOnly from '@components/ImportoReadOnly';
+import { Provincia } from '@model/provincia';
 import {
   CssTextField,
   labelColor,
@@ -27,6 +28,7 @@ import {
   CssSelect,
   formControlStyles,
 } from '@theme/MainTheme';
+import { getValue, textTransform } from '@mui/system';
 
 // Constants
 const inputHeight = 35;
@@ -53,7 +55,6 @@ const textFieldSx = (theme) => ({
 // Main Component
 function FormPersonaFisica(props, ref) {
   const theme = useTheme();
-  const [captcha, setCaptcha] = React.useState(null);
   const [parteAttuale, setParteAttuale] = React.useState(new PersonaFisica());
   const [helperTextCf, setHelperTextCf] = React.useState('');
   const [capResidenza, setCapResidenza] = React.useState('');
@@ -70,6 +71,7 @@ function FormPersonaFisica(props, ref) {
     denominazione: false,
     rappresentanteLegale: false,
     rappresentanteLegalePecEmail: false,
+    indirizzoResidenza: false,
   });
 
   // Calcola il totale quando cambiano gli importi
@@ -105,6 +107,7 @@ function FormPersonaFisica(props, ref) {
       partitaIVA: 'Partita IVA',
       denominazione: 'Denominazione',
       rappresentanteLegale: 'Avvocato',
+      indirizzoResidenza: 'Indirizzo di residenza',
       rappresentanteLegalePecEmail: 'PEC / Email del rappresentante legale',
     };
 
@@ -172,23 +175,50 @@ function FormPersonaFisica(props, ref) {
     setHelperTextCf(message);
     resetAnagrafici();
   };
-  const handleValidCodiceFiscale = (cf) => {
-    const comuneNascita = CodiceFiscaleUtils.comuneCf(cf);
-    setParteAttuale({
-      ...parteAttuale,
-      codiceFiscale: cf,
-      dataNascita: CodiceFiscaleUtils.dataCf(cf),
-      luogoDiNascita: comuneNascita,
-      sesso: CodiceFiscaleUtils.sessoCf(cf),
-    });
-    provinciaNascitaRef.current.setProvincia(comuneNascita.provincia);
-    comuneNascitaRef.current.setComune(comuneNascita);
-    setAnagraficiDisabilitati(true);
-    setErrors({ ...errors, codiceFiscale: false });
-    setHelperTextCf('');
+  const handleValidCodiceFiscale = async (cf) => {
+  
+    try {
+      // Estrai il comune di nascita in modo asincrono
+      const comuneNascita = await CodiceFiscaleUtils.comuneCf(cf);
+  
+      // Controlla se il comune di nascita è valido
+      if (!comuneNascita) {
+        console.error("Comune di nascita non trovato per il codice fiscale:", cf);
+        setHelperTextCf('Comune di nascita non valido');
+        setErrors({ ...errors, codiceFiscale: true });
+        return;
+      }
+  
+      // Aggiorna lo stato con i dati estratti
+      setParteAttuale({
+        ...parteAttuale,
+        codiceFiscale: cf,
+        dataNascita: CodiceFiscaleUtils.dataCf(cf),
+        luogoDiNascita: comuneNascita,
+        sesso: CodiceFiscaleUtils.sessoCf(cf),
+      });
+  
+      // Aggiorna i riferimenti a provincia e comune (se disponibili)
+      if (provinciaNascitaRef.current && comuneNascita.provincia) {
+        provinciaNascitaRef.current.setProvincia(comuneNascita.provincia);
+      }
+      if (comuneNascitaRef.current) {
+        comuneNascitaRef.current.setComune(comuneNascita);
+      }
+  
+      // Disabilita i campi anagrafici e rimuovi gli errori
+      setAnagraficiDisabilitati(true);
+      setErrors({ ...errors, codiceFiscale: false });
+      setHelperTextCf('');
+    } catch (error) {
+      console.error("Errore durante la validazione del codice fiscale:", error);
+      setHelperTextCf('Errore durante la validazione del codice fiscale');
+      setErrors({ ...errors, codiceFiscale: true });
+    }
   };
+
   const handleCodiceFiscaleChange = (event) => {
-    let cf = event.currentTarget.value.toLocaleUpperCase();
+    let cf = event.currentTarget.value?.toLocaleUpperCase();
 
     // Limita la lunghezza del Codice Fiscale a 16 caratteri
     if (cf.length > 16) {
@@ -237,6 +267,7 @@ function FormPersonaFisica(props, ref) {
     partitaIVA: validatePartitaIVA,
     rappresentanteLegale: validateAnagrafica,
     rappresentanteLegalePecEmail: validateEmail,
+    indirizzoResidenza: () => {return true},
   };
   const handleInputChange = (event, campoModel) => {
     const valore = event.target.value.toUpperCase();
@@ -372,8 +403,10 @@ function FormPersonaFisica(props, ref) {
             value={
               parteAttuale.dataNascita ? dayjs(parteAttuale.dataNascita) : null
             }
-            onChange={(value) =>
-              setParteAttuale({ ...parteAttuale, dataNascita: new Date(value) })
+            onChange={(date) =>{
+              const formattedDate = date ? date.format('YYYY-MM-DD') : null;
+              setParteAttuale({ ...parteAttuale, dataNascita: formattedDate })
+            }
             }
             slotProps={{
               textField: {
@@ -482,11 +515,13 @@ function FormPersonaFisica(props, ref) {
           sx={{ ...textFieldSx(theme), minWidth: '246px', maxWidth: '250px' }}
           label="Provincia di nascita"
           disabled={anagraficiDisabilitati}
-          onChange={(value) => {
-            comuneNascitaRef.current.setProvincia(value);
+          onChange={(provincia) => {
+            comuneNascitaRef.current.setProvincia(Object.assign(new Provincia(), provincia));
+            let comuneNascita = new Comune();
+            comuneNascita.provincia = provincia;
             setParteAttuale({
               ...parteAttuale,
-              luogoDiNascita: { ...new Comune(), provincia: value },
+              luogoDiNascita: comuneNascita,
             });
           }}
         />
@@ -494,12 +529,15 @@ function FormPersonaFisica(props, ref) {
         {/* Comune di nascita */}
         <ComuneSelect
           ref={comuneNascitaRef}
-          provincia={parteAttuale.provinciaNascita}
+          provincia={parteAttuale.luogoNascita?.provincia}
           label="Comune di nascita"
           disabled={anagraficiDisabilitati}
-          onChange={(value) =>
-            setParteAttuale({ ...parteAttuale, luogoDiNascita: value })
-          }
+          onChange={(comune) =>{
+            let comuneNascita = comune 
+            comuneNascita.provincia = parteAttuale.luogoDiNascita.provincia
+            console.log(comuneNascita)
+            setParteAttuale({ ...parteAttuale, luogoDiNascita: comuneNascita })
+          }}
           sx={{ ...textFieldSx(theme), minWidth: '246px', maxWidth: '250px' }}
         />
       </Grid>
@@ -521,11 +559,13 @@ function FormPersonaFisica(props, ref) {
         <ProvinciaSelect
           ref={provinciaResidenzaRef}
           label="Provincia di residenza"
-          onChange={(value) => {
-            comuneResidenzaRef.current.setProvincia(value);
+          onChange={(provincia) => {
+            comuneResidenzaRef.current.setProvincia(Object.assign(new Provincia(), provincia));
+            let residenza = new Comune();
+            residenza.provincia = provincia;
             setParteAttuale({
               ...parteAttuale,
-              residenza: { ...new Comune(), provincia: value },
+              residenza: residenza,
             });
           }}
           sx={{ ...textFieldSx(theme), minWidth: '246px', maxWidth: '250px' }}
@@ -537,19 +577,18 @@ function FormPersonaFisica(props, ref) {
           provincia={parteAttuale.provinciaResidenza}
           label="Comune di residenza"
           onChange={(value) => {
-            const comuneInstance = Object.assign(new Comune(), value);
             setCapResidenza(value?.cap || '');
-            setParteAttuale({ ...parteAttuale, residenza: comuneInstance });
+            setParteAttuale({ ...parteAttuale, residenza: {...value, provincia: parteAttuale.residenza.provincia} });
           }}
           sx={{ ...textFieldSx(theme), minWidth: '246px', maxWidth: '250px' }}
         />
 
-        {/* Indirizzo */}
+        {/* Indirizzo di residenza */}
         <CssTextField
           size="small"
           id="outlined-required-indirizzo"
           label="Indirizzo"
-          onChange={(event) => handleInputChange(event, 'indirizzo')}
+          onChange={(event) => handleInputChange(event, 'indirizzoResidenza')}
           sx={{ ...textFieldSx(theme), minWidth: '246px', maxWidth: '250px' }}
         />
 
@@ -685,7 +724,7 @@ function FormPersonaFisica(props, ref) {
         {/* Spese */}
         <Grid xs={12}>
           <ImportoInput
-            importo={'0,00'}
+            importo={parteAttuale.speseAvvio}
             sx={textFieldSx(theme)}
             onChange={(importo) =>
               setParteAttuale({ ...parteAttuale, speseAvvio: importo })
@@ -693,7 +732,7 @@ function FormPersonaFisica(props, ref) {
             label={'Spese di avvio'}
           />
           <ImportoInput
-            importo={'0,00'}
+            importo={parteAttuale.spesePostali}
             sx={textFieldSx(theme)}
             onChange={(importo) =>
               setParteAttuale({ ...parteAttuale, spesePostali: importo })
@@ -701,7 +740,7 @@ function FormPersonaFisica(props, ref) {
             label={'Spese postali'}
           />
           <ImportoInput
-            importo={'0,00'}
+            importo={parteAttuale.pagamentoIndennita}
             sx={textFieldSx(theme)}
             onChange={(importo) =>
               setParteAttuale({ ...parteAttuale, pagamentoIndennita: importo })
@@ -709,7 +748,7 @@ function FormPersonaFisica(props, ref) {
             label={'Pagamento indennità'}
           />
           <ImportoInput
-            importo={'0,00'}
+            importo={parteAttuale.importoMancatoAccordo}
             sx={textFieldSx(theme)}
             onChange={(importo) =>
               setParteAttuale({
@@ -720,7 +759,7 @@ function FormPersonaFisica(props, ref) {
             label={'Mancato accordo'}
           />
           <ImportoInput
-            importo={'0,00'}
+            importo={parteAttuale.importoPositivoPrimoIncontro}
             sx={textFieldSx(theme)}
             onChange={(importo) =>
               setParteAttuale({
@@ -731,7 +770,7 @@ function FormPersonaFisica(props, ref) {
             label={'Positivo primo incontro'}
           />
           <ImportoInput
-            importo={'0,00'}
+            importo={parteAttuale.importoPositivoOltrePrimoIncontro}
             sx={textFieldSx(theme)}
             onChange={(importo) =>
               setParteAttuale({
@@ -777,11 +816,11 @@ function FormPersonaFisica(props, ref) {
           label="Note"
           multiline
           rows={3}
-          sx={{ ...textFieldSx(theme), minWidth: '100%' }}
+          sx={{ ...textFieldSx(theme), minWidth: '100%', textTransform: 'uppercase' }}
           onChange={(event) =>
             setParteAttuale({
               ...parteAttuale,
-              note: event.target.value.trim() || '',
+              note: event.target.value.trim().toLocaleUpperCase() || '',
             })
           }
         />

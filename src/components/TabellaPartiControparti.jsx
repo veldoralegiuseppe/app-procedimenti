@@ -141,6 +141,20 @@ export default function TabellaPartiControparti() {
   );
   const theme = useTheme();
 
+  
+   React.useEffect(() => {
+    if (persone && persone.length > 0) {
+      setRows(createRowFromModel(persone));
+      setSelected(-1);
+      setIsEmpty(false);
+    } else {
+      setRows(createRowFromModel(null)); 
+      setSelected(-1);
+      setIsEmpty(true);
+    }
+  }, [persone]);  
+
+
   function formatImporto(value) {
     const [integerPart, decimalPart] = value.toString().split('.');
     const formattedIntegerPart = Number(
@@ -178,10 +192,9 @@ export default function TabellaPartiControparti() {
     }
 
     persone.forEach((persona, index) => {
-      if (!persona || !( persona instanceof PersonaFisica || persona instanceof PersonaGiuridica)) 
-        console.error(`L'elemento ${JSON.stringify(persona )} non è una persona fisica o giuridica`);
-      else {
-        
+      if (!persona || !(persona instanceof PersonaFisica || persona instanceof PersonaGiuridica)) {
+        console.error(`L'elemento ${JSON.stringify(persona)} non è una persona fisica o giuridica`);
+      } else {
         let commonFields = {
           id: index + 1,
           tipo: persona.isParteIstante ? 'PARTE' : 'CONTROPARTE',
@@ -189,41 +202,40 @@ export default function TabellaPartiControparti() {
           spesePostali: formatImporto(persona.spesePostali),
           pagamentoIndennita: formatImporto(persona.pagamentoIndennita),
           importoMancatoAccordo: formatImporto(persona.importoMancatoAccordo),
-          importoPositivoPrimoIncontro: formatImporto(
-            persona.importoPositivoPrimoIncontro
-          ),
-          importoPositivoOltrePrimoIncontro: formatImporto(
-            persona.importoPositivoOltrePrimoIncontro
-          ),
+          importoPositivoPrimoIncontro: formatImporto(persona.importoPositivoPrimoIncontro),
+          importoPositivoOltrePrimoIncontro: formatImporto(persona.importoPositivoOltrePrimoIncontro),
           totale: formatImporto(persona.getTotaleSpese()),
           open: false,
-          note: persona.note ? persona.note : "",
-          pecEmail: persona.pecEmail ? persona.pecEmail : "",
+          note: persona.note || '',
+          pecEmail: persona.pecEmail || '',
           rappresentanteLegale: persona.rappresentanteLegale,
-          rappresentanteLegalePecEmail: persona.rappresentanteLegalePecEmail ? persona.rappresentanteLegalePecEmail : "",
-          partitaIVA: persona.partitaIVA ? persona.partitaIVA : "",
+          rappresentanteLegalePecEmail: persona.rappresentanteLegalePecEmail || '',
+          partitaIVA: persona.partitaIVA || '',
         };
 
         if (persona instanceof PersonaFisica) {
+         
           rows.push({
-            ...commonFields, 
+            ...commonFields,
             isPersonaFisica: true,
-            anagrafica: `${persona.nome} ${persona.cognome}`,
-            codiceFiscale: persona.codiceFiscale ? persona.codiceFiscale : "",
-            dataNascita: persona.dataNascita ? persona.getDataNascitaLocale() : "",
-            luogoDiNascita: persona.luogoDiNascita ? `${persona.luogoDiNascita.nome} (${persona.luogoDiNascita.provincia.sigla})` : "",
-            sesso: persona.sesso ? persona.sesso : "",
-            residenza:  persona.residenza ? `${persona.indirizzo ? persona.indirizzo +' -' : ''}  ${persona.residenza.cap} ${persona.residenza.nome} (${persona.residenza.provincia.sigla})` : "",
+            anagrafica: `${persona.nome || ''} ${persona.cognome || ''}`,
+            codiceFiscale: persona.codiceFiscale || '',
+            dataNascita: persona.getDataNascitaLocale() || '',
+            luogoDiNascita: persona.luogoDiNascita && persona.luogoDiNascita.provincia ? 
+                            `${persona.luogoDiNascita.nome} (${persona.luogoDiNascita.provincia.sigla})` : '',
+            sesso: persona.sesso === 'M' ? 'UOMO' : (persona.sesso === 'F' ? 'DONNA' : ''),
+            residenza: persona.residenza && persona.residenza.provincia ? 
+                       `${persona.indirizzoResidenza ? persona.indirizzoResidenza + ' -' : ''} ${persona.residenza.cap} ${persona.residenza.nome} (${persona.residenza.provincia.sigla})` : '',
           });
         }
 
         if (persona instanceof PersonaGiuridica) {
           rows.push({
-            ...commonFields, 
+            ...commonFields,
             isPersonaFisica: false,
             anagrafica: persona.denominazione,
-            partitaIVA: persona.partitaIVA ? persona.partitaIVA : "",
-            sedeLegale: persona.sedeLegale ? `${persona.indirizzoSedeLegale ? persona.indirizzoSedeLegale +' -' : ''}  ${persona.sedeLegale.cap} ${persona.sedeLegale.nome} (${persona.sedeLegale.provincia.sigla})` : "",
+            sedeLegale: persona.sedeLegale && persona.sedeLegale.provincia ? 
+                        `${persona.indirizzoSedeLegale ? persona.indirizzoSedeLegale + ' -' : ''} ${persona.sedeLegale.cap} ${persona.sedeLegale.nome} (${persona.sedeLegale.provincia.sigla})` : '',
           });
         }
       }
@@ -231,6 +243,7 @@ export default function TabellaPartiControparti() {
 
     return rows;
   }
+
 
   const handleRequestSort = (event, property) => {
     const isAsc = orderBy === property && order === 'asc';
@@ -262,13 +275,6 @@ export default function TabellaPartiControparti() {
 
   const handleChangeDense = (event) => {
     setDense(event.target.checked);
-  };
-
-  const handleAdd = (event, row) => {
-    setRows(rows.splice(rows.length, 0, row));
-    //console.log(`Gestisco l'aggiunta:\n${rows}`);
-    setSelected(-1);
-    setIsEmpty(false);
   };
 
   const isSelected = (id) => selected == id;

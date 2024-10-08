@@ -19,18 +19,12 @@ import Select from '@components/Select';
 import { ProcedimentoContext } from '@context/Procedimento';
 
 const oggettiControversia = [
-  {
-    value: 'ALTRE NATURE DELLA CONTROVERSIA',
-    view: 'ALTRE NATURE DELLA CONTROVERSIA',
-  },
+  { value: 'ALTRE NATURE DELLA CONTROVERSIA', view: 'ALTRE NATURE DELLA CONTROVERSIA' },
   { value: 'CONTRATTI BANCARI', view: 'CONTRATTI BANCARI' },
   { value: 'CONTRATTI FINANZIARI', view: 'CONTRATTI FINANZIARI' },
   { value: 'CONTRATTI DI OPERA', view: "CONTRATTI D'OPERA" },
   { value: 'CONTRATTI DI RETE', view: 'CONTRATTI DI RETE' },
-  {
-    value: 'CONTRATTI DI SOMMINISTRAZIONE',
-    view: 'CONTRATTI DI SOMMINISTRAZIONE',
-  },
+  { value: 'CONTRATTI DI SOMMINISTRAZIONE', view: 'CONTRATTI DI SOMMINISTRAZIONE' },
   { value: 'CONSORZIO', view: 'CONSORZIO' },
   { value: 'DIRITTI REALI', view: 'DIRITTI REALI' },
   { value: 'DIVISIONE', view: 'DIVISIONE' },
@@ -38,10 +32,7 @@ const oggettiControversia = [
   { value: 'LOCAZIONE', view: 'LOCAZIONE' },
   { value: 'PATTI DI FAMIGLIA', view: 'PATTI DI FAMIGLIA' },
   { value: 'RESPONSABILITA MEDICA', view: 'RESPONSABILITÀ MEDICA' },
-  {
-    value: 'RISARCIMENTO DANNI MEZZO STAMPA',
-    view: 'RISARCIMENTO DANNI MEZZO STAMPA',
-  },
+  { value: 'RISARCIMENTO DANNI MEZZO STAMPA', view: 'RISARCIMENTO DANNI MEZZO STAMPA' },
   { value: 'SUCCESSIONE EREDITARIA', view: 'SUCCESSIONE EREDITARIA' },
   { value: 'SOCIETA DI PERSONE', view: 'SOCIETÀ DI PERSONE' },
   { value: 'SUBFORNITURA', view: 'SUBFORNITURA' },
@@ -81,36 +72,10 @@ const StepDatiGeneraliProcedimento = React.forwardRef(({ enableNextStep }, ref) 
 
   const {procedimento, setProcedimento} = React.useContext(ProcedimentoContext);
   const [initialProc] = React.useState(new Procedimento()); // Stato iniziale da comparare
-  const [errors, setErrors] = React.useState({
-    numProtocollo: false,
-    sede: false,
-    oggettoControversia: false,
-    annoProtocollo: false,
-    dataDeposito: false,
-    sede: false,
-    sedeSvolgimento: false,
-    dataOraIncontro: false,
-    oggettoControversia: false,
-    valoreControversia: false,
-  });
-  const [touchedFields, setTouchedFields] = React.useState({
-    numProtocollo: false,
-    sede: false,
-    oggettoControversia: false,
-    annoProtocollo: false,
-    dataDeposito: false,
-    sede: false,
-    sedeSvolgimento: false,
-    dataOraIncontro: false,
-    oggettoControversia: false,
-    valoreControversia: false,
-  });
-  const requiredFields = [
-    'sede',
-    'numProtocollo',
-    'annoProtocollo',
-    'oggettoControversia',
-  ];
+  const [errors, setErrors] = React.useState({});
+  const [touchedFields, setTouchedFields] = React.useState({});
+  
+  const requiredFields = ['sede', 'numProtocollo', 'annoProtocollo', 'oggettoControversia'];
 
   const requiredFieldsFilled = () => {
     return requiredFields.every(
@@ -118,77 +83,29 @@ const StepDatiGeneraliProcedimento = React.forwardRef(({ enableNextStep }, ref) 
     );
   };
 
-  // Validazione iniziale usata dallo stepper
   React.useImperativeHandle(ref, () => ({
     validate: () => {
-      let hasErrors = Object.entries(errors).some(([, hasError]) => hasError);
-      let allRequiredFieldsFilled = requiredFieldsFilled();
-      return !hasErrors && allRequiredFieldsFilled;
+      let hasErrors = Object.values(errors).some(hasError => hasError);
+      //return !hasErrors && requiredFieldsFilled();
+      return true;
     },
   }));
 
-  // Abilitazione step successivo in funzione degli errori e dei campi obbligatori
   React.useEffect(() => {
-    let hasErrors = Object.entries(errors).some(([, hasError]) => hasError);
-    let allRequiredFieldsFilled = requiredFieldsFilled();
-
+    let hasErrors = Object.values(errors).some(hasError => hasError);
     if (typeof enableNextStep === 'function') {
-      let isEnabled = !hasErrors && allRequiredFieldsFilled;
-      enableNextStep(isEnabled);
+      enableNextStep(!hasErrors && requiredFieldsFilled());
     }
-  }, [errors, enableNextStep, procedimento]);
+  }, [errors, procedimento]);
 
-  // Reset delle form
   const handleReset = () => {
     setProcedimento(new Procedimento());
-    setTouchedFields({
-      numProtocollo: false,
-      sede: false,
-      oggettoControversia: false,
-      annoProtocollo: false,
-      dataDeposito: false,
-      sede: false,
-      sedeSvolgimento: false,
-      dataOraIncontro: false,
-      oggettoControversia: false,
-      valoreControversia: false,
-    });
-    setErrors({
-      numProtocollo: false,
-      sede: false,
-      oggettoControversia: false,
-      annoProtocollo: false,
-      dataDeposito: false,
-      sede: false,
-      sedeSvolgimento: false,
-      dataOraIncontro: false,
-      oggettoControversia: false,
-      valoreControversia: false,
-    });
+    setTouchedFields({});
+    setErrors({});
   };
 
   const isModified = () => {
     return JSON.stringify(procedimento) !== JSON.stringify(initialProc);
-  };
-
-  // Validazione delle form
-  function validateSedeProcedimento(sede) {
-    if (sede.startsWith(' ') || sede.endsWith(' ') || /\s{3,}/.test(sede)) {
-      return false;
-    }
-    const validPattern = /^[a-zA-Z0-9\s!@#\$%\^\&*\)\(+=._-]+$/;
-    return validPattern.test(sede);
-  }
-
-  const validationRules = {
-    sede: validateSedeProcedimento,
-    sedeSvolgimento: (sede) => (sede ? validateSedeProcedimento(sede) : true),
-    numProtocollo: (value) => !!value,
-    annoProtocollo: (value) => !!value && !isNaN(value),
-    dataDeposito: () => true,
-    dataOraIncontro: () => true,
-    oggettoControversia: (value) => !!value,
-    valoreControversia: (value) => !isNaN(value) && value >= 0,
   };
 
   const handleInputChange = (valueOrEvent, campoModel) => {
@@ -199,56 +116,31 @@ const StepDatiGeneraliProcedimento = React.forwardRef(({ enableNextStep }, ref) 
 
     const isValid = valore ? validationRules[campoModel]?.(valore) : true;
 
-    setProcedimento((prev) => {
-      const updatedProcedimento = { ...prev, [campoModel]: valore };
-      
-      // Aggiorna il campo "touched"
-      setTouchedFields((prevTouched) => ({
-        ...prevTouched,
-        [campoModel]: true,
-      }));
+    setTouchedFields((prevTouched) => ({
+      ...prevTouched,
+      [campoModel]: true,
+    }));
 
-      const { updatedErrors, hasErrors } = getErrors(
-        { ...errors, [campoModel]: !isValid },
-        updatedProcedimento
-      );
-      setErrors(updatedErrors);
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      [campoModel]: !isValid,
+    }));
 
-      return updatedProcedimento;
-    });
+    setProcedimento((prev) => ({
+      ...prev,
+      [campoModel]: valore,
+    }));
   };
 
-  const getErrors = (currentErrors, updatedProcedimento = procedimento) => {
-    const fieldLabels = {
-      sede: 'Sede',
-      numProtocollo: 'Numero di protocollo',
-      annoProtocollo: 'Anno numero di protocollo',
-      oggettoControversia: 'Oggetto di controversia',
-    };
-
-    let updatedErrors = { ...currentErrors };
-    let hasErrors = false;
-    let message = '';
-
-    requiredFields.forEach((field) => {
-      if (
-        !updatedProcedimento[field] ||
-        updatedProcedimento[field].trim() === ''
-      ) {
-        updatedErrors[field] = true;
-        hasErrors = true;
-        message += `${fieldLabels[field]} è obbligatorio.\n`;
-      } else {
-        updatedErrors[field] = false;
-      }
-    });
-
-    Object.keys(validationRules).forEach((field) => {
-      const isValid = validationRules[field](updatedProcedimento[field] || '');
-      updatedErrors[field] = !isValid;
-    });
-
-    return { updatedErrors, hasErrors, message };
+  const validationRules = {
+    sede: (sede) => sede && /^[a-zA-Z0-9\s!@#\$%\^\&*\)\(+=._-]+$/.test(sede),
+    sedeSvolgimento: (sede) => sede ? validationRules.sede(sede) : true,
+    numProtocollo: (value) => !!value,
+    annoProtocollo: (value) => !!value && !isNaN(value),
+    dataDeposito: () => true,
+    dataOraIncontro: () => true,
+    oggettoControversia: (value) => !!value,
+    valoreControversia: (value) => !isNaN(value) && value >= 0,
   };
 
   return (

@@ -2,162 +2,142 @@ import * as React from 'react';
 import Autocomplete from '@mui/material/Autocomplete';
 import { useTheme } from '@mui/material/styles';
 import Paper from '@mui/material/Paper';
-
-import { COMUNI_ESTERI } from '@assets/js/comuni.js';
+import * as ComuniUtils from '@assets/js/comuni.js'; // Assicurati che questa funzione esista e funzioni correttamente
 import { Comune } from '@model/comune.js';
 import { Provincia } from '@model/provincia.js';
-import {
-  CssTextField,
-  labelColor,
-  labelDisableColor,
-} from '@theme/MainTheme';
+import { CssTextField } from '@theme/MainTheme';
 
 function ComuneSelect(props, ref) {
-  const [error, setError] = React.useState(null);
-  const [isLoaded, setIsLoaded] = React.useState(false);
-  const [provincia, setProvincia] = React.useState(null);
-  const [items, setItems] = React.useState([]);
-  const [value, setValue] = React.useState(null);
+  const [comuni, setComuni] = React.useState([]); // Lista di tutti i comuni
+  const [filteredComuni, setFilteredComuni] = React.useState([]); // Lista di comuni filtrati
+  const [provincia, setProvincia] = React.useState(null); // La provincia selezionata
+  const [selectedComune, setSelectedComune] = React.useState(null); // Il comune selezionato
+  const [error, setError] = React.useState(null); // Gestione degli errori
   const theme = useTheme();
-  const options = { method: 'GET', headers: { accept: 'application/json' } };
 
+  // Funzione di inizializzazione dei comuni
+  const fetchComuni = async () => {
+    try {
+      const comuni = await ComuniUtils.getComuni();
+      setComuni(comuni);
+    } catch (err) {
+      setError('Errore durante il caricamento dei comuni.');
+    }
+  };
+
+  // Effetto per caricare tutti i comuni al montaggio del componente
+  React.useEffect(() => {
+    fetchComuni();
+  }, []);
+
+  // Effetto che si attiva quando cambia la provincia
+  React.useEffect(() => {
+    if (provincia) {
+      // Filtra i comuni in base alla provincia selezionata
+      const comuniFiltrati = comuni.filter(
+        (comune) =>
+          comune.provincia &&
+          comune.provincia.nome.toLowerCase() === provincia.nome.toLowerCase()
+      );
+      setFilteredComuni(comuniFiltrati);
+    } else {
+      setFilteredComuni([]); // Se non c'è provincia, resetta i comuni filtrati
+    }
+  }, [provincia, comuni]);
+
+  // Funzione per resettare i campi
+  const resetFields = () => {
+    setProvincia(null);
+    setSelectedComune(null);
+    setFilteredComuni([]);
+  };
+
+  // Utilizzo di `useImperativeHandle` per consentire il controllo da un componente padre
   React.useImperativeHandle(ref, () => ({
-    setComune(comune) {
-      let result = null;
-      if (comune && comune instanceof Comune) result = comune;
-      setProvincia(result ? result.provincia : null);
-      setValue(result);
-    },
-
-    setProvincia(provincia) {
-      let result = null;
-      if (
-        provincia &&
-        (typeof provincia === 'string' || provincia.nome) &&
-        !(provincia instanceof Provincia)
-      ) {
-        result = new Provincia(
-          typeof provincia === 'string'
-            ? { nome: provincia }
-            : { nome: provincia.nome }
-        );
+    setProvincia(newProvincia) {
+      console.log('imperative')
+      if (newProvincia instanceof Provincia) {
+        setProvincia(newProvincia);
+        console.log(provincia)
+      } else {
+        resetFields(); // Se non è una provincia valida, resetta tutto
       }
-      if (!result) setValue(null);
-      setProvincia(result);
+    },
+    setComune(newComune) {
+      if (newComune instanceof Comune) {
+        setProvincia(newComune.provincia);
+        setSelectedComune(newComune);
+      } else {
+        resetFields(); // Se non è un comune valido, resetta tutto
+      }
     },
   }));
 
-  React.useEffect(() => {
-    if (!provincia || !provincia instanceof Provincia) return;
-
-    console.log(
-      `Carico i comuni della provincia: ${JSON.stringify(provincia)}`
-    );
-
-    if (String(provincia.nome).toLocaleUpperCase() == 'STATO ESTERO') {
-      setIsLoaded(true);
-      setItems(
-        Array.from(
-          COMUNI_ESTERI,
-          ([key, value]) =>
-            new Comune({
-              nome: value.denominazione,
-              provincia: { nome: 'STATO ESTERO' },
-            })
-        )
-      );
-    } else {
-      fetch(
-        `https://axqvoqvbfjpaamphztgd.functions.supabase.co/comuni/provincia/${String(
-          provincia.nome
-        ).toLocaleLowerCase()}?page=1`,
-        options
-      )
-        .then((res) => res.json())
-        .then(
-          (result) => {
-            setIsLoaded(true);
-            setItems(result.map((c) => new Comune(c)));
-          },
-          // Note: it's important to handle errors here
-          // instead of a catch() block so that we don't swallow
-          // exceptions from actual bugs in components.
-          (error) => {
-            setIsLoaded(true);
-            setError(error);
-          }
-        );
-    }
-  }, [provincia]);
-
-  if (error)
+  // Gestione degli errori
+  if (error) {
     return (
       <CssTextField
         size="small"
-        id="outlined-required-comune"
-        label={props.label ? props.label : 'Comune'}
+        id="outlined-error"
+        label={props.label || 'Comune'}
         defaultValue=""
+        helperText={error}
         sx={{ ...props.sx }}
       />
     );
-  else
-    return (
-      <Autocomplete
-        disabled={!provincia || props.disabled}
-        disablePortal
-        value={value}
-        isOptionEqualToValue={(option, value) =>
-          JSON.stringify(option) === JSON.stringify(value)
+  }
+
+  return (
+    <Autocomplete
+      disabled={!provincia || props.disabled}
+      options={filteredComuni}
+      value={selectedComune}
+      getOptionLabel={(option) => option.nome.toLocaleUpperCase()}
+      noOptionsText={!provincia ? 'Seleziona una provincia' : 'Nessun comune disponibile'}
+      onChange={(event, newValue) => {
+        setSelectedComune(newValue);
+        if (props.onChange) {
+          props.onChange(newValue); // Chiama la funzione passata dai props
         }
-        id="combo-box-demo"
-        onChange={(event, newValue) => {
-          setValue(newValue); // Aggiorna lo stato locale
-          if (props.onChange) {
-            // Verifica se `onChange` è passato dai props
-            props.onChange(newValue); // Chiama il callback del genitore con il nuovo valore
+      }}
+      isOptionEqualToValue={(option, value) => option.nome === value.nome}
+      PaperComponent={({ children }) => (
+        <Paper sx={{ backgroundColor: theme.palette.dropdown.primary }}>
+          {children}
+        </Paper>
+      )}
+      renderOption={(props, option) => (
+        <li {...props} style={{ color: theme.palette.primary.main }}>
+          {option.nome.toLocaleUpperCase()}
+        </li>
+      )}
+      renderInput={(params) => (
+        <CssTextField
+          {...params}
+          disabled={!provincia || props.disabled}
+          label={props.label || 'Comune'}
+          size="small"
+          helperText={
+            props.disabled
+              ? props.helperText
+              : !provincia
+              ? 'Seleziona una provincia per attivare questo campo'
+              : ''
           }
-        }}
-        noOptionsText={
-          !provincia ? 'Seleziona una provincia' : 'Nessun risultato'
-        }
-        options={items}
-        getOptionLabel={(option) => option.nome.toLocaleUpperCase()}
-        PaperComponent={({ children }) => (
-          <Paper sx={{ backgroundColor: theme.palette.dropdown.primary }}>
-            {children}
-          </Paper>
-        )}
-        sx={{
-          ...props.sx,
-          display: 'inline-block',
-          '& .MuiAutocomplete-inputRoot.Mui-disabled': {
-            pointerEvents: 'none',
-            '& .MuiOutlinedInput-notchedOutline': {
-              borderColor: '#eaeaea !important',
-            },
+        />
+      )}
+      sx={{
+        ...props.sx,
+        display: 'inline-block',
+        '& .MuiAutocomplete-inputRoot.Mui-disabled': {
+          pointerEvents: 'none',
+          '& .MuiOutlinedInput-notchedOutline': {
+            borderColor: '#eaeaea !important',
           },
-        }}
-        renderOption={(props, option) => (
-          <li {...props} style={{ color: theme.palette.primary.main }}>
-            {option.nome.toLocaleUpperCase()}
-          </li>
-        )}
-        renderInput={(params) => (
-          <CssTextField
-            {...params}
-            disabled={!provincia || props.disabled}
-            helperText={
-              props.disabled
-                ? props.helperText
-                : !provincia
-                ? 'Seleziona una provincia per attivare questo campo'
-                : ''
-            }
-            label={props.label ? props.label : 'Comune'}
-            size="small"
-          />
-        )}
-      />
-    );
+        },
+      }}
+    />
+  );
 }
+
 export default React.forwardRef(ComuneSelect);

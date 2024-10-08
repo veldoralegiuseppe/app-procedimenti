@@ -14,7 +14,7 @@ export default function Dashboard() {
       <Typography variant="h4" gutterBottom>
         Dashboard Fatturato Ultimi 3 Mesi
       </Typography>
-      <BarChart
+      {/* <BarChart
         xAxis={[{ scaleType: 'band', data: mesi }]} // Etichette degli assi (mesi)
         tooltip={{ enabled: false }} 
     
@@ -25,7 +25,7 @@ export default function Dashboard() {
         ]}
         width={600}
         height={400}
-      />
+      /> */}
     </Box>
   );
 }

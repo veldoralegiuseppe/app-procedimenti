@@ -10,7 +10,7 @@ export class PersonaFisica {
   luogoDiNascita = new Comune();
   sesso;
   residenza = new Comune();
-  indirizzo;
+  indirizzoResidenza;
   partitaIVA;
   pecEmail;
   rappresentanteLegale;
@@ -24,12 +24,17 @@ export class PersonaFisica {
   note;
   isParteIstante;
 
-  equals = (p) => {
+  // Definizione di funzione tradizionale per mantenere il contesto di 'this'
+  getDataNascitaLocale() {
+    return this.dataNascita ? dayjs(this.dataNascita).format('DD/MM/YYYY') : null;
+  }
+
+  equals(p) {
     if (!p || !(p instanceof PersonaFisica)) return false;
     return JSON.stringify(this) === JSON.stringify(p);
-  };
+  }
 
-  getTotaleSpese = () => {
+  getTotaleSpese() {
     return (
       Number(this.speseAvvio) +
       Number(this.spesePostali) +
@@ -38,9 +43,5 @@ export class PersonaFisica {
       Number(this.importoPositivoPrimoIncontro) +
       Number(this.importoPositivoOltrePrimoIncontro)
     );
-  };
-
-  getDataNascitaLocale = () => {
-    return this.dataNascita ? dayjs(this.dataNascita).format('DD/MM/YYYY') : null;
   }
 }

@@ -1,3 +1,5 @@
+import {Provincia} from '@model/provincia';
+
 export class Comune {
     codice
     nome
@@ -5,11 +7,7 @@ export class Comune {
     codiceCatastale
     cap
     prefisso
-    provincia = class {
-      nome
-      regione
-      sigla
-    }
+    provincia = new Provincia()
     email
     pec
     telefono

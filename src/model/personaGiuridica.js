@@ -22,7 +22,7 @@ export class PersonaGiuridica {
     return JSON.stringify(this) === JSON.stringify(p);
   };
 
-  getTotaleSpese = () => {
+  getTotaleSpese() {
     return (
       Number(this.speseAvvio) +
       Number(this.spesePostali) +
@@ -31,5 +31,5 @@ export class PersonaGiuridica {
       Number(this.importoPositivoPrimoIncontro) +
       Number(this.importoPositivoOltrePrimoIncontro)
     );
-  };
+  }
 }

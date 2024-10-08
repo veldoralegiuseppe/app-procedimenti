@@ -16,30 +16,51 @@ import { useTheme } from '@mui/material/styles';
 
 import FormPersonaFisica from '@pages/FormPersonaFisica';
 import FormPersonaGiuridica from '@pages/FormPersonaGiuridica';
+import { ProcedimentoContext } from '@context/Procedimento';
+import { PersonaFisica } from '@model/personaFisica';
+import { PersonaGiuridica } from '@model/personaGiuridica';
 
 const formLabelFontSize = '1rem';
 const labelColor = 'rgb(105 105 105 / 60%)';
 
 export default function CreaParteControparte({ handleClose, onError }) {
   const theme = useTheme();
-  const [tipologiaPersona, setTipologiaPersona] = React.useState('PERSONA_FISICA');
+  const [tipologiaPersona, setTipologiaPersona] =
+    React.useState('PERSONA_FISICA');
   const [ruolo, setRuolo] = React.useState('PARTE_ISTANTE');
   const formPersonaFisicaRef = React.useRef();
   const formPersonaGiuridicaRef = React.useRef();
+  const { persone, setPersone } = React.useContext(ProcedimentoContext);
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const { hasErrors, message } = tipologiaPersona === 'PERSONA_FISICA'
-      ? formPersonaFisicaRef.current?.getErrors()
-      : formPersonaGiuridicaRef.current?.getErrors();
+    const { hasErrors, message } =
+      tipologiaPersona === 'PERSONA_FISICA'
+        ? formPersonaFisicaRef.current?.getErrors()
+        : formPersonaGiuridicaRef.current?.getErrors();
 
     if (hasErrors) {
       console.log('Errori rilevati:', message);
       onError(message);
     } else {
-      // TODO: Inserisco le informazioni relative al ruolo nella persona
-      console.log('Form inviato con successo');
-      handleClose(); 
+      let persona;
+
+      if (tipologiaPersona === 'PERSONA_FISICA')
+        persona = Object.assign(
+          new PersonaFisica(),
+          formPersonaFisicaRef.current?.onSubmit()
+        );
+      else if (tipologiaPersona === 'PERSONA_GIURIDICA')
+        persona = Object.assign(
+          new PersonaGiuridica(),
+          formPersonaGiuridicaRef.current?.onSubmit()
+        );
+
+      persona.isParteIstante = ruolo === 'PARTE_ISTANTE';
+      console.log(persona)
+
+      if (persona) setPersone([...persone, persona]);
+      handleClose();
     }
   };
 
@@ -59,9 +80,7 @@ export default function CreaParteControparte({ handleClose, onError }) {
       {/* Ruolo */}
       <Grid xs={12} sx={{ width: '100%' }}>
         <Grid xs={12} sx={{ borderBottom: '1px solid #467bae61' }}>
-          <Typography
-            sx={{fontSize: formLabelFontSize, color: '#467bae' }}
-          >
+          <Typography sx={{ fontSize: formLabelFontSize, color: '#467bae' }}>
             Ruolo
           </Typography>
         </Grid>
@@ -80,7 +99,9 @@ export default function CreaParteControparte({ handleClose, onError }) {
                 '& .MuiTypography-root': {
                   color: theme.palette.text.primary,
                 },
-                '& .MuiRadio-root:not(.Mui-checked) span': { color: labelColor },
+                '& .MuiRadio-root:not(.Mui-checked) span': {
+                  color: labelColor,
+                },
               }}
             />
             <FormControlLabel
@@ -91,7 +112,9 @@ export default function CreaParteControparte({ handleClose, onError }) {
                 '& .MuiTypography-root': {
                   color: theme.palette.text.primary,
                 },
-                '& .MuiRadio-root:not(.Mui-checked) span': { color: labelColor },
+                '& .MuiRadio-root:not(.Mui-checked) span': {
+                  color: labelColor,
+                },
               }}
             />
           </RadioGroup>
@@ -101,9 +124,7 @@ export default function CreaParteControparte({ handleClose, onError }) {
       {/* Tipologia */}
       <Grid xs={12} sx={{ width: '100%' }}>
         <Grid xs={12} sx={{ borderBottom: '1px solid #467bae61' }}>
-          <Typography
-            sx={{fontSize: formLabelFontSize, color: '#467bae' }}
-          >
+          <Typography sx={{ fontSize: formLabelFontSize, color: '#467bae' }}>
             Tipologia
           </Typography>
         </Grid>
@@ -122,7 +143,9 @@ export default function CreaParteControparte({ handleClose, onError }) {
                 '& .MuiTypography-root': {
                   color: theme.palette.text.primary,
                 },
-                '& .MuiRadio-root:not(.Mui-checked) span': { color: labelColor },
+                '& .MuiRadio-root:not(.Mui-checked) span': {
+                  color: labelColor,
+                },
               }}
             />
             <FormControlLabel
@@ -133,7 +156,9 @@ export default function CreaParteControparte({ handleClose, onError }) {
                 '& .MuiTypography-root': {
                   color: theme.palette.text.primary,
                 },
-                '& .MuiRadio-root:not(.Mui-checked) span': { color: labelColor },
+                '& .MuiRadio-root:not(.Mui-checked) span': {
+                  color: labelColor,
+                },
               }}
             />
           </RadioGroup>
@@ -157,7 +182,9 @@ export default function CreaParteControparte({ handleClose, onError }) {
           >
             <Typography>Persona fisica</Typography>
           </AccordionSummary>
-          <AccordionDetails sx={{ backgroundColor: theme.palette.background.default }}>
+          <AccordionDetails
+            sx={{ backgroundColor: theme.palette.background.default }}
+          >
             <FormPersonaFisica ref={formPersonaFisicaRef} />
           </AccordionDetails>
         </Accordion>
@@ -180,7 +207,9 @@ export default function CreaParteControparte({ handleClose, onError }) {
           >
             <Typography>Persona giuridica</Typography>
           </AccordionSummary>
-          <AccordionDetails sx={{ backgroundColor: theme.palette.background.default }}>
+          <AccordionDetails
+            sx={{ backgroundColor: theme.palette.background.default }}
+          >
             <FormPersonaGiuridica ref={formPersonaGiuridicaRef} />
           </AccordionDetails>
         </Accordion>
@@ -206,7 +235,10 @@ export default function CreaParteControparte({ handleClose, onError }) {
             marginRight: '4.5rem',
             color: '#467bae',
             border: `.9px solid #467bae`,
-            '&:hover': { backgroundColor: '#6ea5da29', border: `.9px solid #467bae` },
+            '&:hover': {
+              backgroundColor: '#6ea5da29',
+              border: `.9px solid #467bae`,
+            },
           }}
           startIcon={<ArrowBackOutlinedIcon sx={{ color: '#467bae' }} />}
         >
