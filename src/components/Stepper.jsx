@@ -142,8 +142,8 @@ export default function Stepper({ steps }) {
           width: '100%',
           borderRadius: '12px',
           border: '1px solid rgb(198, 196, 193 / 80%)',
-          padding: '2rem',
-          boxShadow: '0px 2px 8px rgba(0, 0, 0, 0.1)',
+          padding: '4rem 2rem',
+          boxShadow: '0px 4px 12px rgba(0, 0, 0, 0.25)',
         }}
       >
         {activeStep === steps.length ? (

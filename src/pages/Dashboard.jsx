@@ -10,22 +10,6 @@ export default function Dashboard() {
   const fatturatoServizioC = [6000, 6200, 6100]; // Fatturato per Servizio C
 
   return (
-    <Box sx={{ padding: 4 }}>
-      <Typography variant="h4" gutterBottom>
-        Dashboard Fatturato Ultimi 3 Mesi
-      </Typography>
-      {/* <BarChart
-        xAxis={[{ scaleType: 'band', data: mesi }]} // Etichette degli assi (mesi)
-        tooltip={{ enabled: false }} 
-    
-        series={[
-          { label: 'Servizio A', data: fatturatoServizioA },
-          { label: 'Servizio B', data: fatturatoServizioB },
-          { label: 'Servizio C', data: fatturatoServizioC },
-        ]}
-        width={600}
-        height={400}
-      /> */}
-    </Box>
+   <div style={{width: '100vw', height: '100vh'}}>Dashboard</div>
   );
 }
