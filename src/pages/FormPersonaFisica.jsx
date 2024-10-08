@@ -16,7 +16,6 @@ import ProvinciaSelect from '@components/ProvinciaSelect';
 import ComuneSelect from '@components/ComuneSelect';
 import * as CodiceFiscaleUtils from '@assets/js/convalidaCodiceFiscale';
 import { Comune } from '@model/comune';
-import * as ComuniUtils from '@assets/js/comuni';
 import { PersonaFisica } from '@model/personaFisica';
 import Alert from '@mui/material/Alert';
 import ImportoReadOnly from '@components/ImportoReadOnly';
@@ -28,7 +27,6 @@ import {
   CssSelect,
   formControlStyles,
 } from '@theme/MainTheme';
-import { getValue, textTransform } from '@mui/system';
 
 // Constants
 const inputHeight = 35;
@@ -92,9 +90,45 @@ function FormPersonaFisica(props, ref) {
   const comuneResidenzaRef = React.useRef();
   const provinciaResidenzaRef = React.useRef();
 
+  const resetForm = () => {
+    setParteAttuale(new PersonaFisica()); // Reset dello stato a un nuovo oggetto PersonaFisica
+    setCapResidenza(''); // Reset CAP residenza
+    setHelperTextCf(''); // Reset helper text del Codice Fiscale
+    setErrors({
+      codiceFiscale: false,
+      cognome: false,
+      nome: false,
+      email: false,
+      pecEmail: false,
+      partitaIVA: false,
+      denominazione: false,
+      rappresentanteLegale: false,
+      rappresentanteLegalePecEmail: false,
+      indirizzoResidenza: false,
+    }); // Reset degli errori
+
+    // Reset delle referenze ai selettori di Comune e Provincia
+    if (provinciaNascitaRef.current) {
+      provinciaNascitaRef.current.setProvincia(null);
+    }
+    if (comuneNascitaRef.current) {
+      comuneNascitaRef.current.setComune(null);
+    }
+    if (provinciaResidenzaRef.current) {
+      provinciaResidenzaRef.current.setProvincia(null);
+    }
+    if (comuneResidenzaRef.current) {
+      comuneResidenzaRef.current.setComune(null);
+    }
+
+    setAnagraficiDisabilitati(false); // Riattiva i campi anagrafici
+  };
+
   // Metodi di React.useImperativeHandle
   const onSubmit = () => {
-    return parteAttuale;
+    const parteCreata = Object.assign(new PersonaFisica(), parteAttuale);
+    resetForm();
+    return parteCreata;
   };
   const getErrors = () => {
     const requiredFields = ['cognome', 'nome', 'rappresentanteLegale'];
@@ -160,91 +194,119 @@ function FormPersonaFisica(props, ref) {
 
   // Utility function
   const resetAnagrafici = () => {
-    setParteAttuale({
-      ...parteAttuale,
+    setParteAttuale((prevParteAttuale) => ({
+      ...prevParteAttuale,
       dataNascita: null,
       luogoDiNascita: null,
       sesso: null,
-    });
+    }));
     provinciaNascitaRef.current.setProvincia(null);
     comuneNascitaRef.current.setComune(null);
     setAnagraficiDisabilitati(false);
   };
   const handleInvalidCodiceFiscale = (message) => {
-    setErrors({ ...errors, codiceFiscale: true });
+    setErrors((prevErrors) => ({
+      ...prevErrors,
+      codiceFiscale: true,
+    }));
     setHelperTextCf(message);
     resetAnagrafici();
   };
   const handleValidCodiceFiscale = async (cf) => {
-  
     try {
-      // Estrai il comune di nascita in modo asincrono
+      // Estrai il comune di nascita dal Codice Fiscale
       const comuneNascita = await CodiceFiscaleUtils.comuneCf(cf);
-  
-      // Controlla se il comune di nascita è valido
+
       if (!comuneNascita) {
-        console.error("Comune di nascita non trovato per il codice fiscale:", cf);
+        console.error(
+          'Comune di nascita non trovato per il codice fiscale:',
+          cf
+        );
         setHelperTextCf('Comune di nascita non valido');
-        setErrors({ ...errors, codiceFiscale: true });
+        setErrors((prevErrors) => ({
+          ...prevErrors,
+          codiceFiscale: true,
+        }));
         return;
       }
-  
+
       // Aggiorna lo stato con i dati estratti
-      setParteAttuale({
-        ...parteAttuale,
+      setParteAttuale((prevParteAttuale) => ({
+        ...prevParteAttuale,
         codiceFiscale: cf,
         dataNascita: CodiceFiscaleUtils.dataCf(cf),
         luogoDiNascita: comuneNascita,
         sesso: CodiceFiscaleUtils.sessoCf(cf),
-      });
-  
-      // Aggiorna i riferimenti a provincia e comune (se disponibili)
+      }));
+
+      // Aggiorna i riferimenti a provincia e comune
       if (provinciaNascitaRef.current && comuneNascita.provincia) {
         provinciaNascitaRef.current.setProvincia(comuneNascita.provincia);
       }
       if (comuneNascitaRef.current) {
         comuneNascitaRef.current.setComune(comuneNascita);
       }
-  
+
       // Disabilita i campi anagrafici e rimuovi gli errori
       setAnagraficiDisabilitati(true);
-      setErrors({ ...errors, codiceFiscale: false });
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        codiceFiscale: false,
+      }));
       setHelperTextCf('');
     } catch (error) {
-      console.error("Errore durante la validazione del codice fiscale:", error);
+      console.error('Errore durante la validazione del codice fiscale:', error);
       setHelperTextCf('Errore durante la validazione del codice fiscale');
-      setErrors({ ...errors, codiceFiscale: true });
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        codiceFiscale: true,
+      }));
     }
   };
-
   const handleCodiceFiscaleChange = (event) => {
-    let cf = event.currentTarget.value?.toLocaleUpperCase();
+    let cf = event.currentTarget.value.toUpperCase(); // Converti tutto in maiuscolo
 
-    // Limita la lunghezza del Codice Fiscale a 16 caratteri
+    // Limita la lunghezza del Codice Fiscale a 16 caratteri, ma aggiorna comunque il valore
     if (cf.length > 16) {
-      event.target.value = cf.slice(0, 16);
-      return;
+      cf = cf.slice(0, 16); // Limita il valore massimo a 16 caratteri
     }
+
+    // Aggiorna immediatamente il campo Codice Fiscale nello stato, senza eseguire la validazione
+    setParteAttuale((prevParteAttuale) => ({
+      ...prevParteAttuale,
+      codiceFiscale: cf,
+    }));
 
     // Se il campo è vuoto, rimuovi eventuali errori e resetta i campi
     if (cf === '') {
-      setErrors({ ...errors, codiceFiscale: false });
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        codiceFiscale: false,
+      }));
       setHelperTextCf('');
       resetAnagrafici();
       return;
     }
 
-    // Controllo se il Codice Fiscale inserito è valido
-    const isValid = cf.length === 16 && CodiceFiscaleUtils.isValid(cf);
+    // Se il Codice Fiscale ha esattamente 16 caratteri, esegui la validazione
+    if (cf.length === 16) {
+      const isValid = CodiceFiscaleUtils.isValid(cf);
 
-    if (isValid) {
-      handleValidCodiceFiscale(cf);
-    } else if (cf.length === 16) {
-      handleInvalidCodiceFiscale('Codice fiscale non valido');
+      if (isValid) {
+        handleValidCodiceFiscale(cf);
+      } else {
+        handleInvalidCodiceFiscale('Codice fiscale non valido');
+      }
     } else {
-      handleInvalidCodiceFiscale('Codice fiscale incompleto');
+      // Se è incompleto, ma non bloccare l'input
+      setHelperTextCf('Codice fiscale incompleto');
+      setErrors((prevErrors) => ({
+        ...prevErrors,
+        codiceFiscale: true,
+      }));
     }
   };
+
   const parseImporto = (importo) => {
     //console.log(`importoInput: ${importo} - importoNumber: ${Number(importo)}`)
     return Number(importo);
@@ -267,7 +329,9 @@ function FormPersonaFisica(props, ref) {
     partitaIVA: validatePartitaIVA,
     rappresentanteLegale: validateAnagrafica,
     rappresentanteLegalePecEmail: validateEmail,
-    indirizzoResidenza: () => {return true},
+    indirizzoResidenza: () => {
+      return true;
+    },
   };
   const handleInputChange = (event, campoModel) => {
     const valore = event.target.value.toUpperCase();
@@ -298,9 +362,7 @@ function FormPersonaFisica(props, ref) {
           xs={12}
           sx={{ width: '100%', borderBottom: '1px solid #467bae61' }}
         >
-          <Typography
-            sx={{  fontSize: '1rem', color: '#467bae' }}
-          >
+          <Typography sx={{ fontSize: '1rem', color: '#467bae' }}>
             Codice fiscale
           </Typography>
         </Grid>
@@ -312,6 +374,7 @@ function FormPersonaFisica(props, ref) {
         >
           <CssTextField
             error={errors.codiceFiscale}
+            value={parteAttuale.codiceFiscale || ''}
             helperText={helperTextCf}
             size="small"
             id="outlined-required-cf-piva"
@@ -346,9 +409,7 @@ function FormPersonaFisica(props, ref) {
           xs={12}
           sx={{ width: '100%', borderBottom: '1px solid #467bae61' }}
         >
-          <Typography
-            sx={{  fontSize: '1rem', color: '#467bae' }}
-          >
+          <Typography sx={{ fontSize: '1rem', color: '#467bae' }}>
             Dati anagrafici
           </Typography>
         </Grid>
@@ -358,6 +419,7 @@ function FormPersonaFisica(props, ref) {
           required
           size="small"
           id="outlined-required-cognome"
+          value={parteAttuale.cognome || ''}
           error={errors.cognome}
           helperText={
             errors.cognome
@@ -377,6 +439,7 @@ function FormPersonaFisica(props, ref) {
           size="small"
           id="outlined-required-nome"
           error={errors.nome}
+          value={parteAttuale.nome || ''}
           helperText={
             errors.nome
               ? parteAttuale.nome
@@ -403,11 +466,10 @@ function FormPersonaFisica(props, ref) {
             value={
               parteAttuale.dataNascita ? dayjs(parteAttuale.dataNascita) : null
             }
-            onChange={(date) =>{
+            onChange={(date) => {
               const formattedDate = date ? date.format('YYYY-MM-DD') : null;
-              setParteAttuale({ ...parteAttuale, dataNascita: formattedDate })
-            }
-            }
+              setParteAttuale({ ...parteAttuale, dataNascita: formattedDate });
+            }}
             slotProps={{
               textField: {
                 size: 'small',
@@ -470,7 +532,7 @@ function FormPersonaFisica(props, ref) {
           <CssSelect
             labelId="sesso-input-label"
             id="sesso-select"
-            value={parteAttuale.sesso ? parteAttuale.sesso : ''}
+            value={parteAttuale.sesso || ''}
             onChange={(event) =>
               setParteAttuale({ ...parteAttuale, sesso: event.target.value })
             }
@@ -516,7 +578,9 @@ function FormPersonaFisica(props, ref) {
           label="Provincia di nascita"
           disabled={anagraficiDisabilitati}
           onChange={(provincia) => {
-            comuneNascitaRef.current.setProvincia(Object.assign(new Provincia(), provincia));
+            comuneNascitaRef.current.setProvincia(
+              Object.assign(new Provincia(), provincia)
+            );
             let comuneNascita = new Comune();
             comuneNascita.provincia = provincia;
             setParteAttuale({
@@ -532,11 +596,11 @@ function FormPersonaFisica(props, ref) {
           provincia={parteAttuale.luogoNascita?.provincia}
           label="Comune di nascita"
           disabled={anagraficiDisabilitati}
-          onChange={(comune) =>{
-            let comuneNascita = comune 
-            comuneNascita.provincia = parteAttuale.luogoDiNascita.provincia
-            console.log(comuneNascita)
-            setParteAttuale({ ...parteAttuale, luogoDiNascita: comuneNascita })
+          onChange={(comune) => {
+            let comuneNascita = comune;
+            comuneNascita.provincia = parteAttuale.luogoDiNascita.provincia;
+            console.log(comuneNascita);
+            setParteAttuale({ ...parteAttuale, luogoDiNascita: comuneNascita });
           }}
           sx={{ ...textFieldSx(theme), minWidth: '246px', maxWidth: '250px' }}
         />
@@ -548,9 +612,7 @@ function FormPersonaFisica(props, ref) {
           xs={12}
           sx={{ width: '100%', borderBottom: '1px solid #467bae61' }}
         >
-          <Typography
-            sx={{  fontSize: '1rem', color: '#467bae' }}
-          >
+          <Typography sx={{ fontSize: '1rem', color: '#467bae' }}>
             Dati demografici
           </Typography>
         </Grid>
@@ -560,7 +622,9 @@ function FormPersonaFisica(props, ref) {
           ref={provinciaResidenzaRef}
           label="Provincia di residenza"
           onChange={(provincia) => {
-            comuneResidenzaRef.current.setProvincia(Object.assign(new Provincia(), provincia));
+            comuneResidenzaRef.current.setProvincia(
+              Object.assign(new Provincia(), provincia)
+            );
             let residenza = new Comune();
             residenza.provincia = provincia;
             setParteAttuale({
@@ -578,7 +642,13 @@ function FormPersonaFisica(props, ref) {
           label="Comune di residenza"
           onChange={(value) => {
             setCapResidenza(value?.cap || '');
-            setParteAttuale({ ...parteAttuale, residenza: {...value, provincia: parteAttuale.residenza.provincia} });
+            setParteAttuale({
+              ...parteAttuale,
+              residenza: {
+                ...value,
+                provincia: parteAttuale.residenza.provincia,
+              },
+            });
           }}
           sx={{ ...textFieldSx(theme), minWidth: '246px', maxWidth: '250px' }}
         />
@@ -586,6 +656,7 @@ function FormPersonaFisica(props, ref) {
         {/* Indirizzo di residenza */}
         <CssTextField
           size="small"
+          value={parteAttuale.indirizzoResidenza || ''}
           id="outlined-required-indirizzo"
           label="Indirizzo"
           onChange={(event) => handleInputChange(event, 'indirizzoResidenza')}
@@ -598,7 +669,7 @@ function FormPersonaFisica(props, ref) {
           id="outlined-required-cup"
           label="CAP"
           disabled={true}
-          value={capResidenza}
+          value={parteAttuale.residenza?.cap || ''}
           sx={{ ...textFieldSx(theme), minWidth: '246px', maxWidth: '250px' }}
         />
       </Grid>
@@ -609,9 +680,7 @@ function FormPersonaFisica(props, ref) {
           xs={12}
           sx={{ width: '100%', borderBottom: '1px solid #467bae61' }}
         >
-          <Typography
-            sx={{  fontSize: '1rem', color: '#467bae' }}
-          >
+          <Typography sx={{ fontSize: '1rem', color: '#467bae' }}>
             Recapiti
           </Typography>
         </Grid>
@@ -621,6 +690,7 @@ function FormPersonaFisica(props, ref) {
           size="small"
           id="outlined-required-pec"
           label="PEC / Email"
+          value={parteAttuale.pecEmail || ''}
           error={errors.pecEmail}
           helperText={errors.pecEmail ? 'Indirizzo non valido' : ''}
           onChange={(event) => handleInputChange(event, 'pecEmail')}
@@ -638,9 +708,7 @@ function FormPersonaFisica(props, ref) {
           xs={12}
           sx={{ width: '100%', borderBottom: '1px solid #467bae61' }}
         >
-          <Typography
-            sx={{  fontSize: '1rem', color: '#467bae' }}
-          >
+          <Typography sx={{ fontSize: '1rem', color: '#467bae' }}>
             Ditta individuale / Professionista autonomo
           </Typography>
         </Grid>
@@ -650,6 +718,7 @@ function FormPersonaFisica(props, ref) {
           size="small"
           id="outlined-required-piva"
           label="Partita IVA"
+          value={parteAttuale.partitaIVA || ''}
           error={errors.partitaIVA}
           helperText={errors.partitaIVA ? 'Formato invalido' : ''}
           onChange={(event) => handleInputChange(event, 'partitaIVA')}
@@ -663,9 +732,7 @@ function FormPersonaFisica(props, ref) {
           xs={12}
           sx={{ width: '100%', borderBottom: '1px solid #467bae61' }}
         >
-          <Typography
-            sx={{  fontSize: '1rem', color: '#467bae' }}
-          >
+          <Typography sx={{ fontSize: '1rem', color: '#467bae' }}>
             Rappresentante legale
           </Typography>
         </Grid>
@@ -676,6 +743,7 @@ function FormPersonaFisica(props, ref) {
           size="small"
           id="outlined-required-avvocato"
           label="Avvocato"
+          value={parteAttuale.rappresentanteLegale || ''}
           error={errors.rappresentanteLegale}
           helperText={
             errors.rappresentanteLegale
@@ -693,6 +761,7 @@ function FormPersonaFisica(props, ref) {
           size="small"
           id="outlined-required-pec"
           label="PEC / Email"
+          value={parteAttuale.rappresentanteLegalePecEmail || ''}
           error={errors.rappresentanteLegalePecEmail}
           helperText={
             errors.rappresentanteLegalePecEmail ? 'Indirizzo invalido' : ''
@@ -714,9 +783,7 @@ function FormPersonaFisica(props, ref) {
           xs={12}
           sx={{ width: '100%', borderBottom: '1px solid #467bae61' }}
         >
-          <Typography
-            sx={{  fontSize: '1rem', color: '#467bae' }}
-          >
+          <Typography sx={{ fontSize: '1rem', color: '#467bae' }}>
             Spese di mediazione
           </Typography>
         </Grid>
@@ -724,7 +791,7 @@ function FormPersonaFisica(props, ref) {
         {/* Spese */}
         <Grid xs={12}>
           <ImportoInput
-            importo={parteAttuale.speseAvvio}
+            value={parteAttuale.speseAvvio}
             sx={textFieldSx(theme)}
             onChange={(importo) =>
               setParteAttuale({ ...parteAttuale, speseAvvio: importo })
@@ -732,7 +799,7 @@ function FormPersonaFisica(props, ref) {
             label={'Spese di avvio'}
           />
           <ImportoInput
-            importo={parteAttuale.spesePostali}
+            value={parteAttuale.spesePostali}
             sx={textFieldSx(theme)}
             onChange={(importo) =>
               setParteAttuale({ ...parteAttuale, spesePostali: importo })
@@ -740,7 +807,7 @@ function FormPersonaFisica(props, ref) {
             label={'Spese postali'}
           />
           <ImportoInput
-            importo={parteAttuale.pagamentoIndennita}
+            value={parteAttuale.pagamentoIndennita}
             sx={textFieldSx(theme)}
             onChange={(importo) =>
               setParteAttuale({ ...parteAttuale, pagamentoIndennita: importo })
@@ -748,7 +815,7 @@ function FormPersonaFisica(props, ref) {
             label={'Pagamento indennità'}
           />
           <ImportoInput
-            importo={parteAttuale.importoMancatoAccordo}
+            value={parteAttuale.importoMancatoAccordo}
             sx={textFieldSx(theme)}
             onChange={(importo) =>
               setParteAttuale({
@@ -759,7 +826,7 @@ function FormPersonaFisica(props, ref) {
             label={'Mancato accordo'}
           />
           <ImportoInput
-            importo={parteAttuale.importoPositivoPrimoIncontro}
+            value={parteAttuale.importoPositivoPrimoIncontro}
             sx={textFieldSx(theme)}
             onChange={(importo) =>
               setParteAttuale({
@@ -770,7 +837,7 @@ function FormPersonaFisica(props, ref) {
             label={'Positivo primo incontro'}
           />
           <ImportoInput
-            importo={parteAttuale.importoPositivoOltrePrimoIncontro}
+            value={parteAttuale.importoPositivoOltrePrimoIncontro}
             sx={textFieldSx(theme)}
             onChange={(importo) =>
               setParteAttuale({
@@ -805,9 +872,7 @@ function FormPersonaFisica(props, ref) {
           xs={12}
           sx={{ width: '100%', borderBottom: '1px solid #467bae61' }}
         >
-          <Typography
-            sx={{  fontSize: '1rem', color: '#467bae' }}
-          >
+          <Typography sx={{ fontSize: '1rem', color: '#467bae' }}>
             Informazioni aggiuntive
           </Typography>
         </Grid>
@@ -816,7 +881,12 @@ function FormPersonaFisica(props, ref) {
           label="Note"
           multiline
           rows={3}
-          sx={{ ...textFieldSx(theme), minWidth: '100%', textTransform: 'uppercase' }}
+          value={parteAttuale.note}
+          sx={{
+            ...textFieldSx(theme),
+            minWidth: '100%',
+            textTransform: 'uppercase',
+          }}
           onChange={(event) =>
             setParteAttuale({
               ...parteAttuale,

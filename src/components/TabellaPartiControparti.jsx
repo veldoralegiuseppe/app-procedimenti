@@ -221,10 +221,10 @@ export default function TabellaPartiControparti() {
             anagrafica: `${persona.nome || ''} ${persona.cognome || ''}`,
             codiceFiscale: persona.codiceFiscale || '',
             dataNascita: persona.getDataNascitaLocale() || '',
-            luogoDiNascita: persona.luogoDiNascita && persona.luogoDiNascita.provincia ? 
+            luogoDiNascita: persona.luogoDiNascita?.cap && persona.luogoDiNascita.provincia?.sigla ? 
                             `${persona.luogoDiNascita.nome} (${persona.luogoDiNascita.provincia.sigla})` : '',
             sesso: persona.sesso === 'M' ? 'UOMO' : (persona.sesso === 'F' ? 'DONNA' : ''),
-            residenza: persona.residenza && persona.residenza.provincia ? 
+            residenza: persona.residenza?.cap && persona.residenza.provincia?.sigla ? 
                        `${persona.indirizzoResidenza ? persona.indirizzoResidenza + ' -' : ''} ${persona.residenza.cap} ${persona.residenza.nome} (${persona.residenza.provincia.sigla})` : '',
           });
         }

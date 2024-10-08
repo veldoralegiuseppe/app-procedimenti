@@ -22,7 +22,7 @@ export default function ImportoInput(props) {
   const labelColor = 'rgb(105 105 105 / 60%)';
   const [cursorShift, setCursorShift] = React.useState(0);
   const [importoAttuale, setImportoAttuale] = React.useState(
-    props.importo ? formatCurrency(props.importo) : '0,00'
+    props.value ? formatCurrency(props.value) : '0,00'
   );
 
   // Gestione reset del campo
@@ -34,6 +34,13 @@ export default function ImportoInput(props) {
       }
     }
   }, [props.reset]);
+
+  React.useEffect(() => {
+    // Aggiorna lo stato solo se il valore dell'importo è cambiato
+    if (props.value !== undefined && props.value !== null) {
+      setImportoAttuale(formatCurrency(props.value));
+    }
+  }, [props.value]);
 
   const handleInputChange = (event) => {
     const input = event.target;
