@@ -8,7 +8,7 @@ import { themeOne, ContentGrid } from '@theme/MainTheme';
 import { RouteContext, routes, getRoute } from '@context/Route';
 
 const root = createRoot(document.getElementById('mainContainer'));
-const sideMenuWidth = '60px';
+const sideMenuWidth = '50px';
 
 root.render(<App></App>);
 
@@ -22,8 +22,7 @@ function App() {
     >
       <ThemeProvider theme={themeOne}>
         <CssBaseline />
-        <ResponsiveAppBar
-          drawerWidth={sideMenuWidth} 
+        <ResponsiveAppBar 
           onButtonClick={setPath} 
           sx={{
             transition: 'background-color 0.3s ease', // transizione per cambio di colore
@@ -40,7 +39,7 @@ function App() {
             borderRadius: '8px', // angoli arrotondati per un design simile ai tooltip
             boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)', // effetto ombra per dare la sensazione di sovrapposizione come i tooltip
             backgroundColor: 'background.paper', // colore di sfondo neutro
-            padding: '12px 4rem', // ridotto leggermente il padding
+            padding: '12px 3rem',
           }}
         >
           {getRoute(path).component}

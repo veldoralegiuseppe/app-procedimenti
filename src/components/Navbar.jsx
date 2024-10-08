@@ -20,7 +20,7 @@ const menuItems = [
   { label: 'Parti e Controparti', icon: <HandshakeIcon style={{ fontSize: '24px' }} />, route: '/parti-controparti' },
 ];
 
-export default function ResponsiveAppBar({ drawerWidth = 60, onButtonClick }) {
+export default function ResponsiveAppBar({ drawerWidth = 50, onButtonClick }) {
   const [activeItem, setActiveItem] = React.useState("Dashboard");
   const [hoverIndex, setHoverIndex] = React.useState(null); // Per sapere su quale icona si sta passando il mouse
 
@@ -136,10 +136,10 @@ export default function ResponsiveAppBar({ drawerWidth = 60, onButtonClick }) {
         variant="permanent"
         open={true}
         sx={{
-          width: '60px',
+          width: `${drawerWidth}px`,
           height: '98vh',
           '& .MuiDrawer-paper': {
-            width: '60px',
+            width: `${drawerWidth}px`,
             background: 'linear-gradient(180deg, #A6C8E5 0%, #467BAE 100%)', // Colore semi-trasparente della navbar
             boxShadow: '0px 8px 20px rgba(0, 0, 0, 0.15)', // Ombra per dare profondità
             height: '98vh',
