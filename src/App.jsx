@@ -38,7 +38,7 @@ function App() {
           sx={{
             margin: `0 !important`,
             backgroundColor: 'background.paper',
-            padding: '2rem 5rem',
+            padding: '2rem 4.8rem',
             minHeight: '100vh',
             minWidth: '100%',
           }}

@@ -33,7 +33,7 @@ export const themeOne = createTheme({
       selected: '#ffb25c',
     },
     text: {
-      primary: '#656565',
+      primary: '#192d4d',
       secondary: '#787878',
       //light: 'rgb(171 178 186)',
     },

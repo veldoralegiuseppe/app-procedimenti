@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { Typography } from '@mui/material';
+import { Typography, Box } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 
-import Breadcrumbs from "@components/Breadcrumbs.jsx";
+import Breadcrumbs from '@components/Breadcrumbs.jsx';
 import Stepper from '@components/Stepper';
 import { ProcedimentoProvider } from '@context/Procedimento';
 import DatiGeneraliProcedimento from '@pages/StepDatiGeneraliProcedimento';
@@ -10,27 +10,65 @@ import PartiControparti from '@pages/StepPartiControparti';
 import RiepilogoProcedimento from '@pages/StepRiepilogoProcedimento';
 
 export default function CreaProcedimento() {
+  const theme = useTheme();
+  const stepProcRef = React.useRef();
 
-    const theme = useTheme();
-    const stepProcRef = React.useRef();
-    
-    const steps = [
-        {label: 'Dati generali', component: <DatiGeneraliProcedimento/>}, 
-        {label: 'Parti e controparti', component: <PartiControparti/>}, 
-        {label: 'Riepilogo', component: <RiepilogoProcedimento/>}
-    ];  
+  const steps = [
+    { label: 'Dati generali', component: <DatiGeneraliProcedimento /> },
+    { label: 'Parti e controparti', component: <PartiControparti /> },
+    { label: 'Riepilogo', component: <RiepilogoProcedimento /> },
+  ];
 
-    return (
-        <ProcedimentoProvider>
-            <div style={{display: 'flex', flexDirection: 'column', flex: '1', rowGap: '5rem'}}>
-                <div style={{display: 'flex', backgroundColor: theme.palette.background.default, justifyContent: 'space-between', height: '56px', alignItems: 'center', padding: '0', borderRadius: '8px'}}>
-                    <Typography variant="h4" sx={{color: theme.palette.text.primary, fontSize: '2.2rem'}}>
-                        Crea Procedimento
-                    </Typography>
-                    <Breadcrumbs />
-                </div>
-                <Stepper steps={steps} />
-            </div>
-        </ProcedimentoProvider>
-    );
+  return (
+    <ProcedimentoProvider>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          flex: '1',
+          rowGap: '5rem',
+        }}
+      >
+       
+
+<div
+  style={{
+    display: 'flex',
+    backgroundColor: theme.palette.background.default,
+    flexDirection: 'column',
+    height: 'auto',
+    padding: '0',
+    borderRadius: '8px',
+  }}
+>
+  <Box
+    sx={{
+      display: 'flex',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      height: '56px',
+      padding: '0', 
+    }}
+  >
+    <Typography
+      variant="h4"
+      sx={{
+        color: theme.palette.text.primary,
+        fontSize: '1.777rem',
+        fontWeight: 800,
+      }}
+    >
+      Nuovo Procedimento
+    </Typography>
+    <Breadcrumbs />
+  </Box>
+  <Typography variant="body1" sx={{ padding: '16px 0',}}>
+  Completa i passaggi guidati inserendo le informazioni  sulla mediazione, dati delle parti coinvolte e i dettagli del caso. Al termine, verifica i dati e conferma per finalizzare il nuovo procedimento.
+  </Typography>
+</div>
+
+        <Stepper steps={steps} />
+      </div>
+    </ProcedimentoProvider>
+  );
 }

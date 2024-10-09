@@ -35,7 +35,7 @@ function DrawerAppBar({onButtonClick}) {
       <AppBar
         position="static"
         sx={{
-          backgroundColor: '#fff', // Sfondo bianco
+          backgroundColor: '#f1f4f6', // Sfondo bianco
           boxShadow: 'none',
           borderBottom: '1px solid #ccc', // Separazione sottile
           justifyContent: 'center',
