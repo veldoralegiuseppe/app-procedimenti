@@ -5,7 +5,7 @@ import { CssBaseline } from '@mui/material/';
 
 import ResponsiveAppBar from '@components/Navbar';
 import { themeOne, ContentGrid } from '@theme/MainTheme';
-import { RouteContext, routes, getRoute } from '@context/Route';
+import { RouteContext, getRoute } from '@context/Route';
 
 const root = createRoot(document.getElementById('mainContainer'));
 const sideMenuWidth = '50px';

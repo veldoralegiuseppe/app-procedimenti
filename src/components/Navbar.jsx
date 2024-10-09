@@ -1,155 +1,157 @@
 import * as React from 'react';
+import PropTypes from 'prop-types';
+import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
+import CssBaseline from '@mui/material/CssBaseline';
 import Toolbar from '@mui/material/Toolbar';
-import Drawer from '@mui/material/Drawer';
-import List from '@mui/material/List';
-import ListItemButton from '@mui/material/ListItemButton';
-import ListItemIcon from '@mui/material/ListItemIcon';
-import { Tooltip } from '@mui/material';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
 
-// Import delle Material Icons
-import DashboardIcon from '@mui/icons-material/Dashboard';
-import GavelIcon from '@mui/icons-material/Gavel'; // Icona per Procedimenti
-import HandshakeIcon from '@mui/icons-material/Handshake'; // Icona per Parti e Controparti
-import logo from '@assets/img/logo2.png'; // Include corretto del logo
+// Importa i loghi
+import logo from '@assets/img/logo2.png'; // Logo MedArb
+import repubblicaLogo from '@assets/img/logo-repubblica-blu.png'; // Logo Repubblica Italiana
 
-// Array costante che contiene i dettagli di ogni pulsante
-const menuItems = [
-  { label: 'Dashboard', icon: <DashboardIcon style={{ fontSize: '24px' }} />, route: '/dashboard' },
-  { label: 'Procedimenti', icon: <GavelIcon style={{ fontSize: '24px' }} />, route: '/procedimenti/crea' },
-  { label: 'Parti e Controparti', icon: <HandshakeIcon style={{ fontSize: '24px' }} />, route: '/parti-controparti' },
+// Sezioni di navigazione (menu)
+const navItems = [
+  { label: 'Dashboard', route: '/dashboard' },
+  { label: 'Procedimenti', route: '/procedimenti' },
+  { label: 'Parti e Controparti', route: '/parti-controparti' },
 ];
 
-export default function ResponsiveAppBar({ drawerWidth = 50, onButtonClick }) {
-  const [activeItem, setActiveItem] = React.useState("Dashboard");
-  const [hoverIndex, setHoverIndex] = React.useState(null); // Per sapere su quale icona si sta passando il mouse
-
-  const handleItemClick = (item) => {
-    setActiveItem(item.label);
-    if (item.route) onButtonClick(item.route);
-  };
-
-  // Gestisce il movimento del mouse su un ListItemButton
-  const handleMouseEnter = (index) => {
-    setHoverIndex(index);
-  };
-
-  // Gestisce quando il mouse esce da un ListItemButton
-  const handleMouseLeave = () => {
-    setHoverIndex(null);
-  };
-
-  const drawer = (
-    <div style={{ height: '100%' }}>
-      <Toolbar
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          padding: '0 8px',
-        }}
-      >
-        {/* Logo MedArb */}
-        <img
-          src={logo}
-          width="68px"
-          style={{
-            marginRight: '1px',
-            transition: 'width 0.3s ease-in-out',
-          }}
-          alt="Logo"
-        />
-      </Toolbar>
-
-      <List
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'space-between',
-          height: 'calc(100vh - 72px - 1px)',
-          overflow: 'hidden',
-          padding: '0',
-        }}
-      >
-        {/* Loop sugli elementi del menu */}
-        {menuItems.map((item, index) => {
-          const isHovered = hoverIndex === index; // L'icona su cui il mouse è attualmente
-          const iconScale = isHovered ? 'scale(1.2)' : 'scale(1)'; // Ingrandimento durante l'hover
-
-          return (
-            <ListItemButton
-              key={item.label}
-              disableRipple
-              onMouseEnter={() => handleMouseEnter(index)} // Ingrandisce l'icona quando si passa sul ListItemButton
-              onMouseLeave={handleMouseLeave} // Reset dell'icona quando si esce
-              sx={{
-                display: 'flex',
-                justifyContent: 'center',
-                padding: '8px 0', // Riduzione padding verticale
-                cursor: 'default', // Il puntatore del mouse non cambia sull'intero bottone
-                backgroundColor: 'transparent', // Rimuovi completamente il background color
-                '&:hover': {
-                  backgroundColor: 'transparent', // Nessun background color sull'hover
-                },
-              }}
-            >
-              {/* Contenitore solo per l'icona con onClick */}
-              <Box
-                sx={{
-                  display: 'flex',
-                  justifyContent: 'center',
-                  alignItems: 'center',
-                }}
-              >
-                <ListItemIcon
-                  onClick={() => handleItemClick(item)} // Click valido solo sull'icona
-                  sx={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    transform: iconScale, 
-                    transition: 'transform 0.2s ease-in-out',
-                    minWidth: 0, 
-                    cursor: 'pointer', 
-                  }}
-                >
-                  <Tooltip title={item.label} placement="right">
-                    {React.cloneElement(item.icon, {
-                      sx: {
-                        color: activeItem === item.label ? '#f0f4f8' : '#3e3e3e', 
-                        transition: 'color 0.3s ease-in-out, transform 0.2s ease-in-out',
-                      },
-                    })}
-                  </Tooltip>
-                </ListItemIcon>
-              </Box>
-            </ListItemButton>
-          );
-        })}
-      </List>
-    </div>
-  );
+// Componente principale DrawerAppBar
+function DrawerAppBar(props) {
+  const { window } = props;
+  const container =
+    window !== undefined ? () => window().document.body : undefined;
 
   return (
-    <Box sx={{ width: 0, height: 0 }}>
-      <Drawer
-        variant="permanent"
-        open={true}
+    <Box sx={{ display: 'flex', flexDirection: 'column' }}>
+      <CssBaseline />
+
+      {/* Sezione superiore: nome azienda, sottotitolo e logo della Repubblica */}
+      <AppBar
+        position="static"
         sx={{
-          width: `${drawerWidth}px`,
-          height: '98vh',
-          '& .MuiDrawer-paper': {
-            width: `${drawerWidth}px`,
-            background: 'linear-gradient(180deg, #A6C8E5 0%, #467BAE 100%)', // Colore semi-trasparente della navbar
-            boxShadow: '0px 8px 20px rgba(0, 0, 0, 0.15)', // Ombra per dare profondità
-            height: '98vh',
-            margin: '7px 0 4px 6px',
-            borderRadius: '18px',
-          },
+          backgroundColor: '#fff', // Sfondo bianco
+          boxShadow: 'none',
+          borderBottom: '1px solid #ccc', // Separazione sottile
+          justifyContent: 'center',
         }}
       >
-        {drawer}
-      </Drawer>
+        <Toolbar
+          sx={{
+            maxHeight: '90px',
+            px: 2,
+            display: 'flex',
+            justifyContent: 'space-between', // Logo MedArb a sinistra e logo Repubblica a destra
+            alignItems: 'center',
+            padding: '0 clamp(2.1rem, 5%, 3rem)',
+          }}
+        >
+          {/* Logo MedArb e Nome azienda */}
+          <Box sx={{ display: 'flex', alignItems: 'center', height: '90px' }}>
+            <img src={logo} alt="Logo MedArb" width="102px" height="97px" />
+
+            {/* Nome e sottotitolo dell'azienda */}
+            <Box
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                justifyContent: 'center',
+                marginBottom: '13px',
+                marginLeft: '-0.5rem',
+              }}
+            >
+              <Typography
+                variant="h5"
+                sx={{
+                  fontSize: '2.5rem',
+                  color: '#192d4d', // Blu coerente con la navbar e il logo
+                  fontWeight: 'bold',
+                  letterSpacing: 1,
+                }}
+              >
+                MedArb
+              </Typography>
+              <Typography
+                variant="subtitle1"
+                sx={{
+                  color: '#192d4d', // Colore più leggero per il sottotitolo
+                }}
+              >
+                Risoluzione Mediata delle Controversie
+              </Typography>
+            </Box>
+          </Box>
+
+          {/* Logo Repubblica Italiana a destra */}
+          <Box sx={{ display: 'flex', alignItems: 'center', height: '90px', paddingBottom: '15px' }}>
+            <img
+              src={repubblicaLogo}
+              alt="Logo Repubblica Italiana"
+              width="54px"
+              height="54px"
+            />
+          </Box>
+        </Toolbar>
+      </AppBar>
+
+      {/* Sezione inferiore: pulsanti di navigazione senza icone */}
+      <AppBar
+        position="static"
+        sx={{
+          backgroundColor: '#0D47A1', // Blu navy scuro per i pulsanti
+          minHeight: '48px !important', // Altezza ridotta per adattarsi allo stile
+          boxShadow: 'none',
+        }}
+      >
+        <Toolbar
+          sx={{
+            minHeight: '48px !important',
+            paddingLeft: '48px !important',
+            justifyContent: 'start', 
+          }}
+        >
+          <Box
+            sx={{
+              display: 'flex',
+              gap: 3, // Spaziatura tra i pulsanti
+            }}
+          >
+            {navItems.map((item) => (
+              <Button
+                key={item.label}
+                sx={{
+                  color: '#fff',
+                  textTransform: 'none',
+                  fontSize: '1rem',
+                }}
+              >
+                {item.label}
+              </Button>
+            ))}
+          </Box>
+        </Toolbar>
+      </AppBar>
+
+      {/* Spazio riservato per il contenuto principale */}
+      <Box
+        component="main"
+        sx={{ p: 3, backgroundColor: '#F1F6FA', minHeight: '100vh' }}
+      >
+        <Toolbar />
+        <Typography variant="h5" color="textPrimary">
+          Benvenuto nel sistema di gestione della mediazione
+        </Typography>
+        {/* Aggiungi qui il contenuto della pagina */}
+      </Box>
     </Box>
   );
 }
+
+// Tipi di PropTypes per il componente
+DrawerAppBar.propTypes = {
+  window: PropTypes.func,
+};
+
+export default DrawerAppBar;
