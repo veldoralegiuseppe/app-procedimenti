@@ -38,8 +38,8 @@ export const themeOne = createTheme({
       //light: 'rgb(171 178 186)',
     },
     background: {
-      default: '#fefdfc',
-      paper: '#fefdfc',
+      default: 'white',
+      paper: 'white',
     },
   },
   components: {

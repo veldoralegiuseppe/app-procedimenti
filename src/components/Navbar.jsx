@@ -12,18 +12,21 @@ import logo from '@assets/img/logo2.png'; // Logo MedArb
 import repubblicaLogo from '@assets/img/logo-repubblica-blu.png'; // Logo Repubblica Italiana
 
 // Sezioni di navigazione (menu)
-const navItems = [
-  { label: 'Dashboard', route: '/dashboard' },
-  { label: 'Procedimenti', route: '/procedimenti' },
-  { label: 'Parti e Controparti', route: '/parti-controparti' },
-];
+const navItems = {
+  'Dashboard': {route: '/dashboard'},
+  'Procedimenti': {route: '/procedimenti/crea'},
+  'Parti e Controparti': {route: '/parti-controparti'},
+}
 
-// Componente principale DrawerAppBar
-function DrawerAppBar(props) {
-  const { window } = props;
-  const container =
-    window !== undefined ? () => window().document.body : undefined;
 
+
+function DrawerAppBar({onButtonClick}) {
+
+  const handleButtonClick = (event) => {
+    const btnLabel = event.target.value;
+    onButtonClick(navItems[btnLabel].route)
+  }
+  
   return (
     <Box sx={{ display: 'flex', flexDirection: 'column' }}>
       <CssBaseline />
@@ -45,7 +48,7 @@ function DrawerAppBar(props) {
             display: 'flex',
             justifyContent: 'space-between', // Logo MedArb a sinistra e logo Repubblica a destra
             alignItems: 'center',
-            padding: '0 clamp(2.1rem, 5%, 3rem)',
+            padding: '0 clamp(1px, 5%, 3rem) !important',
           }}
         >
           {/* Logo MedArb e Nome azienda */}
@@ -118,33 +121,23 @@ function DrawerAppBar(props) {
               gap: 3, // Spaziatura tra i pulsanti
             }}
           >
-            {navItems.map((item) => (
+            {Object.keys(navItems).map((label) => (
               <Button
-                key={item.label}
+                key={label}
+                value={label}
                 sx={{
                   color: '#fff',
                   textTransform: 'none',
                   fontSize: '1rem',
                 }}
+                onClick={handleButtonClick}
               >
-                {item.label}
+                {label}
               </Button>
             ))}
           </Box>
         </Toolbar>
       </AppBar>
-
-      {/* Spazio riservato per il contenuto principale */}
-      <Box
-        component="main"
-        sx={{ p: 3, backgroundColor: '#F1F6FA', minHeight: '100vh' }}
-      >
-        <Toolbar />
-        <Typography variant="h5" color="textPrimary">
-          Benvenuto nel sistema di gestione della mediazione
-        </Typography>
-        {/* Aggiungi qui il contenuto della pagina */}
-      </Box>
     </Box>
   );
 }

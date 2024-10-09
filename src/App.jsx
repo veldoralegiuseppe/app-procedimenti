@@ -7,8 +7,9 @@ import ResponsiveAppBar from '@components/Navbar';
 import { themeOne, ContentGrid } from '@theme/MainTheme';
 import { RouteContext, getRoute } from '@context/Route';
 
+
 const root = createRoot(document.getElementById('mainContainer'));
-const sideMenuWidth = '50px';
+
 
 root.render(<App></App>);
 
@@ -35,11 +36,11 @@ function App() {
           container 
           spacing={0} 
           sx={{
-            margin: `0 0 0 ${sideMenuWidth}`, 
-            borderRadius: '8px', // angoli arrotondati per un design simile ai tooltip
-            boxShadow: '0px 4px 10px rgba(0, 0, 0, 0.1)', // effetto ombra per dare la sensazione di sovrapposizione come i tooltip
-            backgroundColor: 'background.paper', // colore di sfondo neutro
-            padding: '12px 3rem',
+            margin: `0 !important`,
+            backgroundColor: 'background.paper',
+            padding: '2rem 5rem',
+            minHeight: '100vh',
+            minWidth: '100%',
           }}
         >
           {getRoute(path).component}
