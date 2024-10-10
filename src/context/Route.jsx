@@ -6,31 +6,38 @@ import Dashboard from '@pages/Dashboard';
 export const routes = [
   {
     path: '/dashboard',
+    label: 'Dashboard',
     component: <Dashboard />,
   },
   {
     path: '/procedimento',
+    label: 'Procedimento',
     children: [
       {
         path: '/crea',
+        label: 'Nuovo procedimento',
         component: <CreaProcedimento />,
       },
       {
         path: '/cerca',
+        label: 'Ricerca procedimento',
         component: 'Ricerca provvedimento',
       },
     ],
   },
   {
     path: '/parti',
+    label: 'Parti',
     component: 'Parti e controparti',
     children: [
       {
         path: '/crea',
+        label: 'Nuova parte',
         component: 'Crea parte',
       },
       {
         path: '/cerca',
+        label: 'Ricerca parte',
         component: 'Ricerca parte',
       },
     ],
