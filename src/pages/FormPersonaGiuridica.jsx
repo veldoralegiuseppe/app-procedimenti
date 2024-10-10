@@ -256,7 +256,7 @@ function FormPersonaGiuridica(props, ref) {
           label="Provincia"
           onChange={(provincia) => {
             let comuneSedeLegale = new Comune();
-            comuneSedeLegale.provincia = Object.assign(new Provincia(), provincia)
+            comuneSedeLegale.provincia = provincia ? Object.assign(new Provincia(), provincia) : null;
             comuneSedeLegaleRef.current.setProvincia(comuneSedeLegale.provincia);
             setParteAttuale({...parteAttuale, sedeLegale: comuneSedeLegale })
           }}
@@ -269,7 +269,7 @@ function FormPersonaGiuridica(props, ref) {
           provincia={parteAttuale.provincia}
           label="Comune"
           onChange={(comune) => {
-            let comuneSedeLegale = comune;
+            let comuneSedeLegale = comune ? comune : new Comune();
             comuneSedeLegale.provincia = parteAttuale.sedeLegale.provincia;
             setCapSedeLegale(
               comuneSedeLegale && comuneSedeLegale.cap
