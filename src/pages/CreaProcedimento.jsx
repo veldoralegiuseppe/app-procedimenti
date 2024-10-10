@@ -54,7 +54,7 @@ export default function CreaProcedimento() {
       variant="h4"
       sx={{
         color: theme.palette.text.primary,
-        fontSize: '1.777rem',
+        fontSize: '2rem',
         fontWeight: 700,
       }}
     >
@@ -62,7 +62,7 @@ export default function CreaProcedimento() {
     </Typography>
     <Breadcrumbs />
   </Box>
-  <Typography variant="body1" sx={{ padding: '16px 0',}}>
+  <Typography variant="body1" sx={{ padding: '16px 0', fontSize: '1.1rem'}}>
   Completa i passaggi guidati inserendo le informazioni  sulla mediazione, dati delle parti coinvolte e i dettagli del caso. Al termine, verifica i dati e conferma per finalizzare il nuovo procedimento.
   </Typography>
 </div>

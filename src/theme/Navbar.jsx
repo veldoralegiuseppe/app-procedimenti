@@ -56,12 +56,13 @@ export const StyledButton = styled(Button)({
   color: '#fff',
   display: 'flex',
   alignItems: 'center',
+  fontSize: '1.1rem',
   position: 'relative', // Necessario per posizionare l'::after relativo al testo del button
   '&::after': {
     content: '""',
     position: 'absolute',
     left: 0,
-    bottom: '5.5px', // Posiziona la linea leggermente più in basso
+    bottom: '4.5px', // Posiziona la linea leggermente più in basso
     height: '1px',
     width: '0%',
     backgroundColor: '#fff', // Colore della linea

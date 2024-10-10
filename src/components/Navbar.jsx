@@ -181,7 +181,12 @@ function Navbar({ onButtonClick }) {
                     />
                     <ul style={{ padding: '4px 0', margin: 0 }}>
                       {route.children.map((child, index) => (
-                        <StyledLi key={`${route.path}-${child.path}`}>
+                        <StyledLi
+                          key={`${route.path}-${child.path}`}
+                          onClick={() =>
+                            handleMenuItemClick(`${route.path}${child.path}`)
+                          }
+                        >
                           {child.icon && (
                             <SvgIcon
                               sx={{ color: '#0D47A1', fontSize: '20px' }}
@@ -189,12 +194,7 @@ function Navbar({ onButtonClick }) {
                               {child.icon}
                             </SvgIcon>
                           )}
-                          <StyledLink
-                            href="#"
-                            onClick={() =>
-                              handleMenuItemClick(`${route.path}${child.path}`)
-                            }
-                          >
+                          <StyledLink href="#">
                             <LinkText className="link-text">
                               {child.label || ''}
                             </LinkText>
