@@ -55,7 +55,7 @@ export default function CreaProcedimento() {
       sx={{
         color: theme.palette.text.primary,
         fontSize: '1.777rem',
-        fontWeight: 800,
+        fontWeight: 700,
       }}
     >
       Nuovo Procedimento

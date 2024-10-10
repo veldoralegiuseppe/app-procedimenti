@@ -11,6 +11,7 @@ export default function IconBreadcrumbs() {
   const theme = useTheme();
 
   function handleClick(requestPath) {
+    console.log(requestPath)
     if (getRoute(requestPath).component) setCurrentPath(requestPath);
   }
 

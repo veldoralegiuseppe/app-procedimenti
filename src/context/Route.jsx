@@ -9,7 +9,7 @@ export const routes = [
     component: <Dashboard />,
   },
   {
-    path: '/procedimenti',
+    path: '/procedimento',
     children: [
       {
         path: '/crea',

@@ -14,8 +14,8 @@ import repubblicaLogo from '@assets/img/logo-repubblica-blu.png'; // Logo Repubb
 // Sezioni di navigazione (menu)
 const navItems = {
   'Dashboard': {route: '/dashboard'},
-  'Procedimenti': {route: '/procedimenti/crea'},
-  'Parti e Controparti': {route: '/parti-controparti'},
+  'Procedimento': {route: '/procedimento/crea'},
+  'Parti': {route: '/parti'},
 }
 
 
