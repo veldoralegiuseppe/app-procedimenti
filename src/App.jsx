@@ -3,7 +3,7 @@ import { createRoot } from 'react-dom/client';
 import { ThemeProvider } from '@mui/material/styles';
 import { CssBaseline } from '@mui/material/';
 
-import ResponsiveAppBar from '@components/Navbar';
+import Navbar from '@components/Navbar';
 import { themeOne, ContentGrid } from '@theme/MainTheme';
 import { RouteContext, getRoute } from '@context/Route';
 
@@ -23,7 +23,7 @@ function App() {
     >
       <ThemeProvider theme={themeOne}>
         <CssBaseline />
-        <ResponsiveAppBar 
+        <Navbar 
           onButtonClick={setPath} 
           sx={{
             transition: 'background-color 0.3s ease', // transizione per cambio di colore
@@ -31,7 +31,7 @@ function App() {
               backgroundColor: 'primary.main', // effetto hover
             },
           }}
-        ></ResponsiveAppBar>
+        ></Navbar>
         <ContentGrid
           container 
           spacing={0} 

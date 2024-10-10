@@ -16,7 +16,7 @@ import repubblicaLogo from '@assets/img/logo-repubblica-blu.png';
 import { routes } from '@context/Route';
 import { StyledLi, StyledLink, LinkText, dropdownFadeIn } from '@theme/Navbar';
 
-function DrawerAppBar({ onButtonClick }) {
+function Navbar({ onButtonClick }) {
   // Layout
   const menuBackgroundColor = '#cfe6f6';
 
@@ -214,8 +214,8 @@ function DrawerAppBar({ onButtonClick }) {
   );
 }
 
-DrawerAppBar.propTypes = {
+Navbar.propTypes = {
   onButtonClick: PropTypes.func,
 };
 
-export default DrawerAppBar;
+export default Navbar;
