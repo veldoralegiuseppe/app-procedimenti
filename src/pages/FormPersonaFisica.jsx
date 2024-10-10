@@ -454,69 +454,84 @@ function FormPersonaFisica(props, ref) {
 
         {/* Data di nascita */}
         <LocalizationProvider
-          dateAdapter={AdapterDayjs}
-          adapterLocale="it"
-          localeText={
-            itIT.components.MuiLocalizationProvider.defaultProps.localeText
-          }
-        >
-          <DatePicker
-            disabled={anagraficiDisabilitati}
-            label="Data di nascita"
-            value={
-              parteAttuale.dataNascita ? dayjs(parteAttuale.dataNascita) : null
-            }
-            onChange={(date) => {
-              const formattedDate = date ? date.format('YYYY-MM-DD') : null;
-              setParteAttuale({ ...parteAttuale, dataNascita: formattedDate });
-            }}
-            slotProps={{
-              textField: {
-                size: 'small',
-                sx: {
-                  ...textFieldSx(theme),
-                  minWidth: '246px',
-                  maxWidth: '250px',
-                  '& .MuiOutlinedInput-root': {
-                    '& fieldset': {
-                      borderWidth: '1px', // Imposta lo spessore del bordo a 1px
-                    },
-                    '&:hover fieldset': {
-                      borderColor: theme.palette.logo.secondary, // Colore del bordo su hover
-                    },
-                    '&.Mui-focused fieldset': {
-                      borderColor: theme.palette.logo.secondary, // Colore del bordo su focus
-                      borderWidth: '1px', // Mantiene lo spessore del bordo a 1px anche in focus
-                    },
-                  },
-                  '& .MuiInputLabel-outlined': {
-                    color: labelColor, // Colore di default della label
-                    transform: 'translate(14px, 8px) scale(1)', // Posizionamento centrato di default
-                  },
-                  '&:hover .MuiInputLabel-root:not(.Mui-disabled)': {
-                    color: theme.palette.logo.secondary, // Cambia il colore della label su hover
-                  },
-                  '& .MuiInputLabel-outlined.Mui-focused': {
-                    color: theme.palette.logo.secondary, // Cambia il colore della label quando è in focus
-                  },
-                  '& .MuiInputLabel-outlined.Mui-disabled': {
-                    color: theme.palette.text.disabled, // Colore della label quando è disabilitata
-                  },
-                  '& .MuiInputLabel-outlined.MuiInputLabel-shrink': {
-                    transform: 'translate(14px, -8px) scale(0.75)', // Posizionamento della label ridotta
-                  },
-                  '& .MuiSvgIcon-root': {
-                    color: labelColor, // Colore di default dell'icona del calendario
-                  },
-                  '&:hover .MuiSvgIcon-root, &.Mui-focused .MuiSvgIcon-root': {
-                    color: theme.palette.logo.secondary, // Cambia il colore dell'icona su hover e focus
-                  },
-                },
-                disabled: anagraficiDisabilitati,
-              },
-            }}
-          />
-        </LocalizationProvider>
+  dateAdapter={AdapterDayjs}
+  adapterLocale="it"
+  localeText={
+    itIT.components.MuiLocalizationProvider.defaultProps.localeText
+  }
+>
+  <DatePicker
+    disabled={anagraficiDisabilitati}
+    label="Data di nascita"
+    value={
+      parteAttuale.dataNascita ? dayjs(parteAttuale.dataNascita) : null
+    }
+    onChange={(date) => {
+      const formattedDate = date ? date.format('YYYY-MM-DD') : null;
+      setParteAttuale({ ...parteAttuale, dataNascita: formattedDate });
+    }}
+    slotProps={{
+      textField: {
+        size: 'small',
+        sx: {
+          ...textFieldSx(theme),
+          minWidth: '246px',
+          maxWidth: '250px',
+          '& .MuiOutlinedInput-root': {
+            backgroundColor: anagraficiDisabilitati
+              ? '#efefef73 !important'
+              : 'inherit', // Colore di sfondo per stato disabilitato
+            '& fieldset': {
+              borderWidth: '1px',
+              borderColor: anagraficiDisabilitati
+                ? '#eaeaea !important'
+                : 'rgba(0, 0, 0, 0.23)',
+            },
+            '&:hover fieldset:not(.Mui-disabled)': {
+              borderColor: theme.palette.logo.secondary, // Colore del bordo su hover solo se non disabilitato
+            },
+            '&.Mui-focused fieldset:not(.Mui-disabled)': {
+              borderColor: theme.palette.logo.secondary, // Colore del bordo quando in focus solo se non disabilitato
+              borderWidth: '1px',
+            },
+          },
+          '& .MuiInputBase-input.Mui-disabled': {
+            color: 'rgba(0, 0, 0, 0.38)', // Colore del testo su stato disabilitato
+          },
+          '& .MuiInputLabel-outlined': {
+            color: labelColor, // Colore di default della label
+            transform: 'translate(14px, 8px) scale(1)', // Posizionamento centrato di default
+          },
+          '&:hover .MuiInputLabel-root:not(.Mui-disabled)': {
+            color: theme.palette.logo.secondary, // Cambia il colore della label su hover solo se non disabilitato
+          },
+          '& .MuiInputLabel-outlined.Mui-focused:not(.Mui-disabled)': {
+            color: theme.palette.logo.secondary, // Cambia il colore della label quando è in focus solo se non disabilitato
+          },
+          '& .MuiInputLabel-outlined.Mui-disabled': {
+            color: 'rgba(0, 0, 0, 0.38)', // Colore della label quando è disabilitata
+          },
+          '& .MuiInputLabel-outlined.MuiInputLabel-shrink': {
+            transform: 'translate(14px, -8px) scale(0.75)', // Posizionamento della label ridotta
+          },
+          '& .MuiSvgIcon-root': {
+            color: labelColor, // Colore di default dell'icona del calendario
+            transition: 'color 0.3s ease', // Transizione per il cambiamento di colore
+          },
+          '&:hover .MuiSvgIcon-root:not(.Mui-disabled), &.Mui-focused .MuiSvgIcon-root:not(.Mui-disabled)': {
+            color: theme.palette.logo.secondary, // Cambia il colore dell'icona su hover e focus solo se non disabilitato
+          },
+          // Aggiungi questa regola per assicurarti che lo stato disabilitato abbia priorità
+          '& .Mui-disabled .MuiSvgIcon-root': {
+            color: 'rgba(0, 0, 0, 0.38) !important', // Colore dell'icona quando disabilitata, forza il colore
+          },
+        },
+        disabled: anagraficiDisabilitati,
+      },
+    }}
+  />
+</LocalizationProvider>
+
 
         {/* Sesso */}
         <FormControl
@@ -646,7 +661,7 @@ function FormPersonaFisica(props, ref) {
             setCapResidenza(comune?.cap || '');
             setParteAttuale({
               ...parteAttuale,
-              residenza: comuneResidenza
+              residenza: comuneResidenza,
             });
           }}
           sx={{ ...textFieldSx(theme), minWidth: '246px', maxWidth: '250px' }}

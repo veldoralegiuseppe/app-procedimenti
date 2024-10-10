@@ -3,7 +3,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import { useTheme } from '@mui/material/styles';
 import Paper from '@mui/material/Paper';
 import * as ComuniUtils from '@assets/js/comuni';
-import { CssTextField } from '@theme/MainTheme';
+import { CssTextField, labelColor } from '@theme/MainTheme';
 
 function ProvinciaSelect(props, ref) {
   const [error, setError] = React.useState(null);
@@ -38,10 +38,12 @@ function ProvinciaSelect(props, ref) {
   // Imposta il ref per consentire l'accesso alla funzione setProvincia
   React.useImperativeHandle(ref, () => ({
     setProvincia(provincia) {
-      if (!provincia || 
-        Object.values(provincia).every((value) => value === undefined)) {
+      if (
+        !provincia ||
+        Object.values(provincia).every((value) => value === undefined)
+      ) {
         setSelectedProvince(null);
-        return
+        return;
       }
 
       const matchedProvince = province.find(
@@ -95,9 +97,29 @@ function ProvinciaSelect(props, ref) {
           {option.nome.toLocaleUpperCase()}
         </li>
       )}
-      sx={{ ...props.sx, display: 'inline-block' }}
+      sx={{
+        ...props.sx,
+        display: 'inline-block',
+        '& .MuiSvgIcon-root': {
+          color: props.disabled || isLoading ? 'rgba(0, 0, 0, 0.38) !important' : labelColor, // Colore dell'icona disabilitata
+          transition: 'color 0.3s ease', // Transizione per eventuali cambiamenti di colore
+        },
+        // Aumenta la specificità per gestire correttamente lo stato di hover quando disabilitato
+        '&.Mui-disabled .MuiOutlinedInput-root:hover .MuiSvgIcon-root': {
+          color: 'rgba(0, 0, 0, 0.38) !important', // Assicura che l'icona rimanga disabilitata anche su hover
+          fill: 'rgba(0, 0, 0, 0.38) !important', // Imposta il fill per forzare il colore anche nel caso venga specificato altrove
+        },
+        '& .MuiOutlinedInput-root:hover .MuiSvgIcon-root': {
+          color: props.disabled || isLoading ? 'rgba(0, 0, 0, 0.38) !important' : theme.palette.logo.secondary, // Cambia il colore su hover solo se non è disabilitato
+          fill: props.disabled || isLoading ? 'rgba(0, 0, 0, 0.38) !important' : theme.palette.logo.secondary, // Cambia il colore di fill solo se non è disabilitato
+        },
+      }}
+      
+      
+      
+      
       onChange={(event, newValue) => {
-        console.log(newValue)
+        console.log(newValue);
         setSelectedProvince(newValue);
         if (props.onChange) {
           props.onChange(newValue); // Chiama il callback onChange passato come prop
