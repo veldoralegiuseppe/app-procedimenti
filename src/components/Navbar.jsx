@@ -7,29 +7,19 @@ import {
   Toolbar,
   Typography,
   Button,
+  SvgIcon,
 } from '@mui/material';
 import KeyboardArrowDownOutlinedIcon from '@mui/icons-material/KeyboardArrowDownOutlined';
-import { keyframes } from '@mui/system';
 
 import logo from '@assets/img/logo2.png';
 import repubblicaLogo from '@assets/img/logo-repubblica-blu.png';
 import { routes } from '@context/Route';
-
-// Animazione `dropdownFadeIn` usando keyframes
-const dropdownFadeIn = keyframes`
-  from {
-    opacity: 0;
-    transform: translateY(-10%);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-`;
+import { StyledLi, StyledLink, LinkText, dropdownFadeIn } from '@theme/Navbar';
 
 function DrawerAppBar({ onButtonClick }) {
-  // Layout 
+  // Layout
   const menuBackgroundColor = '#cfe6f6';
+
   // State
   const [openMenu, setOpenMenu] = useState(null);
 
@@ -39,6 +29,7 @@ function DrawerAppBar({ onButtonClick }) {
   // Handle
   const handleMenuClick = (label, hasChildren) => {
     if (!hasChildren) {
+      setOpenMenu(null)
       onButtonClick(label);
     } else {
       setOpenMenu(openMenu === label ? null : label);
@@ -95,6 +86,8 @@ function DrawerAppBar({ onButtonClick }) {
                   fontSize: '2.5rem',
                   color: '#192d4d',
                   fontWeight: 'bold',
+                  lineHeight: '15px',
+                  marginBottom: '12px',
                 }}
               >
                 MedArb
@@ -109,6 +102,7 @@ function DrawerAppBar({ onButtonClick }) {
             alt="Logo Repubblica Italiana"
             width="54"
             height="54"
+            style={{ marginBottom: '12px' }}
           />
         </Toolbar>
       </AppBar>
@@ -188,22 +182,25 @@ function DrawerAppBar({ onButtonClick }) {
                     />
                     <ul style={{ padding: '4px 0', margin: 0 }}>
                       {route.children.map((child, index) => (
-                        <li key={index} style={{ listStyle: 'none' }}>
-                          <a
+                        <StyledLi key={`${route.path}-${child.path}`}>
+                          {child.icon && (
+                            <SvgIcon
+                              sx={{ color: '#0D47A1', fontSize: '20px' }}
+                            >
+                              {child.icon}
+                            </SvgIcon>
+                          )}
+                          <StyledLink
                             href="#"
                             onClick={() =>
                               handleMenuItemClick(`${route.path}${child.path}`)
                             }
-                            style={{
-                              display: 'block',
-                              padding: '8px 16px',
-                              color: '#0D47A1',
-                              textDecoration: 'none',
-                            }}
                           >
-                            {child.label || ''}
-                          </a>
-                        </li>
+                            <LinkText className="link-text">
+                              {child.label || ''}
+                            </LinkText>
+                          </StyledLink>
+                        </StyledLi>
                       ))}
                     </ul>
                   </Box>

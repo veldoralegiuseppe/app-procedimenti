@@ -1,5 +1,8 @@
 import * as React from 'react';
 import { createContext } from 'react';
+import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
+import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
+
 import CreaProcedimento from '@pages/CreaProcedimento.jsx';
 import Dashboard from '@pages/Dashboard';
 
@@ -16,10 +19,12 @@ export const routes = [
       {
         path: '/crea',
         label: 'Nuovo procedimento',
+        icon:  <AddOutlinedIcon />,
         component: <CreaProcedimento />,
       },
       {
         path: '/cerca',
+        icon: <SearchOutlinedIcon/>,
         label: 'Ricerca procedimento',
         component: 'Ricerca provvedimento',
       },

@@ -1,68 +1,50 @@
-import { styled } from '@mui/system';
-import AppBar from '@mui/material/AppBar';
-import MenuIcon from '@mui/icons-material/Menu';
-import Toolbar from '@mui/material/Toolbar';
-import ListItemButton from '@mui/material/ListItemButton';
-import { Typography } from '@mui/material';
+import { styled, keyframes } from '@mui/system';
 
-export const Header = styled(AppBar)(({ theme }) =>({
-    backgroundColor: theme.palette.background.default,
-    boxShadow: 'none',
-    display: 'flex',
-    justifyContent: 'space-between',
-    [theme.breakpoints.up('md')]: {
-      justifyContent: 'flex-end',
-    }
-}));
-
-export const HamburgerButton = styled(MenuIcon)(({ theme }) =>({
-    color: theme.palette.primary.main,
-    fontSize: '28px',
-    borderRadius: '8px',
-    padding: '3px',
-    backgroundColor: theme.palette.primary.light,
-    transition: 'background-color .2s ease-in-out 0s, color .1s ease-in-out 0s',
-    "&:hover": {
-      backgroundColor: theme.palette.primary.main,
-      color: 'white',
-    }
-}));
-
-export const ReactiveToolbar = styled(Toolbar)(({ theme }) =>({
-    display: 'flex',
-    justifyContent: 'space-between',
-    [theme.breakpoints.up('md')]: {
-      justifyContent: 'flex-end',
-    }
-}));
-
-export const NavbarListItemButton = styled(ListItemButton)(({ theme }) =>({
-  borderRadius: '8px',
-  color: theme.palette.text.primary,
-  paddingLeft: '11px',
-
-  '&:hover':{
-    backgroundColor: theme.palette.primary.light,
+export const StyledLi = styled('li')({
+  listStyle: 'none',
+  display: 'flex',
+  alignItems: 'center',
+  justifyContent: 'center',
+  padding: '8px',
+  gap: '8px',
+  '&:hover .link-text::after': {
+    width: '100%', // La linea appare quando si passa con il mouse sull'`<li>`
   },
+  '&:hover': {
+    cursor: 'pointer',
+  },
+});
 
-  "&.Mui-selected, &.Mui-selected:hover": {
-    'svg':{ color: theme.palette.primary.main,},
-    color: theme.palette.primary.main,
-    backgroundColor: theme.palette.primary.light,
+export const StyledLink = styled('a')({
+  display: 'inline-block',
+  color: '#0D47A1',
+  textDecoration: 'none',
+  flex: '1',
+});
 
-    "& .MuiListItemText-primary":{fontWeight: '500'}
-  }
-}));
+export const LinkText = styled('span')({
+  position: 'relative',
+  '&::after': {
+    content: '""',
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: '-2px', // Posiziona la linea leggermente più in basso
+    height: '1px',
+    backgroundColor: '#0D47A1',
+    width: '0%',
+    transition: 'width 0.2s ease-in-out',
+    margin: '0 auto', // Centra la linea rispetto al testo
+  },
+});
 
-export const SectionText = styled(Typography)(({ theme }) =>({
-  color: theme.palette.logo.primary, 
-  fontFamily:'Public Sans', 
-  fontWeight: '500', 
-  fontSize: '0.9rem', 
-  margin: '0 4px 10px 0',
-  lineHeight: '1.66',
-
-}));
-
-
-  
+export const dropdownFadeIn = keyframes`
+from {
+  opacity: 0;
+  transform: translateY(-10%);
+}
+to {
+  opacity: 1;
+  transform: translateY(0);
+}
+`;
