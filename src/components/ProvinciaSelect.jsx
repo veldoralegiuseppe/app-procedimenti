@@ -38,7 +38,8 @@ function ProvinciaSelect(props, ref) {
   // Imposta il ref per consentire l'accesso alla funzione setProvincia
   React.useImperativeHandle(ref, () => ({
     setProvincia(provincia) {
-      if (!provincia) {
+      if (!provincia || 
+        Object.values(provincia).every((value) => value === undefined)) {
         setSelectedProvince(null);
         return
       }
@@ -96,6 +97,7 @@ function ProvinciaSelect(props, ref) {
       )}
       sx={{ ...props.sx, display: 'inline-block' }}
       onChange={(event, newValue) => {
+        console.log(newValue)
         setSelectedProvince(newValue);
         if (props.onChange) {
           props.onChange(newValue); // Chiama il callback onChange passato come prop

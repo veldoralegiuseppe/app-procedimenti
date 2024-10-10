@@ -83,39 +83,48 @@ export const ContentGrid = styled(Grid)({
 });
 
 export const CssSelect = styled(Select)(({ theme }) => ({
+  // Stile per lo stato disabilitato del componente
   '&.Mui-disabled': {
-    backgroundColor: '#efefef73',
+    backgroundColor: '#efefef73 !important', // Colore di sfondo per lo stato disabilitato
+  },
+  '&.Mui-disabled .MuiOutlinedInput-notchedOutline': {
+    borderColor: '#eaeaea !important', // Colore del bordo per lo stato disabilitato
+  },
+  '&.Mui-disabled .MuiSvgIcon-root': {
+    fill: labelColor + ' !important', // Mantieni il colore di default dell'icona quando il componente è disabilitato
   },
   '& .MuiSvgIcon-root': {
-    fill: labelColor, // Colore di default della freccia
+    fill: labelColor, // Colore di default dell'icona
+    transition: 'fill 0.3s ease', // Transizione smooth per il colore dell'icona
   },
-  '&:hover .MuiSvgIcon-root:not(.Mui-error), &.Mui-focused .MuiSvgIcon-root:not(.Mui-error)':
-    {
-      fill: theme.palette.logo.secondary, // Colore secondario quando selezionato o su hover
-    },
-  '& .MuiSvgIcon-root.Mui-error': {
-    fill: theme.palette.error.main, // Colore della freccia in caso di errore
+  '&:hover:not(.Mui-disabled) .MuiSvgIcon-root:not(.Mui-error, .Mui-disabled)': {
+    fill: theme.palette.logo.secondary, // Cambia il colore della freccia su hover solo se non è disabilitata e non in errore
   },
   '& .MuiOutlinedInput-root': {
-    '&:hover fieldset:not(.Mui-error)': {
-      borderColor: theme.palette.logo.secondary, // Colore del bordo su hover se non c'è errore
+    '&:hover fieldset:not(.Mui-error):not(.Mui-disabled)': {
+      borderColor: theme.palette.logo.secondary, // Colore del bordo su hover se non c'è errore e non è disabilitato
     },
-    '&.Mui-focused fieldset:not(.Mui-error)': {
-      borderColor: theme.palette.logo.secondary, // Colore del bordo quando in focus se non c'è errore
+    '&.Mui-focused fieldset:not(.Mui-error):not(.Mui-disabled)': {
+      borderColor: theme.palette.logo.secondary, // Colore del bordo quando in focus se non c'è errore e non è disabilitato
+    },
+    '&.Mui-disabled fieldset': {
+      borderColor: '#eaeaea !important', // Colore del bordo quando è disabilitato
     },
     '& .Mui-error fieldset': {
       borderColor: theme.palette.error.main, // Colore del bordo in caso di errore
     },
   },
   // Stili per la label
-  '&:hover .MuiInputLabel-root:not(.Mui-error), &.Mui-focused .MuiInputLabel-root:not(.Mui-error)':
-    {
-      color: theme.palette.logo.secondary, // Colore della label su hover o focus
-    },
+  '&:hover:not(.Mui-disabled) .MuiInputLabel-root:not(.Mui-error)': {
+    color: theme.palette.logo.secondary, // Colore della label su hover se non è disabilitata e non è in errore
+  },
   '& .MuiInputLabel-root.Mui-error': {
     color: theme.palette.error.main, // Colore della label in caso di errore
   },
 }));
+
+
+
 
 export const CssTextField = styled(TextField)(({ theme }) => ({
   '& .MuiInputLabel-root:not(.Mui-error, .Mui-disabled, .Mui-focused)': {

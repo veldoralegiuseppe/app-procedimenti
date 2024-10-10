@@ -32,16 +32,19 @@ function ComuneSelect(props, ref) {
 
   // Effetto che si attiva quando cambia la provincia
   React.useEffect(() => {
+    console.log(provincia);
     if (provincia) {
       // Filtra i comuni in base alla provincia selezionata
       const comuniFiltrati = comuni.filter(
         (comune) =>
           comune.provincia &&
-          comune.provincia.nome.toLowerCase() === provincia.nome.toLowerCase()
+          comune.provincia.nome?.toLowerCase() === provincia.nome?.toLowerCase()
       );
       setFilteredComuni(comuniFiltrati);
     } else {
-      setFilteredComuni([]); // Se non c'è provincia, resetta i comuni filtrati
+      console.log('else');
+      setProvincia(null);
+      setFilteredComuni([]);
     }
   }, [provincia, comuni]);
 
@@ -55,12 +58,15 @@ function ComuneSelect(props, ref) {
   // Utilizzo di `useImperativeHandle` per consentire il controllo da un componente padre
   React.useImperativeHandle(ref, () => ({
     setProvincia(newProvincia) {
-      console.log('imperative')
-      if (newProvincia instanceof Provincia) {
+      if (
+        newProvincia instanceof Provincia &&
+        Object.values(newProvincia).every((value) => value !== undefined)
+      ) {
         setProvincia(newProvincia);
-        console.log(provincia)
+        console.log(provincia);
       } else {
-        resetFields(); // Se non è una provincia valida, resetta tutto
+        setProvincia(null);
+        resetFields(); 
       }
     },
     setComune(newComune) {
@@ -93,7 +99,9 @@ function ComuneSelect(props, ref) {
       options={filteredComuni}
       value={selectedComune}
       getOptionLabel={(option) => option.nome.toLocaleUpperCase()}
-      noOptionsText={!provincia ? 'Seleziona una provincia' : 'Nessun comune disponibile'}
+      noOptionsText={
+        !provincia ? 'Seleziona una provincia' : 'Nessun comune disponibile'
+      }
       onChange={(event, newValue) => {
         setSelectedComune(newValue);
         if (props.onChange) {

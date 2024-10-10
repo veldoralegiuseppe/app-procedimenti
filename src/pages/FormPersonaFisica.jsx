@@ -579,7 +579,7 @@ function FormPersonaFisica(props, ref) {
           disabled={anagraficiDisabilitati}
           onChange={(provincia) => {
             comuneNascitaRef.current.setProvincia(
-              Object.assign(new Provincia(), provincia)
+              provincia ? Object.assign(new Provincia(), provincia) : null
             );
             let comuneNascita = new Comune();
             comuneNascita.provincia = provincia;
@@ -597,7 +597,7 @@ function FormPersonaFisica(props, ref) {
           label="Comune di nascita"
           disabled={anagraficiDisabilitati}
           onChange={(comune) => {
-            let comuneNascita = comune;
+            let comuneNascita = comune ? comune : new Comune();
             comuneNascita.provincia = parteAttuale.luogoDiNascita.provincia;
             //console.log(comuneNascita);
             setParteAttuale({ ...parteAttuale, luogoDiNascita: comuneNascita });
@@ -640,14 +640,13 @@ function FormPersonaFisica(props, ref) {
           ref={comuneResidenzaRef}
           provincia={parteAttuale.provinciaResidenza}
           label="Comune di residenza"
-          onChange={(value) => {
-            setCapResidenza(value?.cap || '');
+          onChange={(comune) => {
+            let comuneResidenza = comune ? comune : new Comune();
+            comuneResidenza.provincia = parteAttuale.residenza.provincia;
+            setCapResidenza(comune?.cap || '');
             setParteAttuale({
               ...parteAttuale,
-              residenza: {
-                ...value,
-                provincia: parteAttuale.residenza.provincia,
-              },
+              residenza: comuneResidenza
             });
           }}
           sx={{ ...textFieldSx(theme), minWidth: '246px', maxWidth: '250px' }}
