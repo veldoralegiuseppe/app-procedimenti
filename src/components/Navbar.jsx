@@ -28,6 +28,8 @@ const dropdownFadeIn = keyframes`
 `;
 
 function DrawerAppBar({ onButtonClick }) {
+  // Layout 
+  const menuBackgroundColor = '#cfe6f6';
   // State
   const [openMenu, setOpenMenu] = useState(null);
 
@@ -162,7 +164,7 @@ function DrawerAppBar({ onButtonClick }) {
                       position: 'absolute',
                       top: '100%',
                       left: 0,
-                      backgroundColor: '#e2eef6',
+                      backgroundColor: menuBackgroundColor,
                       boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
                       borderRadius: 1,
                       zIndex: 10,
@@ -179,12 +181,12 @@ function DrawerAppBar({ onButtonClick }) {
                         left: 24,
                         width: 18,
                         height: 18,
-                        backgroundColor: '#e2eef6',
+                        backgroundColor: menuBackgroundColor,
                         transform: 'rotate(45deg)',
                         borderRadius: 1,
                       }}
                     />
-                    <ul style={{ padding: 0, margin: 0 }}>
+                    <ul style={{ padding: '4px 0', margin: 0 }}>
                       {route.children.map((child, index) => (
                         <li key={index} style={{ listStyle: 'none' }}>
                           <a
