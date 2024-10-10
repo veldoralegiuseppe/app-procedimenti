@@ -6,7 +6,6 @@ import {
   CssBaseline,
   Toolbar,
   Typography,
-  Button,
   SvgIcon,
 } from '@mui/material';
 import KeyboardArrowDownOutlinedIcon from '@mui/icons-material/KeyboardArrowDownOutlined';
@@ -14,7 +13,13 @@ import KeyboardArrowDownOutlinedIcon from '@mui/icons-material/KeyboardArrowDown
 import logo from '@assets/img/logo2.png';
 import repubblicaLogo from '@assets/img/logo-repubblica-blu.png';
 import { routes } from '@context/Route';
-import { StyledLi, StyledLink, LinkText, dropdownFadeIn } from '@theme/Navbar';
+import {
+  StyledLi,
+  StyledLink,
+  LinkText,
+  StyledButton,
+  dropdownFadeIn,
+} from '@theme/Navbar';
 
 function Navbar({ onButtonClick }) {
   // Layout
@@ -29,7 +34,7 @@ function Navbar({ onButtonClick }) {
   // Handle
   const handleMenuClick = (label, hasChildren) => {
     if (!hasChildren) {
-      setOpenMenu(null)
+      setOpenMenu(null);
       onButtonClick(label);
     } else {
       setOpenMenu(openMenu === label ? null : label);
@@ -124,14 +129,8 @@ function Navbar({ onButtonClick }) {
                 ref={(el) => (menuRefs.current[route.path] = el)}
                 style={{ position: 'relative' }}
               >
-                <Button
-                  sx={{
-                    color: '#fff',
-                    textTransform: 'none',
-                    fontSize: '1rem',
-                    display: 'flex',
-                    alignItems: 'center',
-                  }}
+                <StyledButton
+                  disableRipple
                   onClick={() =>
                     handleMenuClick(route.path, Boolean(route.children))
                   }
@@ -150,7 +149,7 @@ function Navbar({ onButtonClick }) {
                   }
                 >
                   {route.label || ''}
-                </Button>
+                </StyledButton>
                 {/* Lista di elementi visibile solo quando il menu è aperto e ci sono children */}
                 {openMenu === route.path && route.children && (
                   <Box
@@ -164,7 +163,7 @@ function Navbar({ onButtonClick }) {
                       zIndex: 10,
                       minWidth: '180px',
                       maxWidth: '250px',
-                      mt: 0.5,
+                      mt: '10px',
                       animation: `${dropdownFadeIn} 0.3s forwards`,
                     }}
                   >

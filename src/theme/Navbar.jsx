@@ -1,4 +1,5 @@
 import { styled, keyframes } from '@mui/system';
+import { Button } from '@mui/material';
 
 export const StyledLi = styled('li')({
   listStyle: 'none',
@@ -48,3 +49,25 @@ to {
   transform: translateY(0);
 }
 `;
+
+export const StyledButton = styled(Button)({
+  textTransform: 'none',
+  fontSize: '1rem',
+  color: '#fff',
+  display: 'flex',
+  alignItems: 'center',
+  position: 'relative', // Necessario per posizionare l'::after relativo al testo del button
+  '&::after': {
+    content: '""',
+    position: 'absolute',
+    left: 0,
+    bottom: '5.5px', // Posiziona la linea leggermente più in basso
+    height: '1px',
+    width: '0%',
+    backgroundColor: '#fff', // Colore della linea
+    transition: 'width 0.3s ease', // Effetto smooth sull'espansione della linea
+  },
+  '&:hover::after': {
+    width: '100%', // Espande la linea quando il mouse è sopra
+  },
+});
