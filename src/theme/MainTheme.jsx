@@ -83,6 +83,9 @@ export const ContentGrid = styled(Grid)({
 });
 
 export const CssSelect = styled(Select)(({ theme }) => ({
+  '& .MuiInputLabel-root:not(.Mui-error, .Mui-disabled, .Mui-focused)': {
+    color: labelColor, // Colore di default della label
+  },
   // Stile per lo stato disabilitato del componente
   '&.Mui-disabled': {
     backgroundColor: '#efefef73 !important', // Colore di sfondo per lo stato disabilitato
@@ -97,9 +100,10 @@ export const CssSelect = styled(Select)(({ theme }) => ({
     fill: labelColor, // Colore di default dell'icona
     transition: 'fill 0.3s ease', // Transizione smooth per il colore dell'icona
   },
-  '&:hover:not(.Mui-disabled) .MuiSvgIcon-root:not(.Mui-error, .Mui-disabled)': {
-    fill: theme.palette.logo.secondary, // Cambia il colore della freccia su hover solo se non è disabilitata e non in errore
-  },
+  '&:hover:not(.Mui-disabled) .MuiSvgIcon-root:not(.Mui-error, .Mui-disabled)':
+    {
+      fill: theme.palette.logo.secondary, // Cambia il colore della freccia su hover solo se non è disabilitata e non in errore
+    },
   '& .MuiOutlinedInput-root': {
     '&:hover fieldset:not(.Mui-error):not(.Mui-disabled)': {
       borderColor: theme.palette.logo.secondary, // Colore del bordo su hover se non c'è errore e non è disabilitato
@@ -123,9 +127,6 @@ export const CssSelect = styled(Select)(({ theme }) => ({
   },
 }));
 
-
-
-
 export const CssTextField = styled(TextField)(({ theme }) => ({
   '& .MuiInputLabel-root:not(.Mui-error, .Mui-disabled, .Mui-focused)': {
     color: labelColor, // Colore di default della label
@@ -133,16 +134,25 @@ export const CssTextField = styled(TextField)(({ theme }) => ({
   '& .MuiInputLabel-root.Mui-error': {
     color: theme.palette.error.main, // Colore della label in caso di errore
   },
+  '& .MuiInputLabel-root.Mui-disabled': {
+    color: 'rgba(0, 0, 0, 0.38) !important', // Colore della label quando disabilitata
+  },
   '& .MuiOutlinedInput-root': {
     input: { textTransform: 'uppercase' },
-    '&.Mui-disabled': { backgroundColor: '#efefef73' },
-    '&.Mui-disabled fieldset': { borderColor: '#eaeaea' },
-    '&:hover:not(.Mui-disabled, .Mui-error) fieldset': {
-      borderColor: theme.palette.logo.secondary,
+    '&.Mui-disabled': {
+      backgroundColor: '#efefef73', // Colore di sfondo per input disabilitato
     },
-    '&.Mui-focused.Mui-error fieldset': { borderWidth: '1.2px' },
+    '&.Mui-disabled fieldset': {
+      borderColor: '#eaeaea', // Colore del bordo quando l'input è disabilitato
+    },
+    '&:hover:not(.Mui-disabled, .Mui-error) fieldset': {
+      borderColor: theme.palette.logo.secondary, // Colore del bordo su hover se non disabilitato o in errore
+    },
+    '&.Mui-focused.Mui-error fieldset': {
+      borderWidth: '1.2px',
+    },
     '&.Mui-focused:not(.Mui-error) fieldset': {
-      border: `1.2px solid ${theme.palette.logo.secondary}`,
+      border: `1.2px solid ${theme.palette.logo.secondary}`, // Colore del bordo su focus se non in errore
     },
 
     // Icona di default
@@ -181,6 +191,7 @@ export const CssTextField = styled(TextField)(({ theme }) => ({
       borderColor: theme.palette.logo.secondary, // Colore del bordo su focus
     },
 }));
+
 
 export const ClearButton = styled(Button)(({ theme }) => ({
   // '&':{

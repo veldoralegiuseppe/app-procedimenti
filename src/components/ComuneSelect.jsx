@@ -5,7 +5,7 @@ import Paper from '@mui/material/Paper';
 import * as ComuniUtils from '@assets/js/comuni.js'; // Assicurati che questa funzione esista e funzioni correttamente
 import { Comune } from '@model/comune.js';
 import { Provincia } from '@model/provincia.js';
-import { CssTextField } from '@theme/MainTheme';
+import { CssTextField, labelColor } from '@theme/MainTheme';
 
 function ComuneSelect(props, ref) {
   const [comuni, setComuni] = React.useState([]); // Lista di tutti i comuni
@@ -108,6 +108,25 @@ function ComuneSelect(props, ref) {
           props.onChange(newValue); // Chiama la funzione passata dai props
         }
       }}
+      sx={{
+        ...props.sx,
+        display: 'inline-block',
+        '& .MuiSvgIcon-root': {
+          color: props.disabled ? 'rgba(0, 0, 0, 0.38) !important' : labelColor, // Colore dell'icona disabilitata
+          transition: 'color 0.3s ease', // Transizione smooth per eventuali cambiamenti di colore
+        },
+        '&.Mui-disabled .MuiOutlinedInput-root:hover .MuiSvgIcon-root': {
+          color: 'rgba(0, 0, 0, 0.38) !important', // Assicura che l'icona rimanga disabilitata anche su hover
+          fill: 'rgba(0, 0, 0, 0.38) !important', // Imposta il fill per forzare il colore anche nel caso venga specificato altrove
+        },
+        '& .MuiOutlinedInput-root:hover .MuiSvgIcon-root': {
+          color: props.disabled ? 'rgba(0, 0, 0, 0.38) !important' : theme.palette.logo.secondary, // Cambia il colore su hover solo se non è disabilitato
+          fill: props.disabled ? 'rgba(0, 0, 0, 0.38) !important' : theme.palette.logo.secondary, // Cambia il colore di fill solo se non è disabilitato
+        },
+        '& .MuiFormLabel-root.Mui-disabled': {
+          color: 'rgba(0, 0, 0, 0.38) !important', // Colore della label quando il componente è disabilitato
+        },
+      }}      
       isOptionEqualToValue={(option, value) => option.nome === value.nome}
       PaperComponent={({ children }) => (
         <Paper sx={{ backgroundColor: theme.palette.dropdown.primary }}>
@@ -134,16 +153,6 @@ function ComuneSelect(props, ref) {
           }
         />
       )}
-      sx={{
-        ...props.sx,
-        display: 'inline-block',
-        '& .MuiAutocomplete-inputRoot.Mui-disabled': {
-          pointerEvents: 'none',
-          '& .MuiOutlinedInput-notchedOutline': {
-            borderColor: '#eaeaea !important',
-          },
-        },
-      }}
     />
   );
 }

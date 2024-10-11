@@ -101,23 +101,30 @@ function ProvinciaSelect(props, ref) {
         ...props.sx,
         display: 'inline-block',
         '& .MuiSvgIcon-root': {
-          color: props.disabled || isLoading ? 'rgba(0, 0, 0, 0.38) !important' : labelColor, // Colore dell'icona disabilitata
-          transition: 'color 0.3s ease', // Transizione per eventuali cambiamenti di colore
+          color:
+            props.disabled || isLoading
+              ? 'rgba(0, 0, 0, 0.38) !important'
+              : labelColor, // Colore dell'icona disabilitata
+          transition: 'color 0.3s ease', // Transizione smooth per eventuali cambiamenti di colore
         },
-        // Aumenta la specificità per gestire correttamente lo stato di hover quando disabilitato
         '&.Mui-disabled .MuiOutlinedInput-root:hover .MuiSvgIcon-root': {
           color: 'rgba(0, 0, 0, 0.38) !important', // Assicura che l'icona rimanga disabilitata anche su hover
           fill: 'rgba(0, 0, 0, 0.38) !important', // Imposta il fill per forzare il colore anche nel caso venga specificato altrove
         },
         '& .MuiOutlinedInput-root:hover .MuiSvgIcon-root': {
-          color: props.disabled || isLoading ? 'rgba(0, 0, 0, 0.38) !important' : theme.palette.logo.secondary, // Cambia il colore su hover solo se non è disabilitato
-          fill: props.disabled || isLoading ? 'rgba(0, 0, 0, 0.38) !important' : theme.palette.logo.secondary, // Cambia il colore di fill solo se non è disabilitato
+          color:
+            props.disabled || isLoading
+              ? 'rgba(0, 0, 0, 0.38) !important'
+              : theme.palette.logo.secondary, // Cambia il colore su hover solo se non è disabilitato
+          fill:
+            props.disabled || isLoading
+              ? 'rgba(0, 0, 0, 0.38) !important'
+              : theme.palette.logo.secondary, // Cambia il colore di fill solo se non è disabilitato
+        },
+        '& .MuiFormLabel-root.Mui-disabled': {
+          color: 'rgba(0, 0, 0, 0.38) !important', // Colore della label quando il componente è disabilitato
         },
       }}
-      
-      
-      
-      
       onChange={(event, newValue) => {
         console.log(newValue);
         setSelectedProvince(newValue);
