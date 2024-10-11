@@ -32,7 +32,6 @@ function ComuneSelect(props, ref) {
 
   // Effetto che si attiva quando cambia la provincia
   React.useEffect(() => {
-    console.log(provincia);
     if (provincia) {
       // Filtra i comuni in base alla provincia selezionata
       const comuniFiltrati = comuni.filter(
@@ -42,7 +41,6 @@ function ComuneSelect(props, ref) {
       );
       setFilteredComuni(comuniFiltrati);
     } else {
-      console.log('else');
       setProvincia(null);
       setFilteredComuni([]);
     }
@@ -63,7 +61,6 @@ function ComuneSelect(props, ref) {
         Object.values(newProvincia).every((value) => value !== undefined)
       ) {
         setProvincia(newProvincia);
-        console.log(provincia);
       } else {
         setProvincia(null);
         resetFields(); 
@@ -98,6 +95,7 @@ function ComuneSelect(props, ref) {
       disabled={!provincia || props.disabled}
       options={filteredComuni}
       value={selectedComune}
+      id={props.id}
       getOptionLabel={(option) => option.nome.toLocaleUpperCase()}
       noOptionsText={
         !provincia ? 'Seleziona una provincia' : 'Nessun comune disponibile'

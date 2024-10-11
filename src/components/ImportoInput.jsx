@@ -280,6 +280,7 @@ export default function ImportoInput(props) {
         ...props.sx,
       }}
       label={props.label}
+      id={props.id}
       variant="outlined"
       size="small"
       required={props.required}

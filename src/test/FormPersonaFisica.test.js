@@ -4,18 +4,35 @@ import { ThemeProvider } from '@mui/material/styles';
 import '@testing-library/jest-dom';
 import { themeOne } from '@theme/MainTheme';
 import FormPersonaFisica from '@pages/FormPersonaFisica.jsx';
+import * as ComuniUtils from '@assets/js/comuni';
 
-// Mock della funzione fetch per gestire le chiamate API nei test.
-beforeAll(() => {
-  global.fetch = jest.fn(() =>
-    Promise.resolve({
-      json: () => Promise.resolve({ data: [] }), // Simula una risposta JSON.
-    })
-  );
-});
+// Mock delle chiamate getProvince e getComuni
+jest.mock('@assets/js/comuni', () => ({
+  getProvince: jest.fn(),
+  getComuni: jest.fn(),
+}));
 
-afterAll(() => {
-  global.fetch.mockClear(); // Ripristina fetch dopo tutti i test.
+beforeEach(() => {
+  // Mock della risposta di getProvince e getComuni
+  ComuniUtils.getProvince.mockResolvedValue([
+    { codice: '001', nome: 'MILANO', sigla: 'MI', regione: 'LOMBARDIA' },
+    { codice: '002', nome: 'ROMA', sigla: 'RM', regione: 'LAZIO' },
+  ]);
+  
+  ComuniUtils.getComuni.mockResolvedValue([
+    {
+      codice: '001001',
+      nome: 'MILANO',
+      codiceCatastale: 'F205',
+      provincia: { nome: 'MILANO', regione: 'LOMBARDIA' },
+    },
+    {
+      codice: '001002',
+      nome: 'ROMA',
+      codiceCatastale: 'H501',
+      provincia: { nome: 'ROMA', regione: 'LAZIO' },
+    },
+  ]);
 });
 
 test('renders the form with all required fields', async () => {
@@ -27,15 +44,28 @@ test('renders the form with all required fields', async () => {
     );
   });
 
-  // Usa `getAllByLabelText` ma controlla che ci sia almeno un elemento.
-  const nomeInputs = screen.getAllByLabelText(/Nome/i);
-  expect(nomeInputs.length).toBeGreaterThanOrEqual(1);
+  // Usa una funzione per cercare le label in modo più flessibile.
+  const nomeInput = screen.getByLabelText((content) => content.includes('Nome'));
+  const cognomeInput = screen.getByLabelText((content) => content.includes('Cognome'));
+  const avvocatoInput = screen.getByLabelText((content) => content.includes('Avvocato'));
 
-  const cognomeInputs = screen.getAllByLabelText(/Cognome/i);
-  expect(cognomeInputs.length).toBeGreaterThanOrEqual(1);
+  // Verifica che i campi obbligatori siano presenti
+  expect(nomeInput).toBeInTheDocument();
+  expect(cognomeInput).toBeInTheDocument();
+  expect(avvocatoInput).toBeInTheDocument();
+  
+  // Verifica che i campi obbligatori siano inizialmente vuoti
+  expect(nomeInput).toHaveValue('');
+  expect(cognomeInput).toHaveValue('');
+  expect(avvocatoInput).toHaveValue('');
+  
+  // Simula l'invio del form per verificare i messaggi di errore
+  fireEvent.change(nomeInput, { target: { value: '' } });
+  fireEvent.change(cognomeInput, { target: { value: '' } });
+  fireEvent.change(avvocatoInput, { target: { value: '' } });
 
-  const codiceFiscaleInputs = screen.getAllByLabelText(/Codice fiscale/i);
-  expect(codiceFiscaleInputs.length).toBeGreaterThanOrEqual(1);
+  fireEvent.click(screen.getByRole('button', { name: "Crea" }));
+
+  // Verifica la presenza dei messaggi di errore per i campi obbligatori
+  expect(await screen.findByText(/Campi obbligatori assenti/i)).toBeInTheDocument();
 });
-
-

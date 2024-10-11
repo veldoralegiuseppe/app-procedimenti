@@ -38,21 +38,18 @@ function ProvinciaSelect(props, ref) {
   // Imposta il ref per consentire l'accesso alla funzione setProvincia
   React.useImperativeHandle(ref, () => ({
     setProvincia(provincia) {
-      if (
-        !provincia ||
-        Object.values(provincia).every((value) => value === undefined)
-      ) {
+      if (!provincia || !provincia.nome) {
         setSelectedProvince(null);
         return;
       }
-
+  
+      // Cerca una provincia che corrisponda per nome e, se disponibile, anche per regione
       const matchedProvince = province.find(
         (p) =>
-          p.nome === provincia.nome &&
-          p.sigla === provincia.sigla &&
-          (!provincia.regione || p.regione === provincia.regione)
+          p.nome.toLowerCase() === provincia.nome.toLowerCase() &&
+          (!provincia.regione || p.regione.toLowerCase() === provincia.regione.toLowerCase())
       );
-
+  
       if (matchedProvince) {
         setSelectedProvince(matchedProvince); // Imposta la provincia trovata
       } else {
@@ -60,7 +57,7 @@ function ProvinciaSelect(props, ref) {
       }
     },
   }));
-
+  
   // Se c'è un errore durante il fetch
   if (error) {
     return (
@@ -79,7 +76,7 @@ function ProvinciaSelect(props, ref) {
     <Autocomplete
       disablePortal
       disabled={props.disabled || isLoading} // Disabilita se sta caricando o è disabilitato nei props
-      id="combo-box-provincia"
+      id={props.id}
       value={selectedProvince}
       noOptionsText={isLoading ? 'Caricamento...' : 'Nessun risultato'}
       options={province}

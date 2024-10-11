@@ -52,7 +52,10 @@ const textFieldSx = (theme) => ({
 
 // Main Component
 function FormPersonaFisica(props, ref) {
+  // Layout
   const theme = useTheme();
+
+  // State
   const [parteAttuale, setParteAttuale] = React.useState(new PersonaFisica());
   const [helperTextCf, setHelperTextCf] = React.useState('');
   const [capResidenza, setCapResidenza] = React.useState('');
@@ -72,7 +75,7 @@ function FormPersonaFisica(props, ref) {
     indirizzoResidenza: false,
   });
 
-  // Calcola il totale quando cambiano gli importi
+  // Effect
   React.useEffect(() => {
     const totale =
       parseImporto(parteAttuale.speseAvvio) +
@@ -85,11 +88,13 @@ function FormPersonaFisica(props, ref) {
     setTotaleSpese(totale.toFixed(2)); // Fissa il totale a due decimali
   }, [parteAttuale]);
 
+  // Ref
   const comuneNascitaRef = React.useRef();
   const provinciaNascitaRef = React.useRef();
   const comuneResidenzaRef = React.useRef();
   const provinciaResidenzaRef = React.useRef();
 
+  // Utility
   const resetForm = () => {
     setParteAttuale(new PersonaFisica()); // Reset dello stato a un nuovo oggetto PersonaFisica
     setCapResidenza(''); // Reset CAP residenza
@@ -123,76 +128,6 @@ function FormPersonaFisica(props, ref) {
 
     setAnagraficiDisabilitati(false); // Riattiva i campi anagrafici
   };
-
-  // Metodi di React.useImperativeHandle
-  const onSubmit = () => {
-    const parteCreata = Object.assign(new PersonaFisica(), parteAttuale);
-    resetForm();
-    return parteCreata;
-  };
-  const getErrors = () => {
-    const requiredFields = ['cognome', 'nome', 'rappresentanteLegale'];
-    const fieldLabels = {
-      codiceFiscale: 'Codice fiscale',
-      cognome: 'Cognome',
-      nome: 'Nome',
-      email: 'Email',
-      pecEmail: 'PEC / Email',
-      partitaIVA: 'Partita IVA',
-      denominazione: 'Denominazione',
-      rappresentanteLegale: 'Avvocato',
-      indirizzoResidenza: 'Indirizzo di residenza',
-      rappresentanteLegalePecEmail: 'PEC / Email del rappresentante legale',
-    };
-
-    let updatedErrors = { ...errors };
-    let hasErrors = false;
-    let message = '';
-
-    // Controllo dei campi obbligatori mancanti
-    const missingRequiredFields = requiredFields.filter(
-      (field) => !parteAttuale[field] || parteAttuale[field].trim() === ''
-    );
-
-    if (missingRequiredFields.length > 0) {
-      hasErrors = true;
-      message =
-        'Campi obbligatori assenti: ' +
-        missingRequiredFields.map((field) => fieldLabels[field]).join(', ');
-
-      // Aggiorna gli errori per i campi obbligatori mancanti
-      missingRequiredFields.forEach((field) => {
-        updatedErrors[field] = true;
-      });
-    }
-
-    // Controllo degli errori di altri campi che non sono tra i mancanti
-    const fieldsWithErrors = Object.keys(updatedErrors).filter(
-      (field) => updatedErrors[field] && !missingRequiredFields.includes(field)
-    ); // Non verificare i campi obbligatori mancanti
-
-    if (fieldsWithErrors.length > 0) {
-      hasErrors = true;
-      const errorFields = fieldsWithErrors
-        .map((field) => fieldLabels[field])
-        .join(', ');
-      message +=
-        (message ? '\n' : '') +
-        `Errore di compilazione dei seguenti campi: ${errorFields}`;
-    }
-
-    // Aggiorna lo stato degli errors
-    setErrors(updatedErrors);
-
-    return { hasErrors, message };
-  };
-
-  React.useImperativeHandle(ref, () => ({
-    onSubmit,
-    getErrors,
-  }));
-
-  // Utility function
   const resetAnagrafici = () => {
     setParteAttuale((prevParteAttuale) => ({
       ...prevParteAttuale,
@@ -306,11 +241,77 @@ function FormPersonaFisica(props, ref) {
       }));
     }
   };
-
   const parseImporto = (importo) => {
     //console.log(`importoInput: ${importo} - importoNumber: ${Number(importo)}`)
     return Number(importo);
   };
+
+  // Handler
+  const onSubmit = () => {
+    const parteCreata = Object.assign(new PersonaFisica(), parteAttuale);
+    resetForm();
+    return parteCreata;
+  };
+  const getErrors = () => {
+    const requiredFields = ['cognome', 'nome', 'rappresentanteLegale'];
+    const fieldLabels = {
+      codiceFiscale: 'Codice fiscale',
+      cognome: 'Cognome',
+      nome: 'Nome',
+      email: 'Email',
+      pecEmail: 'PEC / Email',
+      partitaIVA: 'Partita IVA',
+      denominazione: 'Denominazione',
+      rappresentanteLegale: 'Avvocato',
+      indirizzoResidenza: 'Indirizzo di residenza',
+      rappresentanteLegalePecEmail: 'PEC / Email del rappresentante legale',
+    };
+
+    let updatedErrors = { ...errors };
+    let hasErrors = false;
+    let message = '';
+
+    // Controllo dei campi obbligatori mancanti
+    const missingRequiredFields = requiredFields.filter(
+      (field) => !parteAttuale[field] || parteAttuale[field].trim() === ''
+    );
+
+    if (missingRequiredFields.length > 0) {
+      hasErrors = true;
+      message =
+        'Campi obbligatori assenti: ' +
+        missingRequiredFields.map((field) => fieldLabels[field]).join(', ');
+
+      // Aggiorna gli errori per i campi obbligatori mancanti
+      missingRequiredFields.forEach((field) => {
+        updatedErrors[field] = true;
+      });
+    }
+
+    // Controllo degli errori di altri campi che non sono tra i mancanti
+    const fieldsWithErrors = Object.keys(updatedErrors).filter(
+      (field) => updatedErrors[field] && !missingRequiredFields.includes(field)
+    ); // Non verificare i campi obbligatori mancanti
+
+    if (fieldsWithErrors.length > 0) {
+      hasErrors = true;
+      const errorFields = fieldsWithErrors
+        .map((field) => fieldLabels[field])
+        .join(', ');
+      message +=
+        (message ? '\n' : '') +
+        `Errore di compilazione dei seguenti campi: ${errorFields}`;
+    }
+
+    // Aggiorna lo stato degli errors
+    setErrors(updatedErrors);
+
+    return { hasErrors, message };
+  };
+  React.useImperativeHandle(ref, () => ({
+    onSubmit,
+    getErrors,
+  }));
 
   // Validator
   const validatePartitaIVA = (piva) => /^[0-9]{11}$/.test(piva);
@@ -377,7 +378,7 @@ function FormPersonaFisica(props, ref) {
             value={parteAttuale.codiceFiscale || ''}
             helperText={helperTextCf}
             size="small"
-            id="outlined-required-cf-piva"
+            id="pf-cf"
             label="Codice fiscale"
             onChange={handleCodiceFiscaleChange}
             sx={textFieldSx(theme)}
@@ -418,7 +419,7 @@ function FormPersonaFisica(props, ref) {
         <CssTextField
           required
           size="small"
-          id="outlined-required-cognome"
+          id="pf-cognome"
           value={parteAttuale.cognome || ''}
           error={errors.cognome}
           helperText={
@@ -437,7 +438,7 @@ function FormPersonaFisica(props, ref) {
         <CssTextField
           required
           size="small"
-          id="outlined-required-nome"
+          id="pf-nome"
           error={errors.nome}
           value={parteAttuale.nome || ''}
           helperText={
@@ -463,6 +464,7 @@ function FormPersonaFisica(props, ref) {
           <DatePicker
             disabled={anagraficiDisabilitati}
             label="Data di nascita"
+            
             value={
               parteAttuale.dataNascita ? dayjs(parteAttuale.dataNascita) : null
             }
@@ -473,6 +475,7 @@ function FormPersonaFisica(props, ref) {
             slotProps={{
               textField: {
                 size: 'small',
+                id: 'pf-data-nascita',
                 sx: {
                   ...textFieldSx(theme),
                   minWidth: '246px',
@@ -540,13 +543,13 @@ function FormPersonaFisica(props, ref) {
           disabled={anagraficiDisabilitati}
           sx={formControlStyles(theme, labelColor)} // Usa la funzione per applicare lo stile
         >
-          <InputLabel id="sesso-input-label" sx={{ color: labelColor }}>
+          <InputLabel id="pf-sesso-label" sx={{ color: labelColor }}>
             Sesso
           </InputLabel>
 
           <CssSelect
             labelId="sesso-input-label"
-            id="sesso-select"
+            id="pf-sesso"
             value={parteAttuale.sesso || ''}
             onChange={(event) =>
               setParteAttuale({ ...parteAttuale, sesso: event.target.value })
@@ -589,6 +592,7 @@ function FormPersonaFisica(props, ref) {
         {/* Provincia di nascita */}
         <ProvinciaSelect
           ref={provinciaNascitaRef}
+          id='pf-provincia-nascita'
           sx={{ ...textFieldSx(theme), minWidth: '246px', maxWidth: '250px' }}
           label="Provincia di nascita"
           disabled={anagraficiDisabilitati}
@@ -609,12 +613,12 @@ function FormPersonaFisica(props, ref) {
         <ComuneSelect
           ref={comuneNascitaRef}
           provincia={parteAttuale.luogoNascita?.provincia}
+          id='pf-comune-nascita'
           label="Comune di nascita"
           disabled={anagraficiDisabilitati}
           onChange={(comune) => {
             let comuneNascita = comune ? comune : new Comune();
             comuneNascita.provincia = parteAttuale.luogoDiNascita.provincia;
-            //console.log(comuneNascita);
             setParteAttuale({ ...parteAttuale, luogoDiNascita: comuneNascita });
           }}
           sx={{ ...textFieldSx(theme), minWidth: '246px', maxWidth: '250px' }}
@@ -636,6 +640,7 @@ function FormPersonaFisica(props, ref) {
         <ProvinciaSelect
           ref={provinciaResidenzaRef}
           label="Provincia di residenza"
+          id='pf-provincia-residenza'
           onChange={(provincia) => {
             comuneResidenzaRef.current.setProvincia(
               Object.assign(new Provincia(), provincia)
@@ -654,6 +659,7 @@ function FormPersonaFisica(props, ref) {
         <ComuneSelect
           ref={comuneResidenzaRef}
           provincia={parteAttuale.provinciaResidenza}
+          id='pf-comune-residenza'
           label="Comune di residenza"
           onChange={(comune) => {
             let comuneResidenza = comune ? comune : new Comune();
@@ -671,7 +677,7 @@ function FormPersonaFisica(props, ref) {
         <CssTextField
           size="small"
           value={parteAttuale.indirizzoResidenza || ''}
-          id="outlined-required-indirizzo"
+          id="pf-indirizzo-residenza"
           label="Indirizzo"
           onChange={(event) => handleInputChange(event, 'indirizzoResidenza')}
           sx={{ ...textFieldSx(theme), minWidth: '246px', maxWidth: '250px' }}
@@ -680,7 +686,7 @@ function FormPersonaFisica(props, ref) {
         {/* CAP */}
         <CssTextField
           size="small"
-          id="outlined-required-cup"
+          id="pf-cap-residenza"
           label="CAP"
           disabled={true}
           value={parteAttuale.residenza?.cap || ''}
@@ -702,7 +708,7 @@ function FormPersonaFisica(props, ref) {
         {/* PEC / Email */}
         <CssTextField
           size="small"
-          id="outlined-required-pec"
+          id="pf-pec-email"
           label="PEC / Email"
           value={parteAttuale.pecEmail || ''}
           error={errors.pecEmail}
@@ -730,7 +736,7 @@ function FormPersonaFisica(props, ref) {
         {/* Partita IVA */}
         <CssTextField
           size="small"
-          id="outlined-required-piva"
+          id="pf-piva"
           label="Partita IVA"
           value={parteAttuale.partitaIVA || ''}
           error={errors.partitaIVA}
@@ -755,7 +761,7 @@ function FormPersonaFisica(props, ref) {
         <CssTextField
           required
           size="small"
-          id="outlined-required-avvocato"
+          id="pf-avvocato"
           label="Avvocato"
           value={parteAttuale.rappresentanteLegale || ''}
           error={errors.rappresentanteLegale}
@@ -773,7 +779,7 @@ function FormPersonaFisica(props, ref) {
         {/* Email/PEC */}
         <CssTextField
           size="small"
-          id="outlined-required-pec"
+          id="pf-pec-email-avvocato"
           label="PEC / Email"
           value={parteAttuale.rappresentanteLegalePecEmail || ''}
           error={errors.rappresentanteLegalePecEmail}
@@ -806,6 +812,7 @@ function FormPersonaFisica(props, ref) {
         <Grid xs={12}>
           <ImportoInput
             value={parteAttuale.speseAvvio}
+            id="pf-spese-avvio"
             sx={textFieldSx(theme)}
             onChange={(importo) =>
               setParteAttuale({ ...parteAttuale, speseAvvio: importo })
@@ -814,6 +821,7 @@ function FormPersonaFisica(props, ref) {
           />
           <ImportoInput
             value={parteAttuale.spesePostali}
+            id="pf-spese-postali"
             sx={textFieldSx(theme)}
             onChange={(importo) =>
               setParteAttuale({ ...parteAttuale, spesePostali: importo })
@@ -822,6 +830,7 @@ function FormPersonaFisica(props, ref) {
           />
           <ImportoInput
             value={parteAttuale.pagamentoIndennita}
+            id="pf-pagamento-indennita"
             sx={textFieldSx(theme)}
             onChange={(importo) =>
               setParteAttuale({ ...parteAttuale, pagamentoIndennita: importo })
@@ -830,6 +839,7 @@ function FormPersonaFisica(props, ref) {
           />
           <ImportoInput
             value={parteAttuale.importoMancatoAccordo}
+            id="pf-mancato-accordo"
             sx={textFieldSx(theme)}
             onChange={(importo) =>
               setParteAttuale({
@@ -841,6 +851,7 @@ function FormPersonaFisica(props, ref) {
           />
           <ImportoInput
             value={parteAttuale.importoPositivoPrimoIncontro}
+            id="pf-positivo-primo-incontro"
             sx={textFieldSx(theme)}
             onChange={(importo) =>
               setParteAttuale({
@@ -852,6 +863,7 @@ function FormPersonaFisica(props, ref) {
           />
           <ImportoInput
             value={parteAttuale.importoPositivoOltrePrimoIncontro}
+            id="pf-positivo-oltre-primo-incontro"
             sx={textFieldSx(theme)}
             onChange={(importo) =>
               setParteAttuale({
@@ -891,7 +903,7 @@ function FormPersonaFisica(props, ref) {
           </Typography>
         </Grid>
         <CssTextField
-          id="outlined-required-note"
+          id="pf-note"
           label="Note"
           multiline
           rows={3}
