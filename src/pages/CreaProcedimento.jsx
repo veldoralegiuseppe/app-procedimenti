@@ -8,6 +8,8 @@ import { ProcedimentoProvider } from '@context/Procedimento';
 import DatiGeneraliProcedimento from '@pages/StepDatiGeneraliProcedimento';
 import PartiControparti from '@pages/StepPartiControparti';
 import RiepilogoProcedimento from '@pages/StepRiepilogoProcedimento';
+import StepMediatore from './StepMediatore';
+import StepDemandata from './StepMediatoreDemandata';
 
 export default function CreaProcedimento() {
   const theme = useTheme();
@@ -16,6 +18,9 @@ export default function CreaProcedimento() {
   const steps = [
     { label: 'Dati generali', component: <DatiGeneraliProcedimento /> },
     { label: 'Parti e controparti', component: <PartiControparti /> },
+    { label: 'Mediatore', component: <StepMediatore /> },
+    { label: 'Demandata', component: <StepDemandata /> },
+    { label: 'Compenso spese secondaria', component: <StepDemandata /> },
     { label: 'Riepilogo', component: <RiepilogoProcedimento /> },
   ];
 

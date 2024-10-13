@@ -1,5 +1,7 @@
 import * as React from 'react';
 import { createContext, useState } from 'react';
+import dayjs from 'dayjs';
+import 'dayjs/locale/it';
 
 import { Procedimento } from '@model/procedimento.js';
 import { PersonaFisica } from '@model/personaFisica';
@@ -134,19 +136,18 @@ function mockedPersone() {
 }
 
 function mockedProcedimento() {
-  const mockProcedimento = Object.assign(new Procedimento(), {
+  return new Procedimento({
     numProtocollo: '000001',
     annoProtocollo: '2024',
     dataDeposito: new Date(),
-    sede: 'Roma',
-    sedeSvolgimento: 'Roma - Sede Centrale',
-    dataOraIncontro: '23/02/2024 10:30',
-    oggettoControversia: 'Controversia per mancato pagamento',
+    sede: 'NOLA',
+    sedeSvolgimento: 'SAVIANO',
+    dataOraIncontro: dayjs().toISOString(), 
+    oggettoControversia: 'DIVISIONE',
     valoreControversia: 15000,
   });
-
-  return mockProcedimento;
 }
+
 
 export const ProcedimentoProvider = ({ children }) => {
   const [procedimento, setProcedimento] = useState(new Procedimento());

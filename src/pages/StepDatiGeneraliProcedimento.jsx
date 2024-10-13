@@ -86,15 +86,17 @@ const StepDatiGeneraliProcedimento = React.forwardRef(({ enableNextStep }, ref) 
   React.useImperativeHandle(ref, () => ({
     validate: () => {
       let hasErrors = Object.values(errors).some(hasError => hasError);
-      //return !hasErrors && requiredFieldsFilled();
-      return true;
+      return !hasErrors && requiredFieldsFilled();
+      //return false;
     },
   }));
 
   React.useEffect(() => {
     let hasErrors = Object.values(errors).some(hasError => hasError);
     if (typeof enableNextStep === 'function') {
+      console.log('enable next')
       enableNextStep(!hasErrors && requiredFieldsFilled());
+      //enableNextStep(true)
     }
   }, [errors, procedimento]);
 

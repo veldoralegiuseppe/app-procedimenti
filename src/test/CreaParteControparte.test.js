@@ -16,7 +16,7 @@ import * as ComuniUtils from '@assets/js/comuni';
 import { ProcedimentoContext } from '@context/Procedimento';
 import { PersonaFisica } from '@model/personaFisica';
 import { provinceCampania, comuniCampania } from './mock/mockProvinceComuni';
-
+import ComuneSelect from '../components/ComuneSelect';
 
 // Mock delle chiamate
 jest.mock('@assets/js/comuni', () => ({
@@ -62,14 +62,21 @@ async function verifyPopulatedFields(container) {
 
     // Verifica del campo Comune di nascita
     const comuneNascitaField = container.querySelector('#pf-comune-nascita');
-    console.log('Valore del campo comune di nascita:', comuneNascitaField.value);
+    console.log(
+      'Valore del campo comune di nascita:',
+      comuneNascitaField.value
+    );
     expect(comuneNascitaField).toHaveValue('MERCATO SAN SEVERINO');
 
     // Verifica del campo Provincia di nascita
-    const provinciaNascitaField = container.querySelector('#pf-provincia-nascita');
-    console.log('Valore del campo provincia di nascita:', provinciaNascitaField.value);
+    const provinciaNascitaField = container.querySelector(
+      '#pf-provincia-nascita'
+    );
+    console.log(
+      'Valore del campo provincia di nascita:',
+      provinciaNascitaField.value
+    );
     expect(provinciaNascitaField).toHaveValue('SALERNO');
-  
   });
 }
 async function fillRemainingFields(container) {
@@ -90,7 +97,8 @@ async function fillRemainingFields(container) {
       importoPagamentoIndennitaInput: '#pf-pagamento-indennita',
       importoMancatoAccordoInput: '#pf-mancato-accordo',
       importoPositivoPrimoIncontroInput: '#pf-positivo-primo-incontro',
-      importoPositivoOltrePrimoIncontroInput: '#pf-positivo-oltre-primo-incontro',
+      importoPositivoOltrePrimoIncontroInput:
+        '#pf-positivo-oltre-primo-incontro',
       noteInput: '#pf-note',
     };
 
@@ -102,65 +110,87 @@ async function fillRemainingFields(container) {
       target: { value: 'Veldorale' },
     });
 
-    // Interazione con Autocomplete per provincia di residenza
-    userEvent.click(container.querySelector(inputs.provinciaResidenzaInput));
-    userEvent.type(container.querySelector(inputs.provinciaResidenzaInput), 'SALERNO');
-    const provinciaOption = await screen.findByText('SALERNO');
-    userEvent.click(provinciaOption);
-
-    // Interazione con Autocomplete per comune di residenza
-    userEvent.click(container.querySelector(inputs.comuneResidenzaInput));
-    userEvent.type(container.querySelector(inputs.comuneResidenzaInput), 'MERCATO SAN SEVERINO');
-    const comuneOption = await screen.findByText('MERCATO SAN SEVERINO');
-    userEvent.click(comuneOption);
-
     // Popolazione degli altri campi
-    fireEvent.change(container.querySelector(inputs.indirizzoResidenzaInput), {
-      target: { value: 'Viale Europa 168' },
-    });
-    fireEvent.change(container.querySelector(inputs.capInput), {
-      target: { value: '84088' },
-    });
-    fireEvent.change(container.querySelector(inputs.pecEmailInput), {
-      target: { value: 'giuseppe.veldorale@pec.it' },
-    });
-    fireEvent.change(
-      container.querySelector(inputs.rappresentanteLegalePecEmailInput),
-      { target: { value: 'raimondo.giudice@pec.it' } }
+    const changeEvent = (inputSelector, value) => {
+      fireEvent.change(container.querySelector(inputSelector), {
+        target: { value },
+      });
+    };
+
+    changeEvent(inputs.indirizzoResidenzaInput, 'Viale Europa 168');
+    changeEvent(inputs.capInput, '84088');
+    changeEvent(inputs.pecEmailInput, 'giuseppe.veldorale@pec.it');
+    changeEvent(
+      inputs.rappresentanteLegalePecEmailInput,
+      'raimondo.giudice@pec.it'
     );
-    fireEvent.change(container.querySelector(inputs.partitaIVAInput), {
-      target: { value: '12345678901' },
-    });
-    fireEvent.change(container.querySelector(inputs.avvocatoInput), {
-      target: { value: 'Raimondo Giudice' },
-    });
-    fireEvent.change(container.querySelector(inputs.speseAvvioInput), {
-      target: { value: 100 },
-    });
-    fireEvent.change(container.querySelector(inputs.spesePostaliInput), {
-      target: { value: 10 },
-    });
-    fireEvent.change(
-      container.querySelector(inputs.importoPagamentoIndennitaInput),
-      { target: { value: 500 } }
-    );
-    fireEvent.change(
-      container.querySelector(inputs.importoMancatoAccordoInput),
-      { target: { value: '1000' } }
-    );
-    fireEvent.change(
-      container.querySelector(inputs.importoPositivoPrimoIncontroInput),
-      { target: { value: 200 } }
-    );
-    fireEvent.change(
-      container.querySelector(inputs.importoPositivoOltrePrimoIncontroInput),
-      { target: { value: 300 } }
-    );
-    fireEvent.change(container.querySelector(inputs.noteInput), {
-      target: { value: 'Queste sono delle note di esempio.' },
-    });
+    changeEvent(inputs.partitaIVAInput, '12345678901');
+    changeEvent(inputs.avvocatoInput, 'Raimondo Giudice');
+    changeEvent(inputs.speseAvvioInput, 100);
+    changeEvent(inputs.spesePostaliInput, 10);
+    changeEvent(inputs.importoPagamentoIndennitaInput, 500);
+    changeEvent(inputs.importoMancatoAccordoInput, '1000');
+    changeEvent(inputs.importoPositivoPrimoIncontroInput, 200);
+    changeEvent(inputs.importoPositivoOltrePrimoIncontroInput, 300);
+    changeEvent(inputs.noteInput, 'Queste sono delle note di esempio.');
   });
 }
+
+async function compilaResidenza(container) {
+  await act(async () => {
+    const inputs = {
+      provinciaResidenzaInput: '#pf-provincia-residenza',
+      comuneResidenzaInput: '#pf-comune-residenza',
+      indirizzoResidenzaInput: '#pf-indirizzo-residenza',
+    };
+
+    const provinciaInput = container.querySelector(
+      inputs.provinciaResidenzaInput
+    );
+    userEvent.click(provinciaInput);
+    await userEvent.type(provinciaInput, 'SALERNO', { delay: 100 });
+
+    // Attendi che l'opzione appaia nel DOM e selezionala
+    const provinciaOption = await waitFor(() =>
+      screen.getByRole('option', { name: /SALERNO/i })
+    );
+    userEvent.click(provinciaOption);
+    fireEvent.blur(provinciaInput);
+
+    // Verifica se il valore è stato inserito correttamente
+    await waitFor(() => {
+      console.log(
+        'Stato della provincia:',
+        container.querySelector(inputs.provinciaResidenzaInput).value
+      );
+      expect(
+        container.querySelector(inputs.provinciaResidenzaInput).value
+      ).toBe('SALERNO');
+    });
+
+    // Aspetta che il campo del comune si abiliti
+    await waitFor(() => {
+      expect(
+        container.querySelector(inputs.comuneResidenzaInput)
+      ).not.toBeDisabled();
+    });
+
+    // Interazione con Autocomplete per comune di residenza
+    const comuneInput = container.querySelector(inputs.comuneResidenzaInput);
+    userEvent.click(comuneInput);
+    await userEvent.type(comuneInput, 'SIANO', { delay: 100 });
+
+    // Attendi che l'opzione appaia nel DOM e selezionala
+    const comuneOption = await waitFor(() =>
+      screen.getByRole('option', { name: /SIANO/i })
+    );
+    userEvent.click(comuneOption);
+
+    // Verifica se il valore è stato inserito correttamente
+    console.log('Valore inserito nel campo comune:', comuneInput.value);
+  });
+}
+
 async function submitForm() {
   await act(async () => {
     fireEvent.click(screen.getByRole('button', { name: /Crea/i }));
@@ -174,7 +204,7 @@ async function verifyCreatedPersona(mockSetPersone) {
     rappresentanteLegale: 'RAIMONDO GIUDICE',
     codiceFiscale: 'VLDGPP97E16F138C',
     dataNascita: '1997-05-16',
-    luogoDiNascita: comuniCampania[0], 
+    luogoDiNascita: comuniCampania[0],
     sesso: 'M',
     indirizzoResidenza: 'VIALE EUROPA 168',
     partitaIVA: '12345678901',
@@ -208,7 +238,6 @@ function normalize(persona) {
 }
 
 // Test
-
 beforeEach(() => {
   // Mock della risposta di getProvince e getComuni
   ComuniUtils.getProvince.mockResolvedValue(provinceCampania);
@@ -270,29 +299,37 @@ test('renders the form and shows error messages for missing required fields', as
   );
 });
 
-test.only('creates a new persona fisica with all fields filled', async () => {
-  const mockSetPersone = jest.fn();
-  const mockContextValue = {
-    persone: [],
-    setPersone: mockSetPersone,
-  };
-
-  // Render
-  const { container } = await renderComponent(mockContextValue);
-
-  // Compila i campi del form
-  const codiceFiscaleInput = container.querySelector('#pf-cf');
-  await fillCodiceFiscale(codiceFiscaleInput, 'VLDGPP97E16F138C');
-
-  // Verifica che i campi siano popolati correttamente
-  await verifyPopulatedFields(container);
-
-  // Compila i campi restanti
-  await fillRemainingFields(container);
-
-  // Simula il click sul bottone "Crea"
-  await submitForm();
-
-  // Verifica l'oggetto atteso
-  await verifyCreatedPersona(mockSetPersone);
-});
+test.only('crea una nuova persona fisica con tutti i campi compilati', async () => {
+    const mockSetPersone = jest.fn();
+    const mockContextValue = {
+      persone: [],
+      setPersone: mockSetPersone,
+    };
+  
+    const { container, rerender } = await renderComponent(mockContextValue);
+  
+    const provinciaInput = container.querySelector('#pf-provincia-residenza');
+    await userEvent.click(provinciaInput);
+    await userEvent.type(provinciaInput, 'SALERNO', { delay: 100 });
+    await userEvent.keyboard('{Enter}'); // Simula la selezione della provincia
+  
+    // Forza un rerender per verificare che la provincia sia stata presa in considerazione
+    rerender(<ComuneSelect />);
+  
+    // Attendi che il campo 'comune' non sia più disabilitato
+    await waitFor(() => {
+      expect(container.querySelector('#pf-comune-residenza')).not.toBeDisabled();
+    }, { timeout: 5000 });
+  
+    // Interagisci con il campo del comune ora abilitato
+    await userEvent.type(container.querySelector('#pf-comune-residenza'), 'MERCATO SAN SEVERINO', { delay: 100 });
+  
+    // Compila i campi rimanenti e invia il form
+    await fillRemainingFields(container, rerender);
+    await submitForm();
+  
+    // Verifica l'oggetto creato atteso
+    await verifyCreatedPersona(mockSetPersone);
+  });
+  
+  

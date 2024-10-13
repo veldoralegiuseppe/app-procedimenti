@@ -13,6 +13,8 @@ function ComuneSelect(props, ref) {
   const [provincia, setProvincia] = React.useState(null); // La provincia selezionata
   const [selectedComune, setSelectedComune] = React.useState(null); // Il comune selezionato
   const [error, setError] = React.useState(null); // Gestione degli errori
+  const [isComuneEnabled, setIsComuneEnabled] = React.useState(false); // Gestione dell'abilitazione del campo Comune
+  
   const theme = useTheme();
 
   // Funzione di inizializzazione dei comuni
@@ -30,21 +32,31 @@ function ComuneSelect(props, ref) {
     fetchComuni();
   }, []);
 
+  // DEGUB
+  React.useEffect(() => {
+    //console.log('isComuneEnabled:', isComuneEnabled);
+  }, [isComuneEnabled]);
+
   // Effetto che si attiva quando cambia la provincia
   React.useEffect(() => {
+    //console.log('useEffect - Provincia:', provincia);
     if (provincia) {
-      // Filtra i comuni in base alla provincia selezionata
+      //console.log('Filtraggio comuni per la provincia:', provincia);
+      setIsComuneEnabled(true);
       const comuniFiltrati = comuni.filter(
         (comune) =>
           comune.provincia &&
           comune.provincia.nome?.toLowerCase() === provincia.nome?.toLowerCase()
       );
       setFilteredComuni(comuniFiltrati);
+      //('Comuni filtrati:', comuniFiltrati);
     } else {
+      //console.log('Nessuna provincia selezionata, disabilitazione Comune');
       setProvincia(null);
       setFilteredComuni([]);
+      setIsComuneEnabled(false);
     }
-  }, [provincia, comuni]);
+  }, [provincia, comuni, isComuneEnabled]);
 
   // Funzione per resettare i campi
   const resetFields = () => {
@@ -60,7 +72,8 @@ function ComuneSelect(props, ref) {
         newProvincia instanceof Provincia &&
         Object.values(newProvincia).every((value) => value !== undefined)
       ) {
-        setProvincia(newProvincia);
+        //console.log('useImperative - setProvincia: ', newProvincia)
+        setProvincia(newProvincia)
       } else {
         setProvincia(null);
         resetFields(); 
@@ -92,7 +105,7 @@ function ComuneSelect(props, ref) {
 
   return (
     <Autocomplete
-      disabled={!provincia || props.disabled}
+      disabled={!isComuneEnabled}
       options={filteredComuni}
       value={selectedComune}
       id={props.id}
@@ -139,7 +152,6 @@ function ComuneSelect(props, ref) {
       renderInput={(params) => (
         <CssTextField
           {...params}
-          disabled={!provincia || props.disabled}
           label={props.label || 'Comune'}
           size="small"
           helperText={

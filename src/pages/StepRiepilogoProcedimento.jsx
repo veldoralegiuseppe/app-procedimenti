@@ -6,6 +6,9 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { ProcedimentoContext } from '@context/Procedimento';
 import { PersonaGiuridica } from '@model/personaGiuridica';
 import { PersonaFisica } from '@model/personaFisica';
+import { Procedimento } from '@model/procedimento';
+
+
 
 function formatImporto(importo) {
 
@@ -22,7 +25,7 @@ function formatImporto(importo) {
   );
 }
 
-const Procedimento = ({ procedimento }) => {
+const DatiGenerali = ({ procedimento }) => {
   return (
     <div style={{marginTop: '-4rem', marginBottom: '1rem'}}>
       {/* Titolo principale */}
@@ -328,12 +331,20 @@ const RiepilogoSpese = ({ persone }) => {
 };
 
 const StepRiepilogoProcedimento = React.forwardRef((props, ref) => {
-  let { procedimento, persone } = React.useContext(ProcedimentoContext);
-  console.log(procedimento)
-  
+  const [procedimento, setProcedimento] = React.useState(null);
+  const { procedimento: procedimentoRow, persone } = React.useContext(ProcedimentoContext); // `procedimentoRow` è l'oggetto plain
+  //console.log(procedimentoRow)
+
+  React.useEffect(() => {
+    if (procedimentoRow) {
+      const procedimentoInstance = Object.assign(new Procedimento(), procedimentoRow);
+      setProcedimento(procedimentoInstance);
+    }
+  }, [procedimentoRow]);
+
   return (
     <div ref={ref} style={{marginTop: '2rem'}}>
-      <Procedimento procedimento={procedimento} />
+      <DatiGenerali procedimento={procedimento} />
       <PartiControparti persone={persone} />
       <RiepilogoSpese persone={persone} />
     </div>

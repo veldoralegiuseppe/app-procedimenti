@@ -123,7 +123,6 @@ function ProvinciaSelect(props, ref) {
         },
       }}
       onChange={(event, newValue) => {
-        console.log(newValue);
         setSelectedProvince(newValue);
         if (props.onChange) {
           props.onChange(newValue); // Chiama il callback onChange passato come prop
