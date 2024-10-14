@@ -85,6 +85,7 @@ const ImportoInput = ({ onChange, label, sx, value = 0 }) => {
 
   const formatValue = (event) => {
     let inputValue = event.target.value;
+    console.log('inputValue format', inputValue)
 
     // Regex per escludere i formati errati (,x)
     const invalidFormatRegex = /^,?\d{1,2}$|^,\d{2}$|^,\d{1}$/;
@@ -145,6 +146,18 @@ const ImportoInput = ({ onChange, label, sx, value = 0 }) => {
     let inputValue = event.target.value;
     let startCursorPosition = event.target.selectionStart;
     const commaPosition = inputValue.indexOf(',');
+
+     // Controllo se l'input è nel formato (x...x,xx)
+     if (!/^[0-9]+,[0-9]+$/.test(inputValue)) {
+      event.target.value = importo
+      let nextCursor = /,,/.test(inputValue) ? commaPosition+1 : Math.max(startCursorPosition-1,0)
+      console.log('nextCursor',nextCursor)
+      event.target.selectionStart = nextCursor
+      event.target.selectionEnd = nextCursor
+      event.target.setSelectionRange(nextCursor, nextCursor);
+      return;
+    }
+
 
     // Controlla se l'input è vuoto e imposta "0,00"
     if (!inputValue) {
