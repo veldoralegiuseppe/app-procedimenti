@@ -3,9 +3,27 @@ import InputAdornment from '@mui/material/InputAdornment';
 import EuroSymbolIcon from '@mui/icons-material/EuroSymbol';
 import { CssTextField } from '@theme/MainTheme';
 
-const ImportoInput = (props) => {
+const ImportoInput = ({onChange, label, sx, initialValue = 0}) => {
+  // State
   const [value, setValue] = useState('0,00');
 
+  // Utility
+  const formatValueFromNumber = (number) => {
+    const parts = number.toFixed(2).split('.');
+    const integerPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+    const decimalPart = parts[1];
+    return `${integerPart},${decimalPart}`;
+  };
+
+  // Effect
+  React.useEffect(() => {
+    if (initialValue !== undefined && initialValue !== null) {
+      const formattedValue = formatValueFromNumber(initialValue);
+      setValue(formattedValue);
+    }
+  }, [initialValue]);
+
+  // Handle
   const formatDecimalPart = (decimalPart, event) => {
     let inputValue = event.target.value;
     let cursorPosition = event.target.selectionStart;
@@ -131,8 +149,8 @@ const ImportoInput = (props) => {
     // Controlla se l'input è vuoto e imposta "0,00"
     if (!inputValue) {
       setValue('0,00');
-      if (props.onChange) {
-        props.onChange(0);
+      if (onChange) {
+        onChange(0);
       }
       return;
     }
@@ -165,10 +183,10 @@ const ImportoInput = (props) => {
     });
 
     // Passa il valore numerico grezzo al componente genitore se presente
-    if (props.onChange) {
+    if (onChange) {
       const numericValue = parseFloat(adjustedValue.replace(',', '.')); // Converti in numero
       if (!isNaN(numericValue)) {
-        props.onChange(numericValue);
+        onChange(numericValue);
       }
     }
   };
@@ -178,10 +196,10 @@ const ImportoInput = (props) => {
       value={value}
       onChange={handleValueChange}
       onBlur={() => setValue(value)} // Mantieni il valore formattato
-      label={props.label}
+      label={label}
       variant="outlined"
       size="small"
-      sx={{ ...props.sx }} // Usa il tuo stile personalizzato
+      sx={{ ...sx }} // Usa il tuo stile personalizzato
       InputProps={{
         startAdornment: (
           <InputAdornment position="start">
