@@ -6,7 +6,7 @@ import { CssTextField } from '@theme/MainTheme';
 const ImportoInput = (props) => {
   const [value, setValue] = useState('0,00');
 
-  const handleDecimalChange = (decimalPart, event) => {
+  const formatDecimalPart = (decimalPart, event) => {
     let inputValue = event.target.value;
     let cursorPosition = event.target.selectionStart;
     const commaPosition = inputValue.indexOf(',');
@@ -44,7 +44,7 @@ const ImportoInput = (props) => {
     return decimalPart;
   };
 
-  const handleIntegerPartChange = (integerPart) => {
+  const formatIntegerPart = (integerPart) => {
     if (!integerPart) return '0';
 
     // Gestione della primo input intero
@@ -53,8 +53,14 @@ const ImportoInput = (props) => {
     }
 
     // Gestione della parte intera
-    let formattedIntegerPart = String(integerPart).replace(/^0+/, '');
-    integerPart = formattedIntegerPart ? formattedIntegerPart : 0;
+    let formattedIntegerPart = String(integerPart).replace(/^0+/, ''); // Rimuove gli zeri iniziali
+
+    integerPart =
+      !isNaN(formattedIntegerPart) && formattedIntegerPart !== ''
+        ? parseInt(formattedIntegerPart, 10).toLocaleString('it-IT')
+        : '0';
+
+    console.log('formattedIntegerPart:', integerPart);
 
     return `${integerPart}`;
   };
@@ -76,26 +82,26 @@ const ImportoInput = (props) => {
 
     // Rimuove gli zeri multipli all'inizio, tranne il caso "0,XX"
     let adjustedValue = inputValue.replace(/^0+(?![,0])/, '');
-    //console.log('adjusteValue - rimozione zeri', adjustedValue);
 
     let [integerPart, decimalPart] = adjustedValue.split(',');
-    return `${handleIntegerPartChange(integerPart)},${handleDecimalChange(
-      decimalPart,
-      event
-    )}`;
+    return `${formatIntegerPart(
+      integerPart.replaceAll('.', '')
+    )},${formatDecimalPart(decimalPart, event)}`;
   };
 
-  const handleCursorPosition = (
-    event,
-    startCursorPosition,
-    adjustedCommaPosition
-  ) => {
-    let inputValue = event.target.value;
-    const commaPosition = value.indexOf(',');
-    //console.log(`inputValue: ${inputValue}, startCursorPosition: ${startCursorPosition}, commaPosition: ${commaPosition}, adjustCommaPosition: ${adjustedCommaPosition}`)
-
+  const handleCursorPosition = (event, startCursorPosition) => {
     // Regex per escludere i formati errati (,x)
     const invalidFormatRegex = /^,?\d{1,2}$|^,\d{2}$|^,\d{1}$/;
+
+    let inputValue = event.target.value;
+    const commaPosition = inputValue.indexOf(',');
+
+    // Contare il numero di punti delle migliaia prima della formattazione
+    const oldPointsCount = (value.match(/\./g) || []).length; // Punti nel vecchio valore
+    const newPointsCount = (inputValue.match(/\./g) || []).length; // Punti nel nuovo valore
+
+    // Calcola lo shift del cursore in base ai punti aggiunti o rimossi
+    const pointShift = newPointsCount - oldPointsCount;
 
     // Sposta il cursore immediatamente a sinistra della virgola quando si cancella un decimale
     if (
@@ -105,9 +111,16 @@ const ImportoInput = (props) => {
       return commaPosition;
     }
 
-    if (inputValue.length <= value.length || value !== inputValue)
-      return invalidFormatRegex.test(inputValue) ? 0 : startCursorPosition;
-    else return startCursorPosition - 1;
+    // Se ci sono cambiamenti nel numero di caratteri, aggiusta la posizione del cursore
+    if (inputValue.length <= value.length || value !== inputValue) {
+      // Modifica il cursore tenendo conto dei punti
+      return invalidFormatRegex.test(inputValue)
+        ? 0
+        : Math.max(0, startCursorPosition + pointShift);
+    } else {
+      // Se il numero è stato modificato e i punti sono cambiati, riduci la posizione del cursore
+      return Math.max(0, startCursorPosition - 1 + pointShift);
+    }
   };
 
   const handleValueChange = (event) => {
