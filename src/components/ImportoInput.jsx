@@ -1,272 +1,174 @@
-import * as React from 'react';
-import EuroSymbolIcon from '@mui/icons-material/EuroSymbol';
+import React, { useState } from 'react';
 import InputAdornment from '@mui/material/InputAdornment';
-import { useTheme } from '@mui/material/styles';
-
+import EuroSymbolIcon from '@mui/icons-material/EuroSymbol';
 import { CssTextField } from '@theme/MainTheme';
 
-// Funzione per formattare l'importo in parte intera e decimale
-function formatCurrency(value) {
-  //console.log(`value.toString: ${value.toString()}`)
-  const [integerPart, decimalPart] = value.toString().split('.');
-  const formattedIntegerPart = Number(
-    integerPart.replace(/\./g, '')
-  ).toLocaleString('it-IT');
-  const formattedDecimalPart = decimalPart ? decimalPart.padEnd(2, '0') : '00';
-  return `${formattedIntegerPart},${formattedDecimalPart}`;
-}
+const ImportoInput = (props) => {
+  const [value, setValue] = useState('0,00');
 
-export default function ImportoInput(props) {
-  const importoFieldRef = React.useRef(null);
-  const theme = useTheme();
-  const labelColor = 'rgb(105 105 105 / 60%)';
-  const [cursorShift, setCursorShift] = React.useState(0);
-  const [importoAttuale, setImportoAttuale] = React.useState(
-    props.value ? formatCurrency(props.value) : '0,00'
-  );
+  const handleDecimalChange = (decimalPart, event) => {
+    let inputValue = event.target.value;
+    let cursorPosition = event.target.selectionStart;
+    const commaPosition = inputValue.indexOf(',');
 
-  // Gestione reset del campo
-  React.useEffect(() => {
-    if (props.reset) {
-      setImportoAttuale('0,00');
-      if (importoFieldRef.current) {
-        importoFieldRef.current.value = '0,00';
-      }
+    // Assicura che la parte decimale esista e che sia composta da almeno due cifre
+    decimalPart = decimalPart ? decimalPart.padEnd(2, '0') : '00';
+
+    // Gestione inserimento dei decimi
+    if (cursorPosition === commaPosition + 2) {
+      decimalPart = decimalPart[0] + decimalPart[2];
+      decimalPart = decimalPart.slice(0, 2);
     }
-  }, [props.reset]);
 
-  React.useEffect(() => {
-    // Aggiorna lo stato solo se il valore dell'importo è cambiato
-    if (props.value !== undefined && props.value !== null) {
-      setImportoAttuale(formatCurrency(props.value));
+    // Tronca le cifre in eccesso
+    if (decimalPart.length > 2) {
+      decimalPart = decimalPart.slice(0, 2);
     }
-  }, [props.value]);
 
-  const handleInputChange = (event) => {
-    const input = event.target;
-    let importoCorrente = input.value.replaceAll('.', '');
-    const activateLog = false;
-    var exit = false;
-
-    var isOnlyCent = /^,{1}\d+/g;
-    var inputValido = /(?<![\D*\w*])(\d+,{1}\d{2})(?![\D*\d*,*])/g;
-
-    importoCorrente.split(',').forEach((s) => {
-      //console.log(`Token: ${s}, isNumber: ${!/[^\d+]/g.test(s)}`)
-      if (s !== '' && /[^\d+]/g.test(s)) {
-        let currentPosition = input.selectionStart;
-        input.value = importoAttuale;
-        importoCorrente = importoAttuale.replaceAll('.', '');
-        input.setSelectionRange(currentPosition - 1, currentPosition - 1);
-        exit = true;
-      }
-    });
-
-    if (exit) return;
-
-    if (isOnlyCent.test(importoCorrente) || importoCorrente == '') {
-      input.value = '';
-    } else if (!importoCorrente.includes(',')) {
-      // Inserimento di numeri interi
-      if (importoCorrente.length < 3) {
-        if (activateLog) console.log('Gestisco numeri interi');
-        input.value = importoCorrente += ',00';
-        input.setSelectionRange(1, 1);
-      } else {
-        // Canc della virgola
-        if (activateLog) console.log('Gestisco la virgola cancellata');
-        let currentPosition = input.selectionStart;
-        input.value =
-          importoCorrente.slice(0, importoCorrente.length - 2) +
-          ',' +
-          importoCorrente.slice(importoCorrente.length - 2);
-        input.setSelectionRange(currentPosition, currentPosition);
-      }
-    } else if (
-      importoCorrente.charAt(0) == '0' &&
-      /\d/g.test(importoCorrente.charAt(1))
+    // Gestisce il canc dei decimi
+    if (
+      inputValue.length < value.length &&
+      cursorPosition === commaPosition + 1
     ) {
-      // Gestisco i numeri del tipo 023,00
-      if (activateLog) console.log('Gestisco i valori all inizio');
-      let currentPosition = input.selectionStart;
-      input.value = importoCorrente.slice(1);
-      input.setSelectionRange(currentPosition - 1, currentPosition - 1);
-    } else if (input.selectionStart == 1 && importoAttuale == '0,00') {
-      if (activateLog) console.log('Gestisco primo input');
-      let importo = importoCorrente.charAt(0) + importoCorrente.slice(2);
-      input.value = importo;
-      let currentPosition = input.selectionStart;
-      if (activateLog)
-        console.log(
-          `importoCorrente: ${importoCorrente}, importo: ${importo}, currentPosition: ${currentPosition}`
-        );
-      input.setSelectionRange(currentPosition - 3, currentPosition - 3);
-    } else if (
-      input.selectionStart == input.value.length - 3 &&
-      importoCorrente.includes(',,')
-    ) {
-      // Gestisco l'aggiunta della virgola
-      if (activateLog) console.log('Gestisco aggiunta virgola');
-      if (
-        importoCorrente.includes(',,') &&
-        !inputValido.test(importoCorrente.replace(',,', ','))
-      )
-        return;
-      else {
-        let currentPosition = input.selectionStart;
-        input.value = importoCorrente.replace(',,', ',');
-        input.setSelectionRange(currentPosition, currentPosition);
-      }
-    } else if (input.selectionStart == input.value.length - 2) {
-      // Aggiunta di un decimale
-      if (activateLog) console.log('Aggiungo un decimale');
-      let importo =
-        importoCorrente.slice(0, importoCorrente.length - 2) +
-        importoCorrente.slice(importoCorrente.length - 1);
-      if (!inputValido.test(importo)) {
-        if (activateLog) console.log('Input invalido nell aggiungere decimali');
-        let currentPosition = input.selectionStart;
-        input.value = importoAttuale;
-        input.setSelectionRange(currentPosition - 1, currentPosition - 1);
-        return;
-      }
-      let currentPosition = input.selectionStart;
-      let formattedImporto = Number(
-        importo.replaceAll(',', '.')
-      ).toLocaleString('it-IT', {
-        style: 'decimal',
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      });
-      input.value = formattedImporto;
-      let numPunti = (formattedImporto.match(/\./g) || []).length;
-      if (activateLog)
-        console.log(
-          `Aggiungo decimo - importo:${importo}, formattedImporto: ${formattedImporto}, numPunti: ${numPunti}, currentPosition: ${currentPosition}, cursorShift:${cursorShift}`
-        );
-      if (numPunti == cursorShift)
-        input.setSelectionRange(currentPosition, currentPosition);
-      else input.setSelectionRange(currentPosition + 1, currentPosition + 1);
-    } else if (input.selectionStart == input.value.length - 1) {
-      if (importoCorrente.charAt(importoCorrente.length - 2) == ',') {
-        // Canc dei decimi
-        if (activateLog) console.log('Gestisco il canc dei decimi');
-        let importo =
-          importoCorrente.slice(0, importoCorrente.length - 1) +
-          '0' +
-          importoCorrente.slice(importoCorrente.length - 1);
-        if (!inputValido.test(importo)) {
-          if (activateLog) console.log('Input invalido nel canc decimi');
-          let currentPosition = input.selectionStart;
-          input.value = importoAttuale;
-          input.setSelectionRange(currentPosition - 1, currentPosition - 1);
-          return;
-        }
-        let currentPosition = input.selectionStart;
-        input.value =
-          importoCorrente.slice(0, importoCorrente.length - 1) +
-          '0' +
-          importoCorrente.slice(importoCorrente.length - 1);
-        input.setSelectionRange(currentPosition, currentPosition);
-      } else {
-        // Aggiunta di un centesimo
-        if (activateLog) console.log('Aggiungo un centesimo');
-        let importo = importoCorrente.slice(0, importoCorrente.length - 1);
-        if (!inputValido.test(importo)) {
-          let currentPosition = input.selectionStart;
-          input.value = importoAttuale;
-          input.setSelectionRange(currentPosition, currentPosition);
-          return;
-        }
-        let currentPosition = input.selectionStart;
-        let formattedImporto = Number(
-          importo.replaceAll(',', '.')
-        ).toLocaleString('it-IT', {
-          style: 'decimal',
-          minimumFractionDigits: 2,
-          maximumFractionDigits: 2,
-        });
-        input.value = formattedImporto;
-        input.setSelectionRange(currentPosition, currentPosition);
-      }
-    } else if (input.selectionStart === input.value.length) {
-      // Canc dei centesimi
-      if (importoCorrente.charAt(importoCorrente.length - 2) === ',') {
-        if (activateLog) console.log('Gestisco il canc dei centesimi');
-        let currentPosition = input.selectionStart;
-        // Se si cancella il centesimo, aggiungi uno zero al suo posto
-        input.value = importoCorrente.slice(0, importoCorrente.length) + '0';
-        input.setSelectionRange(currentPosition, currentPosition);
-      } else {
-        let currentPosition = input.selectionStart;
-        // Se si cancella la parte finale, riporta il valore corrente
-        input.value = importoAttuale;
-        input.setSelectionRange(currentPosition, currentPosition);
-      }
-    } else if (!inputValido.test(importoCorrente)) {
-      let currentPosition = input.selectionStart;
-      input.value = importoAttuale;
-      input.setSelectionRange(currentPosition - 1, currentPosition - 1);
-      //input.setSelectionRange(dimParteIntera, dimParteIntera)
+      decimalPart = `0${decimalPart[0]}`;
     }
 
-    // Gestire il caso di cancellazione totale: riportare a 0,00
-    if (importoCorrente === '') {
-      input.value = '0,00';
-      setImportoAttuale('0,00');
-      input.setSelectionRange(1, 1);
+    // Gestisce il canc dei centesimi
+    else if (
+      inputValue.length < value.length &&
+      cursorPosition === commaPosition + 2
+    ) {
+      decimalPart = `${decimalPart[0]}0`;
+    }
+
+    return decimalPart;
+  };
+
+  const handleIntegerPartChange = (integerPart) => {
+    if (!integerPart) return '0';
+
+    // Gestione della primo input intero
+    if (value.split(',')[0] === '0') {
+      integerPart = String(integerPart).replace('0', '');
+    }
+
+    // Gestione della parte intera
+    let formattedIntegerPart = String(integerPart).replace(/^0+/, '');
+    integerPart = formattedIntegerPart ? formattedIntegerPart : 0;
+
+    return `${integerPart}`;
+  };
+
+  const formatValue = (event) => {
+    let inputValue = event.target.value;
+
+    // Regex per escludere i formati errati (,x)
+    const invalidFormatRegex = /^,?\d{1,2}$|^,\d{2}$|^,\d{1}$/;
+
+    // Gestione degli '0' all'inizio di 0,00 e del formato ,XX
+    if (invalidFormatRegex.test(inputValue) || /^0+(,00)?$/.test(inputValue)) {
+      let commaIndex = inputValue.indexOf(',');
+      if (commaIndex >= 0) {
+        return '0' + inputValue.slice(inputValue.indexOf(',')).padEnd(2, '0');
+      }
+      return '0,00';
+    }
+
+    // Rimuove gli zeri multipli all'inizio, tranne il caso "0,XX"
+    let adjustedValue = inputValue.replace(/^0+(?![,0])/, '');
+    //console.log('adjusteValue - rimozione zeri', adjustedValue);
+
+    let [integerPart, decimalPart] = adjustedValue.split(',');
+    return `${handleIntegerPartChange(integerPart)},${handleDecimalChange(
+      decimalPart,
+      event
+    )}`;
+  };
+
+  const handleCursorPosition = (
+    event,
+    startCursorPosition,
+    adjustedCommaPosition
+  ) => {
+    let inputValue = event.target.value;
+    const commaPosition = value.indexOf(',');
+    //console.log(`inputValue: ${inputValue}, startCursorPosition: ${startCursorPosition}, commaPosition: ${commaPosition}, adjustCommaPosition: ${adjustedCommaPosition}`)
+
+    // Regex per escludere i formati errati (,x)
+    const invalidFormatRegex = /^,?\d{1,2}$|^,\d{2}$|^,\d{1}$/;
+
+    // Sposta il cursore immediatamente a sinistra della virgola quando si cancella un decimale
+    if (
+      event.nativeEvent.inputType === 'deleteContentBackward' &&
+      startCursorPosition === commaPosition + 1
+    ) {
+      return commaPosition;
+    }
+
+    if (inputValue.length <= value.length || value !== inputValue)
+      return invalidFormatRegex.test(inputValue) ? 0 : startCursorPosition;
+    else return startCursorPosition - 1;
+  };
+
+  const handleValueChange = (event) => {
+    let inputValue = event.target.value;
+    let startCursorPosition = event.target.selectionStart;
+    const commaPosition = inputValue.indexOf(',');
+
+    // Controlla se l'input è vuoto e imposta "0,00"
+    if (!inputValue) {
+      setValue('0,00');
+      if (props.onChange) {
+        props.onChange(0);
+      }
       return;
     }
 
-    // Aggiungo i punti
-    if (activateLog) console.log(`input.value:${input.value}`);
-    let importoView = input.value ? input.value.replaceAll('.', '') : '0.00';
-    let importoNumber = Number(importoView.replace(',', '.'));
-    if (activateLog)
-      console.log(
-        `importoView:${importoView}\nimportoNumber: ${importoNumber}`
-      );
-    const formattedNumber = importoNumber.toLocaleString('it-IT', {
-      style: 'decimal',
-      minimumFractionDigits: 2,
-      maximumFractionDigits: 2,
-    });
-    let currentPosition = input.selectionStart;
-    importoCorrente = formattedNumber;
-    input.value = formattedNumber;
-
-    let numPunti = (formattedNumber.match(/\./g) || []).length;
-    if (activateLog)
-      console.log(`prevPosition: ${currentPosition}, numPunti: ${numPunti}`);
-
-    if (numPunti == cursorShift)
-      input.setSelectionRange(Number(currentPosition), Number(currentPosition));
-    else {
-      if (numPunti > cursorShift)
-        input.setSelectionRange(
-          Number(currentPosition + 1),
-          Number(currentPosition + 1)
-        );
-      else
-        input.setSelectionRange(
-          Number(currentPosition - 1),
-          Number(currentPosition - 1)
-        );
-      setCursorShift(numPunti);
+    // Impedisce la cancellazione della virgola
+    if (
+      startCursorPosition === commaPosition + 1 &&
+      event.nativeEvent.inputType === 'deleteContentBackward'
+    ) {
+      //console.log('impedisco canc')
+      event.preventDefault();
     }
 
-    // Aggiorna lo stato dell'importo
-    setImportoAttuale(input.value);
+    // Formatta il valore
+    const adjustedValue = formatValue(event);
 
-    // Passa il numero puro al chiamante
+    // Aggiorna lo stato e riposiziona il cursore
+    setValue(adjustedValue);
+    inputValue = adjustedValue;
+
+    requestAnimationFrame(() => {
+      const adjustedCommaPosition = adjustedValue.indexOf(',');
+      let cursorPosition = handleCursorPosition(
+        event,
+        startCursorPosition,
+        adjustedCommaPosition
+      );
+      //console.log('posiziono il cursore a:', cursorPosition)
+      event.target.setSelectionRange(cursorPosition, cursorPosition);
+    });
+
+    // Passa il valore numerico grezzo al componente genitore se presente
     if (props.onChange) {
-      const pureNumber = Number(input.value.replace(',', '.'));
-      props.onChange(pureNumber);
+      const numericValue = parseFloat(adjustedValue.replace(',', '.')); // Converti in numero
+      if (!isNaN(numericValue)) {
+        props.onChange(numericValue);
+      }
     }
   };
 
   return (
     <CssTextField
+      value={value}
+      onChange={handleValueChange}
+      onBlur={() => setValue(value)} // Mantieni il valore formattato
+      label={props.label}
+      variant="outlined"
+      size="small"
+      sx={{ ...props.sx }} // Usa il tuo stile personalizzato
       InputProps={{
         startAdornment: (
           <InputAdornment position="start">
@@ -274,17 +176,8 @@ export default function ImportoInput(props) {
           </InputAdornment>
         ),
       }}
-      value={importoAttuale}
-      onChange={handleInputChange}
-      sx={{
-        ...props.sx,
-      }}
-      label={props.label}
-      id={props.id}
-      variant="outlined"
-      size="small"
-      required={props.required}
-      ref={importoFieldRef}
     />
   );
-}
+};
+
+export default ImportoInput;
