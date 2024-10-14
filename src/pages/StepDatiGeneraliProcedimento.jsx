@@ -436,8 +436,10 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
             {/* Valore della controversia */}
             <ImportoInput
               value={procedimento.valoreControversia}
-              onChange={(event) =>
+              onChange={(event) =>{
+                console.log(event)
                 handleInputChange(event, 'valoreControversia')
+              }
               }
               sx={{
                 margin,

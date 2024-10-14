@@ -3,9 +3,9 @@ import InputAdornment from '@mui/material/InputAdornment';
 import EuroSymbolIcon from '@mui/icons-material/EuroSymbol';
 import { CssTextField } from '@theme/MainTheme';
 
-const ImportoInput = ({onChange, label, sx, initialValue = 0}) => {
+const ImportoInput = ({ onChange, label, sx, value = 0 }) => {
   // State
-  const [value, setValue] = useState('0,00');
+  const [importo, setImporto] = useState('0,00');
 
   // Utility
   const formatValueFromNumber = (number) => {
@@ -17,11 +17,11 @@ const ImportoInput = ({onChange, label, sx, initialValue = 0}) => {
 
   // Effect
   React.useEffect(() => {
-    if (initialValue !== undefined && initialValue !== null) {
-      const formattedValue = formatValueFromNumber(initialValue);
-      setValue(formattedValue);
+    if (value !== undefined && value !== null) {
+      const formattedValue = formatValueFromNumber(value);
+      setImporto(formattedValue);
     }
-  }, [initialValue]);
+  }, [value]);
 
   // Handle
   const formatDecimalPart = (decimalPart, event) => {
@@ -45,7 +45,7 @@ const ImportoInput = ({onChange, label, sx, initialValue = 0}) => {
 
     // Gestisce il canc dei decimi
     if (
-      inputValue.length < value.length &&
+      inputValue.length < importo.length &&
       cursorPosition === commaPosition + 1
     ) {
       decimalPart = `0${decimalPart[0]}`;
@@ -53,7 +53,7 @@ const ImportoInput = ({onChange, label, sx, initialValue = 0}) => {
 
     // Gestisce il canc dei centesimi
     else if (
-      inputValue.length < value.length &&
+      inputValue.length < importo.length &&
       cursorPosition === commaPosition + 2
     ) {
       decimalPart = `${decimalPart[0]}0`;
@@ -66,7 +66,7 @@ const ImportoInput = ({onChange, label, sx, initialValue = 0}) => {
     if (!integerPart) return '0';
 
     // Gestione della primo input intero
-    if (value.split(',')[0] === '0') {
+    if (importo.split(',')[0] === '0') {
       integerPart = String(integerPart).replace('0', '');
     }
 
@@ -115,7 +115,7 @@ const ImportoInput = ({onChange, label, sx, initialValue = 0}) => {
     const commaPosition = inputValue.indexOf(',');
 
     // Contare il numero di punti delle migliaia prima della formattazione
-    const oldPointsCount = (value.match(/\./g) || []).length; // Punti nel vecchio valore
+    const oldPointsCount = (importo.match(/\./g) || []).length; // Punti nel vecchio valore
     const newPointsCount = (inputValue.match(/\./g) || []).length; // Punti nel nuovo valore
 
     // Calcola lo shift del cursore in base ai punti aggiunti o rimossi
@@ -130,7 +130,7 @@ const ImportoInput = ({onChange, label, sx, initialValue = 0}) => {
     }
 
     // Se ci sono cambiamenti nel numero di caratteri, aggiusta la posizione del cursore
-    if (inputValue.length <= value.length || value !== inputValue) {
+    if (inputValue.length <= importo.length || importo !== inputValue) {
       // Modifica il cursore tenendo conto dei punti
       return invalidFormatRegex.test(inputValue)
         ? 0
@@ -148,7 +148,7 @@ const ImportoInput = ({onChange, label, sx, initialValue = 0}) => {
 
     // Controlla se l'input è vuoto e imposta "0,00"
     if (!inputValue) {
-      setValue('0,00');
+      setImporto('0,00');
       if (onChange) {
         onChange(0);
       }
@@ -168,7 +168,7 @@ const ImportoInput = ({onChange, label, sx, initialValue = 0}) => {
     const adjustedValue = formatValue(event);
 
     // Aggiorna lo stato e riposiziona il cursore
-    setValue(adjustedValue);
+    setImporto(adjustedValue);
     inputValue = adjustedValue;
 
     requestAnimationFrame(() => {
@@ -184,7 +184,10 @@ const ImportoInput = ({onChange, label, sx, initialValue = 0}) => {
 
     // Passa il valore numerico grezzo al componente genitore se presente
     if (onChange) {
-      const numericValue = parseFloat(adjustedValue.replace(',', '.')); // Converti in numero
+      // Rimuovi i punti delle migliaia prima della conversione
+      const numericValue = parseFloat(
+        adjustedValue.replace(/\./g, '').replace(',', '.')
+      ); // Rimuovi i punti e sostituisci la virgola con il punto
       if (!isNaN(numericValue)) {
         onChange(numericValue);
       }
@@ -193,9 +196,9 @@ const ImportoInput = ({onChange, label, sx, initialValue = 0}) => {
 
   return (
     <CssTextField
-      value={value}
+      value={importo}
       onChange={handleValueChange}
-      onBlur={() => setValue(value)} // Mantieni il valore formattato
+      onBlur={() => setImporto(importo)} // Mantieni il valore formattato
       label={label}
       variant="outlined"
       size="small"
