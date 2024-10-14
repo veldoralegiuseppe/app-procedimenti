@@ -108,39 +108,39 @@ const ImportoInput = ({ onChange, label, sx, value = 0 }) => {
   };
 
   const handleCursorPosition = (event, startCursorPosition) => {
-    // Regex per escludere i formati errati (,x)
-    const invalidFormatRegex = /^,?\d{1,2}$|^,\d{2}$|^,\d{1}$/;
-
     let inputValue = event.target.value;
     const commaPosition = inputValue.indexOf(',');
-
-    // Contare il numero di punti delle migliaia prima della formattazione
-    const oldPointsCount = (importo.match(/\./g) || []).length; // Punti nel vecchio valore
-    const newPointsCount = (inputValue.match(/\./g) || []).length; // Punti nel nuovo valore
-
+  
+    // Conta i punti presenti nella stringa del valore precedente e attuale
+    const oldPointsCount = (importo.match(/\./g) || []).length;
+    const newPointsCount = (inputValue.match(/\./g) || []).length;
+  
     // Calcola lo shift del cursore in base ai punti aggiunti o rimossi
     const pointShift = newPointsCount - oldPointsCount;
-
-    // Sposta il cursore immediatamente a sinistra della virgola quando si cancella un decimale
+  
+    // Se l'utente sta digitando nella parte intera rispetta la posizione del cursore
+    if (startCursorPosition-1 == commaPosition) {
+      return commaPosition // Mantieni la posizione del cursore nella parte decimale
+    }else{
+      //console.log('inserimento parte decimale')
+    }
+  
+    // Se l'utente cancella qualcosa subito prima della virgola
     if (
       event.nativeEvent.inputType === 'deleteContentBackward' &&
       startCursorPosition === commaPosition + 1
     ) {
       return commaPosition;
     }
-
-    // Se ci sono cambiamenti nel numero di caratteri, aggiusta la posizione del cursore
+  
+    // Se ci sono cambiamenti nel numero di caratteri e l'utente è nella parte intera
     if (inputValue.length <= importo.length || importo !== inputValue) {
-      // Modifica il cursore tenendo conto dei punti
-      return invalidFormatRegex.test(inputValue)
-        ? 0
-        : Math.max(0, startCursorPosition + pointShift);
+      return Math.max(0, startCursorPosition + pointShift);
     } else {
-      // Se il numero è stato modificato e i punti sono cambiati, riduci la posizione del cursore
       return Math.max(0, startCursorPosition - 1 + pointShift);
     }
   };
-
+  
   const handleValueChange = (event) => {
     let inputValue = event.target.value;
     let startCursorPosition = event.target.selectionStart;
@@ -178,7 +178,9 @@ const ImportoInput = ({ onChange, label, sx, value = 0 }) => {
         startCursorPosition,
         adjustedCommaPosition
       );
-      //console.log('posiziono il cursore a:', cursorPosition)
+      console.log('posiziono il cursore a:', cursorPosition)
+      event.target.selectionStart = cursorPosition
+      event.target.selectionEnd = cursorPosition
       event.target.setSelectionRange(cursorPosition, cursorPosition);
     });
 

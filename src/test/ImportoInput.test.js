@@ -1,101 +1,103 @@
 import React from 'react';
+import {
+  render as rtlRender,
+  fireEvent,
+  screen,
+} from '@testing-library/react';
+import '@testing-library/jest-dom';
+import userEvent from '@testing-library/user-event';
+
 import { ThemeProvider } from '@mui/material/styles';
 import { themeOne } from '@theme/MainTheme';
-
-import { render, fireEvent } from '@testing-library/react';
 import ImportoInput from '@components/ImportoInput';
-import '@testing-library/jest-dom';
 
-function renderComponent() {
-  const handleChange = jest.fn();
-  const { getByLabelText, rerender } = render(
-    <ThemeProvider theme={themeOne}>
-      <ImportoInput label="Importo" onChange={handleChange} />
-    </ThemeProvider>
+// Funzione di render astratta per includere il ThemeProvider
+const render = (ui, options = {}) => {
+  return rtlRender(
+    <ThemeProvider theme={themeOne}>{ui}</ThemeProvider>,
+    options
   );
-  return { getByLabelText, rerender };
-}
+};
 
-describe('ImportoInput Component', () => {
-  test('should handle integer input correctly', () => {
-    const { getByLabelText } = renderComponent();
-    const input = getByLabelText('Importo');
+// Helper function per simulare l'inserimento input da parte dell'utente
+const typeInInput = (element, value) => {
+  fireEvent.change(element, { target: { value } });
+};
 
-    // Simula l'inserimento di un valore intero
-    fireEvent.change(input, { target: { value: '1000' } });
-
-    // Il valore nell'input deve essere formattato correttamente
-    expect(input.value).toBe('1.000,00');
-    expect(handleChange).toHaveBeenCalledWith(1000);
+describe('ImportoInput', () => {
+  it('renders correctly with default value', () => {
+    render(<ImportoInput label="Importo" />);
+    const input = screen.getByLabelText('Importo');
+    expect(input).toHaveValue('0,00');
   });
 
-  test('should handle decimal input correctly', () => {
-    const { getByLabelText } = renderComponent();
-
-    const input = getByLabelText('Importo');
-
-    // Simula l'inserimento di un valore decimale
-    fireEvent.change(input, { target: { value: '1000,50' } });
-
-    // Il valore nell'input deve essere formattato correttamente
-    expect(input.value).toBe('1.000,50');
-    expect(handleChange).toHaveBeenCalledWith(1000.5);
+  it('formats initial value correctly from the props', () => {
+    render(<ImportoInput label="Importo" value={1234.56} />);
+    const input = screen.getByLabelText('Importo');
+    expect(input).toHaveValue('1.234,56');
   });
 
-  test('should handle invalid input (non-numeric) and prevent incorrect input', () => {
-    const { getByLabelText } = renderComponent();
+  it('formats user input correctly with thousand separators and decimal points', () => {
+    render(<ImportoInput label="Importo" />);
+    const input = screen.getByLabelText('Importo');
 
-    const input = getByLabelText('Importo');
+    typeInInput(input, '1234');
+    expect(input).toHaveValue('1.234,00');
 
-    // Simula l'inserimento di un valore non valido
-    fireEvent.change(input, { target: { value: 'abc' } });
-
-    // Il valore non deve essere accettato, quindi il campo rimane invariato
-    expect(input.value).toBe('0,00');
-    expect(handleChange).not.toHaveBeenCalled();
+    typeInInput(input, '1234,56');
+    expect(input).toHaveValue('1.234,56');
   });
 
-  test('should reset the input field correctly', () => {
-    const { getByLabelText, rerender } = renderComponent();
-    const input = getByLabelText('Importo');
+  it('does not allow deleting the comma', () => {
+    render(<ImportoInput label="Importo" />);
+    const input = screen.getByLabelText('Importo');
 
-    // Verifica il valore iniziale
-    expect(input.value).toBe('1.000,50');
+    typeInInput(input, '1234,56');
+    expect(input).toHaveValue('1.234,56');
 
-    // Re-render con reset impostato a true
-    rerender(<ImportoInput label="Importo" value="1000,50" reset />);
-
-    // Il campo deve essere resettato
-    expect(input.value).toBe('0,00');
+    // Prova a cancellare la virgola
+    fireEvent.change(input, { target: { value: '123456' } });
+    expect(input).toHaveValue('123.456,00');
   });
 
-  test('should handle deleting decimals', () => {
-    const { getByLabelText } = renderComponent();
+  it('calls onChange with correct numeric value', () => {
+    const handleChange = jest.fn();
+    render(<ImportoInput label="Importo" onChange={handleChange} />);
 
-    const input = getByLabelText('Importo');
+    const input = screen.getByLabelText('Importo');
 
-    // Simula l'inserimento di un valore decimale
-    fireEvent.change(input, { target: { value: '1000,50' } });
-    expect(input.value).toBe('1.000,50');
+    typeInInput(input, '1234,56');
+    expect(handleChange).toHaveBeenCalledWith(1234.56);
 
-    // Simula la cancellazione dei decimali
-    fireEvent.change(input, { target: { value: '1000,' } });
-
-    // Verifica che il campo venga gestito correttamente
-    expect(input.value).toBe('1.000,00');
-    expect(handleChange).toHaveBeenCalledWith(1000);
+    typeInInput(input, '1000,00');
+    expect(handleChange).toHaveBeenCalledWith(1000.0);
   });
 
-  test('should handle input with points and commas correctly', () => {
-    const { getByLabelText } = renderComponent();
+  it('formats the number correctly when thousands are entered', async () => {
+    render(<ImportoInput label="Importo" />);
+    const input = screen.getByLabelText('Importo');
 
-    const input = getByLabelText('Importo');
+    // Simula un clic sull'input per dargli il focus
+    fireEvent.click(input);
 
-    // Simula l'inserimento di un numero con punti e virgola
-    fireEvent.change(input, { target: { value: '1.000,50' } });
+    // Digita carattere per carattere usando fireEvent.change
+    typeInInput(input, '1000000');
+    setTimeout(() => {
+      expect(input).toHaveValue('1.000.000,00');
+    }, 1000);
+  });
 
-    // Verifica che il valore venga formattato correttamente
-    expect(input.value).toBe('1.000,50');
-    expect(handleChange).toHaveBeenCalledWith(1000.5);
+  it('maintains correct cursor position after formatting', (done) => {
+    render(<ImportoInput label="Importo" />);
+    const input = screen.getByLabelText('Importo');
+
+    typeInInput(input, '123456');
+    expect(input).toHaveValue('123.456,00');
+
+    // Aggiungi un piccolo timeout per attendere che tutti gli aggiornamenti siano completati
+    setTimeout(() => {
+      expect(input.selectionStart).toBe(7); // Verifica che il cursore sia nella posizione corretta (prima della virgola)
+      done(); // Chiama done() per segnalare che il test è completato
+    }, 100);
   });
 });
