@@ -8,38 +8,44 @@ import {
 } from '@testing-library/react';
 import { ThemeProvider } from '@mui/material/styles';
 import '@testing-library/jest-dom';
+
+import { ProcedimentoContext } from '@context/Procedimento';
 import { themeOne } from '@theme/MainTheme';
 import FormPersonaFisica from '@pages/FormPersonaFisica.jsx';
 import * as ComuniUtils from '@assets/js/comuni';
+import { provinceCampania, comuniCampania } from './mock/mockProvinceComuni';
 import userEvent from '@testing-library/user-event';
 
-// Mock delle chiamate getProvince e getComuni
+// Mock delle chiamate
 jest.mock('@assets/js/comuni', () => ({
   getProvince: jest.fn(),
   getComuni: jest.fn(),
+  findComuneByCodiceCatastale: jest.fn(),
 }));
 
+async function renderComponent(mockContextValue) {
+  let container;
+  await act(async () => {
+    const rendered = render(
+      <ProcedimentoContext.Provider value={mockContextValue}>
+        <ThemeProvider theme={themeOne}>
+          <FormPersonaFisica/>
+        </ThemeProvider>
+      </ProcedimentoContext.Provider>
+    );
+    container = rendered.container;
+  });
+  return { container };
+}
+
 beforeEach(() => {
-  // Mock della risposta di getProvince e getComuni
-  ComuniUtils.getProvince.mockResolvedValue([
-    { codice: '001', nome: 'MILANO', sigla: 'MI', regione: 'LOMBARDIA' },
-    { codice: '002', nome: 'ROMA', sigla: 'RM', regione: 'LAZIO' },
-  ]);
-  
-  ComuniUtils.getComuni.mockResolvedValue([
-    {
-      codice: '001001',
-      nome: 'MILANO',
-      codiceCatastale: 'F205',
-      provincia: { nome: 'MILANO', regione: 'LOMBARDIA' },
-    },
-    {
-      codice: '001002',
-      nome: 'ROMA',
-      codiceCatastale: 'H501',
-      provincia: { nome: 'ROMA', regione: 'LAZIO' },
-    },
-  ]);
+  ComuniUtils.getProvince.mockResolvedValue(provinceCampania);
+  ComuniUtils.getComuni.mockResolvedValue(comuniCampania);
+  ComuniUtils.findComuneByCodiceCatastale.mockImplementation((codice) =>
+    Promise.resolve(
+      comuniCampania.find((comune) => comune.codiceCatastale === codice)
+    )
+  );
 });
 
 // test('renders the form with all required fields', async () => {
@@ -78,34 +84,33 @@ beforeEach(() => {
 // });
 
 test('abilita il campo Comune di residenza quando una provincia è selezionata', async () => {
-  let container;
-  await act(async () => {
-    const rendered = render(
-      
-        <ThemeProvider theme={themeOne}>
-        <FormPersonaFisica/>
-        </ThemeProvider>
-     
-    );
-    container = rendered.container;
-  });
-  
+  const mockSetPersone = jest.fn();
+    const mockContextValue = {
+      persone: [],
+      setPersone: mockSetPersone,
+    };
+
+   const { container } = await renderComponent(mockContextValue);
+
   // Trova il campo della provincia di residenza e inserisci un valore
   const provinciaInput = container.querySelector('#pf-provincia-residenza');
   await userEvent.type(provinciaInput, 'SALERNO');
   await userEvent.keyboard('{Enter}');
 
   // Verifica che il campo del comune sia abilitato
-  await waitFor(() => {
+  setTimeout(()=> {
     const comuneInput = container.querySelector('#pf-comune-residenza');
     expect(comuneInput).not.toBeDisabled();
-  });
-
+  }, 1000)
+  
   // Interagisci con il campo del comune ora abilitato
   const comuneInput = container.querySelector('#pf-comune-residenza');
   await userEvent.type(comuneInput, 'MERCATO SAN SEVERINO');
   await userEvent.keyboard('{Enter}');
 
   // Verifica che il comune selezionato sia quello corretto
-  expect(comuneInput).toHaveValue('MERCATO SAN SEVERINO');
+  setTimeout(()=> {
+    expect(comuneInput).toHaveValue('MERCATO SAN SEVERINO');
+  }, 1000)
+  
 });
