@@ -85,7 +85,7 @@ const ImportoInput = ({ onChange, label, sx, value = 0 }) => {
 
   const formatValue = (event) => {
     let inputValue = event.target.value;
-    console.log('inputValue format', inputValue)
+    console.log('inputValue format', inputValue);
 
     // Regex per escludere i formati errati (,x)
     const invalidFormatRegex = /^,?\d{1,2}$|^,\d{2}$|^,\d{1}$/;
@@ -99,8 +99,9 @@ const ImportoInput = ({ onChange, label, sx, value = 0 }) => {
       return '0,00';
     }
 
-    // Rimuove gli zeri multipli all'inizio, tranne il caso "0,XX"
+    // Rimuove gli zeri multipli all'inizio
     let adjustedValue = inputValue.replace(/^0+(?![,0])/, '');
+    console.log('gestione zero sx',adjustedValue)
 
     let [integerPart, decimalPart] = adjustedValue.split(',');
     return `${formatIntegerPart(
@@ -111,21 +112,21 @@ const ImportoInput = ({ onChange, label, sx, value = 0 }) => {
   const handleCursorPosition = (event, startCursorPosition) => {
     let inputValue = event.target.value;
     const commaPosition = inputValue.indexOf(',');
-  
+
     // Conta i punti presenti nella stringa del valore precedente e attuale
     const oldPointsCount = (importo.match(/\./g) || []).length;
     const newPointsCount = (inputValue.match(/\./g) || []).length;
-  
+
     // Calcola lo shift del cursore in base ai punti aggiunti o rimossi
     const pointShift = newPointsCount - oldPointsCount;
-  
+
     // Se l'utente sta digitando nella parte intera rispetta la posizione del cursore
-    if (startCursorPosition-1 == commaPosition) {
-      return commaPosition // Mantieni la posizione del cursore nella parte decimale
-    }else{
+    if (startCursorPosition - 1 == commaPosition) {
+      return commaPosition; // Mantieni la posizione del cursore nella parte decimale
+    } else {
       //console.log('inserimento parte decimale')
     }
-  
+
     // Se l'utente cancella qualcosa subito prima della virgola
     if (
       event.nativeEvent.inputType === 'deleteContentBackward' &&
@@ -133,7 +134,7 @@ const ImportoInput = ({ onChange, label, sx, value = 0 }) => {
     ) {
       return commaPosition;
     }
-  
+
     // Se ci sono cambiamenti nel numero di caratteri e l'utente è nella parte intera
     if (inputValue.length <= importo.length || importo !== inputValue) {
       return Math.max(0, startCursorPosition + pointShift);
@@ -141,23 +142,40 @@ const ImportoInput = ({ onChange, label, sx, value = 0 }) => {
       return Math.max(0, startCursorPosition - 1 + pointShift);
     }
   };
-  
+
   const handleValueChange = (event) => {
     let inputValue = event.target.value;
     let startCursorPosition = event.target.selectionStart;
     const commaPosition = inputValue.indexOf(',');
 
-     // Controllo se l'input è nel formato (x...x,xx)
-     if (!/^[0-9]+,[0-9]+$/.test(inputValue)) {
-      event.target.value = importo
-      let nextCursor = /,,/.test(inputValue) ? commaPosition+1 : Math.max(startCursorPosition-1,0)
-      console.log('nextCursor',nextCursor)
-      event.target.selectionStart = nextCursor
-      event.target.selectionEnd = nextCursor
-      event.target.setSelectionRange(nextCursor, nextCursor);
-      return;
-    }
+    // Gestisce i punti di separazione per la parte intera
+    let parteIntera = inputValue.split(',')[0].replaceAll('.', '');
+    let numeroDiPunti = inputValue.match(/\./g)?.length || 0;
+    let numeroDiPuntiPrevisti =
+      parteIntera.length > 3 ? parseInt(parteIntera.length / 3) : 0;
 
+    // Controllo se l'input è nel formato corretto
+    if (
+      !/^[0-9]+,[0-9]+$/.test(inputValue.replaceAll('.', '')) ||
+      numeroDiPunti > numeroDiPuntiPrevisti
+    ) {
+      if (!/^,\d{2}$/.test(inputValue)) {
+        // Immissione dati sporchi
+        if (inputValue.length > importo.length) {
+          let nextCursor = /,,/.test(inputValue)
+            ? commaPosition + 1
+            : Math.max(startCursorPosition - 1, 0);
+
+          inputValue = importo;
+          event.target.value = inputValue;
+
+          event.target.selectionStart = nextCursor;
+          event.target.selectionEnd = nextCursor;
+          event.target.setSelectionRange(nextCursor, nextCursor);
+          return;
+        }
+      }
+    }
 
     // Controlla se l'input è vuoto e imposta "0,00"
     if (!inputValue) {
@@ -191,9 +209,9 @@ const ImportoInput = ({ onChange, label, sx, value = 0 }) => {
         startCursorPosition,
         adjustedCommaPosition
       );
-      console.log('posiziono il cursore a:', cursorPosition)
-      event.target.selectionStart = cursorPosition
-      event.target.selectionEnd = cursorPosition
+      console.log('posiziono il cursore a:', cursorPosition);
+      event.target.selectionStart = cursorPosition;
+      event.target.selectionEnd = cursorPosition;
       event.target.setSelectionRange(cursorPosition, cursorPosition);
     });
 
