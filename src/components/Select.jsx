@@ -57,7 +57,7 @@ function Select({
 
       <CssSelect
         labelId={`${label}-input-label`}
-        value={value}
+        value={value || ''}
         label={label}
         size='small'
         onChange={onChange}

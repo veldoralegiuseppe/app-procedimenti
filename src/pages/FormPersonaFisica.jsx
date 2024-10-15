@@ -659,6 +659,7 @@ function FormPersonaFisica(props, ref) {
         <ComuneSelect
           ref={comuneResidenzaRef}
           provincia={parteAttuale.provinciaResidenza}
+          disabled={parteAttuale.provinciaResidenza}
           id='pf-comune-residenza'
           label="Comune di residenza"
           onChange={(comune) => {

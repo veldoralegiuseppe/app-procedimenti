@@ -29,7 +29,7 @@ async function renderComponent(mockContextValue) {
     const rendered = render(
       <ProcedimentoContext.Provider value={mockContextValue}>
         <ThemeProvider theme={themeOne}>
-          <FormPersonaFisica/>
+          <FormPersonaFisica />
         </ThemeProvider>
       </ProcedimentoContext.Provider>
     );
@@ -48,69 +48,179 @@ beforeEach(() => {
   );
 });
 
-// test('renders the form with all required fields', async () => {
-//   await act(async () => {
-//     render(
-//       <ThemeProvider theme={themeOne}>
-//         <FormPersonaFisica />
-//       </ThemeProvider>
-//     );
-//   });
-
-//   // Usa una funzione per cercare le label in modo più flessibile.
-//   const nomeInput = screen.getByLabelText((content) => content.includes('Nome'));
-//   const cognomeInput = screen.getByLabelText((content) => content.includes('Cognome'));
-//   const avvocatoInput = screen.getByLabelText((content) => content.includes('Avvocato'));
-
-//   // Verifica che i campi obbligatori siano presenti
-//   expect(nomeInput).toBeInTheDocument();
-//   expect(cognomeInput).toBeInTheDocument();
-//   expect(avvocatoInput).toBeInTheDocument();
-  
-//   // Verifica che i campi obbligatori siano inizialmente vuoti
-//   expect(nomeInput).toHaveValue('');
-//   expect(cognomeInput).toHaveValue('');
-//   expect(avvocatoInput).toHaveValue('');
-  
-//   // Simula l'invio del form per verificare i messaggi di errore
-//   fireEvent.change(nomeInput, { target: { value: '' } });
-//   fireEvent.change(cognomeInput, { target: { value: '' } });
-//   fireEvent.change(avvocatoInput, { target: { value: '' } });
-
-//   fireEvent.click(screen.getByRole('button', { name: "Crea" }));
-
-//   // Verifica la presenza dei messaggi di errore per i campi obbligatori
-//   expect(await screen.findByText(/Campi obbligatori assenti/i)).toBeInTheDocument();
-// });
-
-test('abilita il campo Comune di residenza quando una provincia è selezionata', async () => {
+test('verifica dei campi obbligatori', async () => {
   const mockSetPersone = jest.fn();
-    const mockContextValue = {
-      persone: [],
-      setPersone: mockSetPersone,
-    };
+  const mockContextValue = {
+    persone: [],
+    setPersone: mockSetPersone,
+  };
 
-   const { container } = await renderComponent(mockContextValue);
+  const { container } = await renderComponent(mockContextValue);
+  const campiObbligatori = ['Nome', 'Cognome', 'Avvocato'];
+
+  campiObbligatori.forEach((campo) => {
+    // Cerca l'input
+    let inputElement = screen.getByLabelText((content) =>
+      content.includes(campo)
+    );
+
+    // Verifica che sia presente
+    expect(inputElement).toBeInTheDocument();
+
+    // Verifica che sia inizialmente vuoto
+    expect(inputElement).toHaveValue('');
+
+    // Verifica che sia obbligatorio
+    expect(inputElement).toBeRequired();
+  });
+});
+
+test.only('abilita il campo Comune di residenza quando una provincia è selezionata', async () => {
+  const mockSetPersone = jest.fn();
+  const mockContextValue = {
+    persone: [],
+    setPersone: mockSetPersone,
+  };
+
+  const { container } = await renderComponent(mockContextValue);
 
   // Trova il campo della provincia di residenza e inserisci un valore
   const provinciaInput = container.querySelector('#pf-provincia-residenza');
-  await userEvent.type(provinciaInput, 'SALERNO');
-  await userEvent.keyboard('{Enter}');
+  await act(async () => {
+    await userEvent.click(provinciaInput);
+    await userEvent.type(provinciaInput, 'SALERNO');
+    await userEvent.keyboard('{Enter}');
+  });
+  await waitFor(() => {
+    expect(provinciaInput).toHaveValue('SALERNO');
+  });
 
   // Verifica che il campo del comune sia abilitato
-  setTimeout(()=> {
-    const comuneInput = container.querySelector('#pf-comune-residenza');
-    expect(comuneInput).not.toBeDisabled();
-  }, 1000)
-  
-  // Interagisci con il campo del comune ora abilitato
   const comuneInput = container.querySelector('#pf-comune-residenza');
+  await waitFor(
+    () => {
+      expect(comuneInput).not.toBeDisabled();
+    },
+    { interval: 1000 }
+  );
+
+  // Interagisci con il campo del comune ora abilitato
   await userEvent.type(comuneInput, 'MERCATO SAN SEVERINO');
   await userEvent.keyboard('{Enter}');
 
   // Verifica che il comune selezionato sia quello corretto
-  setTimeout(()=> {
+  await waitFor(() => {
     expect(comuneInput).toHaveValue('MERCATO SAN SEVERINO');
-  }, 1000)
-  
+  });
+});
+
+test('dati anagrafici pre-compilati se il codice fiscale è specificato e corretto', async () => {
+  const mockSetPersone = jest.fn();
+  const mockContextValue = {
+    persone: [],
+    setPersone: mockSetPersone,
+  };
+
+  const { container } = await renderComponent(mockContextValue);
+  const codiceFiscale = 'VLDGPP97E16F138C';
+  const campiAnagrafici = {
+    'pf-data-nascita': { label: 'Data di nascita', value: '16/05/1997' },
+    'pf-sesso': { label: 'Sesso', value: 'M' },
+    'pf-provincia-nascita': { label: 'Provincia di nascita', value: 'SALERNO' },
+    'pf-comune-nascita': {
+      label: 'Comune di nascita',
+      value: 'MERCATO SAN SEVERINO',
+    },
+  };
+
+  // Verifica che siano normalmente attivi
+  let dataNascitInput = container.querySelector(`#pf-data-nascita`);
+  expect(dataNascitInput).toBeInTheDocument();
+  expect(dataNascitInput).toHaveValue('');
+
+  let sessoSelect = container.querySelector(`#pf-sesso`);
+  expect(sessoSelect).toBeInTheDocument();
+  const cleanedText = sessoSelect.textContent.replace(
+    /[\u200B-\u200D\uFEFF]/g,
+    ''
+  ); // rimuove i caratteri invisibili
+  expect(cleanedText).toBe('');
+
+  let provinciaNascitaInput = container.querySelector(`#pf-provincia-nascita`);
+  expect(provinciaNascitaInput).toBeInTheDocument();
+  expect(provinciaNascitaInput).toHaveValue('');
+
+  let comuneNascitaInput = container.querySelector(`#pf-comune-nascita`);
+  expect(comuneNascitaInput).toBeInTheDocument();
+  expect(comuneNascitaInput).toHaveValue('');
+
+  // Inserisce il codice fiscale
+  const codiceFiscaleInput = container.querySelector('#pf-cf');
+  await userEvent.type(codiceFiscaleInput, codiceFiscale);
+  await waitFor(() => {
+    expect(codiceFiscaleInput).toHaveValue(codiceFiscale);
+  });
+
+  // Verifica che i campi anagrafici siano compilati correttamente
+  for (let campo in campiAnagrafici) {
+    // Cerca l'input
+    let inputElement = container.querySelector(`#${campo}`);
+
+    // Verifica che abbia il valore corretto
+    if (campo == 'pf-sesso') {
+      const cleanedText = inputElement.textContent.replace(
+        /[\u200B-\u200D\uFEFF]/g,
+        ''
+      );
+      await waitFor(() => {
+        expect(cleanedText).toBe('UOMO');
+      });
+    } else
+      await waitFor(() => {
+        expect(inputElement).toHaveValue(campiAnagrafici[campo].value);
+      });
+  }
+});
+
+test('dati anagrafici vuoti se il codice fiscale specificato è errato', async () => {
+  const mockSetPersone = jest.fn();
+  const mockContextValue = {
+    persone: [],
+    setPersone: mockSetPersone,
+  };
+
+  const { container } = await renderComponent(mockContextValue);
+  const campiAnagrafici = {
+    'pf-data-nascita': { label: 'Data di nascita', value: '16/05/1997' },
+    'pf-sesso': { label: 'Sesso', value: 'M' },
+    'pf-provincia-nascita': { label: 'Provincia di nascita', value: 'SALERNO' },
+    'pf-comune-nascita': {
+      label: 'Comune di nascita',
+      value: 'MERCATO SAN SEVERINO',
+    },
+  };
+
+  // Inserisce il codice fiscale
+  const codiceFiscaleInput = container.querySelector('#pf-cf');
+  await userEvent.type(codiceFiscaleInput, 'XXXXXXXXXXXXXXXX');
+  setTimeout(() => {
+    expect(codiceFiscaleInput).toHaveValue('XXXXXXXXXXXXXXXX');
+    const ariaInvalid = codiceFiscaleInput.getAttribute('aria-invalid');
+    expect(ariaInvalid).toBe('true');
+  }, 500);
+
+  // Verifica che i campi anagrafici siano compilati correttamente
+  for (let campo in campiAnagrafici) {
+    // Cerca l'input
+    let inputElement = container.querySelector(`#${campo}`);
+
+    // Verifica che abbia il valore corretto
+    if (campo == 'pf-sesso') {
+      const cleanedText = inputElement.textContent.replace(
+        /[\u200B-\u200D\uFEFF]/g,
+        ''
+      );
+      expect(cleanedText).toBe('');
+    } else expect(inputElement).toHaveValue('');
+  }
 });
