@@ -85,25 +85,8 @@ const ImportoInput = ({ onChange, label, sx, value = 0 }) => {
 
   const formatValue = (event) => {
     let inputValue = event.target.value;
-    console.log('inputValue format', inputValue);
+    let [integerPart, decimalPart] = inputValue.split(',');
 
-    // Regex per escludere i formati errati (,x)
-    const invalidFormatRegex = /^,?\d{1,2}$|^,\d{2}$|^,\d{1}$/;
-
-    // Gestione degli '0' all'inizio di 0,00 e del formato ,XX
-    if (invalidFormatRegex.test(inputValue) || /^0+(,00)?$/.test(inputValue)) {
-      let commaIndex = inputValue.indexOf(',');
-      if (commaIndex >= 0) {
-        return '0' + inputValue.slice(inputValue.indexOf(',')).padEnd(2, '0');
-      }
-      return '0,00';
-    }
-
-    // Rimuove gli zeri multipli all'inizio
-    let adjustedValue = inputValue.replace(/^0+(?![,0])/, '');
-    console.log('gestione zero sx',adjustedValue)
-
-    let [integerPart, decimalPart] = adjustedValue.split(',');
     return `${formatIntegerPart(
       integerPart.replaceAll('.', '')
     )},${formatDecimalPart(decimalPart, event)}`;
@@ -159,24 +142,45 @@ const ImportoInput = ({ onChange, label, sx, value = 0 }) => {
       !/^[0-9]+,[0-9]+$/.test(inputValue.replaceAll('.', '')) ||
       numeroDiPunti > numeroDiPuntiPrevisti
     ) {
-      if (!/^,\d{2}$/.test(inputValue)) {
-        // Immissione dati sporchi
-        if (inputValue.length > importo.length) {
-          let nextCursor = /,,/.test(inputValue)
-            ? commaPosition + 1
-            : Math.max(startCursorPosition - 1, 0);
 
-          inputValue = importo;
-          event.target.value = inputValue;
+      // caso ,xx
+      if(/^,\d{2}$/.test(inputValue)){
+        inputValue = '0' + inputValue.slice(inputValue.indexOf(',')).padEnd(2, '0');
+        event.target.value = inputValue;
+        setImporto(inputValue)
+        let nextCursor = 0
+        event.target.selectionStart = nextCursor;
+        event.target.selectionEnd = nextCursor;
+        event.target.setSelectionRange(nextCursor, nextCursor);
+        return
+      }
 
-          event.target.selectionStart = nextCursor;
-          event.target.selectionEnd = nextCursor;
-          event.target.setSelectionRange(nextCursor, nextCursor);
-          return;
-        }
+      // Immissione dati sporchi
+      if (inputValue.length > importo.length) {
+        let nextCursor = /,,/.test(inputValue)
+          ? commaPosition + 1
+          : Math.max(startCursorPosition - 1, 0);
+
+        inputValue = importo;
+        event.target.value = inputValue;
+        event.target.selectionStart = nextCursor;
+        event.target.selectionEnd = nextCursor;
+        event.target.setSelectionRange(nextCursor, nextCursor);
+        return;
       }
     }
 
+    // Gestione degli zero a sinistra 
+    if(/^0+(?=\d+[,\.]\d+)/.test(inputValue)){
+      console.log('zeri a sx')
+      inputValue = inputValue.replace(/^0+(?![,0])/, '');
+      event.target.value = inputValue
+      startCursorPosition = Math.max(startCursorPosition-1, 0);
+      event.target.selectionStart = startCursorPosition;
+      event.target.selectionEnd = startCursorPosition;
+      event.target.setSelectionRange(startCursorPosition, startCursorPosition);
+    }
+    
     // Controlla se l'input è vuoto e imposta "0,00"
     if (!inputValue) {
       setImporto('0,00');

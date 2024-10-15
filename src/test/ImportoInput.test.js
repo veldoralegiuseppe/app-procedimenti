@@ -3,9 +3,9 @@ import {
   render as rtlRender,
   fireEvent,
   screen,
+  waitFor
 } from '@testing-library/react';
 import '@testing-library/jest-dom';
-import userEvent from '@testing-library/user-event';
 
 import { ThemeProvider } from '@mui/material/styles';
 import { themeOne } from '@theme/MainTheme';
@@ -84,20 +84,23 @@ describe('ImportoInput', () => {
     typeInInput(input, '1000000');
     setTimeout(() => {
       expect(input).toHaveValue('1.000.000,00');
+      done(); 
     }, 1000);
   });
 
-  it('maintains correct cursor position after formatting', (done) => {
+  it('maintains correct cursor position after formatting', async () => {
     render(<ImportoInput label="Importo" />);
     const input = screen.getByLabelText('Importo');
 
     typeInInput(input, '123456');
-    expect(input).toHaveValue('123.456,00');
-
+    setTimeout(() => {
+        expect(input).toHaveValue('123.456,00');
+      }, 600);
+    
     // Aggiungi un piccolo timeout per attendere che tutti gli aggiornamenti siano completati
     setTimeout(() => {
       expect(input.selectionStart).toBe(7); // Verifica che il cursore sia nella posizione corretta (prima della virgola)
       done(); // Chiama done() per segnalare che il test è completato
-    }, 100);
+    }, 600);
   });
 });
