@@ -105,7 +105,7 @@ function ComuneSelect(props, ref) {
 
   return (
     <Autocomplete
-      disabled={!isComuneEnabled}
+      disabled={!isComuneEnabled || props.disabled}
       options={filteredComuni}
       value={selectedComune}
       id={props.id}
