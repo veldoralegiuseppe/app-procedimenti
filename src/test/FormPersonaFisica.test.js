@@ -75,7 +75,7 @@ test('verifica dei campi obbligatori', async () => {
   });
 });
 
-test.only('abilita il campo Comune di residenza quando una provincia è selezionata', async () => {
+test('abilita il campo Comune di residenza quando una provincia è selezionata', async () => {
   const mockSetPersone = jest.fn();
   const mockContextValue = {
     persone: [],
@@ -86,11 +86,11 @@ test.only('abilita il campo Comune di residenza quando una provincia è selezion
 
   // Trova il campo della provincia di residenza e inserisci un valore
   const provinciaInput = container.querySelector('#pf-provincia-residenza');
-  await act(async () => {
-    await userEvent.click(provinciaInput);
-    await userEvent.type(provinciaInput, 'SALERNO');
-    await userEvent.keyboard('{Enter}');
-  });
+  await userEvent.click(provinciaInput);
+  await userEvent.type(provinciaInput, 'SALERNO');
+  await userEvent.keyboard('{arrowdown}');
+  await userEvent.keyboard('{Enter}');
+  
   await waitFor(() => {
     expect(provinciaInput).toHaveValue('SALERNO');
   });
@@ -106,6 +106,7 @@ test.only('abilita il campo Comune di residenza quando una provincia è selezion
 
   // Interagisci con il campo del comune ora abilitato
   await userEvent.type(comuneInput, 'MERCATO SAN SEVERINO');
+  await userEvent.keyboard('{arrowdown}');
   await userEvent.keyboard('{Enter}');
 
   // Verifica che il comune selezionato sia quello corretto
@@ -203,12 +204,11 @@ test('dati anagrafici vuoti se il codice fiscale specificato è errato', async (
   // Inserisce il codice fiscale
   const codiceFiscaleInput = container.querySelector('#pf-cf');
   await userEvent.type(codiceFiscaleInput, 'XXXXXXXXXXXXXXXX');
-  setTimeout(() => {
+  await waitFor(() => {
     expect(codiceFiscaleInput).toHaveValue('XXXXXXXXXXXXXXXX');
-    const ariaInvalid = codiceFiscaleInput.getAttribute('aria-invalid');
-    expect(ariaInvalid).toBe('true');
-  }, 500);
-
+  })
+  expect(codiceFiscaleInput).toHaveAttribute('aria-invalid', 'true');
+  
   // Verifica che i campi anagrafici siano compilati correttamente
   for (let campo in campiAnagrafici) {
     // Cerca l'input
