@@ -14,7 +14,7 @@ import { themeOne } from '@theme/MainTheme';
 import CreaParteControparte from '@pages/CreaParteControparte';
 import * as ComuniUtils from '@assets/js/comuni';
 import { ProcedimentoContext } from '@context/Procedimento';
-import { PersonaFisica } from '@model/personaFisica';
+import { Comune } from '@model/comune';
 import { provinceCampania, comuniCampania } from './mock/mockProvinceComuni';
 
 // Mock delle chiamate
@@ -69,6 +69,28 @@ async function renderComponent(mockContextValue) {
   return { container };
 }
 
+async function fillRuolo(ruolo = 'CONTROPARTE') {
+  const controparteRadio = screen.getByLabelText('CONTROPARTE');
+  const parteRadio = screen.getByLabelText('CONTROPARTE');
+  const selectedRadio = ruolo == 'CONTROPARTE' ? controparteRadio : parteRadio;
+
+  await userEvent.click(selectedRadio);
+  expect(selectedRadio).toBeChecked();
+}
+
+async function fillCampiObbligatori(container) {
+  const { nomeInput, cognomeInput, rappresentanteLegaleInput } =
+    getSelectors(container);
+
+  await userEvent.type(nomeInput, 'GIUSEPPE');
+  await userEvent.type(cognomeInput, 'VELDORALE');
+  await userEvent.type(rappresentanteLegaleInput, 'RAIMONDO GIUDICE');
+
+  expect(nomeInput).toHaveValue('GIUSEPPE');
+  expect(cognomeInput).toHaveValue('VELDORALE');
+  expect(rappresentanteLegaleInput).toHaveValue('RAIMONDO GIUDICE');
+}
+
 async function fillCodiceFiscale(container) {
   const { codiceFiscaleInput } = getSelectors(container);
   await userEvent.type(codiceFiscaleInput, 'VLDGPP97E16F138C');
@@ -92,7 +114,7 @@ async function fillDatiDemografici(container) {
   } = getSelectors(container);
 
   // Simula l'apertura della lista e la selezione della provincia
-  await userEvent.click(provinciaResidenzaInput); 
+  await userEvent.click(provinciaResidenzaInput);
   await userEvent.type(provinciaResidenzaInput, 'SALERNO');
   await userEvent.keyboard('{arrowdown}');
   await userEvent.keyboard('{Enter}');
@@ -101,13 +123,15 @@ async function fillDatiDemografici(container) {
   });
 
   // Abilito manualmente il comune assendoci un bug di Jest che non dipende dal componente
-  await waitFor(() => {expect(comuneResidenzaInput).not.toBeDisabled()});
-  await userEvent.click(comuneResidenzaInput); 
+  await waitFor(() => {
+    expect(comuneResidenzaInput).not.toBeDisabled();
+  });
+  await userEvent.click(comuneResidenzaInput);
   await userEvent.type(comuneResidenzaInput, 'SIANO');
   await userEvent.keyboard('{arrowdown}');
   await userEvent.keyboard('{Enter}');
   expect(comuneResidenzaInput).toHaveValue('SIANO');
-  
+
   // Digita il comune e l'indirizzo
   await userEvent.type(indirizzoResidenzaInput, 'VIALE EUROPA 168');
   expect(indirizzoResidenzaInput).toHaveValue('VIALE EUROPA 168');
@@ -116,13 +140,13 @@ async function fillDatiDemografici(container) {
 async function fillRecapiti(container) {
   const { pecEmailInput } = getSelectors(container);
   await userEvent.type(pecEmailInput, 'GIUSEPPE.VELDORALE@PEC.IT');
-  expect(pecEmailInput).toHaveValue('GIUSEPPE.VELDORALE@PEC.IT')
+  expect(pecEmailInput).toHaveValue('GIUSEPPE.VELDORALE@PEC.IT');
 }
 
 async function fillDittaIndividualeLiberoProfessionista(container) {
-  const { partitaIVAInput} = getSelectors(container);
+  const { partitaIVAInput } = getSelectors(container);
   await userEvent.type(partitaIVAInput, '11111111111');
-  expect(partitaIVAInput).toHaveValue('11111111111')
+  expect(partitaIVAInput).toHaveValue('11111111111');
 }
 
 async function fillRappresentanteLegale(container) {
@@ -133,8 +157,8 @@ async function fillRappresentanteLegale(container) {
   await userEvent.type(avvocatoInput, 'RAIMONDO GIUDICE');
   await userEvent.type(avvocatoPecEmailInput, 'RAIMONDO.GIUDICE@PEC.IT');
 
-  expect(avvocatoInput).toHaveValue('RAIMONDO GIUDICE')
-  expect(avvocatoPecEmailInput).toHaveValue('RAIMONDO.GIUDICE@PEC.IT')
+  expect(avvocatoInput).toHaveValue('RAIMONDO GIUDICE');
+  expect(avvocatoPecEmailInput).toHaveValue('RAIMONDO.GIUDICE@PEC.IT');
 }
 
 async function fillSpeseMediazione(container) {
@@ -147,25 +171,40 @@ async function fillSpeseMediazione(container) {
     importoPositivoOltrePrimoIncontroInput: positivoOltrePrmoIncontroInput,
   } = getSelectors(container);
 
-  await userEvent.type(speseAvvioInput, '{backspace}{backspace}{backspace}100'); 
-  await userEvent.type(spesePostaliInput, '{backspace}{backspace}{backspace}100');
-  await userEvent.type(pagamentoIndennitaInput, '{backspace}{backspace}{backspace}100');
-  await userEvent.type(mancatoAccordoInput, '{backspace}{backspace}{backspace}100');
-  await userEvent.type(positivoPrmoIncontroInput, '{backspace}{backspace}{backspace}100');
-  await userEvent.type(positivoOltrePrmoIncontroInput, '{backspace}{backspace}{backspace}100');
+  await userEvent.type(speseAvvioInput, '{backspace}{backspace}{backspace}100');
+  await userEvent.type(
+    spesePostaliInput,
+    '{backspace}{backspace}{backspace}100'
+  );
+  await userEvent.type(
+    pagamentoIndennitaInput,
+    '{backspace}{backspace}{backspace}100'
+  );
+  await userEvent.type(
+    mancatoAccordoInput,
+    '{backspace}{backspace}{backspace}100'
+  );
+  await userEvent.type(
+    positivoPrmoIncontroInput,
+    '{backspace}{backspace}{backspace}100'
+  );
+  await userEvent.type(
+    positivoOltrePrmoIncontroInput,
+    '{backspace}{backspace}{backspace}100'
+  );
 
-  expect(speseAvvioInput).toHaveValue('100,00')
-  expect(spesePostaliInput).toHaveValue('100,00')
-  expect(pagamentoIndennitaInput).toHaveValue('100,00')
-  expect(mancatoAccordoInput).toHaveValue('100,00')
-  expect(positivoPrmoIncontroInput).toHaveValue('100,00')
-  expect(positivoOltrePrmoIncontroInput).toHaveValue('100,00')
+  expect(speseAvvioInput).toHaveValue('100,00');
+  expect(spesePostaliInput).toHaveValue('100,00');
+  expect(pagamentoIndennitaInput).toHaveValue('100,00');
+  expect(mancatoAccordoInput).toHaveValue('100,00');
+  expect(positivoPrmoIncontroInput).toHaveValue('100,00');
+  expect(positivoOltrePrmoIncontroInput).toHaveValue('100,00');
 }
 
 async function fillNote(container) {
   const { noteInput } = getSelectors(container);
   await userEvent.type(noteInput, 'NOTE DI ESEMPIO');
-  expect(noteInput).toHaveValue('NOTE DI ESEMPIO')
+  expect(noteInput).toHaveValue('NOTE DI ESEMPIO');
 }
 
 async function submitForm() {
@@ -174,11 +213,48 @@ async function submitForm() {
   });
 }
 
+const normalizeComune = (comune) => ({
+  codice: comune.codice,
+  nome: comune.nome,
+  nomeStraniero: comune.nomeStraniero,
+  codiceCatastale: comune.codiceCatastale,
+  cap: comune.cap,
+  prefisso: comune.prefisso,
+  email: comune.email,
+  pec: comune.pec,
+  telefono: comune.telefono,
+  fax: comune.fax,
+  provincia: comune.provincia ? normalizeProvincia(comune.provincia) : undefined,
+  coordinate: comune.coordinate ? normalizeCoordinate(comune.coordinate) : undefined,
+});
+
+const normalizeProvincia = (provincia) => ({
+  codice: provincia.codice,
+  nome: provincia.nome,
+  sigla: provincia.sigla,
+  regione: provincia.regione,
+});
+
+const normalizeCoordinate = (coordinate) => ({
+  lat: coordinate.lat,
+  lng: coordinate.lng,
+});
+
 async function verifyCreatedPersona(mockSetPersone, expected) {
   await waitFor(() => {
     const callArguments = mockSetPersone.mock.calls[0][0];
+
+    // Normalizza gli oggetti `luogoDiNascita` e `residenza` che sono istanze di `Comune`
+    if (callArguments[0].luogoDiNascita) {
+      callArguments[0].luogoDiNascita = normalizeComune(callArguments[0].luogoDiNascita);
+    }
+    if (callArguments[0].residenza) {
+      callArguments[0].residenza = normalizeComune(callArguments[0].residenza);
+    }
+
+    // Confronta l'oggetto normalizzato con quello atteso
     expect(callArguments[0]).toMatchObject(expected);
-  })
+  });
 }
 
 beforeEach(() => {
@@ -191,7 +267,77 @@ beforeEach(() => {
   );
 });
 
-test('crea una nuova persona fisica con tutti i campi compilati', async () => {
+test('crea una controparte fisica con i dati essenziali', async () => {
+  const mockSetPersone = jest.fn();
+  const mockContextValue = {
+    persone: [],
+    setPersone: mockSetPersone,
+  };
+
+  const { container } = await renderComponent(mockContextValue);
+  const expectedPersonaFisica = {
+    nome: 'GIUSEPPE',
+    cognome: 'VELDORALE',
+    isParteIstante: false,
+    rappresentanteLegale: 'RAIMONDO GIUDICE',
+    luogoDiNascita: {
+      cap: undefined,
+      codice: undefined,
+      codiceCatastale: undefined,
+      email: undefined,
+      fax: undefined,
+      nome: undefined,
+      pec: undefined,
+      telefono: undefined,
+      provincia: {
+        codice: undefined,
+        nome: undefined,
+        sigla: undefined,
+        regione: undefined,
+      },
+      coordinate: {
+        lat: undefined,
+        lng: undefined,
+      },
+    },
+    residenza: {
+      cap: undefined,
+      codice: undefined,
+      codiceCatastale: undefined,
+      email: undefined,
+      fax: undefined,
+      nome: undefined,
+      pec: undefined,
+      telefono: undefined,
+      provincia: {
+        codice: undefined,
+        nome: undefined,
+        sigla: undefined,
+        regione: undefined,
+      },
+      coordinate: {
+        lat: undefined,
+        lng: undefined,
+      },
+    },
+    pagamentoIndennita: 0,
+    importoMancatoAccordo: 0,
+    importoPositivoPrimoIncontro: 0,
+    importoPositivoOltrePrimoIncontro: 0,
+  };
+  
+  // Compila il form
+  await fillRuolo('CONTROPARTE');
+  await fillCampiObbligatori(container);
+
+  // Invia il form
+  await submitForm();
+
+  // Verifica l'oggetto creato atteso
+  await verifyCreatedPersona(mockSetPersone, expectedPersonaFisica);
+});
+
+test('crea una parte fisica con tutti i campi compilati', async () => {
   const mockSetPersone = jest.fn();
   const mockContextValue = {
     persone: [],
@@ -239,4 +385,3 @@ test('crea una nuova persona fisica con tutti i campi compilati', async () => {
   // Verifica l'oggetto creato atteso
   await verifyCreatedPersona(mockSetPersone, expectedPersonaFisica);
 });
-
