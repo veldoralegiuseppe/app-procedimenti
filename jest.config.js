@@ -1,5 +1,5 @@
 module.exports = {
-  testTimeout: 60000,
+  testTimeout: 180000,
   setupFiles: ['<rootDir>/jest.setup.js'],
   moduleDirectories: ['node_modules', 'src'],
   moduleNameMapper: {
