@@ -3,7 +3,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import EuroSymbolIcon from '@mui/icons-material/EuroSymbol';
 import { CssTextField } from '@theme/MainTheme';
 
-const ImportoInput = ({ onChange, label, sx, value = 0 }) => {
+const ImportoInput = ({ onChange, label, sx, id, value = 0 }) => {
   // State
   const [importo, setImporto] = useState('0,00');
 
@@ -78,7 +78,7 @@ const ImportoInput = ({ onChange, label, sx, value = 0 }) => {
         ? parseInt(formattedIntegerPart, 10).toLocaleString('it-IT')
         : '0';
 
-    console.log('formattedIntegerPart:', integerPart);
+    //console.log('formattedIntegerPart:', integerPart);
 
     return `${integerPart}`;
   };
@@ -172,7 +172,7 @@ const ImportoInput = ({ onChange, label, sx, value = 0 }) => {
 
     // Gestione degli zero a sinistra 
     if(/^0+(?=\d+[,\.]\d+)/.test(inputValue)){
-      console.log('zeri a sx')
+      //console.log('zeri a sx')
       inputValue = inputValue.replace(/^0+(?![,0])/, '');
       event.target.value = inputValue
       startCursorPosition = Math.max(startCursorPosition-1, 0);
@@ -213,7 +213,7 @@ const ImportoInput = ({ onChange, label, sx, value = 0 }) => {
         startCursorPosition,
         adjustedCommaPosition
       );
-      console.log('posiziono il cursore a:', cursorPosition);
+      //console.log('posiziono il cursore a:', cursorPosition);
       event.target.selectionStart = cursorPosition;
       event.target.selectionEnd = cursorPosition;
       event.target.setSelectionRange(cursorPosition, cursorPosition);
@@ -235,6 +235,7 @@ const ImportoInput = ({ onChange, label, sx, value = 0 }) => {
     <CssTextField
       value={importo}
       onChange={handleValueChange}
+      id={id}
       onBlur={() => setImporto(importo)} // Mantieni il valore formattato
       label={label}
       variant="outlined"

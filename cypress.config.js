@@ -15,7 +15,7 @@ module.exports = defineConfig({
   },
 
   component: {
-    specPattern: 'src/test/cypress/e2e/**/*.cy.{js,jsx,ts,tsx}', 
+    specPattern: 'src/test/cypress/component/**/*.cy.{js,jsx,ts,tsx}', 
     devServer: {
       framework: "react",
       bundler: "webpack",

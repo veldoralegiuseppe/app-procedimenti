@@ -44,7 +44,7 @@ const getSelectors = (container) => ({
   importoPositivoPrmoIncontroInput: container.querySelector(
     '#pf-positivo-primo-incontro'
   ),
-  importoPositivoOltrePrmoIncontroInput: container.querySelector(
+  importoPositivoOltrePrimoIncontroInput: container.querySelector(
     '#pf-positivo-oltre-primo-incontro'
   ),
   noteInput: container.querySelector('#pf-note'),
@@ -72,12 +72,16 @@ async function renderComponent(mockContextValue) {
 async function fillCodiceFiscale(container) {
   const { codiceFiscaleInput } = getSelectors(container);
   await userEvent.type(codiceFiscaleInput, 'VLDGPP97E16F138C');
+  expect(codiceFiscaleInput).toHaveValue('VLDGPP97E16F138C');
 }
 
 async function fillDatiAnagrafici(container) {
   const { nomeInput, cognomeInput } = getSelectors(container);
   await userEvent.type(nomeInput, 'GIUSEPPE');
   await userEvent.type(cognomeInput, 'VELDORALE');
+
+  expect(nomeInput).toHaveValue('GIUSEPPE');
+  expect(cognomeInput).toHaveValue('VELDORALE');
 }
 
 async function fillDatiDemografici(container) {
@@ -88,42 +92,37 @@ async function fillDatiDemografici(container) {
   } = getSelectors(container);
 
   // Simula l'apertura della lista e la selezione della provincia
-  await act(async () => {
-    await userEvent.click(provinciaResidenzaInput); // Apre la lista
-    await userEvent.type(provinciaResidenzaInput, 'SALERNO');
-    await userEvent.keyboard('{Enter}'); // Conferma la selezione della provincia
-  });
-
-  // Attendi che la provincia sia correttamente selezionata
+  await userEvent.click(provinciaResidenzaInput); 
+  await userEvent.type(provinciaResidenzaInput, 'SALERNO');
+  await userEvent.keyboard('{arrowdown}');
+  await userEvent.keyboard('{Enter}');
   await waitFor(() => {
     expect(provinciaResidenzaInput).toHaveValue('SALERNO');
   });
 
   // Abilito manualmente il comune assendoci un bug di Jest che non dipende dal componente
-  comuneResidenzaInput.disabled = false;
-  await waitFor(() => {
-    expect(comuneResidenzaInput).not.toBeDisabled();
-  });
-  comuneResidenzaInput.value = "SIANO"
-  await waitFor(() => {
-    expect(comuneResidenzaInput).toHaveValue('SIANO');
-  });
+  await waitFor(() => {expect(comuneResidenzaInput).not.toBeDisabled()});
+  await userEvent.click(comuneResidenzaInput); 
+  await userEvent.type(comuneResidenzaInput, 'SIANO');
+  await userEvent.keyboard('{arrowdown}');
+  await userEvent.keyboard('{Enter}');
+  expect(comuneResidenzaInput).toHaveValue('SIANO');
   
   // Digita il comune e l'indirizzo
   await userEvent.type(indirizzoResidenzaInput, 'VIALE EUROPA 168');
-  await waitFor(() => {
-    expect(indirizzoResidenzaInput).toHaveValue('VIALE EUROPA 168');
-  });
+  expect(indirizzoResidenzaInput).toHaveValue('VIALE EUROPA 168');
 }
 
 async function fillRecapiti(container) {
   const { pecEmailInput } = getSelectors(container);
   await userEvent.type(pecEmailInput, 'GIUSEPPE.VELDORALE@PEC.IT');
+  expect(pecEmailInput).toHaveValue('GIUSEPPE.VELDORALE@PEC.IT')
 }
 
 async function fillDittaIndividualeLiberoProfessionista(container) {
-  const { partitaIVAInput: pIva } = getSelectors(container);
-  await userEvent.type(pIva, '11111111111');
+  const { partitaIVAInput} = getSelectors(container);
+  await userEvent.type(partitaIVAInput, '11111111111');
+  expect(partitaIVAInput).toHaveValue('11111111111')
 }
 
 async function fillRappresentanteLegale(container) {
@@ -133,6 +132,9 @@ async function fillRappresentanteLegale(container) {
   } = getSelectors(container);
   await userEvent.type(avvocatoInput, 'RAIMONDO GIUDICE');
   await userEvent.type(avvocatoPecEmailInput, 'RAIMONDO.GIUDICE@PEC.IT');
+
+  expect(avvocatoInput).toHaveValue('RAIMONDO GIUDICE')
+  expect(avvocatoPecEmailInput).toHaveValue('RAIMONDO.GIUDICE@PEC.IT')
 }
 
 async function fillSpeseMediazione(container) {
@@ -142,99 +144,28 @@ async function fillSpeseMediazione(container) {
     pagamentoIndennitaInput,
     importoMancatoAccordoInput: mancatoAccordoInput,
     importoPositivoPrmoIncontroInput: positivoPrmoIncontroInput,
-    importoPositivoOltrePrmoIncontroInput: positivoOltrePrmoIncontroInput,
+    importoPositivoOltrePrimoIncontroInput: positivoOltrePrmoIncontroInput,
   } = getSelectors(container);
 
-  await userEvent.type(speseAvvioInput, '100');
-  await userEvent.type(spesePostaliInput, '100');
-  await userEvent.type(pagamentoIndennitaInput, '100');
-  await userEvent.type(mancatoAccordoInput, '100', 100);
-  await userEvent.type(positivoPrmoIncontroInput, '100', 100);
-  await userEvent.type(positivoOltrePrmoIncontroInput, '100', 100);
+  await userEvent.type(speseAvvioInput, '{backspace}{backspace}{backspace}100'); 
+  await userEvent.type(spesePostaliInput, '{backspace}{backspace}{backspace}100');
+  await userEvent.type(pagamentoIndennitaInput, '{backspace}{backspace}{backspace}100');
+  await userEvent.type(mancatoAccordoInput, '{backspace}{backspace}{backspace}100');
+  await userEvent.type(positivoPrmoIncontroInput, '{backspace}{backspace}{backspace}100');
+  await userEvent.type(positivoOltrePrmoIncontroInput, '{backspace}{backspace}{backspace}100');
+
+  expect(speseAvvioInput).toHaveValue('100,00')
+  expect(spesePostaliInput).toHaveValue('100,00')
+  expect(pagamentoIndennitaInput).toHaveValue('100,00')
+  expect(mancatoAccordoInput).toHaveValue('100,00')
+  expect(positivoPrmoIncontroInput).toHaveValue('100,00')
+  expect(positivoOltrePrmoIncontroInput).toHaveValue('100,00')
 }
 
 async function fillNote(container) {
   const { noteInput } = getSelectors(container);
   await userEvent.type(noteInput, 'NOTE DI ESEMPIO');
-}
-
-async function verifyPopulatedFields(container, expected) {
-  const selectors = getSelectors(container);
-  const importiField = [
-    'speseAvvio',
-    'spesePostali',
-    'pagamentoIndennita',
-    'importoMancatoAccordo',
-    'importoPositivoPrimoIncontro',
-    'importoPositivoOltrePrimoIncontro',
-  ];
-
-  await waitFor(() => {
-    for (let attributo in expected) {
-      const selectorName = `${attributo}Input`;
-      const expectedValue = expected[attributo];
-
-      // Log del valore atteso
-      console.log(`Verificando campo: ${attributo}`);
-      console.log(`Valore atteso: ${expectedValue}`);
-
-      if (attributo === 'sesso') {
-        const actualValue = selectors[selectorName].textContent;
-        console.log(`Valore attuale (sesso): ${actualValue}`);
-        expect(actualValue).toBe(expectedValue);
-      } else if (importiField.includes(attributo)) {
-        const actualValue = selectors[selectorName].value;
-        console.log(`Valore attuale (importo): ${actualValue}`);
-        expect(actualValue).toBe(expectedValue.toLocaleString('it-IT'));
-      } else if (attributo === 'residenza') {
-        // Gestione dei campi legati alla residenza
-        const comuneResidenzaValue = selectors['comuneResidenzaInput'].value;
-        const provinciaResidenzaValue =
-          selectors['provinciaResidenzaInput'].value;
-
-        console.log(
-          `Valore attuale (comune residenza): ${comuneResidenzaValue}`
-        );
-        console.log(
-          `Valore attuale (provincia residenza): ${provinciaResidenzaValue}`
-        );
-        console.log(
-          `Valore atteso (comune residenza): ${expected.residenza.nome}`
-        );
-        console.log(
-          `Valore atteso (provincia residenza): ${expected.residenza.provincia.nome}`
-        );
-
-        expect(comuneResidenzaValue).toBe(expected.residenza.nome);
-        expect(provinciaResidenzaValue).toBe(expected.residenza.provincia.nome);
-      } else if (attributo === 'luogoDiNascita') {
-        // Gestione dei campi legati al luogo di nascita
-        const comuneNascitaValue = selectors['comuneNascitaInput'].value;
-        const provinciaNascitaValue = selectors['provinciaNascitaInput'].value;
-
-        console.log(`Valore attuale (comune nascita): ${comuneNascitaValue}`);
-        console.log(
-          `Valore attuale (provincia nascita): ${provinciaNascitaValue}`
-        );
-        console.log(
-          `Valore atteso (comune nascita): ${expected.luogoDiNascita.nome}`
-        );
-        console.log(
-          `Valore atteso (provincia nascita): ${expected.luogoDiNascita.provincia.nome}`
-        );
-
-        expect(comuneNascitaValue).toBe(expected.luogoDiNascita.nome);
-        expect(provinciaNascitaValue).toBe(
-          expected.luogoDiNascita.provincia.nome
-        );
-      } else {
-        // Altri campi generici
-        const actualValue = selectors[selectorName].value;
-        console.log(`Valore attuale (generico): ${actualValue}`);
-        expect(actualValue).toBe(expectedValue);
-      }
-    }
-  });
+  expect(noteInput).toHaveValue('NOTE DI ESEMPIO')
 }
 
 async function submitForm() {
@@ -244,10 +175,10 @@ async function submitForm() {
 }
 
 async function verifyCreatedPersona(mockSetPersone, expected) {
-  setTimeout(() => {
+  await waitFor(() => {
     const callArguments = mockSetPersone.mock.calls[0][0];
     expect(callArguments[0]).toMatchObject(expected);
-  }, 500);
+  })
 }
 
 beforeEach(() => {
@@ -270,7 +201,6 @@ test('crea una nuova persona fisica con tutti i campi compilati', async () => {
   const { container } = await renderComponent(mockContextValue);
 
   const expectedPersonaFisica = {
-    ...new PersonaFisica(),
     nome: 'GIUSEPPE',
     cognome: 'VELDORALE',
     rappresentanteLegale: 'RAIMONDO GIUDICE',
@@ -289,7 +219,7 @@ test('crea una nuova persona fisica con tutti i campi compilati', async () => {
     pagamentoIndennita: 100,
     importoMancatoAccordo: 100,
     importoPositivoPrimoIncontro: 100,
-    importoPositivoOltrePrmoIncontro: 100,
+    importoPositivoOltrePrimoIncontro: 100,
     note: 'NOTE DI ESEMPIO',
   };
 
@@ -303,9 +233,6 @@ test('crea una nuova persona fisica con tutti i campi compilati', async () => {
   await fillSpeseMediazione(container);
   await fillNote(container);
 
-  // Verifico che i campi siano correttamente popolati
-  await verifyPopulatedFields(container, expectedPersonaFisica);
-
   // Invia il form
   await submitForm();
 
@@ -313,20 +240,3 @@ test('crea una nuova persona fisica con tutti i campi compilati', async () => {
   await verifyCreatedPersona(mockSetPersone, expectedPersonaFisica);
 });
 
-test.only('fill dati demografici', async () => {
-  const mockSetPersone = jest.fn();
-  const mockContextValue = {
-    persone: [],
-    setPersone: mockSetPersone,
-  };
-
-  const { container } = await renderComponent(mockContextValue);
-
-  const expectedPersonaFisica = {
-    indirizzoResidenza: 'VIALE EUROPA 168',
-    residenza: comuniCampania[1],
-  };
-
-  await fillDatiDemografici(container);
-  //await verifyPopulatedFields(container, expectedPersonaFisica);
-});

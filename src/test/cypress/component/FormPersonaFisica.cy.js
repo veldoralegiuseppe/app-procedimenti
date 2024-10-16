@@ -56,18 +56,26 @@ describe('Test di FormPersonaFisica', () => {
     }
   });
 
-  it.only('Abilita il campo Comune di residenza quando una provincia è selezionata', () => {
+  it('Abilita il campo Comune di residenza quando una provincia è selezionata', () => {
     // Intercetta la chiamata API per le province e restituisci una risposta mockata
-    cy.intercept('GET', 'https://axqvoqvbfjpaamphztgd.functions.supabase.co/province', {
-      statusCode: 200,
-      body: provinceCampania,
-    }).as('getProvince');
+    cy.intercept(
+      'GET',
+      'https://axqvoqvbfjpaamphztgd.functions.supabase.co/province',
+      {
+        statusCode: 200,
+        body: provinceCampania,
+      }
+    ).as('getProvince');
 
     // Intercetta la chiamata API per i comuni e restituisci una risposta mockata
-    cy.intercept('GET', 'https://axqvoqvbfjpaamphztgd.functions.supabase.co/comuni', {
-      statusCode: 200,
-      body: comuniCampania,
-    }).as('getComuni');
+    cy.intercept(
+      'GET',
+      'https://axqvoqvbfjpaamphztgd.functions.supabase.co/comuni',
+      {
+        statusCode: 200,
+        body: comuniCampania,
+      }
+    ).as('getComuni');
 
     cy.get('#pf-provincia-residenza')
       .click()
@@ -117,5 +125,36 @@ describe('Test di FormPersonaFisica', () => {
     Object.keys(campiAnagrafici).forEach((campo) => {
       cy.get(`#${campo}`).should('have.value', campiAnagrafici[campo]);
     });
+  });
+
+  it.only('Riempie correttamente i campi delle spese di mediazione e verifica i valori formattati', () => {
+    // Selettori usati nella funzione 'fillSpeseMediazione'
+    const selectors = {
+      speseAvvioInput: '#pf-spese-avvio',
+      spesePostaliInput: '#pf-spese-postali',
+      pagamentoIndennitaInput: '#pf-pagamento-indennita',
+      mancatoAccordoInput: '#pf-mancato-accordo',
+      positivoPrmoIncontroInput: '#pf-positivo-primo-incontro',
+      positivoOltrePrmoIncontroInput: '#pf-positivo-oltre-primo-incontro',
+    };
+
+    // Riempie i campi con il valore '100'
+    cy.get(selectors.speseAvvioInput).type('{home}').type('100');
+    cy.get(selectors.spesePostaliInput).type('{home}').type('100');
+    cy.get(selectors.pagamentoIndennitaInput).type('{home}').type('100');
+    cy.get(selectors.mancatoAccordoInput).type('{home}').type('100');
+    cy.get(selectors.positivoPrmoIncontroInput).type('{home}').type('100');
+    cy.get(selectors.positivoOltrePrmoIncontroInput).type('{home}').type('100');
+
+    // Verifica che i valori siano correttamente formattati
+    cy.get(selectors.speseAvvioInput).should('have.value', '100,00');
+    cy.get(selectors.spesePostaliInput).should('have.value', '100,00');
+    cy.get(selectors.pagamentoIndennitaInput).should('have.value', '100,00');
+    cy.get(selectors.mancatoAccordoInput).should('have.value', '100,00');
+    cy.get(selectors.positivoPrmoIncontroInput).should('have.value', '100,00');
+    cy.get(selectors.positivoOltrePrmoIncontroInput).should(
+      'have.value',
+      '100,00'
+    );
   });
 });

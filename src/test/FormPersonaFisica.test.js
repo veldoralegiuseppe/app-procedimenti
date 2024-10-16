@@ -100,8 +100,7 @@ test('abilita il campo Comune di residenza quando una provincia è selezionata',
   await waitFor(
     () => {
       expect(comuneInput).not.toBeDisabled();
-    },
-    { interval: 1000 }
+    }
   );
 
   // Interagisci con il campo del comune ora abilitato
