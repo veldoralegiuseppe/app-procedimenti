@@ -26,6 +26,8 @@
     "@babel/core": "^7.25.8",
     "@babel/preset-env": "^7.25.8",
     "@babel/preset-react": "^7.25.7",
+    "@commitlint/cli": "^19.5.0",
+    "@commitlint/config-conventional": "^19.5.0",
     "@cypress/webpack-dev-server": "^3.11.0",
     "@cypress/webpack-preprocessor": "^6.0.2",
     "@electron-forge/cli": "^7.2.0",
