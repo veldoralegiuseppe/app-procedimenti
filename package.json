@@ -9,7 +9,7 @@
     "package": "electron-forge package",
     "make": "electron-forge make",
     "release": "standard-version",
-    "prepare": "husky install",
+    "prepare": "husky",
     "publish": "electron-forge publish",
     "lint": "echo \"No linting configured\"",
     "cy:open": "cypress open",
@@ -18,7 +18,7 @@
   },
   "keywords": [],
   "author": {
-    "name": "veldoralegiuseppee",
+    "name": "veldoralegiuseppe",
     "email": "veldorale.giuseppe@gmail.com"
   },
   "license": "MIT",
