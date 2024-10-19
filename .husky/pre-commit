@@ -1,1 +1,1 @@
-echo "script pre commit"
+echo "script husky pre-commit"
