@@ -1,3 +1,4 @@
+require('dotenv').config(); // Carica il file .env
 const axios = require('axios');
 
 const jiraDomain = ''; // Modifica con il tuo dominio Jira

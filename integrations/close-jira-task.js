@@ -1,3 +1,4 @@
+require('dotenv').config(); // Carica il file .env
 const simpleGit = require('simple-git');
 const axios = require('axios');
 

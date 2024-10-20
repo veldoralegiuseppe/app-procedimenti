@@ -93,3 +93,6 @@ out/
 .eslintrc.json
 .prettierrc
 setting.json
+
+#Env
+.env
