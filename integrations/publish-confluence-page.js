@@ -2,11 +2,11 @@ require('dotenv').config(); // Carica il file .env
 const axios = require('axios');
 const fs = require('fs');
 
-const confluenceDomain = ''; // Modifica con il tuo dominio Confluence
+const confluenceDomain = process.env.CONFLUENCE_DOMAIN; 
 const spaceKey = 'MedSuite'; // Modifica con il key dello spazio Confluence
 const parentPageId = '1998871'; // Modifica con l'ID della pagina genitore
-const email = ''; // Modifica con la tua email Confluence
-const apiToken = ''; // Modifica con il tuo token API
+const email = process.env.ATLASSIAN_EMAIL; 
+const apiToken = process.env.ATLASSIAN_API_TOKEN;
 const newVersionName = require('./package.json').version; // Ottieni la versione dal package.json
 
 // Leggi il changelog generato da Standard Version

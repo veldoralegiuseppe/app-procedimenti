@@ -2,9 +2,9 @@ require('dotenv').config(); // Carica il file .env
 const simpleGit = require('simple-git');
 const axios = require('axios');
 
-const jiraDomain = ''; // Modifica con il tuo dominio Jira
-const email = ''; // Modifica con la tua email Jira
-const apiToken = ''; // Modifica con il tuo token API
+const jiraDomain = process.env.JIRA_DOMAIN; 
+const email = process.env.ATLASSIAN_EMAIL; ; // Modifica con la tua email Jira
+const apiToken = process.env.ATLASSIAN_API_TOKEN;
 const transitionIdToClose = '31'; // Imposta l'ID della transizione per chiudere il task Jira
 
 // Configura Simple Git per ottenere i commit

@@ -1,10 +1,10 @@
 require('dotenv').config(); // Carica il file .env
 const axios = require('axios');
 
-const jiraDomain = ''; // Modifica con il tuo dominio Jira
+const jiraDomain = process.env.JIRA_DOMAIN; // Modifica con il tuo dominio Jira
 const projectId = 'MEDSUITE'; // Modifica con l'ID del progetto Jira
-const email = ''; // Modifica con la tua email Jira
-const apiToken = ''; // Modifica con il tuo token API
+const email = process.env.ATLASSIAN_EMAIL; // Modifica con la tua email Jira
+const apiToken = process.env.ATLASSIAN_API_TOKEN;
 const newVersionName = require('./package.json').version; // Ottieni la versione dal package.json
 
 // Crea una nuova versione su Jira
