@@ -1,0 +1,2 @@
+echo "close-jira-task.js"
+node integrations/close-jira-task.js
