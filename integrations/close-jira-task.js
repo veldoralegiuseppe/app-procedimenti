@@ -6,7 +6,7 @@ const jiraDomain = process.env.JIRA_DOMAIN;
 const email = process.env.ATLASSIAN_EMAIL; ; // Modifica con la tua email Jira
 const apiToken = process.env.ATLASSIAN_API_TOKEN;
 const transitionIdToClose = '31'; // Imposta l'ID della transizione per chiudere il task Jira
-const currentVersion = require('./package.json').version; // Ottieni la versione dal package.json
+const currentVersion = require('../package.json').version; // Ottieni la versione dal package.json
 
 // Configura Simple Git per ottenere i commit
 const git = simpleGit();

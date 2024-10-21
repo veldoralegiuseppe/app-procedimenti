@@ -5,7 +5,7 @@ const jiraDomain = process.env.JIRA_DOMAIN; // Modifica con il tuo dominio Jira
 const projectId = 'MEDSUITE'; // Modifica con l'ID del progetto Jira
 const email = process.env.ATLASSIAN_EMAIL; // Modifica con la tua email Jira
 const apiToken = process.env.ATLASSIAN_API_TOKEN;
-const newVersionName = require('./package.json').version; // Ottieni la versione dal package.json
+const newVersionName = require('../package.json').version; // Ottieni la versione dal package.json
 
 // Crea una nuova versione su Jira
 const createVersionOnJira = async () => {

@@ -7,7 +7,7 @@ const spaceKey = 'MedSuite'; // Modifica con il key dello spazio Confluence
 const parentPageId = '1998871'; // Modifica con l'ID della pagina genitore
 const email = process.env.ATLASSIAN_EMAIL; 
 const apiToken = process.env.ATLASSIAN_API_TOKEN;
-const newVersionName = require('./package.json').version; // Ottieni la versione dal package.json
+const newVersionName = require('../package.json').version; // Ottieni la versione dal package.json
 
 // Leggi il changelog generato da Standard Version
 const changelog = fs.readFileSync('./CHANGELOG.md', 'utf8');
