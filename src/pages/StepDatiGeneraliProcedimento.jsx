@@ -93,6 +93,14 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
       'oggettoControversia',
     ];
 
+    const esitiMediazione = [
+      {value: 'IN CORSO', view: 'IN CORSO'},
+      {value: 'NEGATIVO INCONTRO FILTRO', view: 'NEGATIVO INCONTRO FILTRO'},
+      {value: 'NEGATIVO MANCATA ADESIONE', view: 'NEGATIVO MANCATA ADESIONE'},
+      {value: 'NEGATIVO MANCATO ACCORDO', view: 'NEGATIVO MANCATO ACCORDO'},
+      {value: 'POSITIVO', view: 'POSITIVO'},  
+    ];
+
     const requiredFieldsFilled = () => {
       return requiredFields.every(
         (field) => !!procedimento[field] && procedimento[field].trim() !== ''
@@ -130,7 +138,7 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
       const valore =
         typeof valueOrEvent === 'object' && valueOrEvent.target
           ? isNaN(valueOrEvent.target.value)
-            ? valueOrEvent.target.value.toUpperCase()
+            ? valueOrEvent.target.value?.toUpperCase()
             : valueOrEvent.target.value
           : isNaN(valueOrEvent)
           ? String(valueOrEvent).toUpperCase()
@@ -165,6 +173,7 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
       dataOraIncontro: () => true,
       oggettoControversia: (value) => !!value,
       valoreControversia: (value) => !isNaN(value) && value >= 0,
+      esitoMediazione: () => true,
     };
 
     return (
@@ -198,8 +207,8 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
             </Typography>
           </Grid>
 
-          {/* Protocollo */}
           <Grid xs={12} sx={{ paddingLeft: '1rem' }}>
+            {/* Protocollo */}
             <ProtocolloInput
               onChange={(numProtocollo, anno) => {
                 handleInputChange(numProtocollo, 'numProtocollo');
@@ -387,6 +396,20 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
                 backgroundColor
               )}
             />
+
+            {/* Esito mediazione */}
+            <Select
+            value={procedimento.esitoMediazione || ''}
+            label="Esito"
+            onChange={(event) =>
+              handleInputChange(event, 'esitoMediazione')
+            }
+            error={
+              touchedFields.esitoMediazione && errors.esitoMediazione
+            }
+            options={esitiMediazione}
+            />
+          
           </Grid>
         </Grid>
 
@@ -418,6 +441,7 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
           <Grid xs={12} sx={{ paddingLeft: '1rem' }}>
             <Select
               label="Oggetto di controversia"
+              required = {true}
               value={procedimento.oggettoControversia || ''}
               onChange={(event) =>
                 handleInputChange(event, 'oggettoControversia')
@@ -436,11 +460,10 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
             {/* Valore della controversia */}
             <ImportoInput
               value={procedimento.valoreControversia}
-              onChange={(event) =>{
-                console.log(event)
-                handleInputChange(event, 'valoreControversia')
-              }
-              }
+              onChange={(event) => {
+                console.log(event);
+                handleInputChange(event, 'valoreControversia');
+              }}
               sx={{
                 margin,
                 backgroundColor,
