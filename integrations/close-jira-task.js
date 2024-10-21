@@ -2,8 +2,8 @@ require('dotenv').config(); // Carica il file .env
 const simpleGit = require('simple-git');
 const axios = require('axios');
 
-const jiraDomain = process.env.JIRA_DOMAIN; 
-const email = process.env.ATLASSIAN_EMAIL; ; // Modifica con la tua email Jira
+const jiraDomain = process.env.JIRA_DOMAIN;
+const email = process.env.ATLASSIAN_EMAIL; // Modifica con la tua email Jira
 const apiToken = process.env.ATLASSIAN_API_TOKEN;
 const transitionIdToClose = '31'; // Imposta l'ID della transizione per chiudere il task Jira
 const currentVersion = require('../package.json').version; // Ottieni la versione dal package.json
@@ -14,11 +14,10 @@ const git = simpleGit();
 // Funzione per chiudere il task Jira
 const closeJiraTask = async (issueId, componente) => {
   try {
-
     // Aggiorna i campi personalizzati (Componente, Versione)
     await updateJiraTask(issueId, componente);
 
-    // Chiude il task 
+    // Chiude il task
     const response = await axios.post(
       `${jiraDomain}/rest/api/3/issue/${issueId}/transitions`,
       {
@@ -32,7 +31,7 @@ const closeJiraTask = async (issueId, componente) => {
           password: apiToken,
         },
         headers: {
-          'Accept': 'application/json',
+          Accept: 'application/json',
           'Content-Type': 'application/json',
         },
       }
@@ -54,7 +53,7 @@ const getCustomFieldId = async (fieldName) => {
         password: apiToken,
       },
       headers: {
-        'Accept': 'application/json',
+        Accept: 'application/json',
         'Content-Type': 'application/json',
       },
     });
@@ -62,7 +61,9 @@ const getCustomFieldId = async (fieldName) => {
     const fields = fieldsResponse.data;
 
     // Trova il campo con il nome corrispondente (case insensitive)
-    const field = fields.find(f => f.name.toLowerCase() === fieldName.toLowerCase());
+    const field = fields.find(
+      (f) => f.name.toLowerCase() === fieldName.toLowerCase()
+    );
 
     if (field) {
       return field.id; // Restituisci l'ID del campo
@@ -83,15 +84,17 @@ const updateJiraTask = async (issueId, componente) => {
     const versioneId = await getCustomFieldId('Versione');
 
     // Gestisco i valori in input
-    const componentArray = Array.isArray(componente) ? componente : [componente];
-    
+    const componentArray = Array.isArray(componente)
+      ? componente
+      : [componente];
+
     // Aggiorna il campo "Componente" con il valore fornito
     const response = await axios.put(
       `${jiraDomain}/rest/api/3/issue/${issueId}`,
       {
         fields: {
-          [componenteId]: componentArray, 
-          [versioneId]: [currentVersion], 
+          [componenteId]: componentArray,
+          [versioneId]: [currentVersion],
         },
       },
       {
@@ -100,14 +103,19 @@ const updateJiraTask = async (issueId, componente) => {
           password: apiToken,
         },
         headers: {
-          'Accept': 'application/json',
+          Accept: 'application/json',
           'Content-Type': 'application/json',
         },
       }
     );
-    console.log(`Task Jira ${issueId} aggiornato con successo con il componente: ${componente}`);
+    console.log(
+      `Task Jira ${issueId} aggiornato con successo con il componente: ${componente}`
+    );
   } catch (error) {
-    console.error(`Errore nell'aggiornamento del task Jira ${issueId}:`, error.response ? error.response.data : error.message);
+    console.error(
+      `Errore nell'aggiornamento del task Jira ${issueId}:`,
+      error.response ? error.response.data : error.message
+    );
   }
 };
 
@@ -118,8 +126,15 @@ const processCommits = async () => {
     const log = await git.log();
     const lastCommit = log.latest;
     const commitMessage = lastCommit.message;
+    const commitBody = lastCommit.body;
 
-    console.log('Ultimo messaggio di commit:', commitMessage);
+    // Suddividi il messaggio di commit in header, body e footer
+    const header = commitMessage;
+    const parts = commitBody.split('\n\n');
+    const footer = parts.length > 1 ? String(parts[parts.length - 1]).replace('\n','') : null; 
+    //console.log('header:', header);
+    //console.log('body:', commitBody);
+    //console.log('footer:', footer);
 
     // Cerca il pattern Standard Version "<tipo>(scope1,scope2,...,scopeN): descrizione"
     const regex = /^(?<type>\w+)(\((?<scopes>[^\)]+)\))?: (?<description>.+)/;
@@ -128,21 +143,23 @@ const processCommits = async () => {
     if (match) {
       const { type, scopes, description } = match.groups;
       console.log(`Tipo: ${type}`);
-      
+
       let scopeArray = [];
       if (scopes) {
         // Dividi gli scope separati da virgola in un array
-        scopeArray = scopes.split(',').map(scope => scope.trim());
+        scopeArray = scopes.split(',').map((scope) => scope.trim());
         console.log(`Scopes: ${scopeArray.join(', ')}`);
       } else {
         console.log('Nessuno scope trovato.');
       }
-      
+
       console.log(`Descrizione: ${description}`);
+      console.log('Body:', commitBody);
+      console.log('Footer:', footer);
 
       // Cerca anche il pattern "Closes <id task jira>"
       const footerRegex = /Closes (\w+-\d+)/i;
-      const footerMatch = commitMessage.match(footerRegex);
+      const footerMatch = footer?.match(footerRegex);
 
       if (footerMatch) {
         const jiraTaskId = footerMatch[1]; // Es. "PROJ-123"
@@ -155,7 +172,7 @@ const processCommits = async () => {
       console.log('Il commit non è nel formato standard version.');
     }
   } catch (error) {
-    console.error('Errore nell\'analisi del commit:', error);
+    console.error("Errore nell'analisi del commit:", error);
   }
 };
 
