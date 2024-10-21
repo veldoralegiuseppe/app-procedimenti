@@ -1,12 +1,15 @@
 import React from 'react';
 import { FormControl, InputLabel, MenuItem, FormHelperText } from '@mui/material';
 import { CssSelect, formControlStyles, labelColor as defaultLabelColor } from '@theme/MainTheme';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import CloseIcon from '@mui/icons-material/Close';
 import { useTheme } from '@mui/material/styles';
 
 function Select({ 
   label, 
   value, 
   onChange, 
+  required = false,
   options = [], 
   error = false, 
   helperText = '', 
@@ -40,9 +43,14 @@ function Select({
     },
   };
 
+  const handleClear = () => {
+    onChange({ target: { value: undefined } });
+  };
+
+
   return (
     <FormControl 
-      required 
+      required={required}
       size='small' 
       sx={sxStyles}
       error={error}
@@ -61,6 +69,15 @@ function Select({
         label={label}
         size='small'
         onChange={onChange}
+        IconComponent={value ? () => null : ArrowDropDownIcon}
+        endAdornment={
+          value && (
+            <CloseIcon 
+              onClick={handleClear} 
+              style={{ cursor: 'pointer' }} 
+            />
+          )
+        }
         MenuProps={{
           PaperProps: {
             sx: {
