@@ -11,6 +11,7 @@ export class Procedimento {
     dataOraIncontro = null,
     oggettoControversia,
     valoreControversia = 0,
+    esitoMediazione,
   } = {}) {
     this.numProtocollo = numProtocollo;
     this.annoProtocollo = annoProtocollo;
@@ -20,6 +21,7 @@ export class Procedimento {
     this.dataOraIncontro = dataOraIncontro;
     this.oggettoControversia = oggettoControversia;
     this.valoreControversia = valoreControversia;
+    this.esitoMediazione = esitoMediazione;
   }
 
   getProtocollo() {
