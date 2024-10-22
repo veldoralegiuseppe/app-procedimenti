@@ -4,24 +4,26 @@ import 'dayjs/locale/it';
 export class Procedimento {
   constructor({
     numProtocollo,
-    annoProtocollo,
+    annoProtocollo = String(new Date().getFullYear()),
     dataDeposito = new Date().toDateString(),
-    sede,
+    sedeDeposito,
     sedeSvolgimento,
     dataOraIncontro = null,
     oggettoControversia,
     valoreControversia = 0,
     esitoMediazione,
+    modalitaSvolgimento = "IN_PRESENZA",
   } = {}) {
     this.numProtocollo = numProtocollo;
     this.annoProtocollo = annoProtocollo;
     this.dataDeposito = dataDeposito;
-    this.sede = sede;
+    this.sedeDeposito = sedeDeposito;
     this.sedeSvolgimento = sedeSvolgimento;
     this.dataOraIncontro = dataOraIncontro;
     this.oggettoControversia = oggettoControversia;
     this.valoreControversia = valoreControversia;
     this.esitoMediazione = esitoMediazione;
+    this.modalitaSvolgimento = modalitaSvolgimento;
   }
 
   getProtocollo() {
