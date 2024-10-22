@@ -44,7 +44,7 @@ const DatiGenerali = ({ procedimento }) => {
           <strong>Data Deposito:</strong> {procedimento?.getDataDepositoLocale()}
         </Grid>
         <Grid  xs={12} md={6} xl={2}>
-          <strong>Sede Caricamento:</strong> {procedimento?.sede}
+          <strong>Sede Caricamento:</strong> {procedimento?.sedeDeposito}
         </Grid>
         <Grid  xs={12} md={6} xl={2}>
           <strong>Sede Svolgimento:</strong> {procedimento?.sedeSvolgimento}

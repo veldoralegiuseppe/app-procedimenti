@@ -140,7 +140,7 @@ function mockedProcedimento() {
     numProtocollo: '000001',
     annoProtocollo: '2024',
     dataDeposito: new Date(),
-    sede: 'NOLA',
+    sedeDeposito: 'NOLA',
     sedeSvolgimento: 'SAVIANO',
     dataOraIncontro: dayjs().toISOString(), 
     oggettoControversia: 'DIVISIONE',
