@@ -10,6 +10,11 @@ import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined
 import DeleteIcon from '@mui/icons-material/Delete';
 import { MobileDateTimePicker } from '@mui/x-date-pickers/MobileDateTimePicker';
 import CloseIcon from '@mui/icons-material/Close';
+import FormControl from '@mui/material/FormControl';
+import RadioGroup from '@mui/material/RadioGroup';
+import Radio from '@mui/material/Radio';
+import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from '@mui/material/Checkbox';
 
 import ProtocolloInput from '@components/ProtocolloInput';
 import ImportoInput from '@components/ImportoInput';
@@ -85,20 +90,22 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
     const [initialProc] = React.useState(new Procedimento()); // Stato iniziale da comparare
     const [errors, setErrors] = React.useState({});
     const [touchedFields, setTouchedFields] = React.useState({});
+    const [sedeUgualeCaricamento, setSedeUgualeCaricamento] =
+      React.useState(false);
 
     const requiredFields = [
-      'sede',
+      'sedeDeposito',
       'numProtocollo',
       'annoProtocollo',
       'oggettoControversia',
     ];
 
     const esitiMediazione = [
-      {value: 'IN CORSO', view: 'IN CORSO'},
-      {value: 'NEGATIVO INCONTRO FILTRO', view: 'NEGATIVO INCONTRO FILTRO'},
-      {value: 'NEGATIVO MANCATA ADESIONE', view: 'NEGATIVO MANCATA ADESIONE'},
-      {value: 'NEGATIVO MANCATO ACCORDO', view: 'NEGATIVO MANCATO ACCORDO'},
-      {value: 'POSITIVO', view: 'POSITIVO'},  
+      { value: 'IN CORSO', view: 'IN CORSO' },
+      { value: 'NEGATIVO INCONTRO FILTRO', view: 'NEGATIVO INCONTRO FILTRO' },
+      { value: 'NEGATIVO MANCATA ADESIONE', view: 'NEGATIVO MANCATA ADESIONE' },
+      { value: 'NEGATIVO MANCATO ACCORDO', view: 'NEGATIVO MANCATO ACCORDO' },
+      { value: 'POSITIVO', view: 'POSITIVO' },
     ];
 
     const requiredFieldsFilled = () => {
@@ -134,39 +141,49 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
       return JSON.stringify(procedimento) !== JSON.stringify(initialProc);
     };
 
-    const handleInputChange = (valueOrEvent, campoModel) => {
-      const valore =
-        typeof valueOrEvent === 'object' && valueOrEvent.target
-          ? isNaN(valueOrEvent.target.value)
-            ? valueOrEvent.target.value?.toUpperCase()
-            : valueOrEvent.target.value
-          : isNaN(valueOrEvent)
-          ? String(valueOrEvent).toUpperCase()
-          : valueOrEvent;
+    const handleInputChange = (changes) => {
+      const updatedProcedimento = { ...procedimento };
+      const updatedTouchedFields = { ...touchedFields };
+      const updatedErrors = { ...errors };
 
-      const isValid = valore ? validationRules[campoModel]?.(valore) : true;
+      Object.entries(changes).forEach(([campoModel, valueOrEvent]) => {
+        let valore;
+        if (typeof valueOrEvent === 'object' && valueOrEvent.target) {
+          valore =
+            valueOrEvent.target.value === ''
+              ? undefined
+              : valueOrEvent.target.value;
+        } else {
+          valore = valueOrEvent === '' ? undefined : valueOrEvent;
+        }
 
-      setTouchedFields((prevTouched) => ({
-        ...prevTouched,
-        [campoModel]: true,
-      }));
+        if (typeof valore === 'string') {
+          valore = valore.toUpperCase();
+        }
 
-      setErrors((prevErrors) => ({
-        ...prevErrors,
-        [campoModel]: !isValid,
-      }));
+        const isValid = valore ? validationRules[campoModel]?.(valore) : true;
+        console.log('valore: ', valore);
 
-      setProcedimento((prev) => ({
-        ...prev,
-        [campoModel]: valore,
-      }));
+        updatedTouchedFields[campoModel] = true;
+        updatedErrors[campoModel] = !isValid;
+        updatedProcedimento[campoModel] = valore;
 
-      console.log({ ...procedimento, [campoModel]: valore });
+        console.log('campo model: ', campoModel);
+        console.log('valore: ', valore);
+      });
+
+      setTouchedFields(updatedTouchedFields);
+      setErrors(updatedErrors);
+      setProcedimento(updatedProcedimento);
+
+      console.log('procedimento originale: ', initialProc);
+      console.log(updatedProcedimento);
     };
 
     const validationRules = {
-      sede: (sede) => sede && /^[a-zA-Z0-9\s!@#\$%\^\&*\)\(+=._-]+$/.test(sede),
-      sedeSvolgimento: (sede) => (sede ? validationRules.sede(sede) : true),
+      sedeDeposito: (sede) => sede && /^[a-zA-Z0-9\s]+$/.test(sede),
+      sedeSvolgimento: (sede) =>
+        sede ? validationRules.sedeDeposito(sede) : true,
       numProtocollo: (value) => !!value,
       annoProtocollo: (value) => !!value && !isNaN(value),
       dataDeposito: () => true,
@@ -174,6 +191,7 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
       oggettoControversia: (value) => !!value,
       valoreControversia: (value) => !isNaN(value) && value >= 0,
       esitoMediazione: () => true,
+      modalitaSvolgimento: () => true,
     };
 
     return (
@@ -211,8 +229,8 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
             {/* Protocollo */}
             <ProtocolloInput
               onChange={(numProtocollo, anno) => {
-                handleInputChange(numProtocollo, 'numProtocollo');
-                handleInputChange(anno, 'annoProtocollo');
+                console.log(numProtocollo, anno);
+                handleInputChange({ numProtocollo, annoProtocollo: anno });
               }}
               numProtocollo={procedimento.numProtocollo}
               anno={procedimento.annoProtocollo}
@@ -255,7 +273,7 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
                 }
                 onChange={(date) => {
                   const formattedDate = date ? date.format('YYYY-MM-DD') : null;
-                  handleInputChange(formattedDate, 'dataDeposito');
+                  handleInputChange({ dataDeposito: formattedDate });
                 }}
                 sx={inputStyles(
                   theme,
@@ -303,7 +321,7 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
                   const formattedDate = date
                     ? date.format('YYYY-MM-DDTHH:mm')
                     : null;
-                  handleInputChange(formattedDate, 'dataOraIncontro');
+                  handleInputChange({ dataOraIncontro: formattedDate });
                 }}
                 sx={inputStyles(
                   theme,
@@ -348,45 +366,29 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
               />
             </LocalizationProvider>
 
-            {/* Sede */}
+            {/* Sede deposito */}
             <CssTextField
               required
               size="small"
-              id="outlined-required-sede"
-              label="Sede"
-              value={procedimento.sede || ''}
-              error={touchedFields.sede && errors.sede}
+              id="outlined-required-sede-deposito"
+              label="Sede deposito"
+              value={procedimento.sedeDeposito || ''}
+              error={touchedFields.sedeDeposito && errors.sedeDeposito}
               helperText={
-                touchedFields.sede && errors.sede
-                  ? procedimento.sede
+                touchedFields.sedeDeposito && errors.sedeDeposito
+                  ? procedimento.sedeDeposito
                     ? 'Sede non valida'
                     : 'Campo obbligatorio'
                   : ''
               }
-              onChange={(event) => handleInputChange(event, 'sede')}
-              sx={inputStyles(
-                theme,
-                inputWidth,
-                minWidth,
-                maxWidth,
-                margin,
-                backgroundColor
-              )}
-            />
-
-            {/* Sede svolgimento */}
-            <CssTextField
-              size="small"
-              id="outlined-required-sede-svolgimento"
-              label="Sede svolgimento"
-              value={procedimento.sedeSvolgimento || ''}
-              onChange={(event) => handleInputChange(event, 'sedeSvolgimento')}
-              error={touchedFields.sedeSvolgimento && errors.sedeSvolgimento}
-              helperText={
-                touchedFields.sedeSvolgimento && errors.sedeSvolgimento
-                  ? 'Sede non valida'
-                  : ''
-              }
+              onChange={(event) => {
+                handleInputChange({
+                  sedeDeposito: event,
+                  sedeSvolgimento: sedeUgualeCaricamento
+                    ? event
+                    : procedimento.sedeSvolgimento,
+                });
+              }}
               sx={inputStyles(
                 theme,
                 inputWidth,
@@ -399,17 +401,150 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
 
             {/* Esito mediazione */}
             <Select
-            value={procedimento.esitoMediazione || ''}
-            label="Esito"
-            onChange={(event) =>
-              handleInputChange(event, 'esitoMediazione')
-            }
-            error={
-              touchedFields.esitoMediazione && errors.esitoMediazione
-            }
-            options={esitiMediazione}
+              value={procedimento.esitoMediazione || ''}
+              label="Esito"
+              onChange={(event) =>
+                handleInputChange({ esitoMediazione: event })
+              }
+              error={touchedFields.esitoMediazione && errors.esitoMediazione}
+              options={esitiMediazione}
             />
-          
+
+            {/* Svolgimento */}
+            <Grid size={{ xs: 12 }} sx={{ margin: margin }}>
+              <Grid size={{ xs: 12 }}>
+                {/* Modalità di svolgimento */}
+                <FormControl
+                  sx={{
+                    marginTop: '4px',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                  }}
+                >
+                  <Typography
+                    sx={{
+                      fontSize: '1.05rem',
+                      color: labelColor,
+                      margin: 'auto',
+                    }}
+                  >
+                    Modalità:
+                  </Typography>
+                  <RadioGroup
+                    row
+                    sx={{ marginLeft: '1rem' }}
+                    value={procedimento.modalitaSvolgimento || 'IN_PRESENZA'}
+                    onChange={(event) =>
+                      handleInputChange({ modalitaSvolgimento: event })
+                    }
+                  >
+                    <FormControlLabel
+                      value="IN_PRESENZA"
+                      control={<Radio />}
+                      label="IN PRESENZA"
+                      sx={{
+                        marginRight: '1.5rem',
+                        '& .MuiTypography-root': {
+                          color: theme.palette.text.primary,
+                        },
+                        '& .MuiRadio-root:not(.Mui-checked) span': {
+                          color: labelColor,
+                        },
+                      }}
+                    />
+                    <FormControlLabel
+                      value="TELEMATICA_MISTA"
+                      control={<Radio />}
+                      label="TELEMATICA MISTA"
+                      sx={{
+                        marginRight: '1.5rem',
+                        '& .MuiTypography-root': {
+                          color: theme.palette.text.primary,
+                        },
+                        '& .MuiRadio-root:not(.Mui-checked) span': {
+                          color: labelColor,
+                        },
+                      }}
+                    />
+                    <FormControlLabel
+                      value="TELEMATICA"
+                      control={<Radio />}
+                      label="TELEMATICA"
+                      sx={{
+                        '& .MuiTypography-root': {
+                          color: theme.palette.text.primary,
+                        },
+                        '& .MuiRadio-root:not(.Mui-checked) span': {
+                          color: labelColor,
+                        },
+                      }}
+                    />
+                  </RadioGroup>
+                </FormControl>
+              </Grid>
+
+              {/* Sede svolgimento */}
+              <Grid
+                size={{ xs: 12 }}
+                sx={{
+                  display: 'flex',
+                  columnGap: '2rem',
+                  alignItems: 'center',
+                }}
+              >
+                <Typography
+                  sx={{
+                    fontSize: '1.05rem',
+                    color: labelColor,
+                    display: 'inline-block',
+                  }}
+                >
+                  presso:
+                </Typography>
+
+                <CssTextField
+                  size="small"
+                  id="outlined-required-sede-svolgimento"
+                  disabled={sedeUgualeCaricamento}
+                  label="Sede svolgimento"
+                  value={procedimento.sedeSvolgimento || ''}
+                  onChange={(event) =>
+                    handleInputChange({ sedeSvolgimento: event })
+                  }
+                  error={
+                    touchedFields.sedeSvolgimento && errors.sedeSvolgimento
+                  }
+                  helperText={
+                    touchedFields.sedeSvolgimento && errors.sedeSvolgimento
+                      ? 'Sede non valida'
+                      : ''
+                  }
+                  sx={inputStyles(
+                    theme,
+                    inputWidth,
+                    minWidth,
+                    maxWidth,
+                    margin,
+                    backgroundColor
+                  )}
+                />
+                <FormControlLabel
+                  value={sedeUgualeCaricamento}
+                  onChange={(event) => {
+                    const checked = event.target.checked;
+                    setSedeUgualeCaricamento(checked);
+
+                    if (checked)
+                      handleInputChange({
+                        sedeSvolgimento: procedimento.sedeDeposito,
+                      });
+                    else handleInputChange({ sedeSvolgimento: '' });
+                  }}
+                  control={<Checkbox />}
+                  label="Coincide con sede deposito"
+                />
+              </Grid>
+            </Grid>
           </Grid>
         </Grid>
 
@@ -441,10 +576,10 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
           <Grid xs={12} sx={{ paddingLeft: '1rem' }}>
             <Select
               label="Oggetto di controversia"
-              required = {true}
+              required={true}
               value={procedimento.oggettoControversia || ''}
               onChange={(event) =>
-                handleInputChange(event, 'oggettoControversia')
+                handleInputChange({ oggettoControversia: event })
               }
               error={
                 touchedFields.oggettoControversia && errors.oggettoControversia
@@ -462,7 +597,7 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
               value={procedimento.valoreControversia}
               onChange={(event) => {
                 console.log(event);
-                handleInputChange(event, 'valoreControversia');
+                handleInputChange({ valoreControversia: event });
               }}
               sx={{
                 margin,
