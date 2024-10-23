@@ -12,7 +12,8 @@ export class Procedimento {
     oggettoControversia,
     valoreControversia = 0,
     esitoMediazione,
-    modalitaSvolgimento = "IN_PRESENZA",
+    modalitaSvolgimento = "PRESENZA",
+    totaleIncontri = 0,
   } = {}) {
     this.numProtocollo = numProtocollo;
     this.annoProtocollo = annoProtocollo;
@@ -24,6 +25,7 @@ export class Procedimento {
     this.valoreControversia = valoreControversia;
     this.esitoMediazione = esitoMediazione;
     this.modalitaSvolgimento = modalitaSvolgimento;
+    this.totaleIncontri = totaleIncontri;
   }
 
   getProtocollo() {

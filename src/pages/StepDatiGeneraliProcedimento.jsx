@@ -22,6 +22,7 @@ import { CssTextField, ClearButton, labelColor } from '@theme/MainTheme';
 import { Procedimento } from '@model/procedimento';
 import Select from '@components/Select';
 import { ProcedimentoContext } from '@context/Procedimento';
+import NumberInput from '@components/NumberInput';
 
 const oggettiControversia = [
   {
@@ -53,7 +54,7 @@ const oggettiControversia = [
 ];
 
 // Constants
-const inputHeight = 56;
+const inputHeight = 36;
 const gridRowHeight = inputHeight + 34 + 3;
 
 const inputStyles = (
@@ -192,6 +193,7 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
       valoreControversia: (value) => !isNaN(value) && value >= 0,
       esitoMediazione: () => true,
       modalitaSvolgimento: () => true,
+      numeroIncontri: (value) => !isNaN(value) && value >= 0,
     };
 
     return (
@@ -221,7 +223,7 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
             <Typography
               sx={{ fontSize: formLabelFontSize, color: formLabelColor }}
             >
-              Procedimento di mediazione
+              Istanza di mediazione
             </Typography>
           </Grid>
 
@@ -302,70 +304,6 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
               />
             </LocalizationProvider>
 
-            {/* Data e ora incontro */}
-            <LocalizationProvider
-              dateAdapter={AdapterDayjs}
-              adapterLocale="it"
-              localeText={
-                itIT.components.MuiLocalizationProvider.defaultProps.localeText
-              }
-            >
-              <MobileDateTimePicker
-                label="Data e ora incontro"
-                value={
-                  procedimento.dataOraIncontro
-                    ? dayjs(procedimento.dataOraIncontro)
-                    : null
-                }
-                onChange={(date) => {
-                  const formattedDate = date
-                    ? date.format('YYYY-MM-DDTHH:mm')
-                    : null;
-                  handleInputChange({ dataOraIncontro: formattedDate });
-                }}
-                sx={inputStyles(
-                  theme,
-                  inputWidth,
-                  minWidth,
-                  maxWidth,
-                  margin,
-                  backgroundColor
-                )}
-                slots={{ textField: CssTextField }}
-                slotProps={{
-                  textField: {
-                    error: false,
-                    InputProps: {
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          {procedimento.dataOraIncontro ? (
-                            <CloseIcon
-                              onClick={(event) => {
-                                event.stopPropagation();
-                                setProcedimento((prev) => ({
-                                  ...prev,
-                                  dataOraIncontro: null,
-                                }));
-                              }}
-                              sx={{
-                                cursor: 'pointer',
-                                color: theme.palette.error.main,
-                              }}
-                            />
-                          ) : (
-                            <CalendarMonthOutlinedIcon
-                              sx={{ color: labelColor }}
-                            />
-                          )}
-                        </InputAdornment>
-                      ),
-                    },
-                    size: 'small',
-                  },
-                }}
-              />
-            </LocalizationProvider>
-
             {/* Sede deposito */}
             <CssTextField
               required
@@ -399,9 +337,50 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
               )}
             />
 
-            {/* Esito mediazione */}
-            <Select
+            {/* Oggetto e valore controversia */}
+            <Grid xs={12}>
+              <Select
+                label="Oggetto di controversia"
+                required={true}
+                value={procedimento.oggettoControversia || ''}
+                onChange={(event) =>
+                  handleInputChange({ oggettoControversia: event })
+                }
+                error={
+                  touchedFields.oggettoControversia &&
+                  errors.oggettoControversia
+                }
+                helperText={
+                  touchedFields.oggettoControversia &&
+                  errors.oggettoControversia
+                    ? 'Campo obbligatorio'
+                    : ''
+                }
+                options={oggettiControversia}
+              />
+
+              {/* Valore della controversia */}
+              <ImportoInput
+                value={procedimento.valoreControversia}
+                onChange={(event) => {
+                  console.log(event);
+                  handleInputChange({ valoreControversia: event });
+                }}
+                sx={{
+                  margin,
+                  backgroundColor,
+                  width: inputWidth,
+                  minWidth,
+                  maxWidth,
+                }}
+                label="Valore della controversia"
+              />
+            </Grid>
+
+             {/* Esito mediazione */}
+             <Select
               value={procedimento.esitoMediazione || ''}
+              sx={{ margin: margin }}
               label="Esito"
               onChange={(event) =>
                 handleInputChange({ esitoMediazione: event })
@@ -410,38 +389,74 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
               options={esitiMediazione}
             />
 
-            {/* Svolgimento */}
-            <Grid size={{ xs: 12 }} sx={{ margin: margin }}>
+          </Grid>
+        </Grid>
+
+        {/* Svolgimento */}
+        <Grid
+          size={{ xs: 12 }}
+          sx={{ width: '100%', minHeight: `${gridRowHeight}px` }}
+        >
+          <Grid
+            xs={12}
+            sx={{
+              borderBottom: `1px solid ${formLabelColor}`,
+              width: 'calc(100% - 1rem)',
+              margin: '0 0 0 1rem',
+            }}
+          >
+            <Typography
+              variant="h6"
+              sx={{
+                fontSize: formLabelFontSize,
+                fontWeight: '400',
+                color: formLabelColor,
+              }}
+            >
+              Fissazione incontro
+            </Typography>
+          </Grid>
+           {/* Svolgimento */}
+           <Grid
+              size={{ xs: 12 }}
+              sx={{
+                paddingLeft: '1rem',
+                display: 'flex',
+                flexDirection: 'column',
+                rowGap: '1rem',
+              }}
+            >
+              {/* Modalità di svolgimento */}
               <Grid size={{ xs: 12 }}>
-                {/* Modalità di svolgimento */}
                 <FormControl
                   sx={{
-                    marginTop: '4px',
+                    marginTop: '18px',
                     flexDirection: 'row',
                     alignItems: 'center',
+                    flexWrap: 'wrap',
                   }}
                 >
                   <Typography
                     sx={{
-                      fontSize: '1.05rem',
+                      fontSize: '1rem',
                       color: labelColor,
-                      margin: 'auto',
+                      margin: '0',
                     }}
                   >
-                    Modalità:
+                    L'ultimo incontro è da svolgersi in
                   </Typography>
                   <RadioGroup
                     row
-                    sx={{ marginLeft: '1rem' }}
-                    value={procedimento.modalitaSvolgimento || 'IN_PRESENZA'}
+                    sx={{ marginLeft: '1rem', flexWrap: 'wrap', }}
+                    value={procedimento.modalitaSvolgimento || 'PRESENZA'}
                     onChange={(event) =>
                       handleInputChange({ modalitaSvolgimento: event })
                     }
                   >
                     <FormControlLabel
-                      value="IN_PRESENZA"
+                      value="PRESENZA"
                       control={<Radio />}
-                      label="IN PRESENZA"
+                      label="PRESENZA"
                       sx={{
                         marginRight: '1.5rem',
                         '& .MuiTypography-root': {
@@ -480,6 +495,7 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
                       }}
                     />
                   </RadioGroup>
+                  <Grid></Grid>
                 </FormControl>
               </Grid>
 
@@ -494,12 +510,12 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
               >
                 <Typography
                   sx={{
-                    fontSize: '1.05rem',
+                    fontSize: '1rem',
                     color: labelColor,
                     display: 'inline-block',
                   }}
                 >
-                  presso:
+                  presso
                 </Typography>
 
                 <CssTextField
@@ -524,7 +540,7 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
                     inputWidth,
                     minWidth,
                     maxWidth,
-                    margin,
+                    '0 20px 0 0',
                     backgroundColor
                   )}
                 />
@@ -540,75 +556,131 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
                       });
                     else handleInputChange({ sedeSvolgimento: '' });
                   }}
+                  sx={{
+                    '& .MuiTypography-root': {
+                      color: theme.palette.text.primary,
+                    },
+                  }}
                   control={<Checkbox />}
-                  label="Coincide con sede deposito"
+                  label="Coincidente con sede deposito"
                 />
               </Grid>
+
+              {/* Data, ora e numero incontri */}
+              <Grid
+                size={{ xs: 12 }}
+                sx={{
+                  display: 'flex',
+                  flexWrap: 'wrap',
+                  columnGap: '2rem',
+                  alignItems: 'center',
+                  rowGap: '1rem',
+                }}
+              >
+                <Typography
+                  sx={{
+                    fontSize: '1rem',
+                    color: labelColor,
+                    margin: '0',
+                  }}
+                >
+                  il
+                </Typography>
+
+                <LocalizationProvider
+                  dateAdapter={AdapterDayjs}
+                  adapterLocale="it"
+                  localeText={
+                    itIT.components.MuiLocalizationProvider.defaultProps
+                      .localeText
+                  }
+                >
+                  <MobileDateTimePicker
+                    label="Data e ora incontro"
+                    value={
+                      procedimento.dataOraIncontro
+                        ? dayjs(procedimento.dataOraIncontro)
+                        : null
+                    }
+                    onChange={(date) => {
+                      const formattedDate = date
+                        ? date.format('YYYY-MM-DDTHH:mm')
+                        : null;
+                      handleInputChange({ dataOraIncontro: formattedDate });
+                    }}
+                    sx={inputStyles(
+                      theme,
+                      inputWidth,
+                      minWidth,
+                      maxWidth,
+                      '0 20px 0 0',
+                      backgroundColor
+                    )}
+                    slots={{ textField: CssTextField }}
+                    slotProps={{
+                      textField: {
+                        error: false,
+                        InputProps: {
+                          endAdornment: (
+                            <InputAdornment position="end">
+                              {procedimento.dataOraIncontro ? (
+                                <CloseIcon
+                                  onClick={(event) => {
+                                    event.stopPropagation();
+                                    setProcedimento((prev) => ({
+                                      ...prev,
+                                      dataOraIncontro: null,
+                                    }));
+                                  }}
+                                  sx={{
+                                    cursor: 'pointer',
+                                    color: theme.palette.error.main,
+                                  }}
+                                />
+                              ) : (
+                                <CalendarMonthOutlinedIcon
+                                  sx={{ color: labelColor }}
+                                />
+                              )}
+                            </InputAdornment>
+                          ),
+                        },
+                        size: 'small',
+                      },
+                    }}
+                  />
+                </LocalizationProvider>
+
+                {/* Numero di incontri */}
+                <Grid
+                  size={{ xs: 12 }}
+                  sx={{
+                    display: 'flex',
+                    columnGap: '2rem',
+                    alignItems: 'center',
+                  }}
+                >
+                  <Typography
+                    sx={{
+                      fontSize: '1rem',
+                      color: labelColor,
+                      margin: '0',
+                    }}
+                  >
+                    portando il totale degli incontri svolti a
+                  </Typography>
+
+                  {/* Numero di incontri */}
+                  <NumberInput
+                    value={procedimento.totaleIncontri}
+                    sx={{ height: inputHeight }}
+                    onChange={(num) => {
+                      handleInputChange({ totaleIncontri: num });
+                    }}
+                  />
+                </Grid>
+              </Grid>
             </Grid>
-          </Grid>
-        </Grid>
-
-        {/* Controversia */}
-        <Grid
-          size={{ xs: 12 }}
-          sx={{ width: '100%', minHeight: `${gridRowHeight}px` }}
-        >
-          <Grid
-            xs={12}
-            sx={{
-              borderBottom: `1px solid ${formLabelColor}`,
-              margin: '0 0 0 1rem',
-              width: 'calc(100% - 1rem)',
-            }}
-          >
-            <Typography
-              variant="h6"
-              sx={{
-                fontSize: formLabelFontSize,
-                fontWeight: '400',
-                color: formLabelColor,
-              }}
-            >
-              Controversia
-            </Typography>
-          </Grid>
-
-          <Grid xs={12} sx={{ paddingLeft: '1rem' }}>
-            <Select
-              label="Oggetto di controversia"
-              required={true}
-              value={procedimento.oggettoControversia || ''}
-              onChange={(event) =>
-                handleInputChange({ oggettoControversia: event })
-              }
-              error={
-                touchedFields.oggettoControversia && errors.oggettoControversia
-              }
-              helperText={
-                touchedFields.oggettoControversia && errors.oggettoControversia
-                  ? 'Campo obbligatorio'
-                  : ''
-              }
-              options={oggettiControversia}
-            />
-
-            {/* Valore della controversia */}
-            <ImportoInput
-              value={procedimento.valoreControversia}
-              onChange={(event) => {
-                console.log(event);
-                handleInputChange({ valoreControversia: event });
-              }}
-              sx={{
-                margin,
-                backgroundColor,
-                width: inputWidth,
-                minWidth,
-                maxWidth,
-              }}
-              label="Valore della controversia"
-            />
-          </Grid>
         </Grid>
 
         {/* Reset button */}
