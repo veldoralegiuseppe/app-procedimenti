@@ -8,6 +8,7 @@ export default function NumberInput({
   onChange,
   min = 0,
   max = 100,
+  sx,
 }) {
   const [inputValue, setInputValue] = React.useState(value);
 
@@ -39,9 +40,10 @@ export default function NumberInput({
         width: '5rem',
         //cursor: 'default',
         '& .MuiInputBase-input': {
-          cursor: 'default', 
-          minWidth: '1.5rem'
+          cursor: 'default',
+          minWidth: '1.5rem',
         },
+        ...sx,
       }}
       InputProps={{
         readOnly: true,
