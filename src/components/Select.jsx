@@ -15,7 +15,8 @@ function Select({
   helperText = '', 
   minWidth = '30rem', 
   maxWidth = '168px', 
-  labelColor = defaultLabelColor 
+  labelColor = defaultLabelColor,
+  sx
 }) {
   const theme = useTheme();
 
@@ -52,7 +53,7 @@ function Select({
     <FormControl 
       required={required}
       size='small' 
-      sx={sxStyles}
+      sx={{...sxStyles, sx}}
       error={error}
     >
       <InputLabel 
