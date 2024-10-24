@@ -523,7 +523,10 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
           </Grid>
 
           {/* Data ora incontro */}
-          <Grid size={{ xs: 12, md: 4 }} sx={{ width: 'auto', maxWidth: inputWidth }}>
+          <Grid
+            size={{ xs: 12, md: 4 }}
+            sx={{ width: 'auto', maxWidth: inputWidth }}
+          >
             <LocalizationProvider
               dateAdapter={AdapterDayjs}
               adapterLocale="it"
@@ -590,7 +593,7 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
 
           {/* Sede svolgimento */}
           <Grid
-            size={{ xs: 12,  }}
+            size={{ xs: 12 }}
             sx={{
               display: 'flex',
               flexWrap: 'wrap',
@@ -645,7 +648,10 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
           </Grid>
 
           {/* Totale incontri */}
-          <Grid size={{ xs: 12, sm: 12, md: 12, lg: 12  }} sx={{ width: 'auto' }}>
+          <Grid
+            size={{ xs: 12, sm: 12, md: 12, lg: 12 }}
+            sx={{ width: 'auto' }}
+          >
             <NumberInput
               value={procedimento.totaleIncontri}
               label="Totale incontri"
@@ -666,14 +672,21 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
 
         {/* Mediatore */}
         <Grid
+          container
           size={{ xs: 12 }}
-          sx={{ width: '100%', minHeight: `${gridRowHeight}px` }}
+          sx={{
+            width: '100%',
+            minHeight: `${gridRowHeight}px`,
+            paddingLeft: '1rem',
+            rowGap: '1.5rem',
+            columnGap: '1.5rem',
+          }}
         >
+          {/* Titolo della form */}
           <Grid
-            xs={12}
+            size={{ xs: 12 }}
             sx={{
               borderBottom: `1px solid ${formLabelColor}`,
-              margin: '0 0 0 1rem',
               width: 'calc(100% - 1rem)',
             }}
           >
@@ -684,25 +697,27 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
             </Typography>
           </Grid>
 
-          <Grid
-            size={{ xs: 12 }}
-            sx={{ display: 'flex', alignItems: 'end', paddingLeft: '1rem' }}
-          >
-            {/* Qualifica */}
+          {/* Qualifica */}
+          <Grid size={{ xs: 12 }}>
             <SelectQualificaPersona
-              label="Qualifica"
+              label="Titolo professionale/cortesia"
               sx={inputStyles(
                 theme,
-                inputWidth,
-                '11rem',
-                '11rem',
-                margin,
+                maxWidth,
+                minWidth,
+                maxWidth,
+                0,
                 backgroundColor
               )}
               options={[{ maschile: 'AVV', femminile: 'AVV.SSA' }]}
             />
+          </Grid>
 
-            {/* Nome */}
+          {/* Nome */}
+          <Grid
+            size={{ xs: 12, sm: 6 }}
+            sx={{ width: 'auto', maxWidth: maxWidth }}
+          >
             <CssTextField
               required
               size="small"
@@ -720,15 +735,20 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
               onChange={(event) => handleInputChange(event, 'nomeMediatore')}
               sx={inputStyles(
                 theme,
-                inputWidth,
+                maxWidth,
                 minWidth,
                 maxWidth,
-                margin,
+                0,
                 backgroundColor
               )}
             />
+          </Grid>
 
-            {/* Cognome */}
+          {/* Cognome */}
+          <Grid
+            size={{ xs: 12, sm: 6 }}
+            sx={{ width: 'auto', maxWidth: maxWidth }}
+          >
             <CssTextField
               required
               size="small"
@@ -746,10 +766,10 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
               onChange={(event) => handleInputChange(event, 'cognomeMediatore')}
               sx={inputStyles(
                 theme,
-                inputWidth,
+                maxWidth,
                 minWidth,
                 maxWidth,
-                margin,
+                0,
                 backgroundColor
               )}
             />
