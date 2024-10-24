@@ -12,7 +12,7 @@ export class Procedimento {
     oggettoControversia,
     valoreControversia = 0,
     esitoMediazione,
-    modalitaSvolgimento = "PRESENZA",
+    modalitaSvolgimento,
     totaleIncontri = 0,
   } = {}) {
     this.numProtocollo = numProtocollo;
