@@ -13,9 +13,8 @@ function Select({
   options = [], 
   error = false, 
   helperText = '', 
-  minWidth = '30rem', 
-  maxWidth = '168px', 
   labelColor = defaultLabelColor,
+  renderValue,
   sx
 }) {
   const theme = useTheme();
@@ -23,9 +22,10 @@ function Select({
   // Definisci lo stile specifico da riutilizzare nel FormControl
   const sxStyles = {
     ...formControlStyles(theme, labelColor),
-    maxWidth,
-    minWidth,
-    margin: '18px 20px 0px 0px', // Imposta il margin predefinito o accetta margini dinamici se necessario
+    width: sx?.width || '100%',
+    maxWidth: sx?.maxWidth || '30rem',
+    minWidth: sx?.minWidth || '16.8rem',
+    margin: sx?.margin || 0,
     '&:hover .MuiInputLabel-root:not(.Mui-disabled), &:hover .MuiSvgIcon-root, &:hover .MuiOutlinedInput-root fieldset': {
       color: theme.palette.logo.secondary, // Sincronizza colore su hover
       borderColor: theme.palette.logo.secondary, // Sincronizza il colore del bordo
@@ -45,7 +45,7 @@ function Select({
   };
 
   const handleClear = () => {
-    onChange({ target: { value: undefined } });
+    if(onChange) onChange({ target: { value: undefined } });
   };
 
 
@@ -67,9 +67,10 @@ function Select({
       <CssSelect
         labelId={`${label}-input-label`}
         value={value || ''}
+        renderValue={(selected) => renderValue ? renderValue(selected) : selected}
         label={label}
         size='small'
-        onChange={onChange}
+        onChange={onChange ? onChange : () => {}}
         IconComponent={value ? () => null : ArrowDropDownIcon}
         endAdornment={
           value && (
