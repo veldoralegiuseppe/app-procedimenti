@@ -6,6 +6,7 @@ import { ArrowDropUp, ArrowDropDown } from '@mui/icons-material';
 export default function NumberInput({
   value = 0,
   onChange,
+  label = '',
   min = 0,
   max = 100,
   sx,
@@ -18,7 +19,7 @@ export default function NumberInput({
 
   return (
     <CssTextField
-      //label="Numero di incontri"
+      label={label}
       type="text"
       variant="outlined"
       size="small"
