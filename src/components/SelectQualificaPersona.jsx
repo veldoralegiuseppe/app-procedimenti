@@ -1,16 +1,20 @@
 import * as React from 'react';
+import { styled, useTheme } from '@mui/system';
+import {
+  Autocomplete,
+  createFilterOptions,
+  Popper,
+  Paper,
+  Button,
+  Divider,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+} from '@mui/material';
+import PropTypes from 'prop-types';
 import { CssTextField, labelColor } from '@theme/MainTheme';
-import { styled } from '@mui/system';
-import Autocomplete, { createFilterOptions } from '@mui/material/Autocomplete';
-import { Button, Divider } from '@mui/material';
-import Popper from '@mui/material/Popper';
-import Paper from '@mui/material/Paper';
-import { useTheme } from '@mui/material/styles';
-import Dialog from '@mui/material/Dialog';
-import DialogTitle from '@mui/material/DialogTitle';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogActions from '@mui/material/DialogActions';
 
 const filter = createFilterOptions();
 
@@ -273,3 +277,15 @@ export default function SelectQualificaPersona({ label, onChange, options, sx })
     </React.Fragment>
   );
 }
+
+SelectQualificaPersona.propTypes = {
+  label: PropTypes.string.isRequired,
+  onChange: PropTypes.func,
+  options: PropTypes.arrayOf(
+    PropTypes.shape({
+      maschile: PropTypes.string,
+      femminile: PropTypes.string,
+    })
+  ).isRequired,
+  sx: PropTypes.object,
+};
