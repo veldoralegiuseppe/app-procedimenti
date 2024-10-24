@@ -252,14 +252,21 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
       >
         {/* Procedimento di mediazione */}
         <Grid
+          container
           size={{ xs: 12 }}
-          sx={{ width: '100%', minHeight: `${gridRowHeight}px` }}
+          sx={{
+            width: '100%',
+            minHeight: `${gridRowHeight}px`,
+            paddingLeft: '1rem',
+            rowGap: '1.5rem',
+            columnGap: '1.5rem',
+          }}
         >
+          {/* Titolo form */}
           <Grid
-            xs={12}
+            size={{ xs: 12 }}
             sx={{
               borderBottom: `1px solid ${formLabelColor}`,
-              margin: '0 0 0 1rem',
               width: 'calc(100% - 1rem)',
             }}
           >
@@ -270,8 +277,8 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
             </Typography>
           </Grid>
 
-          <Grid xs={12} sx={{ paddingLeft: '1rem' }}>
-            {/* Protocollo */}
+          {/* Protocollo */}
+          <Grid size={{ xs: 4 }} sx={{ width: 'auto' }}>
             <ProtocolloInput
               onChange={(numProtocollo, anno) => {
                 console.log(numProtocollo, anno);
@@ -296,12 +303,14 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
                 inputWidth,
                 minWidth,
                 maxWidth,
-                margin,
+                '0',
                 backgroundColor
               )}
             />
+          </Grid>
 
-            {/* Data deposito */}
+          {/* Data deposito */}
+          <Grid size={{ xs: 4 }} sx={{ width: 'auto' }}>
             <LocalizationProvider
               dateAdapter={AdapterDayjs}
               adapterLocale="it"
@@ -325,7 +334,7 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
                   inputWidth,
                   minWidth,
                   maxWidth,
-                  margin,
+                  '0',
                   backgroundColor
                 )}
                 slots={{ textField: CssTextField }}
@@ -346,8 +355,30 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
                 }}
               />
             </LocalizationProvider>
+          </Grid>
 
-            {/* Sede deposito */}
+          {/* Valore della controversia */}
+          <Grid size={{ xs: 4 }} sx={{ width: 'auto' }}>
+            <ImportoInput
+              value={procedimento.valoreControversia}
+              onChange={(event) => {
+                console.log(event);
+                handleInputChange({ valoreControversia: event });
+              }}
+              sx={inputStyles(
+                theme,
+                inputWidth,
+                minWidth,
+                maxWidth,
+                '0',
+                backgroundColor
+              )}
+              label="Valore della controversia"
+            />
+          </Grid>
+
+          {/* Sede deposito */}
+          <Grid size={{ xs: 12 }} sx={{ width: 'auto', maxWidth: maxWidth }}>
             <CssTextField
               required
               size="small"
@@ -372,68 +403,66 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
               }}
               sx={inputStyles(
                 theme,
-                inputWidth,
+                maxWidth,
                 minWidth,
                 maxWidth,
-                margin,
+                '0',
                 backgroundColor
               )}
             />
+          </Grid>
 
-            {/* Oggetto e valore controversia */}
-            <Grid xs={12}>
-              <Select
-                label="Oggetto di controversia"
-                required={true}
-                value={procedimento.oggettoControversia || ''}
-                onChange={(event) =>
-                  handleInputChange({ oggettoControversia: event })
-                }
-                error={
-                  touchedFields.oggettoControversia &&
-                  errors.oggettoControversia
-                }
-                helperText={
-                  touchedFields.oggettoControversia &&
-                  errors.oggettoControversia
-                    ? 'Campo obbligatorio'
-                    : ''
-                }
-                options={oggettiControversia}
-              />
+          {/* Oggetto controversia */}
+          <Grid size={{ xs: 12 }} sx={{ width: 'auto', maxWidth: maxWidth }}>
+            <Select
+              label="Oggetto di controversia"
+              required={true}
+              value={procedimento.oggettoControversia || ''}
+              onChange={(event) =>
+                handleInputChange({ oggettoControversia: event })
+              }
+              sx={inputStyles(
+                theme,
+                maxWidth,
+                minWidth,
+                maxWidth,
+                '0',
+                backgroundColor
+              )}
+              error={
+                touchedFields.oggettoControversia && errors.oggettoControversia
+              }
+              helperText={
+                touchedFields.oggettoControversia && errors.oggettoControversia
+                  ? 'Campo obbligatorio'
+                  : ''
+              }
+              options={oggettiControversia}
+            />
+          </Grid>
 
-              {/* Valore della controversia */}
-              <ImportoInput
-                value={procedimento.valoreControversia}
-                onChange={(event) => {
-                  console.log(event);
-                  handleInputChange({ valoreControversia: event });
-                }}
-                sx={{
-                  margin,
-                  backgroundColor,
-                  width: inputWidth,
-                  minWidth,
-                  maxWidth,
-                }}
-                label="Valore della controversia"
-              />
-            </Grid>
-
-            {/* Esito mediazione */}
+          {/* Esito mediazione */}
+          <Grid size={{ xs: 12 }} sx={{ width: 'auto', maxWidth: maxWidth }}>
             <Select
               value={procedimento.esitoMediazione || ''}
-              sx={{ margin: margin }}
               label="Esito"
               onChange={(event) =>
                 handleInputChange({ esitoMediazione: event })
               }
               error={touchedFields.esitoMediazione && errors.esitoMediazione}
               options={esitiMediazione}
+              sx={inputStyles(
+                theme,
+                maxWidth,
+                minWidth,
+                maxWidth,
+                '0',
+                backgroundColor
+              )}
             />
-
-            {/* <SelectQualificaPersona label="Qualifica" options={[{maschile: "AVV", femminile: "AVV.SSA"}, {maschile: "DOTT", femminile: "DOTT.SSA"}]}/> */}
           </Grid>
+
+          {/* <SelectQualificaPersona label="Qualifica" options={[{maschile: "AVV", femminile: "AVV.SSA"}, {maschile: "DOTT", femminile: "DOTT.SSA"}]}/> */}
         </Grid>
 
         {/* Fissazione incontro */}
@@ -470,7 +499,10 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
           </Grid>
 
           {/* Modalità svolgimento */}
-          <Grid size={{ xs: 12, md: 6}} sx={{width: 'auto', maxWidth: maxWidth}}>
+          <Grid
+            size={{ xs: 12, md: 8 }}
+            sx={{ width: 'auto', maxWidth: maxWidth }}
+          >
             <Select
               value={procedimento.modalitaSvolgimento}
               label="Modalità svolgimento"
@@ -491,7 +523,7 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
           </Grid>
 
           {/* Data ora incontro */}
-          <Grid size={{ xs: 12, md: 4 }} sx={{width: 'auto'}}>
+          <Grid size={{ xs: 12, md: 4 }} sx={{ width: 'auto', maxWidth: inputWidth }}>
             <LocalizationProvider
               dateAdapter={AdapterDayjs}
               adapterLocale="it"
@@ -557,7 +589,15 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
           </Grid>
 
           {/* Sede svolgimento */}
-          <Grid size={{ xs: 12, sm: 12 }} sx={{display:'flex', flexWrap: 'wrap', columnGap: '1.5rem', width: 'auto'}}>
+          <Grid
+            size={{ xs: 12,  }}
+            sx={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              columnGap: '1.5rem',
+              width: 'auto',
+            }}
+          >
             <CssTextField
               size="small"
               id="outlined-required-sede-svolgimento"
@@ -605,7 +645,7 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
           </Grid>
 
           {/* Totale incontri */}
-          <Grid size={{ xs: 12 }} sx={{width: 'auto'}}>
+          <Grid size={{ xs: 12, sm: 12, md: 12, lg: 12  }} sx={{ width: 'auto' }}>
             <NumberInput
               value={procedimento.totaleIncontri}
               label="Totale incontri"
