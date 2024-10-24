@@ -15,6 +15,9 @@ import RadioGroup from '@mui/material/RadioGroup';
 import Radio from '@mui/material/Radio';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
+import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
+import Tooltip from '@mui/material/Tooltip';
+import Grow from '@mui/material/Grow';
 
 import ProtocolloInput from '@components/ProtocolloInput';
 import ImportoInput from '@components/ImportoInput';
@@ -23,6 +26,9 @@ import { Procedimento } from '@model/procedimento';
 import Select from '@components/Select';
 import { ProcedimentoContext } from '@context/Procedimento';
 import NumberInput from '@components/NumberInput';
+import SelectQualificaPersona from '@components/SelectQualificaPersona';
+import it from 'dayjs/locale/it';
+import { height } from '@mui/system';
 
 const oggettiControversia = [
   {
@@ -56,6 +62,7 @@ const oggettiControversia = [
 // Constants
 const inputHeight = 36;
 const gridRowHeight = inputHeight + 34 + 3;
+const infoColor = labelColor;
 
 const inputStyles = (
   theme,
@@ -65,7 +72,7 @@ const inputStyles = (
   margin,
   backgroundColor
 ) => ({
-  margin,
+  margin: margin,
   backgroundColor,
   width: inputWidth,
   maxWidth,
@@ -80,7 +87,7 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
     const theme = useTheme();
     const inputWidth = '168px';
     const minWidth = '133px';
-    const maxWidth = '200px';
+    const maxWidth = '30rem';
     const margin = '18px 20px 0px 0px';
     const backgroundColor = theme.palette.background.default;
     const formLabelFontSize = '1.2rem';
@@ -107,6 +114,42 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
       { value: 'NEGATIVO MANCATA ADESIONE', view: 'NEGATIVO MANCATA ADESIONE' },
       { value: 'NEGATIVO MANCATO ACCORDO', view: 'NEGATIVO MANCATO ACCORDO' },
       { value: 'POSITIVO', view: 'POSITIVO' },
+    ];
+
+    const modalitaSvolgimento = [
+      {
+        value: 'PRESENZA',
+        view: (
+          <Tooltip
+            placement="right"
+            title="Partecipazione sia in presenza che da remoto."
+          >
+            PRESENZA
+            <InfoOutlinedIcon sx={{ color: infoColor }} />
+          </Tooltip>
+        ),
+      },
+      {
+        value: 'TELEMATICA',
+        view: (
+          <Tooltip placement="right" title="Incontro interamente a distanza.">
+            TELEMATICA
+            <InfoOutlinedIcon sx={{ color: infoColor }} />
+          </Tooltip>
+        ),
+      },
+      {
+        value: 'TELEMATICA_MISTA',
+        view: (
+          <Tooltip
+            placement="right"
+            title="Incontro di persona, presso una sede fisica."
+          >
+            TELEMATICA MISTA
+            <InfoOutlinedIcon sx={{ color: infoColor }} />
+          </Tooltip>
+        ),
+      },
     ];
 
     const requiredFieldsFilled = () => {
@@ -377,8 +420,8 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
               />
             </Grid>
 
-             {/* Esito mediazione */}
-             <Select
+            {/* Esito mediazione */}
+            <Select
               value={procedimento.esitoMediazione || ''}
               sx={{ margin: margin }}
               label="Esito"
@@ -389,20 +432,29 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
               options={esitiMediazione}
             />
 
+            {/* <SelectQualificaPersona label="Qualifica" options={[{maschile: "AVV", femminile: "AVV.SSA"}, {maschile: "DOTT", femminile: "DOTT.SSA"}]}/> */}
           </Grid>
         </Grid>
 
-        {/* Svolgimento */}
+        {/* Fissazione incontro */}
         <Grid
+          container
           size={{ xs: 12 }}
-          sx={{ width: '100%', minHeight: `${gridRowHeight}px` }}
+          sx={{
+            width: '100%',
+            minHeight: `${gridRowHeight}px`,
+            paddingLeft: '1rem',
+            rowGap: '1.5rem',
+            columnGap: '1.5rem',
+          }}
         >
+          {/* Titolo form */}
           <Grid
-            xs={12}
+            size={{ xs: 12 }}
             sx={{
               borderBottom: `1px solid ${formLabelColor}`,
               width: 'calc(100% - 1rem)',
-              margin: '0 0 0 1rem',
+              //margin: '0 0 0 1rem',
             }}
           >
             <Typography
@@ -416,271 +468,252 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
               Fissazione incontro
             </Typography>
           </Grid>
-           {/* Svolgimento */}
-           <Grid
-              size={{ xs: 12 }}
-              sx={{
-                paddingLeft: '1rem',
-                display: 'flex',
-                flexDirection: 'column',
-                rowGap: '1rem',
-              }}
+
+          {/* Modalità svolgimento */}
+          <Grid size={{ xs: 12, md: 6}} sx={{width: 'auto', maxWidth: maxWidth}}>
+            <Select
+              value={procedimento.modalitaSvolgimento}
+              label="Modalità svolgimento"
+              onChange={(event) =>
+                handleInputChange({ modalitaSvolgimento: event })
+              }
+              options={modalitaSvolgimento}
+              renderValue={(selected) => String(selected).replaceAll('_', ' ')}
+              sx={inputStyles(
+                theme,
+                maxWidth,
+                minWidth,
+                maxWidth,
+                '0',
+                backgroundColor
+              )}
+            />
+          </Grid>
+
+          {/* Data ora incontro */}
+          <Grid size={{ xs: 12, md: 4 }} sx={{width: 'auto'}}>
+            <LocalizationProvider
+              dateAdapter={AdapterDayjs}
+              adapterLocale="it"
+              localeText={
+                itIT.components.MuiLocalizationProvider.defaultProps.localeText
+              }
             >
-              {/* Modalità di svolgimento */}
-              <Grid size={{ xs: 12 }}>
-                <FormControl
-                  sx={{
-                    marginTop: '18px',
-                    flexDirection: 'row',
-                    alignItems: 'center',
-                    flexWrap: 'wrap',
-                  }}
-                >
-                  <Typography
-                    sx={{
-                      fontSize: '1rem',
-                      color: labelColor,
-                      margin: '0',
-                    }}
-                  >
-                    L'ultimo incontro è da svolgersi in
-                  </Typography>
-                  <RadioGroup
-                    row
-                    sx={{ marginLeft: '1rem', flexWrap: 'wrap', }}
-                    value={procedimento.modalitaSvolgimento || 'PRESENZA'}
-                    onChange={(event) =>
-                      handleInputChange({ modalitaSvolgimento: event })
-                    }
-                  >
-                    <FormControlLabel
-                      value="PRESENZA"
-                      control={<Radio />}
-                      label="PRESENZA"
-                      sx={{
-                        marginRight: '1.5rem',
-                        '& .MuiTypography-root': {
-                          color: theme.palette.text.primary,
-                        },
-                        '& .MuiRadio-root:not(.Mui-checked) span': {
-                          color: labelColor,
-                        },
-                      }}
-                    />
-                    <FormControlLabel
-                      value="TELEMATICA_MISTA"
-                      control={<Radio />}
-                      label="TELEMATICA MISTA"
-                      sx={{
-                        marginRight: '1.5rem',
-                        '& .MuiTypography-root': {
-                          color: theme.palette.text.primary,
-                        },
-                        '& .MuiRadio-root:not(.Mui-checked) span': {
-                          color: labelColor,
-                        },
-                      }}
-                    />
-                    <FormControlLabel
-                      value="TELEMATICA"
-                      control={<Radio />}
-                      label="TELEMATICA"
-                      sx={{
-                        '& .MuiTypography-root': {
-                          color: theme.palette.text.primary,
-                        },
-                        '& .MuiRadio-root:not(.Mui-checked) span': {
-                          color: labelColor,
-                        },
-                      }}
-                    />
-                  </RadioGroup>
-                  <Grid></Grid>
-                </FormControl>
-              </Grid>
-
-              {/* Sede svolgimento */}
-              <Grid
-                size={{ xs: 12 }}
-                sx={{
-                  display: 'flex',
-                  columnGap: '2rem',
-                  alignItems: 'center',
+              <MobileDateTimePicker
+                label="Data e ora incontro"
+                value={
+                  procedimento.dataOraIncontro
+                    ? dayjs(procedimento.dataOraIncontro)
+                    : null
+                }
+                onChange={(date) => {
+                  const formattedDate = date
+                    ? date.format('YYYY-MM-DDTHH:mm')
+                    : null;
+                  handleInputChange({ dataOraIncontro: formattedDate });
                 }}
-              >
-                <Typography
-                  sx={{
-                    fontSize: '1rem',
-                    color: labelColor,
-                    display: 'inline-block',
-                  }}
-                >
-                  presso
-                </Typography>
-
-                <CssTextField
-                  size="small"
-                  id="outlined-required-sede-svolgimento"
-                  disabled={sedeUgualeCaricamento}
-                  label="Sede svolgimento"
-                  value={procedimento.sedeSvolgimento || ''}
-                  onChange={(event) =>
-                    handleInputChange({ sedeSvolgimento: event })
-                  }
-                  error={
-                    touchedFields.sedeSvolgimento && errors.sedeSvolgimento
-                  }
-                  helperText={
-                    touchedFields.sedeSvolgimento && errors.sedeSvolgimento
-                      ? 'Sede non valida'
-                      : ''
-                  }
-                  sx={inputStyles(
-                    theme,
-                    inputWidth,
-                    minWidth,
-                    maxWidth,
-                    '0 20px 0 0',
-                    backgroundColor
-                  )}
-                />
-                <FormControlLabel
-                  value={sedeUgualeCaricamento}
-                  onChange={(event) => {
-                    const checked = event.target.checked;
-                    setSedeUgualeCaricamento(checked);
-
-                    if (checked)
-                      handleInputChange({
-                        sedeSvolgimento: procedimento.sedeDeposito,
-                      });
-                    else handleInputChange({ sedeSvolgimento: '' });
-                  }}
-                  sx={{
-                    '& .MuiTypography-root': {
-                      color: theme.palette.text.primary,
+                sx={inputStyles(
+                  theme,
+                  inputWidth,
+                  minWidth,
+                  maxWidth,
+                  '0',
+                  backgroundColor
+                )}
+                slots={{ textField: CssTextField }}
+                slotProps={{
+                  textField: {
+                    error: false,
+                    InputProps: {
+                      endAdornment: (
+                        <InputAdornment position="end">
+                          {procedimento.dataOraIncontro ? (
+                            <CloseIcon
+                              onClick={(event) => {
+                                event.stopPropagation();
+                                setProcedimento((prev) => ({
+                                  ...prev,
+                                  dataOraIncontro: null,
+                                }));
+                              }}
+                              sx={{
+                                cursor: 'pointer',
+                                color: theme.palette.error.main,
+                              }}
+                            />
+                          ) : (
+                            <CalendarMonthOutlinedIcon
+                              sx={{ color: labelColor }}
+                            />
+                          )}
+                        </InputAdornment>
+                      ),
                     },
-                  }}
-                  control={<Checkbox />}
-                  label="Coincidente con sede deposito"
-                />
-              </Grid>
-
-              {/* Data, ora e numero incontri */}
-              <Grid
-                size={{ xs: 12 }}
-                sx={{
-                  display: 'flex',
-                  flexWrap: 'wrap',
-                  columnGap: '2rem',
-                  alignItems: 'center',
-                  rowGap: '1rem',
+                    size: 'small',
+                  },
                 }}
-              >
-                <Typography
-                  sx={{
-                    fontSize: '1rem',
-                    color: labelColor,
-                    margin: '0',
-                  }}
-                >
-                  il
-                </Typography>
+              />
+            </LocalizationProvider>
+          </Grid>
 
-                <LocalizationProvider
-                  dateAdapter={AdapterDayjs}
-                  adapterLocale="it"
-                  localeText={
-                    itIT.components.MuiLocalizationProvider.defaultProps
-                      .localeText
-                  }
-                >
-                  <MobileDateTimePicker
-                    label="Data e ora incontro"
-                    value={
-                      procedimento.dataOraIncontro
-                        ? dayjs(procedimento.dataOraIncontro)
-                        : null
-                    }
-                    onChange={(date) => {
-                      const formattedDate = date
-                        ? date.format('YYYY-MM-DDTHH:mm')
-                        : null;
-                      handleInputChange({ dataOraIncontro: formattedDate });
-                    }}
-                    sx={inputStyles(
-                      theme,
-                      inputWidth,
-                      minWidth,
-                      maxWidth,
-                      '0 20px 0 0',
-                      backgroundColor
-                    )}
-                    slots={{ textField: CssTextField }}
-                    slotProps={{
-                      textField: {
-                        error: false,
-                        InputProps: {
-                          endAdornment: (
-                            <InputAdornment position="end">
-                              {procedimento.dataOraIncontro ? (
-                                <CloseIcon
-                                  onClick={(event) => {
-                                    event.stopPropagation();
-                                    setProcedimento((prev) => ({
-                                      ...prev,
-                                      dataOraIncontro: null,
-                                    }));
-                                  }}
-                                  sx={{
-                                    cursor: 'pointer',
-                                    color: theme.palette.error.main,
-                                  }}
-                                />
-                              ) : (
-                                <CalendarMonthOutlinedIcon
-                                  sx={{ color: labelColor }}
-                                />
-                              )}
-                            </InputAdornment>
-                          ),
-                        },
-                        size: 'small',
-                      },
-                    }}
-                  />
-                </LocalizationProvider>
+          {/* Sede svolgimento */}
+          <Grid size={{ xs: 12, sm: 12 }} sx={{display:'flex', flexWrap: 'wrap', columnGap: '1.5rem', width: 'auto'}}>
+            <CssTextField
+              size="small"
+              id="outlined-required-sede-svolgimento"
+              disabled={sedeUgualeCaricamento}
+              label="Sede svolgimento"
+              value={procedimento.sedeSvolgimento || ''}
+              onChange={(event) =>
+                handleInputChange({ sedeSvolgimento: event })
+              }
+              error={touchedFields.sedeSvolgimento && errors.sedeSvolgimento}
+              helperText={
+                touchedFields.sedeSvolgimento && errors.sedeSvolgimento
+                  ? 'Sede non valida'
+                  : ''
+              }
+              sx={inputStyles(
+                theme,
+                maxWidth,
+                minWidth,
+                maxWidth,
+                '0',
+                backgroundColor
+              )}
+            />
+            <FormControlLabel
+              value={sedeUgualeCaricamento}
+              onChange={(event) => {
+                const checked = event.target.checked;
+                setSedeUgualeCaricamento(checked);
 
-                {/* Numero di incontri */}
-                <Grid
-                  size={{ xs: 12 }}
-                  sx={{
-                    display: 'flex',
-                    columnGap: '2rem',
-                    alignItems: 'center',
-                  }}
-                >
-                  <Typography
-                    sx={{
-                      fontSize: '1rem',
-                      color: labelColor,
-                      margin: '0',
-                    }}
-                  >
-                    portando il totale degli incontri svolti a
-                  </Typography>
+                if (checked)
+                  handleInputChange({
+                    sedeSvolgimento: procedimento.sedeDeposito,
+                  });
+                else handleInputChange({ sedeSvolgimento: '' });
+              }}
+              sx={{
+                '& .MuiTypography-root': {
+                  color: labelColor,
+                },
+              }}
+              control={<Checkbox />}
+              label="Coincidente con sede deposito"
+            />
+          </Grid>
 
-                  {/* Numero di incontri */}
-                  <NumberInput
-                    value={procedimento.totaleIncontri}
-                    sx={{ height: inputHeight }}
-                    onChange={(num) => {
-                      handleInputChange({ totaleIncontri: num });
-                    }}
-                  />
-                </Grid>
-              </Grid>
-            </Grid>
+          {/* Totale incontri */}
+          <Grid size={{ xs: 12 }} sx={{width: 'auto'}}>
+            <NumberInput
+              value={procedimento.totaleIncontri}
+              label="Totale incontri"
+              sx={inputStyles(
+                theme,
+                '11rem',
+                minWidth,
+                maxWidth,
+                '0',
+                backgroundColor
+              )}
+              onChange={(num) => {
+                handleInputChange({ totaleIncontri: num });
+              }}
+            />
+          </Grid>
+        </Grid>
+
+        {/* Mediatore */}
+        <Grid
+          size={{ xs: 12 }}
+          sx={{ width: '100%', minHeight: `${gridRowHeight}px` }}
+        >
+          <Grid
+            xs={12}
+            sx={{
+              borderBottom: `1px solid ${formLabelColor}`,
+              margin: '0 0 0 1rem',
+              width: 'calc(100% - 1rem)',
+            }}
+          >
+            <Typography
+              sx={{ fontSize: formLabelFontSize, color: formLabelColor }}
+            >
+              Mediatore
+            </Typography>
+          </Grid>
+
+          <Grid
+            size={{ xs: 12 }}
+            sx={{ display: 'flex', alignItems: 'end', paddingLeft: '1rem' }}
+          >
+            {/* Qualifica */}
+            <SelectQualificaPersona
+              label="Qualifica"
+              sx={inputStyles(
+                theme,
+                inputWidth,
+                '11rem',
+                '11rem',
+                margin,
+                backgroundColor
+              )}
+              options={[{ maschile: 'AVV', femminile: 'AVV.SSA' }]}
+            />
+
+            {/* Nome */}
+            <CssTextField
+              required
+              size="small"
+              id="med-nome"
+              error={errors.nomeMediatore}
+              value={procedimento.nomeMediatore || ''}
+              helperText={
+                errors.nomeNomeMediatore
+                  ? procedimento.nomeMediatore
+                    ? 'Nome non valido'
+                    : 'Campo obbligatorio'
+                  : ''
+              }
+              label="Nome"
+              onChange={(event) => handleInputChange(event, 'nomeMediatore')}
+              sx={inputStyles(
+                theme,
+                inputWidth,
+                minWidth,
+                maxWidth,
+                margin,
+                backgroundColor
+              )}
+            />
+
+            {/* Cognome */}
+            <CssTextField
+              required
+              size="small"
+              id="med-cognome"
+              error={errors.cognomeMediatore}
+              value={procedimento.cognomeMediatore || ''}
+              helperText={
+                errors.cognomeNomeMediatore
+                  ? procedimento.cognomeMediatore
+                    ? 'Nome non valido'
+                    : 'Campo obbligatorio'
+                  : ''
+              }
+              label="Cognome"
+              onChange={(event) => handleInputChange(event, 'cognomeMediatore')}
+              sx={inputStyles(
+                theme,
+                inputWidth,
+                minWidth,
+                maxWidth,
+                margin,
+                backgroundColor
+              )}
+            />
+          </Grid>
         </Grid>
 
         {/* Reset button */}
