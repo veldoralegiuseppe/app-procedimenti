@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { styled, useTheme } from '@mui/system';
+import { fontSize, styled, useTheme } from '@mui/system';
 import {
   Autocomplete,
-  createFilterOptions,
   Popper,
   Paper,
   Button,
@@ -12,7 +11,9 @@ import {
   DialogContent,
   DialogContentText,
   DialogActions,
+  IconButton,
 } from '@mui/material';
+import DeleteIcon from '@mui/icons-material/Delete';
 import PropTypes from 'prop-types';
 import { CssTextField, labelColor } from '@theme/MainTheme';
 
@@ -44,6 +45,7 @@ export default function SelectQualificaPersona({
   label,
   onChange,
   onSubmit,
+  onDelete,
   options: items,
   sx,
   value: initialValue = null,
@@ -109,7 +111,7 @@ export default function SelectQualificaPersona({
         option.femminile?.toLowerCase().includes(inputValue.toLowerCase())
     );
 
-    if (optionsFiltered.length == 0) {
+    if (optionsFiltered.length == 0 && inputValue != '') {
       optionsFiltered.push({ title: `Aggiungi "${inputValue}"` });
     }
 
@@ -136,9 +138,11 @@ export default function SelectQualificaPersona({
       femminile: dialogValue.femminile,
     };
 
-    const value = dialogValue.isFemminile ? (dialogValue.femminile || dialogValue.maschile) : (dialogValue.maschile || dialogValue.femminile);
+    const value = dialogValue.isFemminile
+      ? dialogValue.femminile || dialogValue.maschile
+      : dialogValue.maschile || dialogValue.femminile;
     setValue(value);
-   
+
     if (onSubmit) onSubmit(newValue);
     handleClose(false);
   };
@@ -158,11 +162,20 @@ export default function SelectQualificaPersona({
     if (onChange) onChange({ target: { value: newValue } });
     document.activeElement.blur(); // Close the popper by blurring the input
   };
+  const handleDelete = (option) => {
+    if (value && (option.maschile === value || option.femminile === value)) {
+      setValue(null);
+      if (onChange) onChange({ target: { value: undefined } });
+    }
+    if (onDelete) onDelete(option);
+  };
 
   // Render utils
   const renderGroup = (params) => {
     //console.log('params', /{"title":"Aggiungi/.test(params.children[0].key));
-    const hasFilteredOptions = !/{"title":"Aggiungi/.test(params.children[0].key)
+    const hasFilteredOptions = !/{"title":"Aggiungi/.test(
+      params.children[0].key
+    );
 
     return (
       <li key={params.key}>
@@ -197,11 +210,13 @@ export default function SelectQualificaPersona({
         clearOnBlur
         disableClearable={!value}
         id="qualifica-select"
-        options={options.sort((a, b) => {
-          if (a.femminile && !b.femminile) return 1;
-          if (!a.femminile && b.femminile) return -1;
-          return a.maschile.localeCompare(b.maschile);
-        }) || []}
+        options={
+          options.sort((a, b) => {
+            if (a.femminile && !b.femminile) return 1;
+            if (!a.femminile && b.femminile) return -1;
+            return a.maschile.localeCompare(b.maschile);
+          }) || []
+        }
         getOptionLabel={getOptionLabel}
         renderGroup={renderGroup}
         renderOption={(props, option) => (
@@ -220,25 +235,41 @@ export default function SelectQualificaPersona({
               }}
             >
               {Object.entries(option).map(([key, value], subIndex) => (
-                <React.Fragment key={`${key}-${value}-${subIndex}`}>
-                  {value && (
-                    <Button
-                      variant="text"
-                      sx={{
-                        width: '100%',
-                        '&:hover': {
-                          backgroundColor: theme.palette.dropdown.hover, // Colore di sfondo su hover
-                          color: theme.palette.primary.main, // Colore del testo su hover
-                        },
-                      }}
-                      onClick={() => handleButtonClick(value)}
+                <React.Fragment key={`${key}-${value}-${subIndex}-container`}>
+                  {key == 'maschile' && value && (
+                    <IconButton
+                      onClick={() => handleDelete(option)}
+                      aria-label="delete"
+                      sx={{ fontSize: '1rem', color: '#e67a0fb3' }}
                     >
-                      {value}
-                    </Button>
+                      <DeleteIcon />
+                    </IconButton>
                   )}
-                  {subIndex < Object.keys(option).length - 1 && value && (
-                    <Divider orientation="vertical" flexItem />
-                  )}
+                  <React.Fragment key={`${key}-${value}-${subIndex}-fragment`}>
+                    {value && (
+                      <Button
+                        variant="text"
+                        sx={{
+                          width: '100%',
+                          margin: '0 .5rem',
+                          '&:hover': {
+                            backgroundColor: theme.palette.dropdown.hover, // Colore di sfondo su hover
+                            color: theme.palette.primary.main, // Colore del testo su hover
+                          },
+                        }}
+                        onClick={() => handleButtonClick(value)}
+                      >
+                        {value}
+                      </Button>
+                    )}
+                    {subIndex < Object.keys(option).length - 1 && value && (
+                      <Divider
+                        orientation="vertical"
+                        variant="middle"
+                        flexItem
+                      />
+                    )}
+                  </React.Fragment>
                 </React.Fragment>
               ))}
             </div>

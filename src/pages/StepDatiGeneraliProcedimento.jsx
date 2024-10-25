@@ -10,14 +10,10 @@ import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined
 import DeleteIcon from '@mui/icons-material/Delete';
 import { MobileDateTimePicker } from '@mui/x-date-pickers/MobileDateTimePicker';
 import CloseIcon from '@mui/icons-material/Close';
-import FormControl from '@mui/material/FormControl';
-import RadioGroup from '@mui/material/RadioGroup';
-import Radio from '@mui/material/Radio';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import Tooltip from '@mui/material/Tooltip';
-import Grow from '@mui/material/Grow';
 
 import ProtocolloInput from '@components/ProtocolloInput';
 import ImportoInput from '@components/ImportoInput';
@@ -27,42 +23,10 @@ import Select from '@components/Select';
 import { ProcedimentoContext } from '@context/Procedimento';
 import NumberInput from '@components/NumberInput';
 import SelectQualificaPersona from '@components/SelectQualificaPersona';
-import it from 'dayjs/locale/it';
-import { height } from '@mui/system';
-
-const oggettiControversia = [
-  {
-    value: 'ALTRE NATURE DELLA CONTROVERSIA',
-    view: 'ALTRE NATURE DELLA CONTROVERSIA',
-  },
-  { value: 'CONTRATTI BANCARI', view: 'CONTRATTI BANCARI' },
-  { value: 'CONTRATTI FINANZIARI', view: 'CONTRATTI FINANZIARI' },
-  { value: 'CONTRATTI DI OPERA', view: "CONTRATTI D'OPERA" },
-  { value: 'CONTRATTI DI RETE', view: 'CONTRATTI DI RETE' },
-  {
-    value: 'CONTRATTI DI SOMMINISTRAZIONE',
-    view: 'CONTRATTI DI SOMMINISTRAZIONE',
-  },
-  { value: 'CONSORZIO', view: 'CONSORZIO' },
-  { value: 'DIRITTI REALI', view: 'DIRITTI REALI' },
-  { value: 'DIVISIONE', view: 'DIVISIONE' },
-  { value: 'FRANCHISING', view: 'FRANCHISING' },
-  { value: 'LOCAZIONE', view: 'LOCAZIONE' },
-  { value: 'PATTI DI FAMIGLIA', view: 'PATTI DI FAMIGLIA' },
-  { value: 'RESPONSABILITA MEDICA', view: 'RESPONSABILITÀ MEDICA' },
-  {
-    value: 'RISARCIMENTO DANNI MEZZO STAMPA',
-    view: 'RISARCIMENTO DANNI MEZZO STAMPA',
-  },
-  { value: 'SUCCESSIONE EREDITARIA', view: 'SUCCESSIONE EREDITARIA' },
-  { value: 'SOCIETA DI PERSONE', view: 'SOCIETÀ DI PERSONE' },
-  { value: 'SUBFORNITURA', view: 'SUBFORNITURA' },
-];
 
 // Constants
 const inputHeight = 36;
 const gridRowHeight = inputHeight + 34 + 3;
-const infoColor = labelColor;
 
 const inputStyles = (
   theme,
@@ -84,30 +48,56 @@ const inputStyles = (
 
 const StepDatiGeneraliProcedimento = React.forwardRef(
   ({ enableNextStep }, ref) => {
+
+    // Style
     const theme = useTheme();
     const inputWidth = '168px';
     const minWidth = '133px';
     const maxWidth = '30rem';
-    const margin = '18px 20px 0px 0px';
     const backgroundColor = theme.palette.background.default;
     const formLabelFontSize = '1.2rem';
     const formLabelColor = '#467bae';
 
+    // Context
     const { procedimento, setProcedimento } =
       React.useContext(ProcedimentoContext);
+
+    // State
     const [initialProc] = React.useState(new Procedimento()); // Stato iniziale da comparare
     const [errors, setErrors] = React.useState({});
     const [touchedFields, setTouchedFields] = React.useState({});
-    const [sedeUgualeCaricamento, setSedeUgualeCaricamento] =
-      React.useState(false);
+    const [sedeUgualeCaricamento, setSedeUgualeCaricamento] = React.useState(false);
+    const [titoliMediatore, setTitoliMediatore] = React.useState([{maschile: 'AVV', femminile: 'AVV.SSA'}]);
 
-    const requiredFields = [
-      'sedeDeposito',
-      'numProtocollo',
-      'annoProtocollo',
-      'oggettoControversia',
+    // Select options
+    const oggettiControversia = [
+      {
+        value: 'ALTRE NATURE DELLA CONTROVERSIA',
+        view: 'ALTRE NATURE DELLA CONTROVERSIA',
+      },
+      { value: 'CONTRATTI BANCARI', view: 'CONTRATTI BANCARI' },
+      { value: 'CONTRATTI FINANZIARI', view: 'CONTRATTI FINANZIARI' },
+      { value: 'CONTRATTI DI OPERA', view: "CONTRATTI D'OPERA" },
+      { value: 'CONTRATTI DI RETE', view: 'CONTRATTI DI RETE' },
+      {
+        value: 'CONTRATTI DI SOMMINISTRAZIONE',
+        view: 'CONTRATTI DI SOMMINISTRAZIONE',
+      },
+      { value: 'CONSORZIO', view: 'CONSORZIO' },
+      { value: 'DIRITTI REALI', view: 'DIRITTI REALI' },
+      { value: 'DIVISIONE', view: 'DIVISIONE' },
+      { value: 'FRANCHISING', view: 'FRANCHISING' },
+      { value: 'LOCAZIONE', view: 'LOCAZIONE' },
+      { value: 'PATTI DI FAMIGLIA', view: 'PATTI DI FAMIGLIA' },
+      { value: 'RESPONSABILITA MEDICA', view: 'RESPONSABILITÀ MEDICA' },
+      {
+        value: 'RISARCIMENTO DANNI MEZZO STAMPA',
+        view: 'RISARCIMENTO DANNI MEZZO STAMPA',
+      },
+      { value: 'SUCCESSIONE EREDITARIA', view: 'SUCCESSIONE EREDITARIA' },
+      { value: 'SOCIETA DI PERSONE', view: 'SOCIETÀ DI PERSONE' },
+      { value: 'SUBFORNITURA', view: 'SUBFORNITURA' },
     ];
-
     const esitiMediazione = [
       { value: 'IN CORSO', view: 'IN CORSO' },
       { value: 'NEGATIVO INCONTRO FILTRO', view: 'NEGATIVO INCONTRO FILTRO' },
@@ -115,7 +105,6 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
       { value: 'NEGATIVO MANCATO ACCORDO', view: 'NEGATIVO MANCATO ACCORDO' },
       { value: 'POSITIVO', view: 'POSITIVO' },
     ];
-
     const modalitaSvolgimento = [
       {
         value: 'PRESENZA',
@@ -124,8 +113,12 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
             placement="right"
             title="Partecipazione sia in presenza che da remoto."
           >
-            PRESENZA
-            <InfoOutlinedIcon sx={{ color: infoColor }} />
+            <div style={{ display: 'flex', width: '100%' }}>
+              PRESENZA
+              <InfoOutlinedIcon
+                sx={{ color: theme.palette.primary.main, fontSize: '.8rem' }}
+              />
+            </div>
           </Tooltip>
         ),
       },
@@ -133,8 +126,12 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
         value: 'TELEMATICA',
         view: (
           <Tooltip placement="right" title="Incontro interamente a distanza.">
-            TELEMATICA
-            <InfoOutlinedIcon sx={{ color: infoColor }} />
+            <div style={{ display: 'flex', width: '100%' }}>
+              TELEMATICA
+              <InfoOutlinedIcon
+                sx={{ color: theme.palette.primary.main, fontSize: '.8rem' }}
+              />
+            </div>
           </Tooltip>
         ),
       },
@@ -145,19 +142,29 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
             placement="right"
             title="Incontro di persona, presso una sede fisica."
           >
-            TELEMATICA MISTA
-            <InfoOutlinedIcon sx={{ color: infoColor }} />
+            <div style={{ display: 'flex', width: '100%' }}>
+              TELEMATICA MISTA
+              <InfoOutlinedIcon
+                sx={{ color: theme.palette.primary.main, fontSize: '.8rem' }}
+              />
+            </div>
           </Tooltip>
         ),
       },
     ];
 
+   // UseImperativeHandle
+   const requiredFields = [
+    'sedeDeposito',
+    'numProtocollo',
+    'annoProtocollo',
+    'oggettoControversia',
+  ];
     const requiredFieldsFilled = () => {
       return requiredFields.every(
         (field) => !!procedimento[field] && procedimento[field].trim() !== ''
       );
     };
-
     React.useImperativeHandle(ref, () => ({
       validate: () => {
         let hasErrors = Object.values(errors).some((hasError) => hasError);
@@ -166,25 +173,43 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
       },
     }));
 
+    // Use Effect
     React.useEffect(() => {
       let hasErrors = Object.values(errors).some((hasError) => hasError);
       if (typeof enableNextStep === 'function') {
-        console.log('enable next');
+        //console.log('enable next');
         enableNextStep(!hasErrors && requiredFieldsFilled());
         //enableNextStep(true)
       }
     }, [errors, procedimento]);
 
+    // Handlers
     const handleReset = () => {
       setProcedimento(new Procedimento());
       setTouchedFields({});
       setErrors({});
     };
-
     const isModified = () => {
       return JSON.stringify(procedimento) !== JSON.stringify(initialProc);
     };
-
+    const validationRules = {
+      sedeDeposito: (sede) => sede && /^[a-zA-Z0-9\s]+$/.test(sede),
+      sedeSvolgimento: (sede) =>
+        sede ? validationRules.sedeDeposito(sede) : true,
+      numProtocollo: (value) => !!value,
+      annoProtocollo: (value) => !!value && !isNaN(value),
+      dataDeposito: () => true,
+      dataOraIncontro: () => true,
+      oggettoControversia: (value) => !!value,
+      valoreControversia: (value) => !isNaN(value) && value >= 0,
+      esitoMediazione: () => true,
+      modalitaSvolgimento: () => true,
+      numeroIncontri: (value) => !isNaN(value) && value >= 0,
+      nomeMediatore: (value) =>
+        !!value && /^[a-zA-Z]+(?:\s[a-zA-Z]+)*$/.test(value),
+      cognomeMediatore: (value) => validationRules.nomeMediatore(value),
+      titoloMediatore: (value) => true,
+    };
     const handleInputChange = (changes) => {
       const updatedProcedimento = { ...procedimento };
       const updatedTouchedFields = { ...touchedFields };
@@ -206,39 +231,21 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
         }
 
         const isValid = valore ? validationRules[campoModel]?.(valore) : true;
-        console.log('valore: ', valore);
-
+     
         updatedTouchedFields[campoModel] = true;
         updatedErrors[campoModel] = !isValid;
         updatedProcedimento[campoModel] = valore;
-
-        console.log('campo model: ', campoModel);
-        console.log('valore: ', valore);
       });
 
       setTouchedFields(updatedTouchedFields);
       setErrors(updatedErrors);
       setProcedimento(updatedProcedimento);
 
-      console.log('procedimento originale: ', initialProc);
-      console.log(updatedProcedimento);
+      // console.log('procedimento originale: ', initialProc);
+      // console.log(updatedProcedimento);
     };
 
-    const validationRules = {
-      sedeDeposito: (sede) => sede && /^[a-zA-Z0-9\s]+$/.test(sede),
-      sedeSvolgimento: (sede) =>
-        sede ? validationRules.sedeDeposito(sede) : true,
-      numProtocollo: (value) => !!value,
-      annoProtocollo: (value) => !!value && !isNaN(value),
-      dataDeposito: () => true,
-      dataOraIncontro: () => true,
-      oggettoControversia: (value) => !!value,
-      valoreControversia: (value) => !isNaN(value) && value >= 0,
-      esitoMediazione: () => true,
-      modalitaSvolgimento: () => true,
-      numeroIncontri: (value) => !isNaN(value) && value >= 0,
-    };
-
+  
     return (
       <form
         id="step-procedimento-form"
@@ -281,7 +288,7 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
           <Grid size={{ xs: 4 }} sx={{ width: 'auto' }}>
             <ProtocolloInput
               onChange={(numProtocollo, anno) => {
-                console.log(numProtocollo, anno);
+                //console.log(numProtocollo, anno);
                 handleInputChange({ numProtocollo, annoProtocollo: anno });
               }}
               numProtocollo={procedimento.numProtocollo}
@@ -362,7 +369,6 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
             <ImportoInput
               value={procedimento.valoreControversia}
               onChange={(event) => {
-                console.log(event);
                 handleInputChange({ valoreControversia: event });
               }}
               sx={inputStyles(
@@ -461,8 +467,6 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
               )}
             />
           </Grid>
-
-          {/* <SelectQualificaPersona label="Qualifica" options={[{maschile: "AVV", femminile: "AVV.SSA"}, {maschile: "DOTT", femminile: "DOTT.SSA"}]}/> */}
         </Grid>
 
         {/* Fissazione incontro */}
@@ -697,10 +701,21 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
             </Typography>
           </Grid>
 
-          {/* Qualifica */}
+          {/* Titolo */}
           <Grid size={{ xs: 12 }}>
             <SelectQualificaPersona
               label="Titolo professionale/cortesia"
+              value={procedimento.titoloMediatore || ''}
+              error={errors.titoloMediatore}
+              helperText={errors.titoloMediatore ? 'Titolo non valido' : ''}
+              onSubmit={(newTitolo) => {
+                setTitoliMediatore([...titoliMediatore, newTitolo]);
+              }}
+              onDelete={(deletedTitolo) => {
+                setTitoliMediatore(
+                  titoliMediatore.filter((titolo) => titolo !== deletedTitolo)
+                );
+              }}
               sx={inputStyles(
                 theme,
                 maxWidth,
@@ -709,7 +724,10 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
                 0,
                 backgroundColor
               )}
-              options={[{ maschile: 'AVV', femminile: 'AVV.SSA' }]}
+              options={titoliMediatore}
+              onChange={(event) => {
+                handleInputChange({ titoloMediatore: event });
+              }}
             />
           </Grid>
 
@@ -724,15 +742,9 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
               id="med-nome"
               error={errors.nomeMediatore}
               value={procedimento.nomeMediatore || ''}
-              helperText={
-                errors.nomeNomeMediatore
-                  ? procedimento.nomeMediatore
-                    ? 'Nome non valido'
-                    : 'Campo obbligatorio'
-                  : ''
-              }
+              helperText={errors.nomeMediatore ? 'Nome non valido' : ''}
               label="Nome"
-              onChange={(event) => handleInputChange(event, 'nomeMediatore')}
+              onChange={(event) => handleInputChange({ nomeMediatore: event })}
               sx={inputStyles(
                 theme,
                 maxWidth,
@@ -755,15 +767,11 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
               id="med-cognome"
               error={errors.cognomeMediatore}
               value={procedimento.cognomeMediatore || ''}
-              helperText={
-                errors.cognomeNomeMediatore
-                  ? procedimento.cognomeMediatore
-                    ? 'Nome non valido'
-                    : 'Campo obbligatorio'
-                  : ''
-              }
+              helperText={errors.cognomeMediatore ? 'Cognome non valido' : ''}
               label="Cognome"
-              onChange={(event) => handleInputChange(event, 'cognomeMediatore')}
+              onChange={(event) =>
+                handleInputChange({ cognomeMediatore: event })
+              }
               sx={inputStyles(
                 theme,
                 maxWidth,
