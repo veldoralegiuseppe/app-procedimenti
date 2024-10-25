@@ -16,8 +16,6 @@ import {
 import PropTypes from 'prop-types';
 import { CssTextField, labelColor } from '@theme/MainTheme';
 
-const filter = createFilterOptions();
-
 const StyledPopper = styled((props) => <Popper {...props} />)(({ theme }) => ({
   '& .MuiPaper-root': {
     backgroundColor: theme.palette.dropdown.primary,
@@ -42,15 +40,38 @@ const StyledPopper = styled((props) => <Popper {...props} />)(({ theme }) => ({
   },
 }));
 
-export default function SelectQualificaPersona({ label, onChange, options, sx }) {
+export default function SelectQualificaPersona({
+  label,
+  onChange,
+  onSubmit,
+  options: items,
+  sx,
+  value: initialValue = null,
+  error = false,
+  helperText = '',
+}) {
+  // Style
   const theme = useTheme();
-  const [value, setValue] = React.useState(null);
+
+  // State
   const [open, toggleOpen] = React.useState(false);
+  const [value, setValue] = React.useState(initialValue);
+  const [options, setOptions] = React.useState(items || []);
   const [dialogValue, setDialogValue] = React.useState({
     maschile: '',
     femminile: '',
   });
 
+  // Ref
+  const maschileInputRef = React.useRef(null);
+  const femminileInputRef = React.useRef(null);
+
+  // Use Effect
+  React.useEffect(() => {
+    setOptions(items);
+  }, [items]);
+
+  // Handlers
   const handleChange = (event, newValue) => {
     if (typeof newValue === 'string') {
       setTimeout(() => {
@@ -65,7 +86,6 @@ export default function SelectQualificaPersona({ label, onChange, options, sx })
     } else if (newValue && newValue.inputValue) {
       setTimeout(() => {
         const isFemminile = newValue.inputValue.endsWith('A');
-        console.log('isFemminile', isFemminile);
         toggleOpen(true);
         setDialogValue({
           maschile: !isFemminile ? newValue.inputValue : '',
@@ -73,65 +93,95 @@ export default function SelectQualificaPersona({ label, onChange, options, sx })
           isFemminile,
         });
       });
-    } else {
-      setValue(newValue);
+    }
+    if (!newValue) {
+      document.activeElement.blur(); // Close the popper by blurring the input
     }
     if (onChange) {
-      onChange(newValue);
+      setValue(newValue ? newValue : null);
+      onChange({ target: { value: newValue ? newValue : undefined } });
     }
   };
-
-  const filterOptions = (options, params) => {
-    const filtered = filter(options, params);
-    const { inputValue } = params;
-    const isExisting = options.some((option) =>
-      Object.values(option).some((value) => {
-        return value.toLowerCase().includes(inputValue.toLowerCase());
-      })
+  const filterOptions = (options, { inputValue }) => {
+    const optionsFiltered = options.filter(
+      (option) =>
+        option.maschile.toLowerCase().includes(inputValue.toLowerCase()) ||
+        option.femminile?.toLowerCase().includes(inputValue.toLowerCase())
     );
-    if (inputValue !== '' && !isExisting) {
-      filtered.push({ title: `Aggiungi "${inputValue}"` });
-    }
-    return filtered;
-  };
 
+    if (optionsFiltered.length == 0) {
+      optionsFiltered.push({ title: `Aggiungi "${inputValue}"` });
+    }
+
+    return optionsFiltered;
+  };
   const getOptionLabel = (option) => {
     if (typeof option === 'string') return option;
     if (option.inputValue) return option.inputValue;
     return Object.values(option).join(' ') || '';
   };
-
-  const handleClose = () => {
+  const handleClose = (clearValue) => {
     setDialogValue({
       maschile: '',
       femminile: '',
     });
+    if (clearValue) setValue(null);
+    if (onChange) onChange({ target: { value: undefined } });
     toggleOpen(false);
   };
-
   const handleSubmit = (event) => {
     event.preventDefault();
-    setValue(
-      dialogValue.isFemminile ? dialogValue.femminile : dialogValue.maschile
-    );
-    handleClose();
-  };
+    const newValue = {
+      maschile: dialogValue.maschile,
+      femminile: dialogValue.femminile,
+    };
 
+    const value = dialogValue.isFemminile ? (dialogValue.femminile || dialogValue.maschile) : (dialogValue.maschile || dialogValue.femminile);
+    setValue(value);
+   
+    if (onSubmit) onSubmit(newValue);
+    handleClose(false);
+  };
   const handleButtonClick = (value) => {
-    console.log('handleButtonClick', value);
     if (String(value).toLocaleLowerCase().includes('aggiungi')) {
       const sanitizedValue = String(value)
         .replace('Aggiungi "', '')
         .replace('"', '')
         .trim()
         .toUpperCase();
+      setValue(sanitizedValue);
       handleChange(null, { inputValue: sanitizedValue });
       return;
     }
-    const newValue = { label: value };
-    setValue(newValue);
-    if (onChange) onChange(newValue);
+    const newValue = value ? value : undefined;
+    setValue(value);
+    if (onChange) onChange({ target: { value: newValue } });
     document.activeElement.blur(); // Close the popper by blurring the input
+  };
+
+  // Render utils
+  const renderGroup = (params) => {
+    //console.log('params', /{"title":"Aggiungi/.test(params.children[0].key));
+    const hasFilteredOptions = !/{"title":"Aggiungi/.test(params.children[0].key)
+
+    return (
+      <li key={params.key}>
+        {hasFilteredOptions && (
+          <div
+            style={{
+              backgroundColor: '#e67a0fb3', // Cambiato da primary a secondary
+              padding: '4px 16px',
+              fontWeight: '500',
+              fontFamily: 'Montserrat, sans-serif',
+              color: '#ffffff', // Colore del testo cambiato a bianco per migliorare la leggibilità
+            }}
+          >
+            {params.group}
+          </div>
+        )}
+        <ul style={{ padding: 0 }}>{params.children}</ul>
+      </li>
+    );
   };
 
   return (
@@ -139,13 +189,21 @@ export default function SelectQualificaPersona({ label, onChange, options, sx })
       <Autocomplete
         value={value}
         onChange={handleChange}
+        groupBy={(option) =>
+          option.femminile ? 'Genere Specifico' : 'Genere Comune'
+        }
         filterOptions={filterOptions}
         selectOnFocus
         clearOnBlur
-        handleHomeEndKeys
-        id="multi-select"
-        options={options || []}
+        disableClearable={!value}
+        id="qualifica-select"
+        options={options.sort((a, b) => {
+          if (a.femminile && !b.femminile) return 1;
+          if (!a.femminile && b.femminile) return -1;
+          return a.maschile.localeCompare(b.maschile);
+        }) || []}
         getOptionLabel={getOptionLabel}
+        renderGroup={renderGroup}
         renderOption={(props, option) => (
           <li
             {...props}
@@ -163,20 +221,22 @@ export default function SelectQualificaPersona({ label, onChange, options, sx })
             >
               {Object.entries(option).map(([key, value], subIndex) => (
                 <React.Fragment key={`${key}-${value}-${subIndex}`}>
-                  <Button
-                    variant="text"
-                    sx={{
-                      width: '100%',
-                      '&:hover': {
-                        backgroundColor: theme.palette.dropdown.hover, // Colore di sfondo su hover
-                        color: theme.palette.primary.main, // Colore del testo su hover
-                      },
-                    }}
-                    onClick={() => handleButtonClick(value)}
-                  >
-                    {value}
-                  </Button>
-                  {subIndex < Object.keys(option).length - 1 && (
+                  {value && (
+                    <Button
+                      variant="text"
+                      sx={{
+                        width: '100%',
+                        '&:hover': {
+                          backgroundColor: theme.palette.dropdown.hover, // Colore di sfondo su hover
+                          color: theme.palette.primary.main, // Colore del testo su hover
+                        },
+                      }}
+                      onClick={() => handleButtonClick(value)}
+                    >
+                      {value}
+                    </Button>
+                  )}
+                  {subIndex < Object.keys(option).length - 1 && value && (
                     <Divider orientation="vertical" flexItem />
                   )}
                 </React.Fragment>
@@ -193,6 +253,8 @@ export default function SelectQualificaPersona({ label, onChange, options, sx })
         renderInput={(params) => (
           <CssTextField
             {...params}
+            error={error}
+            helperText={error ? helperText || '' : ''}
             sx={{
               '& .MuiInput-underline:before': {
                 borderBottomColor: theme.palette.primary.main, // Colore principale del theme
@@ -210,14 +272,18 @@ export default function SelectQualificaPersona({ label, onChange, options, sx })
         )}
       />
       <Dialog open={open} onClose={handleClose}>
-        <form onSubmit={handleSubmit}>
+        <form>
           <DialogTitle>Crea</DialogTitle>
           <DialogContent>
             <DialogContentText>
               Aggiungi un titolo professionale o di cortesia mancante
             </DialogContentText>
             <CssTextField
+              ref={maschileInputRef}
+              error={!dialogValue.maschile}
+              helperText={!dialogValue.maschile ? 'Campo obbligatorio' : ''}
               autoFocus
+              required
               margin="dense"
               id="input-text-maschile"
               value={dialogValue.maschile}
@@ -234,17 +300,18 @@ export default function SelectQualificaPersona({ label, onChange, options, sx })
               sx={{
                 margin: '1.5rem 0 0 0',
                 '& .MuiInput-underline:before': {
-                  borderBottomColor: labelColor, 
+                  borderBottomColor: labelColor,
                 },
                 '& .MuiInput-underline:hover:before': {
                   borderBottomWidth: '1px',
-                  borderBottomColor: theme.palette.primary.main + ' !important', 
+                  borderBottomColor: theme.palette.primary.main + ' !important',
                 },
               }}
             />
             <CssTextField
               margin="dense"
               id="input-text-femminile"
+              ref={femminileInputRef}
               value={dialogValue.femminile}
               onChange={(event) => {
                 event.target.value = String(event.target.value).toUpperCase();
@@ -259,18 +326,24 @@ export default function SelectQualificaPersona({ label, onChange, options, sx })
               sx={{
                 margin: '1.5rem 0 0 1rem',
                 '& .MuiInput-underline:before': {
-                  borderBottomColor: labelColor, 
+                  borderBottomColor: labelColor,
                 },
                 '& .MuiInput-underline:hover:before': {
                   borderBottomWidth: '1px',
-                  borderBottomColor: theme.palette.primary.main + ' !important', 
+                  borderBottomColor: theme.palette.primary.main + ' !important',
                 },
               }}
             />
           </DialogContent>
           <DialogActions>
-            <Button onClick={handleClose}>Annulla</Button>
-            <Button type="submit">Aggiungi</Button>
+            <Button onClick={() => handleClose(true)}>Annulla</Button>
+            <Button
+              disabled={!dialogValue.maschile}
+              onClick={handleSubmit}
+              type="submit"
+            >
+              Aggiungi
+            </Button>
           </DialogActions>
         </form>
       </Dialog>
