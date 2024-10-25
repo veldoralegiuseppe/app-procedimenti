@@ -14,12 +14,11 @@ function Select({
   error = false, 
   helperText = '', 
   labelColor = defaultLabelColor,
-  renderValue,
+  renderOptions,
   sx
 }) {
+  // Style
   const theme = useTheme();
-
-  // Definisci lo stile specifico da riutilizzare nel FormControl
   const sxStyles = {
     ...formControlStyles(theme, labelColor),
     width: sx?.width || '100%',
@@ -44,10 +43,10 @@ function Select({
     },
   };
 
+  // Handlers
   const handleClear = () => {
     if(onChange) onChange({ target: { value: undefined } });
   };
-
 
   return (
     <FormControl 
@@ -66,11 +65,11 @@ function Select({
 
       <CssSelect
         labelId={`${label}-input-label`}
-        value={value || ''}
-        renderValue={(selected) => renderValue ? renderValue(selected) : selected}
+        value={value}
         label={label}
         size='small'
-        onChange={onChange ? onChange : () => {}}
+        renderValue={(selected) => selected?.replaceAll('_', ' ') || ''}
+        onChange={(event) => onChange? onChange(event) : null}
         IconComponent={value ? () => null : ArrowDropDownIcon}
         endAdornment={
           value && (
@@ -110,8 +109,8 @@ function Select({
         }}
       >
         {options.map((option, index) => (
-          <MenuItem key={`${label}-item-${index}`} value={option.value}>
-            {option.view}
+          <MenuItem key={`${label}-item-${index}`} value={option}>
+            {renderOptions && renderOptions(option) || option.replaceAll('_', ' ')}
           </MenuItem>
         ))}
       </CssSelect>
