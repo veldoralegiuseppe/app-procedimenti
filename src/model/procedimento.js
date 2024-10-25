@@ -17,6 +17,9 @@ export class Procedimento {
     cognomeMediatore,
     titoloMediatore,
     totaleIncontri = 0,
+    isDemandata = false,
+    causaleDemandata,
+    materiaCausaleDemandata,
   } = {}) {
     this.numProtocollo = numProtocollo;
     this.annoProtocollo = annoProtocollo;
@@ -32,6 +35,9 @@ export class Procedimento {
     this.nomeMediatore = nomeMediatore;
     this.cognomeMediatore = cognomeMediatore;
     this.titoloMediatore = titoloMediatore; 
+    this.isDemandata = isDemandata;
+    this.causaleDemandata = causaleDemandata;
+    this.materiaCausaleDemandata = materiaCausaleDemandata;
   }
 
   getProtocollo() {

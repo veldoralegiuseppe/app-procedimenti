@@ -14,6 +14,7 @@ import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import Tooltip from '@mui/material/Tooltip';
+import Slide from '@mui/material/Slide';
 
 import ProtocolloInput from '@components/ProtocolloInput';
 import ImportoInput from '@components/ImportoInput';
@@ -27,6 +28,7 @@ import SelectQualificaPersona from '@components/SelectQualificaPersona';
 // Constants
 const inputHeight = 36;
 const gridRowHeight = inputHeight + 34 + 3;
+const CAUSALE_VOLONTARIA_IN_MATERIA = 'VOLONTARIA IN MATERIA DI';
 
 const inputStyles = (
   theme,
@@ -48,7 +50,6 @@ const inputStyles = (
 
 const StepDatiGeneraliProcedimento = React.forwardRef(
   ({ enableNextStep }, ref) => {
-
     // Style
     const theme = useTheme();
     const inputWidth = '168px';
@@ -66,100 +67,62 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
     const [initialProc] = React.useState(new Procedimento()); // Stato iniziale da comparare
     const [errors, setErrors] = React.useState({});
     const [touchedFields, setTouchedFields] = React.useState({});
-    const [sedeUgualeCaricamento, setSedeUgualeCaricamento] = React.useState(false);
-    const [titoliMediatore, setTitoliMediatore] = React.useState([{maschile: 'AVV', femminile: 'AVV.SSA'}]);
+    const [sedeUgualeCaricamento, setSedeUgualeCaricamento] =
+      React.useState(false);
+    const [titoliMediatore, setTitoliMediatore] = React.useState([
+      { maschile: 'AVV', femminile: 'AVV.SSA' },
+    ]);
+    const [showFormMateriaVolontaria, setShowFormMateriaVolontaria] =
+      React.useState(
+        procedimento.causaleDemandata === CAUSALE_VOLONTARIA_IN_MATERIA
+      );
+
+    // Refs
+    const containerFormDemandataRef = React.useRef(null);
 
     // Select options
     const oggettiControversia = [
-      {
-        value: 'ALTRE NATURE DELLA CONTROVERSIA',
-        view: 'ALTRE NATURE DELLA CONTROVERSIA',
-      },
-      { value: 'CONTRATTI BANCARI', view: 'CONTRATTI BANCARI' },
-      { value: 'CONTRATTI FINANZIARI', view: 'CONTRATTI FINANZIARI' },
-      { value: 'CONTRATTI DI OPERA', view: "CONTRATTI D'OPERA" },
-      { value: 'CONTRATTI DI RETE', view: 'CONTRATTI DI RETE' },
-      {
-        value: 'CONTRATTI DI SOMMINISTRAZIONE',
-        view: 'CONTRATTI DI SOMMINISTRAZIONE',
-      },
-      { value: 'CONSORZIO', view: 'CONSORZIO' },
-      { value: 'DIRITTI REALI', view: 'DIRITTI REALI' },
-      { value: 'DIVISIONE', view: 'DIVISIONE' },
-      { value: 'FRANCHISING', view: 'FRANCHISING' },
-      { value: 'LOCAZIONE', view: 'LOCAZIONE' },
-      { value: 'PATTI DI FAMIGLIA', view: 'PATTI DI FAMIGLIA' },
-      { value: 'RESPONSABILITA MEDICA', view: 'RESPONSABILITÀ MEDICA' },
-      {
-        value: 'RISARCIMENTO DANNI MEZZO STAMPA',
-        view: 'RISARCIMENTO DANNI MEZZO STAMPA',
-      },
-      { value: 'SUCCESSIONE EREDITARIA', view: 'SUCCESSIONE EREDITARIA' },
-      { value: 'SOCIETA DI PERSONE', view: 'SOCIETÀ DI PERSONE' },
-      { value: 'SUBFORNITURA', view: 'SUBFORNITURA' },
+      'ALTRE NATURE DELLA CONTROVERSIA',
+      'CONTRATTI BANCARI',
+      'CONTRATTI FINANZIARI',
+      "CONTRATTI D'OPERA",
+      'CONTRATTI DI RETE',
+      'CONTRATTI DI SOMMINISTRAZIONE',
+      'CONSORZIO',
+      'DIRITTI REALI',
+      'DIVISIONE',
+      'FRANCHISING',
+      'LOCAZIONE',
+      'PATTI DI FAMIGLIA',
+      'RESPONSABILITÀ MEDICA',
+      'RISARCIMENTO DANNI MEZZO STAMPA',
+      'SUCCESSIONE EREDITARIA',
+      'SOCIETÀ DI PERSONE',
+      'SUBFORNITURA',
     ];
     const esitiMediazione = [
-      { value: 'IN CORSO', view: 'IN CORSO' },
-      { value: 'NEGATIVO INCONTRO FILTRO', view: 'NEGATIVO INCONTRO FILTRO' },
-      { value: 'NEGATIVO MANCATA ADESIONE', view: 'NEGATIVO MANCATA ADESIONE' },
-      { value: 'NEGATIVO MANCATO ACCORDO', view: 'NEGATIVO MANCATO ACCORDO' },
-      { value: 'POSITIVO', view: 'POSITIVO' },
+      'IN CORSO',
+      'NEGATIVO INCONTRO FILTRO',
+      'NEGATIVO MANCATA ADESIONE',
+      'NEGATIVO MANCATO ACCORDO',
+      'POSITIVO',
     ];
-    const modalitaSvolgimento = [
-      {
-        value: 'PRESENZA',
-        view: (
-          <Tooltip
-            placement="right"
-            title="Partecipazione sia in presenza che da remoto."
-          >
-            <div style={{ display: 'flex', width: '100%' }}>
-              PRESENZA
-              <InfoOutlinedIcon
-                sx={{ color: theme.palette.primary.main, fontSize: '.8rem' }}
-              />
-            </div>
-          </Tooltip>
-        ),
-      },
-      {
-        value: 'TELEMATICA',
-        view: (
-          <Tooltip placement="right" title="Incontro interamente a distanza.">
-            <div style={{ display: 'flex', width: '100%' }}>
-              TELEMATICA
-              <InfoOutlinedIcon
-                sx={{ color: theme.palette.primary.main, fontSize: '.8rem' }}
-              />
-            </div>
-          </Tooltip>
-        ),
-      },
-      {
-        value: 'TELEMATICA_MISTA',
-        view: (
-          <Tooltip
-            placement="right"
-            title="Incontro di persona, presso una sede fisica."
-          >
-            <div style={{ display: 'flex', width: '100%' }}>
-              TELEMATICA MISTA
-              <InfoOutlinedIcon
-                sx={{ color: theme.palette.primary.main, fontSize: '.8rem' }}
-              />
-            </div>
-          </Tooltip>
-        ),
-      },
+    const modalitaSvolgimento = ['PRESENZA', 'TELEMATICA', 'TELEMATICA MISTA'];
+    const causaliDemandata = [
+      'CONDIZIONE DI PROCEDIBILITÀ',
+      'DEMANDATA DAL GIUDICE PER IMPROCEDIBILITÀ',
+      'DEMANDATA DAL GIUDICE PER LE MATERIE NON OBBLIGATORIE',
+      'DEMANDATA DAL GIUDICE PER MANCATA CONCILIAZIONE',
+      'VOLONTARIA IN MATERIA DI',
     ];
 
-   // UseImperativeHandle
-   const requiredFields = [
-    'sedeDeposito',
-    'numProtocollo',
-    'annoProtocollo',
-    'oggettoControversia',
-  ];
+    // UseImperativeHandle
+    const requiredFields = [
+      'sedeDeposito',
+      'numProtocollo',
+      'annoProtocollo',
+      'oggettoControversia',
+    ];
     const requiredFieldsFilled = () => {
       return requiredFields.every(
         (field) => !!procedimento[field] && procedimento[field].trim() !== ''
@@ -209,6 +172,9 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
         !!value && /^[a-zA-Z]+(?:\s[a-zA-Z]+)*$/.test(value),
       cognomeMediatore: (value) => validationRules.nomeMediatore(value),
       titoloMediatore: (value) => true,
+      causaleDemandata: (value) => !!value,
+      materiaCausaleDemandata: (value) =>
+        !!value && /^[a-zA-Z]+(?:\s[a-zA-Z]+)*$/.test(value),
     };
     const handleInputChange = (changes) => {
       const updatedProcedimento = { ...procedimento };
@@ -231,7 +197,7 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
         }
 
         const isValid = valore ? validationRules[campoModel]?.(valore) : true;
-     
+
         updatedTouchedFields[campoModel] = true;
         updatedErrors[campoModel] = !isValid;
         updatedProcedimento[campoModel] = valore;
@@ -245,7 +211,6 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
       // console.log(updatedProcedimento);
     };
 
-  
     return (
       <form
         id="step-procedimento-form"
@@ -447,6 +412,95 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
             />
           </Grid>
 
+          {/* Demandata */}
+          <Grid
+            size={{ xs: showFormMateriaVolontaria ? 6 : 12 }}
+            sx={{
+              width: 'auto',
+              maxWidth: maxWidth,
+            }}
+          >
+            <Select
+              label="Demandata"
+              value={procedimento.causaleDemandata || ''}
+              options={causaliDemandata}
+              onChange={(event) => {
+                const showFormMateriaVolontaria =
+                  event.target.value === CAUSALE_VOLONTARIA_IN_MATERIA;
+
+                if (showFormMateriaVolontaria)
+                  requiredFields.push('materiaCausaleDemandata');
+                else {
+                  requiredFields.pop('materiaCausaleDemandata');
+                }
+
+                handleInputChange({
+                  isDemandata: !!event.target.value,
+                  causaleDemandata: event,
+                  materiaCausaleDemandata: showFormMateriaVolontaria
+                    ? procedimento.materiaCausaleDemandata
+                    : undefined,
+                });
+
+                setShowFormMateriaVolontaria(showFormMateriaVolontaria);
+              }}
+              sx={inputStyles(
+                theme,
+                maxWidth,
+                minWidth,
+                maxWidth,
+                '0',
+                backgroundColor
+              )}
+              error={touchedFields.causaleDemandata && errors.causaleDemandata}
+            />
+          </Grid>
+
+          {/* Materia demandata */}
+          {showFormMateriaVolontaria && (
+            <Grid ref={containerFormDemandataRef} size={{ xs: 6 }}>
+              <Slide
+                in={showFormMateriaVolontaria}
+                container={containerFormDemandataRef.current}
+                direction="left"
+                mountOnEnter
+                unmountOnExit
+                timeout={300}
+              >
+                <CssTextField
+                  size="small"
+                  id="outlined-required-materia-demandata"
+                  label="Materia"
+                  required
+                  value={procedimento.materiaCausaleDemandata || ''}
+                  onChange={(event) =>
+                    handleInputChange({ materiaCausaleDemandata: event })
+                  }
+                  error={
+                    touchedFields.materiaCausaleDemandata &&
+                    errors.materiaCausaleDemandata
+                  }
+                  helperText={
+                    touchedFields.materiaCausaleDemandata &&
+                    errors.materiaCausaleDemandata
+                      ? procedimento.materiaCausaleDemandata
+                        ? 'Materia non valida'
+                        : 'Campo obbligatorio'
+                      : ''
+                  }
+                  sx={inputStyles(
+                    theme,
+                    maxWidth,
+                    minWidth,
+                    maxWidth,
+                    '0',
+                    backgroundColor
+                  )}
+                />
+              </Slide>
+            </Grid>
+          )}
+
           {/* Esito mediazione */}
           <Grid size={{ xs: 12 }} sx={{ width: 'auto', maxWidth: maxWidth }}>
             <Select
@@ -508,13 +562,34 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
             sx={{ width: 'auto', maxWidth: maxWidth }}
           >
             <Select
-              value={procedimento.modalitaSvolgimento}
+              value={procedimento.modalitaSvolgimento || ''}
               label="Modalità svolgimento"
               onChange={(event) =>
                 handleInputChange({ modalitaSvolgimento: event })
               }
               options={modalitaSvolgimento}
-              renderValue={(selected) => String(selected).replaceAll('_', ' ')}
+              renderOptions={(selected) => {
+                const tooltipMessage = {
+                  PRESENZA: 'Partecipazione sia in presenza che da remoto.',
+                  TELEMATICA: 'Incontro interamente a distanza.',
+                  TELEMATICA_MISTA:
+                    'Incontro di persona, presso una sede fisica.',
+                };
+
+                return (
+                  <Tooltip placement="right" title={tooltipMessage[selected]}>
+                    <div style={{ display: 'flex', width: '100%' }}>
+                      {selected.replaceAll(/_/g, ' ')}
+                      <InfoOutlinedIcon
+                        sx={{
+                          color: theme.palette.primary.main,
+                          fontSize: '.8rem',
+                        }}
+                      />
+                    </div>
+                  </Tooltip>
+                );
+              }}
               sx={inputStyles(
                 theme,
                 maxWidth,
