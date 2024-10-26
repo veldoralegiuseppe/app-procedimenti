@@ -24,6 +24,8 @@ import Select from '@components/Select';
 import { ProcedimentoContext } from '@context/Procedimento';
 import NumberInput from '@components/NumberInput';
 import SelectQualificaPersona from '@components/SelectQualificaPersona';
+import TabellaSpese from '../components/TabellaSpese';
+import { type } from '@testing-library/user-event/dist/cjs/utility/type.js';
 
 // Constants
 const inputHeight = 36;
@@ -855,6 +857,49 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
                 0,
                 backgroundColor
               )}
+            />
+          </Grid>
+        </Grid>
+
+        {/* Riepilogo spese */}
+        <Grid
+          container
+          size={{ xs: 12 }}
+          sx={{
+            width: '100%',
+            minHeight: `${gridRowHeight}px`,
+            paddingLeft: '1rem',
+            rowGap: '1.5rem',
+            columnGap: '1.5rem',
+          }}
+        >
+          {/* Titolo della form */}
+          <Grid
+            size={{ xs: 12 }}
+            sx={{
+              borderBottom: `1px solid ${formLabelColor}`,
+              width: 'calc(100% - 1rem)',
+            }}
+          >
+            <Typography
+              sx={{ fontSize: formLabelFontSize, color: formLabelColor }}
+            >
+              Riepilogo spese
+            </Typography>
+          </Grid>
+
+          <Grid size={{ xs: 12 }}>
+            <TabellaSpese
+              metadata={[
+                { columnName: 'Transazione', },
+                { columnType: 'importo', columnName: 'importo' },
+                { columnType: 'stato', columnName: 'stato' },
+              ]}
+              body={[
+                [{nome:'Incasso dalle parti', tipo: 'entrata'}, 0, 'da saldare',],
+                [{nome: 'Incasso dalle controparti', tipo: 'entrata'}, 0, 'da saldare'],
+                [{nome:'Compenso mediatore', tipo: 'uscita'}, 0, 'da saldare'],
+              ]}
             />
           </Grid>
         </Grid>

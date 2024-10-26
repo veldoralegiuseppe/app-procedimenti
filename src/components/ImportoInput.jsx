@@ -3,8 +3,8 @@ import InputAdornment from '@mui/material/InputAdornment';
 import EuroSymbolIcon from '@mui/icons-material/EuroSymbol';
 import { CssTextField } from '@theme/MainTheme';
 
-const ImportoInput = ({ onChange, label, sx, id, value = 0 }) => {
-  // State
+const ImportoInput = ({ onChange, label = "", sx, id, value = 0 }) => {
+  // State«
   const [importo, setImporto] = useState('0,00');
 
   // Utility
