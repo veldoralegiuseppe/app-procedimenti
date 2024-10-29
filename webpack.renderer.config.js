@@ -14,7 +14,7 @@ rules.push(
       { loader: 'css-loader' },
       { loader: 'sass-loader' },
     ],
-  }
+  },
 );
 
 module.exports = {
@@ -22,7 +22,7 @@ module.exports = {
     rules,
   },
   resolve: {
-    extensions: ['.js', '.jsx', '.json', '.wasm'],
+    extensions: ['.js', '.jsx', '.json', '.wasm', '.svg'],
     alias: {
       '@components': path.resolve(__dirname, 'src/components/'),
       '@pages': path.resolve(__dirname, 'src/pages/'),

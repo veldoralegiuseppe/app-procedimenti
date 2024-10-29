@@ -38,15 +38,15 @@ export const themeOne = createTheme({
       //light: 'rgb(171 178 186)',
     },
     background: {
-      default: 'white',
-      paper: 'white',
+      default: '#ffffff',
+      paper: '#ffffff',
     },
   },
   components: {
     MuiPickersToolbar: {
       styleOverrides: {
         root: {
-          color: 'white',
+          color: '#ffffff',
           borderRadius: 2,
           borderWidth: 1,
           borderColor: '#2196f3',
@@ -61,9 +61,9 @@ export const themeOne = createTheme({
           color: '#fb8500',
           borderRadius: 2,
           borderWidth: 1,
-          borderColor: 'white',
+          borderColor: '#ffffff',
           border: '0px solid',
-          backgroundColor: 'white',
+          backgroundColor: '#ffffff',
         },
       },
     },

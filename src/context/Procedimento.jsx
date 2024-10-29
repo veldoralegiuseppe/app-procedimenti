@@ -2,6 +2,7 @@ import * as React from 'react';
 import { createContext, useState } from 'react';
 import dayjs from 'dayjs';
 import 'dayjs/locale/it';
+import Backdrop from '@mui/material/Backdrop';
 
 import { Procedimento } from '@model/procedimento.js';
 import { PersonaFisica } from '@model/personaFisica';
@@ -155,6 +156,7 @@ export const ProcedimentoProvider = ({ children }) => {
   const [showAlert, setShowAlert] = React.useState(false);
   const [alertSeverity, setAlertSeverity] = React.useState('error');
   const [alertMessage, setAlertMessage] = React.useState(null);
+  const [isBackdropOpen, setIsBackdropOpen] = React.useState(false);
 
   const notify = (message, severity) => {
     setShowAlert(true);
@@ -164,7 +166,7 @@ export const ProcedimentoProvider = ({ children }) => {
 
   return (
     <ProcedimentoContext.Provider
-      value={{ procedimento, setProcedimento, persone, setPersone, notify }}
+      value={{ procedimento, setProcedimento, persone, setPersone, notify, isBackdropOpen, setIsBackdropOpen }}
     >
       {children}
      
@@ -177,6 +179,7 @@ export const ProcedimentoProvider = ({ children }) => {
           setAlertMessage(null);
         }}
       />
+      <Backdrop open={isBackdropOpen}/>
     </ProcedimentoContext.Provider>
   );
 };
