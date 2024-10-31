@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import {
   Autocomplete,
   Typography,
@@ -13,8 +13,11 @@ import {
 } from '@mui/material';
 import { styled, useTheme } from '@mui/system';
 import DeleteIcon from '@mui/icons-material/Delete';
-import { parse, evaluate } from 'mathjs';
+import { parse, evaluate, i, exp } from 'mathjs';
 import { CssTextField } from '@theme/MainTheme';
+import { ProcedimentoContext } from '@context/Procedimento';
+import { ProcedimentoMetadata } from '@model/procedimento';
+import Regola from '@model/regola';
 
 const StyledPopper = styled((props) => <Popper {...props} />)(({ theme }) => ({
   '& .MuiPaper-root': {
@@ -40,86 +43,77 @@ const StyledPopper = styled((props) => <Popper {...props} />)(({ theme }) => ({
   },
 }));
 
-const steps = ['Definisci il contesto', 'Definisci la formula'];
-
-// Mock del modello del procedimento con soggetti, predicati e valori già definiti
-const procedureModel = {
-  'Tipo di Controversia': {
-    key: 'Tipo di Controversia',
-    type: 'testuale',
-    sezione: 'Dati generali',
-    value: 'Contratto',
-  },
-  'Data di Mediazione': {
-    key: 'Data di Mediazione',
-    type: 'data',
-    sezione: 'Dati generali',
-    value: '01/01/2024',
-  },
-  'Spese Postali': {
-    key: 'Spese Postali',
-    type: 'numerico',
-    sezione: 'Parti istanti',
-    value: '200',
-  },
-};
-
-const numericVariables = [
-  { key: 'Valore della controversia', sezione: 'Procedimento', value: 1 },
-  { key: 'Incasso parti', sezione: 'Parti / Controparti', value: 1 },
-  {
-    key: 'Incasso controparti',
-    sezione: 'Parti / Controparti',
-    value: 1,
-  },
-  { key: 'Spese avvio parti', sezione: 'Parti / Controparti', value: 1 },
-  { key: 'Spese avvio controparti', sezione: 'Parti / Controparti', value: 1 },
-].sort((a, b) => a.sezione.localeCompare(b.sezione));
+// Steps
+const steps = ['Target', 'Contesto', 'Formula'];
 
 // Predicati basati sul tipo del soggetto
 const predicatiNumerici = ['è maggiore di', 'è minore di', 'è uguale a'];
 const predicatiTestuali = ['è uguale a', 'contiene', 'non contiene'];
 const predicatiData = ['è maggiore di', 'è minore di', 'è uguale a'];
 const operators = ['Canc'];
-const subjects = Object.values(procedureModel);
 
 export default function RuleBuilder() {
+  // Context
+  const { procedimento, metadatiProcedimento, notify, setRegole } = React.useContext(ProcedimentoContext);
+
   // Style
   const theme = useTheme();
   const formLabelColor = '#467bae';
 
   // State
   const [activeStep, setActiveStep] = useState(0); // Passaggio attivo nello stepper
-  const [selectedSubjects, setSelectedSubjects] = useState([]); // Soggetti selezionati
+  const [contestoSelezionato, setContestoSelezionato] = useState([]); // Soggetti selezionati
   const [predicates, setPredicates] = useState({}); // Predicati per ogni soggetto
+  const [campoTarget, setCampoTarget] = useState(null); // Variabili numeriche selezionate
+  const regola = useRef(new Regola()); // Regola
+  const [espressione, setEspressione] = React.useState(regola.current.espressione); // Espressione parent
 
   // Handler
   const handleNext = () => setActiveStep((prevStep) => prevStep + 1);
-  const handleBack = () => setActiveStep((prevStep) => prevStep - 1);
 
-  const filteredSubjects = subjects.filter(
-    (subject) =>
-      !selectedSubjects.some((selected) => selected.key === subject.key)
+  const handleBack = () => {
+    setActiveStep((prevStep) => prevStep - 1);
+    setEspressione(regola.current.espressione);
+  }
+
+  function getCampiNumerici() {
+    const numericFields = Object.values(metadatiProcedimento.current)
+      .map((field) => ({
+        key: field.key,
+        label: field.label,
+        type: field.type,
+        sezione: 'DATI GENERALI',
+      }))
+      .filter(
+        (field) => field.type === 'number' && field.key !== 'valoreControversia'
+      );
+    //console.log('numericFields', numericFields);
+    return numericFields;
+  }
+  const listaCampiTarget = getCampiNumerici();
+
+  function getContesto() {
+    const contestoDatigenerali = Object.values(metadatiProcedimento.current).map(
+      (field) => {
+        return {
+          key: field.key,
+          type: field.type,
+          label: field.label,
+          sezione: 'DATI GENERALI',
+          value: procedimento[field.key],
+        };
+      }
+    );
+
+    //console.log('contestoDatigenerali', contestoDatigenerali);
+    return contestoDatigenerali;
+  }
+  const contesto = getContesto();
+
+  const contestoFiltrato = contesto.filter(
+    (opzione) =>
+      !contestoSelezionato.some((selected) => selected.key === opzione.key)
   );
-
-  const handleSubjectSelect = (event, newSelectedSubjects) => {
-    setSelectedSubjects(newSelectedSubjects);
-    const newRules = newSelectedSubjects.map((subject) => {
-      const { key, value } = subject;
-      return {
-        subject: key,
-        predicate: '',
-        value,
-      };
-    });
-  };
-
-  const handlePredicateChange = (subject, selectedPredicate) => {
-    setPredicates({
-      ...predicates,
-      [subject]: selectedPredicate,
-    });
-  };
 
   const renderGroup = (params) => {
     return (
@@ -140,12 +134,44 @@ export default function RuleBuilder() {
     );
   };
 
-  // Components
-  function NumberRuleBuilder() {
-    const [selectedVariables, setSelectedVariables] = useState([]); // Variabili numeriche selezionate
+  const handleCreateRule = () => {
+    const newRule = new Regola(
+      regola.current.target,
+      regola.current.tipoTarget,
+      regola.current.contesto,
+      regola.current.stato,
+      regola.current.descrizione,
+      regola.current.espressione
+    );
+    
+    const errorMessages = [];
+    if(!newRule.target)  errorMessages.push(`Target richiesto`);
+    if(!newRule.contesto)  errorMessages.push(`Contesto richiesto`);
+    if(regola.current.isValid == false) errorMessages.push(`Espressione non valida`);
+    if(newRule.espressione == null || newRule.espressione == undefined || newRule.espressione == '') errorMessages.push(`Espressione richiesta`);
+    
+    if (errorMessages.length > 0) {
+      notify(errorMessages.join('\n'), 'error');
+    } else {
+      setRegole((prevRegole) => [...prevRegole, newRule]);
+      notify('Regola creata con successo', 'success');
+    }
+
+    setEspressione(newRule.espressione)
+  };
+
+  const handleChangeExpression = ({expression, isValid}) => {
+    regola.current.espressione = expression;
+    regola.current.isValid = isValid;
+    //console.log('regola', regola.current);
+  };
+
+  // Builders
+  function NumberRuleBuilder({ variabili, onChange, espressione }) {
+    const [selectedVariables, setSelectedVariables] = useState([]);
     const [error, setError] = useState(false);
     const [helperText, setHelperText] = useState('');
-    const [expression, setExpression] = useState(''); // Espressione numerica in anteprima
+    const [expression, setExpression] = useState(espressione || ''); // Espressione numerica
 
     React.useEffect(() => {
       const transformedExpression = expression.replace(
@@ -160,35 +186,37 @@ export default function RuleBuilder() {
 
       if (validateExpression(transformedExpression)) {
         console.log("L'espressione è valida");
+        if (onChange) {
+          onChange({expression, isValid: true});
+        }
       } else {
         console.log("L'espressione non è valida");
+        if (onChange) {
+          onChange({expression, isValid: false});
+        }
       }
     }, [expression]);
 
     // Mapping delle variabili numeriche
-    const aliasMap = numericVariables.reduce((acc, variable, index) => {
+    const aliasMap = variabili.reduce((acc, variable, index) => {
       const alias = `VAR${index}`; // alias univoco per ogni variabile
-      acc[variable.key.toUpperCase()] = alias;
+      acc[variable.label.toUpperCase()] = alias;
       return acc;
     }, {});
+    //console.log('aliasMap', aliasMap);
 
     // Mappa dei valori con alias
-    const scope = numericVariables.reduce((acc, variable, index) => {
-      const alias = aliasMap[variable.key.toUpperCase()];
-      acc[alias] = variable.value;
+    const scope = variabili.reduce((acc, variable, index) => {
+      const alias = aliasMap[variable.label.toUpperCase()];
+      acc[alias] = variable.value && variable.value > 0 ? variable.value : 1; // per evitare errori di divisione per zero
       return acc;
     }, {});
+    //console.log('scope', scope);
 
-    const filteredVariables = numericVariables
-      .filter(
-        (variable) =>
-          !selectedVariables.some((selected) => selected.key === variable.key)
-      )
-      .map((variable) => ({
-        ...variable,
-        key: variable.key.toUpperCase(),
-        sezione: variable.sezione.toUpperCase(),
-      }));
+    const filteredVariables = variabili.filter(
+      (variable) =>
+        !selectedVariables.some((selected) => selected.key === variable.key)
+    );
 
     const addToExpression = (component) => {
       setExpression(
@@ -247,9 +275,11 @@ export default function RuleBuilder() {
       try {
         // Esegui il parsing dell'espressione trasformata
         const parsedExpression = parse(transformedExpression);
+        //console.log('parsedExpression', parsedExpression);
 
         // Funzione ricorsiva per validare operatori e alias delle variabili
         const validateOperatorsAndVariables = (node) => {
+          //console.log('node', node);
           if (node.isSymbolNode) {
             const variableName = node.name;
             if (!Object.values(aliasMap).includes(variableName)) {
@@ -269,6 +299,7 @@ export default function RuleBuilder() {
 
         // Valuta l'espressione trasformata usando il contesto `scope`
         let result = evaluate(transformedExpression, scope);
+        //console.log('resultEvaluate', result);
         if (result === Infinity || result === -Infinity) {
           throw new Error('Divisione per zero');
         }
@@ -306,10 +337,7 @@ export default function RuleBuilder() {
           multiple
           options={filteredVariables}
           groupBy={(option) => option?.sezione || ''}
-          getOptionLabel={(option) =>
-            option.key.charAt(0).toUpperCase() +
-            option.key.slice(1).toLowerCase()
-          }
+          getOptionLabel={(option) => option.label || ''}
           renderGroup={renderGroup}
           value={selectedVariables}
           onChange={(event, newVariables) => setSelectedVariables(newVariables)}
@@ -318,18 +346,7 @@ export default function RuleBuilder() {
               <Chip
                 size="small"
                 key={option.key}
-                label={
-                  numericVariables.filter((v) => v.key === option.key).length >
-                  1
-                    ? option.key.charAt(0).toUpperCase() +
-                      option.key.slice(1).toLowerCase() +
-                      ` (${
-                        option.sezione?.charAt(0).toUpperCase() +
-                        option.sezione?.slice(1).toLowerCase()
-                      })`
-                    : option.key.charAt(0).toUpperCase() +
-                      option.key.slice(1).toLowerCase()
-                }
+                label={option.label}
                 {...getTagProps({ index })}
                 onMouseDown={(event) => event.stopPropagation()}
               />
@@ -354,9 +371,9 @@ export default function RuleBuilder() {
               <Button
                 key={variable.key}
                 variant="outlined"
-                onClick={() => addToExpression(variable.key)}
+                onClick={() => addToExpression(variable.label)}
               >
-                {variable.key.toUpperCase()}
+                {variable.label.toUpperCase()}
               </Button>
             ))}
           </Box>
@@ -421,8 +438,52 @@ export default function RuleBuilder() {
         ))}
       </Stepper>
 
-      {/* Step contesto */}
+      {/* Step target */}
       {activeStep === 0 && (
+        <Box
+          sx={{
+            padding: '3rem 0',
+            display: 'flex',
+            flexDirection: 'column',
+            rowGap: '1.5rem',
+          }}
+        >
+          <Typography
+            variant="h6"
+            sx={{
+              borderBottom: `1px solid ${formLabelColor}`,
+              color: formLabelColor,
+            }}
+          >
+            Definisci il target:
+          </Typography>
+          <Autocomplete
+            size="small"
+            groupBy={(option) => option?.sezione || ''}
+            options={listaCampiTarget}
+            value={campoTarget || ''}
+            getOptionLabel={(option) => option.label || ''}
+            onChange={(event, selectedCampoTarget) => {
+              setCampoTarget(selectedCampoTarget);
+            }}
+            renderGroup={renderGroup}
+            renderInput={(params) => (
+              <CssTextField {...params} label="Seleziona il campo target" />
+            )}
+            PopperComponent={(props) => <StyledPopper {...props} />}
+            PaperComponent={(props) => (
+              <Paper
+                {...props}
+                sx={{ bgcolor: theme.palette.dropdown.primary }}
+              />
+            )}
+            sx={{ width: '100%' }}
+          />
+        </Box>
+      )}
+
+      {/* Step contesto */}
+      {activeStep === 1 && (
         <Box
           sx={{
             padding: '3rem 0',
@@ -444,17 +505,19 @@ export default function RuleBuilder() {
             size="small"
             multiple
             groupBy={(option) => option?.sezione || ''}
-            options={filteredSubjects}
-            value={selectedSubjects}
-            getOptionLabel={(option) => option.key || ''}
-            onChange={handleSubjectSelect}
+            options={contestoFiltrato}
+            value={contestoSelezionato}
+            getOptionLabel={(option) => option.label || ''}
+            onChange={(event, newContesto) => {
+              setContestoSelezionato(newContesto);
+            }}
             renderGroup={renderGroup}
             renderTags={(value, getTagProps) =>
               value.map((option, index) => (
                 <Chip
                   size="small"
                   key={option.key}
-                  label={option.key}
+                  label={option.label}
                   {...getTagProps({ index })}
                   onMouseDown={(event) => event.stopPropagation()}
                 />
@@ -473,20 +536,20 @@ export default function RuleBuilder() {
             sx={{ width: '100%' }}
           />
 
-          {selectedSubjects.length > 0 && (
+          {contestoSelezionato.length > 0 && (
             <Box sx={{ marginTop: 2 }}>
-              {selectedSubjects.map((subject, index) => {
-                const { key, type, value } = subject;
+              {contestoSelezionato.map((subject, index) => {
+                const { key, type, value, label } = subject;
                 let predicateOptions = [];
 
                 switch (type) {
-                  case 'numerico':
+                  case 'number':
                     predicateOptions = predicatiNumerici;
                     break;
-                  case 'testuale':
+                  case 'string':
                     predicateOptions = predicatiTestuali;
                     break;
-                  case 'data':
+                  case 'datetime':
                     predicateOptions = predicatiData;
                     break;
                   default:
@@ -512,15 +575,18 @@ export default function RuleBuilder() {
                       component="span"
                     >
                       {index + 1 + ')  '}
-                      {key}{' '}
+                      {label}{' '}
                     </Typography>
                     <Autocomplete
                       size="small"
                       options={predicateOptions}
                       value={predicates[key] || ''}
-                      onChange={(event, selectedPredicate) =>
-                        handlePredicateChange(key, selectedPredicate)
-                      }
+                      onChange={(subject, selectedPredicate) => {
+                        setPredicates({
+                          ...predicates,
+                          [subject]: selectedPredicate,
+                        });
+                      }}
                       renderInput={(params) => (
                         <CssTextField
                           {...params}
@@ -552,8 +618,15 @@ export default function RuleBuilder() {
       )}
 
       {/* Step espressione numerica */}
-      {activeStep === 1 && <NumberRuleBuilder />}
+      {activeStep === 2 && (
+        <NumberRuleBuilder
+          variabili={listaCampiTarget}
+          onChange={handleChangeExpression}
+          espressione={espressione}
+        />
+      )}
 
+      {/* Stepper button */}
       <Box
         sx={{ display: 'flex', justifyContent: 'space-between', marginTop: 2 }}
       >
@@ -577,7 +650,11 @@ export default function RuleBuilder() {
         <Button
           variant="contained"
           color="primary"
-          onClick={activeStep === steps.length - 1 ? () => {} : handleNext}
+          onClick={
+            activeStep === steps.length - 1
+              ? handleCreateRule
+              : handleNext
+          }
         >
           {activeStep === steps.length - 1 ? 'Applica' : 'Avanti'}
         </Button>
