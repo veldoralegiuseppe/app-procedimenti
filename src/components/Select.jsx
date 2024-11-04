@@ -24,6 +24,7 @@ function Select({
     width: sx?.width || '100%',
     maxWidth: sx?.maxWidth || '30rem',
     minWidth: sx?.minWidth || '16.8rem',
+    height: sx?.height || '34.13px',
     margin: sx?.margin || 0,
     '&:hover .MuiInputLabel-root:not(.Mui-disabled), &:hover .MuiSvgIcon-root, &:hover .MuiOutlinedInput-root fieldset': {
       color: theme.palette.logo.secondary, // Sincronizza colore su hover

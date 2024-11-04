@@ -9,6 +9,7 @@ import { PersonaFisica } from '@model/personaFisica';
 import { PersonaGiuridica } from '@model/personaGiuridica';
 import { Comune } from '@model/comune.js';
 import NotificationAlert from '@components/NotificationAlert';
+import { ProcedimentoMetadata } from '../model/procedimento';
 
 export const ProcedimentoContext = createContext();
 
@@ -151,8 +152,10 @@ function mockedProcedimento() {
 
 
 export const ProcedimentoProvider = ({ children }) => {
-  const [procedimento, setProcedimento] = useState(new Procedimento());
-  const [persone, setPersone] = useState([]);
+  const [procedimento, setProcedimento] = React.useState(new Procedimento());
+  const metadatiProcedimento = React.useRef(new ProcedimentoMetadata());
+  const [persone, setPersone] = React.useState(mockedPersone());
+  const [regole, setRegole] = React.useState([]);
   const [showAlert, setShowAlert] = React.useState(false);
   const [alertSeverity, setAlertSeverity] = React.useState('error');
   const [alertMessage, setAlertMessage] = React.useState(null);
@@ -166,7 +169,7 @@ export const ProcedimentoProvider = ({ children }) => {
 
   return (
     <ProcedimentoContext.Provider
-      value={{ procedimento, setProcedimento, persone, setPersone, notify, isBackdropOpen, setIsBackdropOpen }}
+      value={{ procedimento, metadatiProcedimento, setProcedimento, persone, setPersone, notify, isBackdropOpen, setIsBackdropOpen, regole, setRegole }}
     >
       {children}
      

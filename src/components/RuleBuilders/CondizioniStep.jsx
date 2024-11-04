@@ -81,6 +81,91 @@ class ContextFactory {
   }
 }
 
+const TargetInput = ({
+  target,
+  isIntervallo = false,
+  isMin = false,
+  condizioniLocal,
+  setCondizioniLocal,
+  onUpdate,
+}) => {
+  // Handlers
+  const condizione = condizioniLocal.find((c) => c.campo.key === target.key);
+  const checkForErrors = (value, condizione, isMin) => {
+    if (isMin && condizione?.valore != undefined && value > condizione.valore) {
+      return 'Il valore minimo deve essere inferiore al valore massimo';
+    } else if (
+      !isMin &&
+      condizione?.valoreMin != undefined &&
+      value < condizione.valoreMin
+    ) {
+      return 'Il valore massimo deve essere superiore al valore minimo';
+    } else {
+      return null;
+    }
+  };
+  const handleValueChange = (newValue) => {
+    const value =
+      typeof newValue === 'object' && newValue.target
+        ? newValue.target.value
+        : newValue;
+    const updatedCondizioni = condizioniLocal.map((condizione) =>
+      condizione.campo.key === target.key
+        ? isMin
+          ? { ...condizione, valoreMin: value }
+          : { ...condizione, valore: value }
+        : condizione
+    );
+
+    const error = checkForErrors(value, condizione, isMin);
+    setError(error);
+
+    setCondizioniLocal(updatedCondizioni);
+    onUpdate({ condizioni: updatedCondizioni });
+  };
+
+  // Costanti
+  const value = isMin ? condizione?.valoreMin : condizione?.valore;
+
+  // State
+  const [error, setError] = useState(null);
+
+  React.useEffect(() => {
+    console.log('verifico errori');
+    setError(checkForErrors(value, condizione, isMin));
+  }, [value, condizione, isMin]);
+
+  const targetInputProps = {
+    value: value || (target.type === 'number' ? 0 : ''),
+    onChange: handleValueChange,
+    label: isIntervallo ? (isMin ? target.label + ' (min)' : target.label + ' (max)') : target.label,
+    required: true,
+    error: error != null,
+    helperText: error,
+  };
+  const targetInputMap = {
+    oggettoControversia: (
+      <Select
+        {...targetInputProps}
+        options={oggettiControversia}
+        sx={{ height: '34.13px' }}
+      />
+    ),
+    esitoMediazione: (
+      <Select
+        {...targetInputProps}
+        options={esitiMediazione}
+        sx={{ height: '34.13px' }}
+      />
+    ),
+    number: <ImportoInput {...targetInputProps} />,
+    string: <CssTextField {...targetInputProps} />,
+    // 'datetime': <DateTimeInput {...targetInputProps} />
+  };
+
+  return targetInputMap[target.key] || targetInputMap[target.type];
+};
+
 export default function ContextStep({ condizioni, onUpdate }) {
   // Style
   const theme = useTheme();
@@ -102,68 +187,6 @@ export default function ContextStep({ condizioni, onUpdate }) {
   );
 
   // Handlers
-  const getTargetInput = (target) => {
-    const value = condizioniLocal.find(
-      (c) => c.campo.key === target.key
-    )?.valore;
-    const handleValueChange = (newValue) => {
-      const value =
-        typeof newValue === 'object' && newValue.target
-          ? newValue.target.value
-          : newValue;
-      console.log('value', value);
-      const updatedCondizioni = condizioniLocal.map((condizione) =>
-        condizione.campo.key === target.key
-          ? { ...condizione, valore: value }
-          : condizione
-      );
-      console.log('updatedCondizioni', updatedCondizioni);
-      setCondizioniLocal(updatedCondizioni);
-      onUpdate({ condizioni: updatedCondizioni });
-    };
-
-    const targetInputMap = {
-      oggettoControversia: (
-        <Select
-          label={target.label}
-          required={true}
-          value={value || ''}
-          onChange={(event) => handleValueChange(event)}
-          sx={{height: '34.13px'}}
-          options={oggettiControversia}
-        />
-      ),
-      esitoMediazione: (
-        <Select
-          label={target.label}
-          required={true}
-          value={value || ''}
-          sx={{height: '34.13px'}}
-          onChange={(event) => handleValueChange(event)}
-          options={esitiMediazione}
-        />
-      ),
-      number: (
-        <ImportoInput
-          required={true}
-          value={value || 0}
-          onChange={(event) => handleValueChange(event)}
-          label={target.label}
-        />
-      ),
-      string: (
-        <CssTextField
-          required={true}
-          value={value || ''}
-          onChange={(event) => handleValueChange(event)}
-          label={target.label}
-        />
-      ),
-      // 'datetime': <DateTimeInput value={value} onChange={handleInputChange} label={target.label}/>
-    };
-
-    return targetInputMap[target.key] || targetInputMap[target.type];
-  };
   const handleCampoChange = (event, newCampiSelezionati) => {
     setCampiSelezionati(newCampiSelezionati);
     const updatedCondizioni = condizioniLocal;
@@ -200,20 +223,27 @@ export default function ContextStep({ condizioni, onUpdate }) {
     if (condizione) {
       // Modifica l'oggetto
       condizione.operatore = newOperatore;
+      if (newOperatore && newOperatore.includes('compreso tra')) {
+        condizione.valoreMin = condizione.valoreMin
+          ? condizione.valoreMin
+          : campo.type === 'number'
+          ? 0
+          : '';
+      }
 
       // Aggiorna lo stato locale
       setCondizioniLocal([...condizioniLocal]);
       onUpdate({ condizioni: [...condizioniLocal] });
     }
   };
-
-  const conditionMap = {
+  const operatoriMap = {
     number: {
       '>': (a, b) => a > b,
       '≥': (a, b) => a >= b,
       '<': (a, b) => a < b,
       '≤': (a, b) => a <= b,
       '=': (a, b) => a === b,
+      'compreso tra': (a, b) => a >= b[0] && a <= b[1],
     },
     string: {
       '=': (a, b) => a === b,
@@ -272,7 +302,7 @@ export default function ContextStep({ condizioni, onUpdate }) {
           color: formLabelColor,
         }}
       >
-        Definisci il contesto:
+        Definisci le condizioni:
       </Typography>
       <Autocomplete
         size="small"
@@ -306,8 +336,11 @@ export default function ContextStep({ condizioni, onUpdate }) {
       />
 
       {campiSelezionati.length > 0 && (
-        <Box sx={{ marginTop: 2 }}>
+        <Box sx={{ marginTop: 2, display: 'flex', flexDirection: 'column', rowGap: '1rem'  }}>
           {campiSelezionati.map((target, index) => {
+            const condizione = condizioniLocal.find((c) => c.campo.key === target.key);
+            const isIntervallo = condizione?.operatore?.includes('compreso tra');
+
             return (
               <Box
                 key={target.label + '_' + index}
@@ -318,16 +351,6 @@ export default function ContextStep({ condizioni, onUpdate }) {
                   columnGap: '1rem',
                 }}
               >
-                <Typography
-                  sx={{
-                    minWidth: '1.5rem',
-                    textTransform: 'uppercase',
-                    whiteSpace: 'break-spaces',
-                  }}
-                  component="span"
-                >
-                  {index + 1 + ')  '}
-                </Typography>
                 <React.Fragment>
                   {/* Target */}
                   <Typography
@@ -335,41 +358,61 @@ export default function ContextStep({ condizioni, onUpdate }) {
                       minWidth: '10rem',
                       textTransform: 'uppercase',
                       whiteSpace: 'break-spaces',
+                      color: '#1c69b3',
+                      minWidth: '16rem',
                     }}
                     component="span"
                   >
-                    {target.label}{' '}
+                    {index + 1 + ')  ' + target.label + ':'}{' '}
                   </Typography>
 
-                  {/* Operatore */}
-                  <Autocomplete
-                    size="small"
-                    options={Object.keys(conditionMap[target.type])}
-                    value={
-                      condizioniLocal.find((c) => c.campo.key === target.key)
-                        ?.operatore || ''
-                    }
-                    onChange={(event, newOperatore) =>
-                      handleOperatoreChange(event, newOperatore, target)
-                    }
-                    renderInput={(params) => (
-                      <CssTextField
-                        {...params}
-                        label="Seleziona un predicato"
+                  <div style={{ display: 'flex', flexWrap: 'wrap', rowGap: '1rem', columnGap: '1rem', alignItems: 'center', width: '100%' }}>
+                    {/* Valore min (condizionale) */}
+                    {isIntervallo && (
+                      <TargetInput
+                        target={target}
+                        isIntervallo={true}
+                        isMin={true}
+                        condizioniLocal={condizioniLocal}
+                        setCondizioniLocal={setCondizioniLocal}
+                        onUpdate={onUpdate}
                       />
                     )}
-                    PopperComponent={(props) => <StyledPopper {...props} />}
-                    PaperComponent={(props) => (
-                      <Paper
-                        {...props}
-                        sx={{ bgcolor: theme.palette.dropdown.primary }}
-                      />
-                    )}
-                    sx={{ width: '16rem', display: 'inline-block' }}
-                  />
 
-                  {/* Valore */}
-                  {getTargetInput(target)}
+                    {/* Operatore */}
+                    <Autocomplete
+                      size="small"
+                      options={Object.keys(operatoriMap[target.type])}
+                      value={condizione?.operatore || ''}
+                      onChange={(event, newOperatore) =>
+                        handleOperatoreChange(event, newOperatore, target)
+                      }
+                      renderInput={(params) => (
+                        <CssTextField
+                          {...params}
+                          label="Operatore"
+                        />
+                      )}
+                      PopperComponent={(props) => <StyledPopper {...props} />}
+                      PaperComponent={(props) => (
+                        <Paper
+                          {...props}
+                          sx={{ bgcolor: theme.palette.dropdown.primary }}
+                        />
+                      )}
+                      sx={{ width: '16rem', display: 'inline-block' }}
+                    />
+
+                    {/* Valore / Valore max */}
+                    <TargetInput
+                      isIntervallo={isIntervallo}
+                      isMin={false}
+                      target={target}
+                      condizioniLocal={condizioniLocal}
+                      setCondizioniLocal={setCondizioniLocal}
+                      onUpdate={onUpdate}
+                    />
+                  </div>
                 </React.Fragment>
               </Box>
             );

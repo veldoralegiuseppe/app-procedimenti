@@ -3,7 +3,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import EuroSymbolIcon from '@mui/icons-material/EuroSymbol';
 import { CssTextField } from '@theme/MainTheme';
 
-const ImportoInput = ({ onChange, label = "", sx, id, value = 0 }) => {
+const ImportoInput = ({ onChange, label = "", sx, id, value = 0, error = false, helperText = '' }) => {
   // State«
   const [importo, setImporto] = useState('0,00');
 
@@ -127,6 +127,7 @@ const ImportoInput = ({ onChange, label = "", sx, id, value = 0 }) => {
   };
 
   const handleValueChange = (event) => {
+    console.log('onChange', event.target.value)
     let inputValue = event.target.value;
     let startCursorPosition = event.target.selectionStart;
     const commaPosition = inputValue.indexOf(',');
@@ -148,6 +149,7 @@ const ImportoInput = ({ onChange, label = "", sx, id, value = 0 }) => {
         inputValue = '0' + inputValue.slice(inputValue.indexOf(',')).padEnd(2, '0');
         event.target.value = inputValue;
         setImporto(inputValue)
+        if(onChange) onChange(0);
         let nextCursor = 0
         event.target.selectionStart = nextCursor;
         event.target.selectionEnd = nextCursor;
@@ -162,6 +164,7 @@ const ImportoInput = ({ onChange, label = "", sx, id, value = 0 }) => {
           : Math.max(startCursorPosition - 1, 0);
 
         inputValue = importo;
+        notifyDouble(importo);
         event.target.value = inputValue;
         event.target.selectionStart = nextCursor;
         event.target.selectionEnd = nextCursor;
@@ -185,6 +188,7 @@ const ImportoInput = ({ onChange, label = "", sx, id, value = 0 }) => {
     if (!inputValue) {
       setImporto('0,00');
       if (onChange) {
+        console.log('onChange(0)')
         onChange(0);
       }
       return;
@@ -220,13 +224,18 @@ const ImportoInput = ({ onChange, label = "", sx, id, value = 0 }) => {
     });
 
     // Passa il valore numerico grezzo al componente genitore se presente
-    if (onChange) {
-      // Rimuovi i punti delle migliaia prima della conversione
-      const numericValue = parseFloat(
-        adjustedValue.replace(/\./g, '').replace(',', '.')
-      ); // Rimuovi i punti e sostituisci la virgola con il punto
-      if (!isNaN(numericValue)) {
-        onChange(numericValue);
+    notifyDouble(adjustedValue);
+
+    // Funzione di utilità per notificare il valore al componente genitore
+    function notifyDouble(formattedValue) {
+      if (onChange) {
+        // Rimuovi i punti delle migliaia prima della conversione
+        const numericValue = parseFloat(
+          formattedValue.replace(/\./g, '').replace(',', '.')
+        ); // Rimuovi i punti e sostituisci la virgola con il punto
+        if (!isNaN(numericValue)) {
+          onChange(numericValue);
+        }
       }
     }
   };
@@ -234,6 +243,8 @@ const ImportoInput = ({ onChange, label = "", sx, id, value = 0 }) => {
   return (
     <CssTextField
       value={importo}
+      error={error}
+      helperText={helperText}
       onChange={handleValueChange}
       id={id}
       onBlur={() => setImporto(importo)} // Mantieni il valore formattato
