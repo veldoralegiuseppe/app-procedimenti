@@ -150,12 +150,28 @@ function mockedProcedimento() {
   });
 }
 
+function mockedRegole(){
+  const regoleMockate = [
+    {
+      espressione: {
+        target: { key: 'compensoMediatore', label: 'Compenso Mediatore', type: 'number' },
+        formula: 'SOMMA SPESE POSTALI DELLE PARTI * 1.2'
+      },
+      condizioni: [
+        { campo: { key: 'valoreControversia', label: 'Valore Controversia', type: 'number' }, operatore: '>', valore: 1000 }
+      ],
+      stato: 'ATTIVA'
+    },
+  ];
+
+  return regoleMockate;
+}
 
 export const ProcedimentoProvider = ({ children }) => {
   const [procedimento, setProcedimento] = React.useState(new Procedimento());
   const metadatiProcedimento = React.useRef(new ProcedimentoMetadata());
-  const [persone, setPersone] = React.useState(mockedPersone());
-  const [regole, setRegole] = React.useState([]);
+  const [persone, setPersone] = React.useState([]);
+  const [regole, setRegole] = React.useState(mockedRegole());
   const [showAlert, setShowAlert] = React.useState(false);
   const [alertSeverity, setAlertSeverity] = React.useState('error');
   const [alertMessage, setAlertMessage] = React.useState(null);

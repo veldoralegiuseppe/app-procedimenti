@@ -5,7 +5,9 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  TableFooter,
   Chip,
+  Button,
 } from '@mui/material';
 import { styled } from '@mui/system';
 import * as React from 'react';
@@ -13,6 +15,7 @@ import PropTypes from 'prop-types';
 import TrendingDownIcon from '@mui/icons-material/TrendingDown';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import ImportoInput from '@components/ImportoInput';
+import { CssTextField } from '@theme/MainTheme';
 
 const StyledTableHead = styled(TableHead)(({ theme }) => ({
   backgroundColor: theme.palette.background.default,
@@ -48,6 +51,7 @@ function TableHeader({ metadata }) {
   );
 }
 
+// Celle 
 function ImportoCell({ importo }) {
   return (
     <TableCell sx={{ paddingLeft: '4px' }} align="left">
@@ -108,14 +112,20 @@ function NomeTransazioneCell({ nome, tipo }) {
   let icon;
   switch (tipo) {
     case 'entrata':
-      color = '#176938'
+      color = '#176938';
       icon = (
-        <TrendingUpIcon style={{ color: 'green', marginRight: '8px', marginBottom: '3px' }} />
+        <TrendingUpIcon
+          style={{ color: 'green', marginRight: '8px', marginBottom: '3px' }}
+        />
       );
       break;
     case 'uscita':
-      color = 'rgb(199 49 49)'
-      icon = <TrendingDownIcon style={{ color: 'inherit', marginRight: '8px', marginBottom: '3px'}} />;
+      color = 'rgb(199 49 49)';
+      icon = (
+        <TrendingDownIcon
+          style={{ color: 'inherit', marginRight: '8px', marginBottom: '3px' }}
+        />
+      );
       break;
     default:
       icon = null;
@@ -123,7 +133,14 @@ function NomeTransazioneCell({ nome, tipo }) {
 
   return (
     <TableCell align="left" sx={{ paddingLeft: '4px' }}>
-      <div style={{display: 'flex', alignItems: 'center', color: color, fontSize: '1rem'}}>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          color: color,
+          fontSize: '1rem',
+        }}
+      >
         {icon}
         <span>{nome}</span>
       </div>
@@ -131,7 +148,53 @@ function NomeTransazioneCell({ nome, tipo }) {
   );
 }
 
-export default function TabellaSpese({ metadata, body }) {
+// Footer
+function AggiungiTransazioneFooter({ metadata }) {
+  return (
+    <TableFooter>
+      <TableRow>
+        <TableCell colSpan={metadata.length}>
+          <Button variant="outlined" color="primary" fullWidth>
+            Aggiungi transazione
+          </Button>
+        </TableCell>
+      </TableRow>
+    </TableFooter>
+  );
+}
+
+// Righe
+function RowCreazioneTransazione({ metadata }) {
+  return (
+    <TableRow>
+      {metadata.map((col, index) => {
+        switch (col.columnType) {
+          case 'importo':
+            return <ImportoCell key={`importo-${index}`} importo={0} />;
+          case 'stato':
+            return (
+              <TableCell key={`stato-${index}`} align="left">
+                <Button size="small">
+                  Aggiungi
+                </Button>
+              </TableCell>
+            );
+          default:
+            return (
+              <TableCell key={`cell-${index}`} align="left">
+                <CssTextField
+                  size="small"
+                  label="Nome transazione"
+                />
+              </TableCell>
+            );
+        }
+      })}
+    </TableRow>
+  );
+}
+
+export default function TabellaSpese({ metadata, body, createable }) {
   return (
     <TableContainer>
       <Table size="small">
@@ -152,7 +215,7 @@ export default function TabellaSpese({ metadata, body }) {
                         stato={col}
                       />
                     );
-                  default:
+                  default: {
                     return (
                       <NomeTransazioneCell
                         key={`${col}-${index}`}
@@ -162,10 +225,12 @@ export default function TabellaSpese({ metadata, body }) {
                         }
                       />
                     );
+                  }
                 }
               })}
             </TableRow>
           ))}
+          {createable && <RowCreazioneTransazione metadata={metadata} />}
         </TableBody>
       </Table>
     </TableContainer>

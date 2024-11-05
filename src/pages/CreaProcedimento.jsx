@@ -5,14 +5,9 @@ import { useTheme } from '@mui/material/styles';
 
 import Breadcrumbs from '@components/Breadcrumbs.jsx';
 import Stepper from '@components/Stepper';
-import {
-  ProcedimentoProvider,
-} from '@context/Procedimento';
 import DatiGeneraliProcedimento from '@pages/StepDatiGeneraliProcedimento';
 import PartiControparti from '@pages/StepPartiControparti';
 import RiepilogoProcedimento from '@pages/StepRiepilogoProcedimento';
-import StepMediatore from './StepMediatore';
-import StepDemandata from './StepMediatoreDemandata';
 import RobotToolbar from '@components/RobotToolbar';
 
 export default function CreaProcedimento() {
@@ -21,14 +16,11 @@ export default function CreaProcedimento() {
   const steps = [
     { label: 'Dati generali', component: <DatiGeneraliProcedimento /> },
     { label: 'Parti e controparti', component: <PartiControparti /> },
-    { label: 'Mediatore', component: <StepMediatore /> },
-    { label: 'Demandata', component: <StepDemandata /> },
-    { label: 'Compenso spese secondaria', component: <StepDemandata /> },
     { label: 'Riepilogo', component: <RiepilogoProcedimento /> },
   ];
 
   return (
-    <ProcedimentoProvider>
+    <React.Fragment>
       <div
         style={{
           display: 'flex',
@@ -82,6 +74,6 @@ export default function CreaProcedimento() {
         <Stepper steps={steps} />
         <RobotToolbar />
       </div>
-    </ProcedimentoProvider>
+    </React.Fragment>
   );
 }

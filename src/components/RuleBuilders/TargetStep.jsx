@@ -60,6 +60,7 @@ class TargetsFactory {
 export default function TargetStep({
   target,
   onUpdate,
+  mode,
 }) {
   // Style
   const theme = useTheme();
@@ -69,6 +70,7 @@ export default function TargetStep({
   // State
   const [targetSelezionato, setTargetSelezionato] = useState(target || null);
   const [listaTarget, setListaTarget] = useState([]);
+  console.log('targetSelezionato', targetSelezionato);
 
   // Handlers
   const handleChanged = (event, selectedTarget) => {
@@ -78,11 +80,9 @@ export default function TargetStep({
 
   // Effetti
   React.useEffect(() => {
-    setListaTarget(
-      TargetsFactory.getTargetsStrategy(
-        context
-      ).getTargets()
-    );
+    const listaTarget = TargetsFactory.getTargetsStrategy(context).getTargets();
+    setListaTarget(listaTarget);
+    if(target) setTargetSelezionato(listaTarget.find((t) => t.key === target.key));
   }, []);
 
   // Funzioni di utilità
@@ -125,6 +125,7 @@ export default function TargetStep({
       </Typography>
       <Autocomplete
         size="small"
+        disabled={mode !== 'create'}
         groupBy={(option) => option?.scope || ''}
         options={listaTarget}
         value={targetSelezionato || ''}

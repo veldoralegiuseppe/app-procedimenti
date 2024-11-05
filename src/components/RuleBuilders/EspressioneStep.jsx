@@ -110,36 +110,56 @@ export default function NumberRuleBuilder({ onUpdate, espressione }) {
   );
 
   // State
-  const [variabili, setVariabili] = useState([]);
+  const [variabili, setVariabili] = useState(
+    EspressioneStrategy.current.getVariabiliPredefinite()
+  );
   const [selectedVariables, setSelectedVariables] = useState([]);
   const [error, setError] = useState(false);
   const [helperText, setHelperText] = useState('');
   const [expression, setExpression] = useState(espressione?.formula || '');
+  const [aliasMap, setAliasMap] = useState({});
+  const [scope, setScope] = useState({});
+
+  // Constants
+  const operators = ['Canc'];
 
   // Effects
   React.useEffect(() => {
-    console.log('useEffect expression', expression);
+    // Crea un alias per ogni variabile
+    const newAliasMap = variabili.reduce((acc, variable, index) => {
+      const alias = `VAR${index}`;
+      acc[variable.label.toUpperCase()] = alias;
+      return acc;
+    }, {});
 
+    const newScope = variabili.reduce((acc, variable, index) => {
+      const alias = newAliasMap[variable.label.toUpperCase()];
+      acc[alias] = variable.value && variable.value > 0 ? variable.value : 1; // per evitare errori di divisione per zero
+      return acc;
+    }, {});
+
+    setAliasMap(newAliasMap);
+    setScope(newScope);
+
+    // Trasforma l'espressione usando aliasMap appena creato
     const transformedExpression = expression?.replace(
       new RegExp(
-        Object.keys(aliasMap)
+        Object.keys(newAliasMap)
           .map((key) => `\\b${key}\\b`)
           .join('|'),
         'g'
       ),
-      (matched) => aliasMap[matched]
+      (matched) => newAliasMap[matched]
     );
 
+    //console.log('transformedExpression', transformedExpression);
+
     if (
-      (!transformedExpression ||
-      transformedExpression.trim() != '') &&
-      validateExpression(transformedExpression)
+      transformedExpression &&
+      transformedExpression.trim() !== '' &&
+      validateExpression(transformedExpression, newScope, newAliasMap)
     ) {
       console.log("L'espressione è valida");
-    //   console.log(
-    //     'espressione risolta',
-    //     EspressioneStrategy.current.resolve(expression)
-    //   );
       if (onUpdate) {
         onUpdate({
           espressione: {
@@ -154,35 +174,7 @@ export default function NumberRuleBuilder({ onUpdate, espressione }) {
         onUpdate({ espressione: { ...espressione, formula: undefined } });
       }
     }
-  }, [expression]);
-
-  React.useEffect(() => {
-    setVariabili(EspressioneStrategy.current.getVariabiliPredefinite());
-  }, []);
-
-  // Constants
-  const operators = ['Canc'];
-
-  const aliasMap =
-    variabili.length > 0
-      ? variabili.reduce((acc, variable, index) => {
-          const alias = `VAR${index}`; // alias univoco per ogni variabile
-          acc[variable.label.toUpperCase()] = alias;
-          return acc;
-        }, {})
-      : {};
-  //console.log('aliasMap', aliasMap);
-
-  const scope =
-    variabili.length > 0
-      ? variabili.reduce((acc, variable, index) => {
-          const alias = aliasMap[variable.label.toUpperCase()];
-          acc[alias] =
-            variable.value && variable.value > 0 ? variable.value : 1; // per evitare errori di divisione per zero
-          return acc;
-        }, {})
-      : {};
-  //console.log('scope', scope);
+  }, [expression, variabili]);
 
   // Handlers
   const filteredVariables = variabili.filter(
@@ -243,17 +235,19 @@ export default function NumberRuleBuilder({ onUpdate, espressione }) {
     return message; // Return the original message if no translation is found
   };
 
-  const validateExpression = (transformedExpression) => {
+  const validateExpression = (transformedExpression, scope, aliasMap) => {
     try {
       // Esegui il parsing dell'espressione trasformata
       const parsedExpression = parse(transformedExpression);
-      //console.log('parsedExpression', parsedExpression);
+      console.log('parsedExpression', parsedExpression);
 
       // Funzione ricorsiva per validare operatori e alias delle variabili
       const validateOperatorsAndVariables = (node) => {
         //console.log('node', node);
         if (node.isSymbolNode) {
           const variableName = node.name;
+          console.log('variableName', variableName);
+          console.log('aliasMap', aliasMap);
           if (!Object.values(aliasMap).includes(variableName)) {
             throw new Error(`Variabile non valida: ${variableName}`);
           }
@@ -270,6 +264,7 @@ export default function NumberRuleBuilder({ onUpdate, espressione }) {
       validateOperatorsAndVariables(parsedExpression);
 
       // Valuta l'espressione trasformata usando il contesto `scope`
+      //console.log('scope', scope);
       let result = evaluate(transformedExpression, scope);
       //console.log('resultEvaluate', result);
       if (result === Infinity || result === -Infinity) {

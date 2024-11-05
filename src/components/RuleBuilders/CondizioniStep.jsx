@@ -6,7 +6,7 @@ import Popper from '@mui/material/Popper';
 import { CssTextField } from '@theme/MainTheme';
 import ImportoInput from '@components/ImportoInput';
 import { ProcedimentoContext } from '@context/Procedimento';
-import { Target } from '@model/regola';
+import { Target, operatoriMap } from '@model/regola';
 import Select from '@components/Select';
 import { oggettiControversia, esitiMediazione } from '@model/procedimento';
 
@@ -54,7 +54,7 @@ class ContextStrategy extends Component {
     fields = Object.values(metadatiProcedimento.current)
       .filter((field) => this._campiCondizioni.includes(field.key))
       .map((field) => ({
-        ...new Target(field.key, field.label, field.type, field.descrizione),
+        ...new Target(field.key, field.label, field.type),
         scope: field.descrizione,
         valore: this.getTargetValue(field),
       }));
@@ -64,8 +64,7 @@ class ContextStrategy extends Component {
 
   getTargetValue(campo) {
     const { procedimento } = this._context;
-    console.log('procedimento', procedimento);
-
+   
     switch (campo.descrizione) {
       case 'DATI GENERALI':
         return procedimento[campo.key];
@@ -131,7 +130,6 @@ const TargetInput = ({
   const [error, setError] = useState(null);
 
   React.useEffect(() => {
-    console.log('verifico errori');
     setError(checkForErrors(value, condizione, isMin));
   }, [value, condizione, isMin]);
 
@@ -200,7 +198,6 @@ export default function ContextStep({ condizioni, onUpdate }) {
         });
     });
     setCondizioniLocal([...updatedCondizioni]);
-    console.log('condizioniLocali', [...updatedCondizioni]);
     onUpdate({ condizioni: [...updatedCondizioni] });
   };
   const handleChipDelete = (target) => {
@@ -236,34 +233,15 @@ export default function ContextStep({ condizioni, onUpdate }) {
       onUpdate({ condizioni: [...condizioniLocal] });
     }
   };
-  const operatoriMap = {
-    number: {
-      '>': (a, b) => a > b,
-      '≥': (a, b) => a >= b,
-      '<': (a, b) => a < b,
-      '≤': (a, b) => a <= b,
-      '=': (a, b) => a === b,
-      'compreso tra': (a, b) => a >= b[0] && a <= b[1],
-    },
-    string: {
-      '=': (a, b) => a === b,
-      contiene: (a, b) => a.includes(b),
-      'non contiene': (a, b) => !a.includes(b),
-    },
-    datetime: {
-      '>': (a, b) => new Date(a) > new Date(b),
-      '<': (a, b) => new Date(a) < new Date(b),
-      '=': (a, b) => new Date(a).getTime() === new Date(b).getTime(),
-    },
-  };
 
   // Effetti
   React.useEffect(() => {
-    setCampi(
-      ContextStrategy.current
-        .getTargets()
-        .filter((target) => !campiSelezionati.includes(target))
+    const listaCampi = ContextStrategy.current.getTargets();
+    const campiSelezionati = listaCampi.filter((target) =>
+      condizioni?.some((condizione) => condizione.campo.key === target.key) || false
     );
+    setCampi(listaCampi);
+    setCampiSelezionati(campiSelezionati);
   }, []);
 
   // Render

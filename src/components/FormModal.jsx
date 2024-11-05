@@ -6,7 +6,7 @@ import { useTheme } from '@mui/material/styles';
 
 import NotificationAlert from '@components/NotificationAlert';
 
-export default function FormModal({ open, handleClose, title = "", children}) {
+export default function FormModal({ open, handleClose, title = '', children }) {
   const theme = useTheme();
   const [showAlert, setShowAlert] = React.useState(false);
   const [alertSeverity, setAlertSeverity] = React.useState('error');
@@ -50,7 +50,7 @@ export default function FormModal({ open, handleClose, title = "", children}) {
         >
           <Typography
             variant="h5"
-            component="h2" 
+            component="h2"
             sx={{ color: 'white', marginLeft: '32px' }}
           >
             {title}
@@ -58,7 +58,14 @@ export default function FormModal({ open, handleClose, title = "", children}) {
         </div>
 
         {/* Form */}
-        {React.Children.map(children, (child) => React.cloneElement(child, {onError: onFormError, handleClose: handleClose}))}
+        {React.Children.map(children, (child) =>
+          child
+            ? React.cloneElement(child, {
+                onError: onFormError,
+                handleClose: handleClose,
+              })
+            : null
+        )}
 
         {/* Alert */}
         <NotificationAlert

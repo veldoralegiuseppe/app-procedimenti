@@ -563,23 +563,6 @@ export default function TabellaPartiControparti({ onDelete }) {
 
     if (!persone || persone.length == 0) return rows;
 
-    // if (!persone || persone.length === 0) {
-    //   rows.push({
-    //     id: null,
-    //     anagrafica: 'Nessuna parte inserita',
-    //     tipo: '',
-    //     speseAvvio: '',
-    //     spesePostali: '',
-    //     pagamentoIndennita: '',
-    //     importoMancatoAccordo: '',
-    //     importoPositivoPrimoIncontro: '',
-    //     importoPositivoOltrePrimoIncontro: '',
-    //     totale: '',
-    //     open: false,
-    //   });
-    //   return rows;
-    // }
-
     persone.forEach((persona, index) => {
       if (
         !persona ||
@@ -871,7 +854,10 @@ export default function TabellaPartiControparti({ onDelete }) {
             `${from}-${to} di ${count !== -1 ? count : `più di ${to}`}`
           }
         />
-        <EnhancedTableToolbar numSelected={selected == -1 ? 0 : 1} handleDelete={handleDelete} />
+        <EnhancedTableToolbar
+          numSelected={selected == -1 ? 0 : 1}
+          handleDelete={handleDelete}
+        />
       </Paper>
     </Box>
   );

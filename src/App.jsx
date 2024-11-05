@@ -6,10 +6,9 @@ import { CssBaseline } from '@mui/material/';
 import Navbar from '@components/Navbar';
 import { themeOne, ContentGrid } from '@theme/MainTheme';
 import { RouteContext, getRoute } from '@context/Route';
-
+import { ProcedimentoProvider } from '@context/Procedimento';
 
 const root = createRoot(document.getElementById('mainContainer'));
-
 
 root.render(<App></App>);
 
@@ -23,8 +22,9 @@ function App() {
     >
       <ThemeProvider theme={themeOne}>
         <CssBaseline />
-        <Navbar 
-          onButtonClick={setPath} 
+
+        <Navbar
+          onButtonClick={setPath}
           sx={{
             transition: 'background-color 0.3s ease', // transizione per cambio di colore
             '&:hover': {
@@ -32,19 +32,21 @@ function App() {
             },
           }}
         ></Navbar>
-        <ContentGrid
-          container 
-          spacing={0} 
-          sx={{
-            margin: `0 !important`,
-            backgroundColor: 'background.paper',
-            padding: '2rem 5rem',
-            minHeight: '100vh',
-            minWidth: '100%',
-          }}
-        >
-          {getRoute(path).component}
-        </ContentGrid>
+        <ProcedimentoProvider>
+          <ContentGrid
+            container
+            spacing={0}
+            sx={{
+              margin: `0 !important`,
+              backgroundColor: 'background.paper',
+              padding: '2rem 5rem',
+              minHeight: '100vh',
+              minWidth: '100%',
+            }}
+          >
+            {getRoute(path).component}
+          </ContentGrid>
+        </ProcedimentoProvider>
       </ThemeProvider>
     </RouteContext.Provider>
   );

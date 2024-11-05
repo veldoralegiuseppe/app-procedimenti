@@ -19,13 +19,15 @@ import Slide from '@mui/material/Slide';
 import ProtocolloInput from '@components/ProtocolloInput';
 import ImportoInput from '@components/ImportoInput';
 import { CssTextField, ClearButton, labelColor } from '@theme/MainTheme';
-import { Procedimento } from '@model/procedimento';
+import { Procedimento, oggettiControversia, modalitaSvolgimento, causaliDemandata, esitiMediazione } from '@model/procedimento';
 import Select from '@components/Select';
 import { ProcedimentoContext } from '@context/Procedimento';
 import NumberInput from '@components/NumberInput';
 import SelectQualificaPersona from '@components/SelectQualificaPersona';
 import TabellaSpese from '../components/TabellaSpese';
-import { type } from '@testing-library/user-event/dist/cjs/utility/type.js';
+import {calculateValueByActiveRule} from '@model/regola';
+
+
 
 // Constants
 const inputHeight = 36;
@@ -62,8 +64,8 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
     const formLabelColor = '#467bae';
 
     // Context
-    const { procedimento, setProcedimento } =
-      React.useContext(ProcedimentoContext);
+    const procedimentoContext = React.useContext(ProcedimentoContext);
+    const { procedimento, setProcedimento } = procedimentoContext;
 
     // State
     const [initialProc] = React.useState(new Procedimento()); // Stato iniziale da comparare
@@ -81,42 +83,6 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
 
     // Refs
     const containerFormDemandataRef = React.useRef(null);
-
-    // Select options
-    const oggettiControversia = [
-      'ALTRE NATURE DELLA CONTROVERSIA',
-      'CONTRATTI BANCARI',
-      'CONTRATTI FINANZIARI',
-      "CONTRATTI D'OPERA",
-      'CONTRATTI DI RETE',
-      'CONTRATTI DI SOMMINISTRAZIONE',
-      'CONSORZIO',
-      'DIRITTI REALI',
-      'DIVISIONE',
-      'FRANCHISING',
-      'LOCAZIONE',
-      'PATTI DI FAMIGLIA',
-      'RESPONSABILITÀ MEDICA',
-      'RISARCIMENTO DANNI MEZZO STAMPA',
-      'SUCCESSIONE EREDITARIA',
-      'SOCIETÀ DI PERSONE',
-      'SUBFORNITURA',
-    ];
-    const esitiMediazione = [
-      'IN CORSO',
-      'NEGATIVO INCONTRO FILTRO',
-      'NEGATIVO MANCATA ADESIONE',
-      'NEGATIVO MANCATO ACCORDO',
-      'POSITIVO',
-    ];
-    const modalitaSvolgimento = ['PRESENZA', 'TELEMATICA', 'TELEMATICA MISTA'];
-    const causaliDemandata = [
-      'CONDIZIONE DI PROCEDIBILITÀ',
-      'DEMANDATA DAL GIUDICE PER IMPROCEDIBILITÀ',
-      'DEMANDATA DAL GIUDICE PER LE MATERIE NON OBBLIGATORIE',
-      'DEMANDATA DAL GIUDICE PER MANCATA CONCILIAZIONE',
-      'VOLONTARIA IN MATERIA DI',
-    ];
 
     // UseImperativeHandle
     const requiredFields = [
@@ -888,6 +854,7 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
             </Typography>
           </Grid>
 
+          {/* Tabella spese */}
           <Grid size={{ xs: 12 }}>
             <TabellaSpese
               metadata={[
@@ -898,7 +865,7 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
               body={[
                 [{nome:'Incasso dalle parti', tipo: 'entrata'}, 0, 'da saldare',],
                 [{nome: 'Incasso dalle controparti', tipo: 'entrata'}, 0, 'da saldare'],
-                [{nome:'Compenso mediatore', tipo: 'uscita'}, 0, 'da saldare'],
+                [{nome:'Compenso mediatore', tipo: 'uscita'}, calculateValueByActiveRule('compensoMediatore', procedimentoContext) || 0, 'da saldare'],
               ]}
             />
           </Grid>
