@@ -19,15 +19,19 @@ import Slide from '@mui/material/Slide';
 import ProtocolloInput from '@components/ProtocolloInput';
 import ImportoInput from '@components/ImportoInput';
 import { CssTextField, ClearButton, labelColor } from '@theme/MainTheme';
-import { Procedimento, oggettiControversia, modalitaSvolgimento, causaliDemandata, esitiMediazione } from '@model/procedimento';
+import {
+  Procedimento,
+  oggettiControversia,
+  modalitaSvolgimento,
+  causaliDemandata,
+  esitiMediazione,
+} from '@model/procedimento';
 import Select from '@components/Select';
 import { ProcedimentoContext } from '@context/Procedimento';
 import NumberInput from '@components/NumberInput';
 import SelectQualificaPersona from '@components/SelectQualificaPersona';
 import TabellaSpese from '../components/TabellaSpese';
-import {calculateValueByActiveRule} from '@model/regola';
-
-
+import { calculateValueByActiveRule } from '@model/regola';
 
 // Constants
 const inputHeight = 36;
@@ -65,7 +69,7 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
 
     // Context
     const procedimentoContext = React.useContext(ProcedimentoContext);
-    const { procedimento, setProcedimento } = procedimentoContext;
+    const { procedimento, setProcedimento, regole } = procedimentoContext;
 
     // State
     const [initialProc] = React.useState(new Procedimento()); // Stato iniziale da comparare
@@ -80,6 +84,12 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
       React.useState(
         procedimento.causaleDemandata === CAUSALE_VOLONTARIA_IN_MATERIA
       );
+    const [
+      automatedValueCompensoMediatore,
+      setAutometedValueCompensoMediatore,
+    ] = React.useState(
+      calculateValueByActiveRule('compensoMediatore', procedimentoContext)
+    );
 
     // Refs
     const containerFormDemandataRef = React.useRef(null);
@@ -113,6 +123,13 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
         //enableNextStep(true)
       }
     }, [errors, procedimento]);
+
+    React.useEffect(() => {
+      setAutometedValueCompensoMediatore(
+        calculateValueByActiveRule('compensoMediatore', procedimentoContext)
+      );
+
+    }, [regole]);
 
     // Handlers
     const handleReset = () => {
@@ -858,14 +875,32 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
           <Grid size={{ xs: 12 }}>
             <TabellaSpese
               metadata={[
-                { columnName: 'Transazione', },
+                { columnName: 'Transazione' },
                 { columnType: 'importo', columnName: 'importo' },
                 { columnType: 'stato', columnName: 'stato' },
               ]}
               body={[
-                [{nome:'Incasso dalle parti', tipo: 'entrata'}, 0, 'da saldare',],
-                [{nome: 'Incasso dalle controparti', tipo: 'entrata'}, 0, 'da saldare'],
-                [{nome:'Compenso mediatore', tipo: 'uscita'}, calculateValueByActiveRule('compensoMediatore', procedimentoContext) || 0, 'da saldare'],
+                [
+                  { nome: 'Incasso dalle parti', tipo: 'entrata' },
+                  0,
+                  'da saldare',
+                ],
+                [
+                  { nome: 'Incasso dalle controparti', tipo: 'entrata' },
+                  0,
+                  'da saldare',
+                ],
+                [
+                  { nome: 'Compenso mediatore', tipo: 'uscita' },
+                  automatedValueCompensoMediatore != null &&
+                  automatedValueCompensoMediatore != undefined
+                    ? {
+                        value: automatedValueCompensoMediatore,
+                        automated: true,
+                      }
+                    : 0,
+                  'da saldare',
+                ],
               ]}
             />
           </Grid>

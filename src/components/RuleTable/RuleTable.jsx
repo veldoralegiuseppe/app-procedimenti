@@ -19,6 +19,8 @@ import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 
+
+const borderBottomStyle = '1px solid rgba(224, 224, 224, 1)';
 const StyledTableHead = styled(TableHead)(({ theme }) => ({
   backgroundColor: theme.palette.background.default,
 }));
@@ -39,7 +41,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 }));
 
 function TableHeader({ metadata }) {
-  console.log(metadata);
+  //console.log(metadata);
   return (
     <StyledTableHead>
       <TableRow key={'header-row'}>
@@ -54,18 +56,23 @@ function TableHeader({ metadata }) {
 }
 
 // Celle
-function SwitchCell({ stato }) {
+function SwitchCell({ stato, onChange }) {
   const [localStato, setLocalStato] = React.useState(stato || 'DISATTIVA');
 
   const handleStatusChange = () => {
     const newStatus = localStato === 'ATTIVA' ? 'DISATTIVA' : 'ATTIVA';
     setLocalStato(newStatus);
-    console.log(newStatus);
+    if (onChange) onChange(newStatus);
+    //console.log(newStatus);
   };
 
   return (
     <TableCell sx={{ paddingLeft: 0, maxWidth: '8rem' }} align="left">
-      <Switch size='small' checked={localStato === 'ATTIVA'} onChange={handleStatusChange} />
+      <Switch
+        size="small"
+        checked={localStato === 'ATTIVA'}
+        onChange={handleStatusChange}
+      />
     </TableCell>
   );
 }
@@ -104,8 +111,12 @@ function ChipCell({ stato }) {
   const [localStato, setLocalStato] = React.useState(stato || 'NON APPLICATA');
 
   const statusOptions = {
-    "NON APPLICATA": { label: 'DA SALDARE', color: '#e0e0e0', textColor: '#616161' },
-    "APPLICATA": { label: 'SALDATO', color: '#c8e6c9', textColor: '#2e7d32' },
+    'NON APPLICATA': {
+      label: 'DA SALDARE',
+      color: '#e0e0e0',
+      textColor: '#616161',
+    },
+    APPLICATA: { label: 'SALDATO', color: '#c8e6c9', textColor: '#2e7d32' },
   };
 
   const chipStyles = {
@@ -119,11 +130,7 @@ function ChipCell({ stato }) {
 
   return (
     <TableCell sx={{ paddingLeft: 0, maxWidth: '8rem' }} align="left">
-      <Chip
-        size="small"
-        label={localStato}
-        sx={chipStyles}
-      />
+      <Chip size="small" label={localStato} sx={chipStyles} />
     </TableCell>
   );
 }
@@ -139,7 +146,15 @@ function EmptyRow({ metadata }) {
   );
 }
 
-function Row({ metadata, row, index, getCollapsibleComponent, handleDelete, handleModify }) {
+function Row({
+  metadata,
+  row,
+  index,
+  getCollapsibleComponent,
+  handleDelete,
+  handleModify,
+  handleAttivoChange,
+}) {
   const isCollapsible = metadata.some(
     (row) => row.columnType === 'collapsible'
   );
@@ -149,13 +164,19 @@ function Row({ metadata, row, index, getCollapsibleComponent, handleDelete, hand
     <React.Fragment key={`fragment-row-${index}`}>
       <TableRow
         key={`main-row-${index}`}
-        sx={{ '& > *': { borderBottom: 'unset' } }}
+        sx={{ '& > *': { borderBottom: isCollapsible ? 'unset' : borderBottomStyle } }}
       >
         {row.map((col, cellIndex) => {
           const cellKey = `main-${col}-${cellIndex}-${index}`;
           switch (metadata[cellIndex].columnType) {
             case 'switch':
-              return <SwitchCell key={cellKey} stato={col} />;
+              return (
+                <SwitchCell
+                  key={cellKey}
+                  stato={col}
+                  onChange={(status) => handleAttivoChange(index, status)}
+                />
+              );
             case 'chip':
               return <ChipCell key={cellKey} stato={col} />;
             case 'azioni':
@@ -194,7 +215,7 @@ function Row({ metadata, row, index, getCollapsibleComponent, handleDelete, hand
         <TableRow key={`collapsible-row-${index}`}>
           <TableCell
             key={`collapsible-cell-${index}`}
-            style={{ paddingBottom: 0, paddingTop: 0 }}
+            style={{ paddingBottom: 0, paddingTop: 0, borderBottom: borderBottomStyle }}
             colSpan={metadata.length}
           >
             <Collapse in={open} timeout="auto" unmountOnExit>
@@ -210,7 +231,15 @@ function Row({ metadata, row, index, getCollapsibleComponent, handleDelete, hand
 }
 
 // Body
-export default function RuleTable({ metadata, body, getCollapsibleComponent, onDelete, onModify, sx}) {
+export default function RuleTable({
+  metadata,
+  body,
+  getCollapsibleComponent,
+  onDelete,
+  onModify,
+  handleAttivoChange,
+  sx,
+}) {
   const [localBody, setLocalBody] = React.useState(() => {
     if (metadata.some((col) => col.columnType === 'collapsible')) {
       const collapsibleIndex = metadata.findIndex(
@@ -225,19 +254,36 @@ export default function RuleTable({ metadata, body, getCollapsibleComponent, onD
     return body;
   });
 
+  // Aggiungi questo effetto per aggiornare `localBody` quando `body` cambia
+  React.useEffect(() => {
+    setLocalBody(() => {
+      if (metadata.some((col) => col.columnType === 'collapsible')) {
+        const collapsibleIndex = metadata.findIndex(
+          (col) => col.columnType === 'collapsible'
+        );
+        return body.map((row) => {
+          const newRow = [...row];
+          newRow.splice(collapsibleIndex, 0, '');
+          return newRow;
+        });
+      }
+      return body;
+    });
+  }, [body, metadata]);
+
   const handleDelete = (index) => {
     console.log('delete', index);
-    if(onDelete) onDelete(index);
+    if (onDelete) onDelete(index);
     setLocalBody((prev) => prev.filter((_, i) => i !== index));
   };
 
   const handleModify = (index) => {
     console.log('modify', index);
-    if(onModify) onModify(index);
+    if (onModify) onModify(index);
   };
 
   return (
-    <TableContainer sx={{...sx}}>
+    <TableContainer sx={{ ...sx }}>
       <Table size="small">
         <TableHeader metadata={metadata} />
         <TableBody>
@@ -253,6 +299,7 @@ export default function RuleTable({ metadata, body, getCollapsibleComponent, onD
                 getCollapsibleComponent={getCollapsibleComponent}
                 handleDelete={handleDelete}
                 handleModify={handleModify}
+                handleAttivoChange={handleAttivoChange}
               />
             ))
           )}

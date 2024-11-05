@@ -22,10 +22,11 @@ class Condizione {
 }
 
 class Regola {
-  constructor(espressione, condizioni, stato = 'DISATTIVA') {
+  constructor(espressione, condizioni, stato = 'DISATTIVA', isApplicata = false) {
     this.espressione = espressione;
     this.condizioni = condizioni;
     this.stato = stato;
+    this.isApplicata = isApplicata;
   }
 }
 
@@ -44,6 +45,20 @@ const operatoriMap = {
     contiene: (a, b) => a.includes(b),
     'non contiene': (a, b) => !a.includes(b),
   },
+};
+
+const campiCondizione = [
+  'oggettoControversia',
+  'valoreControversia',
+  'esitoMediazione',
+];
+
+const jsOperatorMap = {
+  '>': '>',
+  '≥': '>=',
+  '<': '<',
+  '≤': '<=',
+  '=': '===',
 };
 
 function getVariabiliPredefinite(tipo = 'number') {
@@ -66,8 +81,6 @@ function getVariabiliPredefinite(tipo = 'number') {
         checkContext(context);
         const { persone } = context;
         checkPersone(persone);
-
-        console.log(persone);
 
         return persone
           .filter(
@@ -199,7 +212,7 @@ function areRulesConflicting(regola1, regola2) {
     return condizioni2.some((cond2) => areConditionsOverlapping(cond1, cond2));
   });
 
-  console.log('Condizioni sovrapposte:', overlappingConditions);
+  //console.log('Condizioni sovrapposte:', overlappingConditions);
 
   // Verifica se il numero di condizioni sovrapposte corrisponde a n e m
   const n = condizioni1.length;
@@ -238,13 +251,6 @@ function isNumberConditionOverlapping(cond1, cond2) {
 }
 
 function getConditionRange(cond) {
-  const jsOperatorMap = {
-    '>': '>',
-    '≥': '>=',
-    '<': '<',
-    '≤': '<=',
-    '=': '===',
-  };
   const oper = jsOperatorMap[cond.operatore] || cond.operatore;
   const valore = cond.valore;
   const valoreMin = cond.valoreMin;
@@ -302,23 +308,74 @@ function getEspressione(regola) {
   return regola.espressione.formula;
 }
 
-function getActiveRule(targetKey, regole) {
-  // Filtra le regole attive con il target specificato
-  const regoleAttive = regole.filter(
-    (r) => r.espressione.target.key === targetKey && r.stato === 'ATTIVA'
-  );
+function getActiveRule(targetKey, context) {
+  // Filtra le regole attive, specifiche per il target, e soddisfatte dal contesto
+  const regoleAttive = context.regole
+    .filter(
+      (r) =>
+        r.espressione.target.key === targetKey &&
+        r.stato === 'ATTIVA' &&
+        isRuleSatisfied(r, context)
+    )
+    .sort((a, b) => b.condizioni.length - a.condizioni.length); // Ordina per specificità
 
-  // Trova la regola più specifica (con il maggior numero di condizioni)
-  return regoleAttive.sort((a, b) => b.condizioni.length - a.condizioni.length)[0] || null;
+  // Ritorna la regola più specifica soddisfatta, oppure null se nessuna è valida
+  return regoleAttive[0] || null;
+}
+
+function getActiveRules(context) {
+  // Filtra le regole attive soddisfatte dal contesto
+  return context.regole.filter((r) => r.stato === 'ATTIVA' && isRuleSatisfied(r, context));
+}
+
+function isRuleSatisfied(regola, context) {
+  const { procedimento } = context;
+  //console.log('Procedimento:', procedimento);
+
+  return regola.condizioni.every((condizione) => {
+    let { campo, operatore, valore } = condizione;
+    const valoreContext = procedimento?.[campo.key];
+
+    // Se il valore del contesto è undefined, interrompi e considera la condizione non soddisfatta
+    if (valoreContext === undefined) {
+      console.warn(`Valore per il campo ${campo.key} non trovato nel contesto.`);
+      return false;
+    }
+
+    // Applica l'operatore utilizzando una mappa di operatori per tipo
+    operatore = jsOperatorMap[operatore] || operatore;
+
+    switch (operatore) {
+      case '>':
+        return valoreContext > valore;
+      case '>=':
+        return valoreContext >= valore;
+      case '<':
+        return valoreContext < valore;
+      case '<=':
+        return valoreContext <= valore;
+      case '===':
+        return valoreContext === valore;
+      case 'compreso tra':
+        return Array.isArray(valore) && valoreContext >= valore[0] && valoreContext <= valore[1];
+      case 'contiene':
+        return typeof valoreContext === 'string' && valoreContext.includes(valore);
+      case 'non contiene':
+        return typeof valoreContext === 'string' && !valoreContext.includes(valore);
+      default:
+        console.error(`Operatore non supportato: ${operatore}`);
+        return false;
+    }
+  });
 }
 
 function calculateValueByActiveRule(targetKey, context) {
-  const activeRule = getActiveRule(targetKey, context.regole);
+  const activeRule = getActiveRule(targetKey, context);
   if (!activeRule) return null;
 
   const { espressione } = activeRule;
   const { target, formula } = espressione;
-  console.log('Formula originale:', formula);
+  //console.log('Formula originale:', formula);
 
   // Usa una regex per catturare sequenze di parole separate da spazi
   const evaluatedFormula = formula.replace(/([A-Z\s]+)/g, (match) => {
@@ -339,7 +396,7 @@ function calculateValueByActiveRule(targetKey, context) {
     return match; // Mantieni il nome della variabile se non viene trovata
   });
 
-  console.log('Formula sostituita:', evaluatedFormula);
+  //console.log('Formula sostituita:', evaluatedFormula);
 
   // Esegui la formula con le variabili sostituite
   try {
@@ -353,6 +410,7 @@ function calculateValueByActiveRule(targetKey, context) {
 
 export {
   operatoriMap,
+  campiCondizione,
   Target,
   Regola,
   Condizione,
@@ -361,6 +419,9 @@ export {
   getVariabiliPredefinite,
   getEspressioneCondizione,
   getEspressione,
+  getActiveRule,
+  getActiveRules,
+  isRuleSatisfied,
   validateConflitti,
   calculateValueByActiveRule,
 };

@@ -14,7 +14,6 @@ import RuleTable from '@components/RuleTable/RuleTable';
 import { ProcedimentoContext } from '@context/Procedimento';
 import { getEspressioneCondizione, getEspressione } from '@model/regola';
 import RuleBuilder from '@components/RuleBuilders/RuleBuilder';
-import { height } from '@mui/system';
 
 function FragmentWithProps({ children, onError, sx }) {
   return (
@@ -29,7 +28,7 @@ function FragmentWithProps({ children, onError, sx }) {
 }
 
 const ModaleRegole = ({ open, handleClose, onError }) => {
-  const { regole } = React.useContext(ProcedimentoContext);
+  const { regole, setRegole } = React.useContext(ProcedimentoContext);
   const [mode, setMode] = React.useState('view');
   const [rule, setRule] = React.useState(null);
 
@@ -52,11 +51,38 @@ const ModaleRegole = ({ open, handleClose, onError }) => {
     setMode('create');
   };
 
+  const handleAttivoChange = (index, status) => setRegole((prev) => {
+    const newRegole = [...prev];
+    newRegole[index].stato = status;
+    return newRegole;
+  });
+
+  // Calcola dinamicamente il contenuto di `body` da `regole`
+  let body = regole.map((r) => [
+    r.stato,
+    r.espressione.target.label,
+    getEspressioneCondizione(r) || 'N/A',
+    r.isApplicata ? 'APPLICATA' : 'NON APPLICATA',
+    'N/A',
+  ]);
+
+  React.useEffect(() => {
+    body = regole.map((r) => [
+      r.stato,
+      r.espressione.target.label,
+      getEspressioneCondizione(r) || 'N/A',
+      r.isApplicata ? 'APPLICATA' : 'NON APPLICATA',
+      'N/A',
+    ]);
+
+    //console.log('body update', body);
+  }, [regole]);
+
   const renderContent = () => {
     switch (mode) {
       case 'view':
         return (
-          <FragmentWithProps onError={onError} sx={{height: '100%'}}>
+          <FragmentWithProps onError={onError} sx={{ height: '100%' }}>
             {/* Titolo */}
             <Box
               sx={{
@@ -81,18 +107,13 @@ const ModaleRegole = ({ open, handleClose, onError }) => {
                 { columnName: 'stato', columnType: 'chip' },
                 { columnName: 'azioni', columnType: 'azioni' },
               ]}
-              body={regole.map((r) => [
-                r.stato,
-                r.espressione.target.label,
-                getEspressioneCondizione(r) || 'N/A',
-                'NON APPLICATA',
-                'N/A',
-              ])}
+              body={body}
               getCollapsibleComponent={(row, index) => (
                 <CollapsibleRow row={row} index={index} />
               )}
               onDelete={handleDelete}
               onModify={handleModify}
+              handleAttivoChange={handleAttivoChange}
             />
 
             {/* Button creazione */}
@@ -258,7 +279,7 @@ export default function RobotToolbar({ sx }) {
               boxShadow: 'none !important',
             },
           }}
-          icon={<SvgCartoonRobot style={{ width: '30px' }} />}
+          icon={<SvgCartoonRobot style={{ width: '23px' }} />}
         >
           {actions.map((action) => (
             <SpeedDialAction

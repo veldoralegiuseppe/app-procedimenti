@@ -6,7 +6,7 @@ import Popper from '@mui/material/Popper';
 import { CssTextField } from '@theme/MainTheme';
 import ImportoInput from '@components/ImportoInput';
 import { ProcedimentoContext } from '@context/Procedimento';
-import { Target, operatoriMap } from '@model/regola';
+import { Target, operatoriMap, campiCondizione } from '@model/regola';
 import Select from '@components/Select';
 import { oggettiControversia, esitiMediazione } from '@model/procedimento';
 
@@ -36,11 +36,7 @@ const StyledPopper = styled((props) => <Popper {...props} />)(({ theme }) => ({
 
 class ContextStrategy extends Component {
   _context = null;
-  _campiCondizioni = [
-    'oggettoControversia',
-    'valoreControversia',
-    'esitoMediazione',
-  ];
+  _campiCondizioni = campiCondizione;
 
   constructor(context) {
     super();

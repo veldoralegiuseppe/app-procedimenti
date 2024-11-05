@@ -4,7 +4,7 @@ import EuroSymbolIcon from '@mui/icons-material/EuroSymbol';
 import { CssTextField } from '@theme/MainTheme';
 
 const ImportoInput = ({ onChange, label = "", sx, id, value = 0, error = false, helperText = '' }) => {
-  // State«
+  // State
   const [importo, setImporto] = useState('0,00');
 
   // Utility
@@ -127,7 +127,7 @@ const ImportoInput = ({ onChange, label = "", sx, id, value = 0, error = false, 
   };
 
   const handleValueChange = (event) => {
-    console.log('onChange', event.target.value)
+    //console.log('onChange', event.target.value)
     let inputValue = event.target.value;
     let startCursorPosition = event.target.selectionStart;
     const commaPosition = inputValue.indexOf(',');
@@ -188,7 +188,7 @@ const ImportoInput = ({ onChange, label = "", sx, id, value = 0, error = false, 
     if (!inputValue) {
       setImporto('0,00');
       if (onChange) {
-        console.log('onChange(0)')
+        //console.log('onChange(0)')
         onChange(0);
       }
       return;

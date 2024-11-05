@@ -15,6 +15,7 @@ import PropTypes from 'prop-types';
 import TrendingDownIcon from '@mui/icons-material/TrendingDown';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
 import ImportoInput from '@components/ImportoInput';
+import ImportoReadOnly from '@components/ImportoReadOnly';
 import { CssTextField } from '@theme/MainTheme';
 
 const StyledTableHead = styled(TableHead)(({ theme }) => ({
@@ -37,7 +38,7 @@ const StyledTableCell = styled(TableCell)(({ theme }) => ({
 }));
 
 function TableHeader({ metadata }) {
-  console.log(metadata);
+  //console.log(metadata);
   return (
     <StyledTableHead>
       <TableRow>
@@ -53,9 +54,13 @@ function TableHeader({ metadata }) {
 
 // Celle 
 function ImportoCell({ importo }) {
+  const value = typeof importo === 'object' ? importo.value : importo;
+  const isAutomated = typeof importo === 'object' ? importo.automated : false;
+
   return (
     <TableCell sx={{ paddingLeft: '4px' }} align="left">
-      <ImportoInput value={importo} sx={{ width: '100%', maxWidth: '168px' }} />
+      {!isAutomated &&  <ImportoInput value={value} sx={{ width: '100%', maxWidth: '168px' }} />}
+      {isAutomated &&  <ImportoReadOnly value={value} isAutomated={isAutomated} backgroundColor="#c4c4c438" sx={{ width: '100%', maxWidth: '168px' }} />}
     </TableCell>
   );
 }

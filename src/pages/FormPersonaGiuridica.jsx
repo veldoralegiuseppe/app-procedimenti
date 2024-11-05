@@ -457,6 +457,7 @@ function FormPersonaGiuridica(props, ref) {
           borderColor="#467bae38"
           euroIconColor="#467bae"
           helperTextColor="rgb(105 105 105 / 60%)"
+          helperText="Calcolato automaticamente"
           sx={{ margin: '4rem 20px 10px 0px' }}
         />
       </Grid>
