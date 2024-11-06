@@ -10,7 +10,7 @@ import { PersonaGiuridica } from '@model/personaGiuridica';
 import { Comune } from '@model/comune.js';
 import NotificationAlert from '@components/NotificationAlert';
 import { ProcedimentoMetadata } from '../model/procedimento';
-import { isRuleSatisfied, campiCondizione } from '@model/regola';
+import { isRuleSatisfied, campiCondizione, getActiveRules, equals } from '@model/regola';
 
 
 export const ProcedimentoContext = createContext();
@@ -187,27 +187,17 @@ export const ProcedimentoProvider = ({ children }) => {
 
   // Effetti
   React.useEffect(() => {
+    const regoleAttiveCorrenti = getActiveRules({ procedimento, persone, metadatiProcedimento, regole } )
+    console.log('regoleAttiveCorrenti', regoleAttiveCorrenti);
     const updatedRegole = regole.map(r => ({
       ...r,
-      isApplicata: isRuleSatisfied(r, {procedimento, persone, metadatiProcedimento})
+      isApplicata: regoleAttiveCorrenti.some(rule => equals(rule, r))
     }));
     setRegole(updatedRegole);
-    //console.log('regole update', updatedRegole);
   }, [
-    // Usa useMemo per monitorare solo i campi specificati in `campiCondizione`
     ...React.useMemo(
       () => campiCondizione.map((key) => procedimento[key]),
-      [procedimento]
-    )
-  ]);
-
-  React.useEffect(() => {
-    const updatedRegole = regole.map(r => ({
-      ...r,
-      isApplicata: r.stato === 'DISATTIVA' ? false : isRuleSatisfied(r, { procedimento, persone, metadatiProcedimento })
-    }));
-    setRegole(updatedRegole);
-  }, [
+      [procedimento]),
     JSON.stringify(regole.map(r => r.stato)) // Serializzazione per mantenere una dipendenza costante
   ]);
   

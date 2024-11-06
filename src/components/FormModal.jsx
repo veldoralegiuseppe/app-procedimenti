@@ -24,6 +24,12 @@ export default function FormModal({ open, handleClose, title = '', children }) {
     setAlertSeverity('success');
   };
 
+  const handleCloseModal = () => {
+    setShowAlert(false);
+    setAlertMessage(null);
+    if(handleClose) handleClose();
+  }
+
   // Mantieni lo stesso stile del codice originario
   const style = {
     position: 'absolute',
@@ -41,7 +47,7 @@ export default function FormModal({ open, handleClose, title = '', children }) {
   };
 
   return (
-    <Modal keepMounted open={open} onClose={handleClose}>
+    <Modal keepMounted open={open} onClose={handleCloseModal}>
       <Box sx={style}>
         <div
           style={{
@@ -69,7 +75,6 @@ export default function FormModal({ open, handleClose, title = '', children }) {
             ? React.cloneElement(child, {
                 onError: onFormError,
                 onSuccess: onFormSuccess,
-                handleClose: handleClose,
               })
             : null
         )}

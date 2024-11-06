@@ -22,7 +22,7 @@ function FragmentWithProps({ children, onError, onSuccess, sx }) {
         React.isValidElement(child)
           ? React.cloneElement(child, {
               ...(onError && { onError }), // Passa onError solo se definito
-              ...(child.type && (child.type.name === 'RuleBuilder' || child.type.name === 'RuleTable') && { onSuccess }), // Passa onSuccess solo a RuleBuilder
+              ...(child.type && (child.type.name === 'RuleBuilder' || child.type.name === 'RuleTable') && { onSuccess }), 
             })
           : child
       )}

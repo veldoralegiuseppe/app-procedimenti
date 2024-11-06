@@ -324,8 +324,34 @@ function getActiveRule(targetKey, context) {
 }
 
 function getActiveRules(context) {
-  // Filtra le regole attive soddisfatte dal contesto
-  return context.regole.filter((r) => r.stato === 'ATTIVA' && isRuleSatisfied(r, context));
+  // Filtra le regole attive e soddisfatte nel contesto
+  const regoleAttiveSoddisfatte = context.regole.filter(
+    (regola) => regola.stato === 'ATTIVA' && isRuleSatisfied(regola, context)
+  );
+
+  // Ordina le regole in base alla specificità (numero di condizioni, discendente)
+  regoleAttiveSoddisfatte.sort((a, b) => b.condizioni.length - a.condizioni.length);
+
+  // Filtra solo le regole più specifiche
+  const regoleFiltrate = [];
+  
+  regoleAttiveSoddisfatte.forEach((regola) => {
+    // Controlla se la regola è già coperta da una regola più specifica in `regoleFiltrate`
+    const isCovered = regoleFiltrate.some((regolaSpecifica) =>
+      regola.condizioni.every((condizione) =>
+        regolaSpecifica.condizioni.some((condSpecifica) =>
+          areConditionsOverlapping(condizione, condSpecifica)
+        )
+      )
+    );
+
+    // Aggiungi la regola solo se non è coperta da una regola più specifica
+    if (!isCovered) {
+      regoleFiltrate.push(regola);
+    }
+  });
+
+  return regoleFiltrate;
 }
 
 function isRuleSatisfied(regola, context) {

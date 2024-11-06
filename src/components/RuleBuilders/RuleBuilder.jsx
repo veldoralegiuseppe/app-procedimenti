@@ -70,7 +70,7 @@ export default function RuleBuilder({
     console.log('rule', rule);
     const conflittiResult = validateConflitti(regola, regole);
 
-    if (!conflittiResult.applicabile) {
+    if (conflittiResult && !conflittiResult.applicabile) {
       console.log(
         'Conflitto rilevato con regole esistenti',
         conflittiResult.messaggio
