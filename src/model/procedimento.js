@@ -20,6 +20,8 @@ export class Procedimento {
     incassoParti = 0,
     incassoControparti = 0,
     compensoMediatore = 0,
+    speseAvvioSedeSecondaria = 0,
+    speseIndennitaSedeSecondaria = 0,
     isDemandata = false,
     causaleDemandata,
     materiaCausaleDemandata,
@@ -44,6 +46,8 @@ export class Procedimento {
     this.incassoParti = incassoParti;
     this.incassoControparti = incassoControparti;
     this.compensoMediatore = compensoMediatore;
+    this.speseAvvioSedeSecondaria = speseAvvioSedeSecondaria;
+    this.speseIndennitaSedeSecondaria = speseIndennitaSedeSecondaria;
   }
 
   getProtocollo() {
@@ -169,7 +173,7 @@ export class ProcedimentoMetadata {
   };
   compensoMediatore = {
     key: 'compensoMediatore',
-    label: 'Compenso Mediatore',
+    label: 'Compenso mediatore',
     type: 'number',
     descrizione: 'DATI GENERALI',
   };
@@ -191,7 +195,20 @@ export class ProcedimentoMetadata {
     type: 'string',
     descrizione: 'DATI GENERALI',
   };
+  speseAvvioSedeSecondaria = {
+    key: 'speseAvvioSedeSecondaria',
+    label: 'Spese avvio sede secondaria',
+    type: 'number',
+    descrizione: 'DATI GENERALI',
+  };
+  speseIndennitaSedeSecondaria = {
+    key: 'speseIndennitaSedeSecondaria',
+    label: 'Spese indennità sede secondaria',
+    type: 'number',
+    descrizione: 'DATI GENERALI',
+  };
 }
+export const sedePrincipale = 'NOLA';
 
 export const esitiMediazione = [
   'IN CORSO',
