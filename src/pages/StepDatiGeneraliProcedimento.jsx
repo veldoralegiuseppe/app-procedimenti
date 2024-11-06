@@ -25,6 +25,7 @@ import {
   modalitaSvolgimento,
   causaliDemandata,
   esitiMediazione,
+  sedePrincipale
 } from '@model/procedimento';
 import Select from '@components/Select';
 import { ProcedimentoContext } from '@context/Procedimento';
@@ -69,7 +70,7 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
 
     // Context
     const procedimentoContext = React.useContext(ProcedimentoContext);
-    const { procedimento, setProcedimento, regole } = procedimentoContext;
+    const { procedimento, setProcedimento, regole, metadatiProcedimento } = procedimentoContext;
 
     // State
     const [initialProc] = React.useState(new Procedimento()); // Stato iniziale da comparare
@@ -90,6 +91,21 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
     ] = React.useState(
       calculateValueByActiveRule('compensoMediatore', procedimentoContext)
     );
+    const [bodySpese, setBodySpese] = React.useState([
+      [{ nome: 'Incasso dalle parti', tipo: 'entrata' }, 0, 'da saldare'],
+      [{ nome: 'Incasso dalle controparti', tipo: 'entrata' }, 0, 'da saldare'],
+      [
+        { nome: 'Compenso mediatore', tipo: 'uscita' },
+        automatedValueCompensoMediatore != null &&
+        automatedValueCompensoMediatore != undefined
+          ? {
+              value: automatedValueCompensoMediatore,
+              automated: true,
+            }
+          : 0,
+        'da saldare',
+      ],
+    ]);
 
     // Refs
     const containerFormDemandataRef = React.useRef(null);
@@ -125,10 +141,61 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
     }, [errors, procedimento]);
 
     React.useEffect(() => {
-      setAutometedValueCompensoMediatore(
-        calculateValueByActiveRule('compensoMediatore', procedimentoContext)
+      setBodySpese((prevBodySpese) => {
+        // Aggiorna il valore di "Compenso mediatore"
+        let updatedBodySpese = prevBodySpese.map((row) => {
+          if (row[0].nome === 'Compenso mediatore') {
+            return [
+              row[0],
+              automatedValueCompensoMediatore != null
+                ? { value: automatedValueCompensoMediatore, automated: true }
+                : procedimento.compensoMediatore,
+              row[2],
+            ];
+          }
+          return row;
+        });
+    
+        // Definisce le spese per la sede secondaria
+        const speseSedeSecondaria = [
+          { nome: 'Spese avvio sede secondaria', tipo: 'uscita', key: 'speseAvvioSedeSecondaria' },
+          { nome: 'Spese indennità sede secondaria', tipo: 'uscita', key: 'speseIndennitaSedeSecondaria' },
+        ];
+    
+        const isSedeSecondaria = procedimento.sedeSvolgimento !== sedePrincipale;
+    
+        // Rimuove le spese della sede secondaria se già presenti, prima di eventuale aggiunta
+        updatedBodySpese = updatedBodySpese.filter(
+          (row) => !speseSedeSecondaria.some((spesa) => spesa.nome === row[0].nome)
+        );
+    
+        // Aggiunge le spese della sede secondaria se `isSedeSecondaria` è true
+        if (isSedeSecondaria) {
+          speseSedeSecondaria.forEach((spesa) => {
+            updatedBodySpese.push([
+              spesa,
+              procedimento[spesa.key] || 0,
+              'da saldare',
+            ]);
+          });
+        }
+    
+        return updatedBodySpese;
+      });
+    }, [
+      procedimento.sedeSvolgimento,
+      procedimento.speseAvvioSedeSecondaria,
+      procedimento.speseIndennitaSedeSecondaria,
+      procedimento.compensoMediatore,
+      automatedValueCompensoMediatore,
+    ]);
+    
+    React.useEffect(() => {
+      const valueCompensoMediatore = calculateValueByActiveRule(
+        'compensoMediatore',
+        procedimentoContext
       );
-
+      setAutometedValueCompensoMediatore(valueCompensoMediatore);
     }, [regole]);
 
     // Handlers
@@ -193,7 +260,7 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
       setProcedimento(updatedProcedimento);
 
       // console.log('procedimento originale: ', initialProc);
-      // console.log(updatedProcedimento);
+       console.log(updatedProcedimento);
     };
 
     return (
@@ -879,29 +946,16 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
                 { columnType: 'importo', columnName: 'importo' },
                 { columnType: 'stato', columnName: 'stato' },
               ]}
-              body={[
-                [
-                  { nome: 'Incasso dalle parti', tipo: 'entrata' },
-                  0,
-                  'da saldare',
-                ],
-                [
-                  { nome: 'Incasso dalle controparti', tipo: 'entrata' },
-                  0,
-                  'da saldare',
-                ],
-                [
-                  { nome: 'Compenso mediatore', tipo: 'uscita' },
-                  automatedValueCompensoMediatore != null &&
-                  automatedValueCompensoMediatore != undefined
-                    ? {
-                        value: automatedValueCompensoMediatore,
-                        automated: true,
-                      }
-                    : 0,
-                  'da saldare',
-                ],
-              ]}
+              body={bodySpese}
+              onImportoChange={(row, importo) => {
+                const label = row[0].nome;
+                const key = Object.values(metadatiProcedimento.current).find(
+                  (field) => field.label === label
+                )?.key;
+
+                console.log('Key trovata:', key);
+                if (key) handleInputChange({ [key]: importo });
+              }}
             />
           </Grid>
         </Grid>
