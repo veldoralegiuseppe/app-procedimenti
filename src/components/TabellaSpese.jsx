@@ -53,13 +53,13 @@ function TableHeader({ metadata }) {
 }
 
 // Celle 
-function ImportoCell({ importo }) {
+function ImportoCell({ importo, onChange }) {
   const value = typeof importo === 'object' ? importo.value : importo;
   const isAutomated = typeof importo === 'object' ? importo.automated : false;
 
   return (
     <TableCell sx={{ paddingLeft: '4px' }} align="left">
-      {!isAutomated &&  <ImportoInput value={value} sx={{ width: '100%', maxWidth: '168px' }} />}
+      {!isAutomated &&  <ImportoInput onChange={onChange} value={value} sx={{ width: '100%', maxWidth: '168px' }} />}
       {isAutomated &&  <ImportoReadOnly value={value} isAutomated={isAutomated} backgroundColor="#c4c4c438" sx={{ width: '100%', maxWidth: '168px' }} />}
     </TableCell>
   );
@@ -199,7 +199,7 @@ function RowCreazioneTransazione({ metadata }) {
   );
 }
 
-export default function TabellaSpese({ metadata, body, createable }) {
+export default function TabellaSpese({ metadata, body, createable, onImportoChange }) {
   return (
     <TableContainer>
       <Table size="small">
@@ -211,7 +211,7 @@ export default function TabellaSpese({ metadata, body, createable }) {
                 switch (metadata[index].columnType) {
                   case 'importo':
                     return (
-                      <ImportoCell key={`${col}-${index}`} importo={col} />
+                      <ImportoCell onChange={(importo) => onImportoChange(row, importo)} key={`${col}-${index}`} importo={col} />
                     );
                   case 'stato':
                     return (

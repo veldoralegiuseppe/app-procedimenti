@@ -15,19 +15,23 @@ import { ProcedimentoContext } from '@context/Procedimento';
 import { getEspressioneCondizione, getEspressione } from '@model/regola';
 import RuleBuilder from '@components/RuleBuilders/RuleBuilder';
 
-function FragmentWithProps({ children, onError, sx }) {
+function FragmentWithProps({ children, onError, onSuccess, sx }) {
   return (
     <div style={{ ...sx }}>
       {React.Children.map(children, (child) =>
         React.isValidElement(child)
-          ? React.cloneElement(child, { onError })
+          ? React.cloneElement(child, {
+              ...(onError && { onError }), // Passa onError solo se definito
+              ...(child.type && (child.type.name === 'RuleBuilder' || child.type.name === 'RuleTable') && { onSuccess }), // Passa onSuccess solo a RuleBuilder
+            })
           : child
       )}
     </div>
   );
 }
 
-const ModaleRegole = ({ open, handleClose, onError }) => {
+
+const ModaleRegole = ({ open, handleClose, onError, onSuccess }) => {
   const { regole, setRegole } = React.useContext(ProcedimentoContext);
   const [mode, setMode] = React.useState('view');
   const [rule, setRule] = React.useState(null);
@@ -39,12 +43,18 @@ const ModaleRegole = ({ open, handleClose, onError }) => {
 
   const handleDelete = (index) => {
     console.log('onDelete', index);
+    setRegole((prev) => {
+      const newRegole = [...prev];
+      newRegole.splice(index, 1);
+      return newRegole;
+    });
+    return true;
   };
 
   const handleModify = (index) => {
     console.log('onModify', index);
     setMode('modify');
-    setRule(regole[index]);
+    setRule({ ...regole[index] });
   };
 
   const handleCreate = () => {
@@ -56,6 +66,11 @@ const ModaleRegole = ({ open, handleClose, onError }) => {
     newRegole[index].stato = status;
     return newRegole;
   });
+
+  const onEndOperation = () => {
+    setMode('view');
+    setRule(null);
+  }
 
   // Calcola dinamicamente il contenuto di `body` da `regole`
   let body = regole.map((r) => [
@@ -82,7 +97,7 @@ const ModaleRegole = ({ open, handleClose, onError }) => {
     switch (mode) {
       case 'view':
         return (
-          <FragmentWithProps onError={onError} sx={{ height: '100%' }}>
+          <FragmentWithProps onError={onError} onSuccess={onSuccess} sx={{ height: '100%' }}>
             {/* Titolo */}
             <Box
               sx={{
@@ -146,6 +161,7 @@ const ModaleRegole = ({ open, handleClose, onError }) => {
         return (
           <FragmentWithProps
             onError={onError}
+            onSuccess={onSuccess}
             sx={{
               marginTop: '2.5rem',
               display: 'flex',
@@ -181,7 +197,7 @@ const ModaleRegole = ({ open, handleClose, onError }) => {
             </Button>
 
             {/* Stepper */}
-            <RuleBuilder mode={mode} rule={mode === 'modify' ? rule : null} />
+            <RuleBuilder mode={mode} onEndOperation={onEndOperation} rule={mode === 'modify' ? rule : null} />
           </FragmentWithProps>
         );
       default:

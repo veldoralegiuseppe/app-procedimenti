@@ -19,7 +19,6 @@ import IconButton from '@mui/material/IconButton';
 import DeleteIcon from '@mui/icons-material/Delete';
 import EditIcon from '@mui/icons-material/Edit';
 
-
 const borderBottomStyle = '1px solid rgba(224, 224, 224, 1)';
 const StyledTableHead = styled(TableHead)(({ theme }) => ({
   backgroundColor: theme.palette.background.default,
@@ -164,7 +163,11 @@ function Row({
     <React.Fragment key={`fragment-row-${index}`}>
       <TableRow
         key={`main-row-${index}`}
-        sx={{ '& > *': { borderBottom: isCollapsible ? 'unset' : borderBottomStyle } }}
+        sx={{
+          '& > *': {
+            borderBottom: isCollapsible ? 'unset' : borderBottomStyle,
+          },
+        }}
       >
         {row.map((col, cellIndex) => {
           const cellKey = `main-${col}-${cellIndex}-${index}`;
@@ -215,7 +218,11 @@ function Row({
         <TableRow key={`collapsible-row-${index}`}>
           <TableCell
             key={`collapsible-cell-${index}`}
-            style={{ paddingBottom: 0, paddingTop: 0, borderBottom: borderBottomStyle }}
+            style={{
+              paddingBottom: 0,
+              paddingTop: 0,
+              borderBottom: borderBottomStyle,
+            }}
             colSpan={metadata.length}
           >
             <Collapse in={open} timeout="auto" unmountOnExit>
@@ -237,6 +244,8 @@ export default function RuleTable({
   getCollapsibleComponent,
   onDelete,
   onModify,
+  onError,
+  onSuccess,
   handleAttivoChange,
   sx,
 }) {
@@ -273,8 +282,13 @@ export default function RuleTable({
 
   const handleDelete = (index) => {
     console.log('delete', index);
-    if (onDelete) onDelete(index);
-    setLocalBody((prev) => prev.filter((_, i) => i !== index));
+    if (onDelete) {
+      const result = onDelete(index);
+      if (result) {
+        onSuccess('Elemento eliminato correttamente');
+        setLocalBody((prev) => prev.filter((_, i) => i !== index));
+      }
+    }
   };
 
   const handleModify = (index) => {

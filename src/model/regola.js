@@ -407,6 +407,32 @@ function calculateValueByActiveRule(targetKey, context) {
   }
 }
 
+function equals(a, b) {
+  if (a === b) return true; // Controllo di uguaglianza per tipi primari (numeri, stringhe, booleani)
+
+  if (a == null || b == null || typeof a !== typeof b) return false; // Controllo di nullità o tipo
+
+  if (Array.isArray(a) && Array.isArray(b)) {
+    return (
+      a.length === b.length &&
+      a.every((el, index) => equals(el, b[index]))
+    ); // Confronto degli array elemento per elemento
+  }
+
+  if (typeof a === 'object' && typeof b === 'object') {
+    const keysA = Object.keys(a);
+    const keysB = Object.keys(b);
+
+    return (
+      keysA.length === keysB.length &&
+      keysA.every((key) => equals(a[key], b[key]))
+    ); // Confronto ricorsivo di oggetti
+  }
+
+  return false; // Se nessuno dei casi precedenti corrisponde
+}
+
+
 
 export {
   operatoriMap,
@@ -424,4 +450,5 @@ export {
   isRuleSatisfied,
   validateConflitti,
   calculateValueByActiveRule,
+  equals,
 };

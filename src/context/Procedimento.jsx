@@ -204,13 +204,13 @@ export const ProcedimentoProvider = ({ children }) => {
   React.useEffect(() => {
     const updatedRegole = regole.map(r => ({
       ...r,
-      isApplicata: r.stato === 'DISATTIVA' ? false : isRuleSatisfied(r, {procedimento, persone, metadatiProcedimento})
+      isApplicata: r.stato === 'DISATTIVA' ? false : isRuleSatisfied(r, { procedimento, persone, metadatiProcedimento })
     }));
     setRegole(updatedRegole);
   }, [
-    // Usa useMemo per monitorare solo il campo `stato` di ogni regola
-    ...React.useMemo(() => regole.map((r) => r.stato), [regole])
+    JSON.stringify(regole.map(r => r.stato)) // Serializzazione per mantenere una dipendenza costante
   ]);
+  
 
   return (
     <ProcedimentoContext.Provider

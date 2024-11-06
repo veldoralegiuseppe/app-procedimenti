@@ -18,6 +18,12 @@ export default function FormModal({ open, handleClose, title = '', children }) {
     setAlertSeverity('error');
   };
 
+  const onFormSuccess = (message) => {
+    setShowAlert(true);
+    setAlertMessage(message);
+    setAlertSeverity('success');
+  };
+
   // Mantieni lo stesso stile del codice originario
   const style = {
     position: 'absolute',
@@ -62,6 +68,7 @@ export default function FormModal({ open, handleClose, title = '', children }) {
           child
             ? React.cloneElement(child, {
                 onError: onFormError,
+                onSuccess: onFormSuccess,
                 handleClose: handleClose,
               })
             : null
