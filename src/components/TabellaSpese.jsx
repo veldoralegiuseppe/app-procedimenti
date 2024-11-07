@@ -54,16 +54,46 @@ function TableHeader({ metadata }) {
 
 // Celle 
 function ImportoCell({ importo, onChange }) {
-  const value = typeof importo === 'object' ? importo.value : importo;
+  const [localValue, setLocalValue] = React.useState(
+    typeof importo === 'object' ? importo.value : importo
+  );
   const isAutomated = typeof importo === 'object' ? importo.automated : false;
+
+  const handleBlur = () => {
+    // Trigger `onChange` only when the input loses focus
+    console.log('handleBlur', localValue);
+    if (localValue !== (typeof importo === 'object' ? importo.value : importo)) {
+      onChange(localValue);
+    }
+  };
+
+  const handleChange = (event) => {
+    const newValue = event?.target ? event.target.value : event;
+    setLocalValue(newValue);
+  };
+  
 
   return (
     <TableCell sx={{ paddingLeft: '4px' }} align="left">
-      {!isAutomated &&  <ImportoInput onChange={onChange} value={value} sx={{ width: '100%', maxWidth: '168px' }} />}
-      {isAutomated &&  <ImportoReadOnly value={value} isAutomated={isAutomated} backgroundColor="#c4c4c438" sx={{ width: '100%', maxWidth: '168px' }} />}
+      {!isAutomated ? (
+        <ImportoInput
+          value={localValue}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          sx={{ width: '100%', maxWidth: '168px' }}
+        />
+      ) : (
+        <ImportoReadOnly
+          value={localValue}
+          isAutomated={isAutomated}
+          backgroundColor="#c4c4c438"
+          sx={{ width: '100%', maxWidth: '168px' }}
+        />
+      )}
     </TableCell>
   );
 }
+
 
 function StatoTransazioneCell({ stato }) {
   const [statoTransazione, setStatoTransazione] = React.useState(
@@ -154,17 +184,69 @@ function NomeTransazioneCell({ nome, tipo }) {
 }
 
 // Footer
-function AggiungiTransazioneFooter({ metadata }) {
+function TotaliFooter({ metadata }) {
   return (
     <TableFooter>
-      <TableRow>
-        <TableCell colSpan={metadata.length}>
-          <Button variant="outlined" color="primary" fullWidth>
-            Aggiungi transazione
-          </Button>
-        </TableCell>
-      </TableRow>
+      {Array.from({ length: 3 }).map((_, index) => (
+        <TableRow key={`footer-row-${index}`}>
+          <TableCell colSpan={metadata.length} sx={{backgroundColor: '#426c92d6'} }>
+            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '1rem', color: 'white'}}>
+              {(() => {
+                switch (index) {
+                  case 0:
+                    return (
+                      <>
+                        <span>Totale spese sede secondaria</span>
+                        <span>0.00 €</span>
+                      </>
+                    );
+                  case 1:
+                    return (
+                      <>
+                        <span>Totale in uscita</span>
+                        <span>0.00 €</span>
+                      </>
+                    );
+                  case 2:
+                    return (
+                      <>
+                        <span>Totale in entrata</span>
+                        <span>0.00 €</span>
+                      </>
+                    );
+                  default:
+                    return null;
+                }
+              })()}
+            </div>
+          </TableCell>
+        </TableRow>
+      ))}
     </TableFooter>
+  );
+}
+
+// Components
+function Totali({totali}){
+  const totaleTdStyle = { fontWeight: 'bold', color: '#467bae' };
+
+  return (
+    <table style={{ width: '100%', marginTop: '1rem', borderSpacing: '0 18px' }}>
+      <tbody>
+        {totali.map((totale, index) => (
+          <tr key={index} style={totaleTdStyle}>
+            <td>{totale.label}</td>
+            <td style={{ textAlign: 'center' }}>
+              €{' '}
+              {totale.value.toLocaleString('it-IT', {
+                style: 'currency',
+                currency: 'EUR',
+              }).replace('€', '')}
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
   );
 }
 
@@ -199,8 +281,9 @@ function RowCreazioneTransazione({ metadata }) {
   );
 }
 
-export default function TabellaSpese({ metadata, body, createable, onImportoChange }) {
+export default function TabellaSpese({ metadata, body, totali, onImportoChange }) {
   return (
+    <React.Fragment>
     <TableContainer>
       <Table size="small">
         <TableHeader metadata={metadata} />
@@ -235,10 +318,12 @@ export default function TabellaSpese({ metadata, body, createable, onImportoChan
               })}
             </TableRow>
           ))}
-          {createable && <RowCreazioneTransazione metadata={metadata} />}
         </TableBody>
       </Table>
     </TableContainer>
+
+    <Totali totali={totali} />
+    </React.Fragment>
   );
 }
 

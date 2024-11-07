@@ -35,6 +35,7 @@ const ModaleRegole = ({ open, handleClose, onError, onSuccess }) => {
   const { regole, setRegole } = React.useContext(ProcedimentoContext);
   const [mode, setMode] = React.useState('view');
   const [rule, setRule] = React.useState(null);
+  const [body, setBody] = React.useState([]);
 
   const onClose = () => {
     setMode('view');
@@ -72,25 +73,17 @@ const ModaleRegole = ({ open, handleClose, onError, onSuccess }) => {
     setRule(null);
   }
 
-  // Calcola dinamicamente il contenuto di `body` da `regole`
-  let body = regole.map((r) => [
-    r.stato,
-    r.espressione.target.label,
-    getEspressioneCondizione(r) || 'N/A',
-    r.isApplicata ? 'APPLICATA' : 'NON APPLICATA',
-    'N/A',
-  ]);
-
   React.useEffect(() => {
-    body = regole.map((r) => [
+    console.log('regole', regole);
+    setBody(regole.map((r) => [
       r.stato,
       r.espressione.target.label,
       getEspressioneCondizione(r) || 'N/A',
-      r.isApplicata ? 'APPLICATA' : 'NON APPLICATA',
+      r.isApplicata == true ? 'APPLICATA' : 'NON APPLICATA',
       'N/A',
-    ]);
+    ]));
 
-    //console.log('body update', body);
+   console.log('body updated', regole[0].isApplicata);
   }, [regole]);
 
   const renderContent = () => {

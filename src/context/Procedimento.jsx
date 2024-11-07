@@ -3,6 +3,7 @@ import { createContext, useState } from 'react';
 import dayjs from 'dayjs';
 import 'dayjs/locale/it';
 import Backdrop from '@mui/material/Backdrop';
+import _ from 'lodash';
 
 import { Procedimento } from '@model/procedimento.js';
 import { PersonaFisica } from '@model/personaFisica';
@@ -11,6 +12,9 @@ import { Comune } from '@model/comune.js';
 import NotificationAlert from '@components/NotificationAlert';
 import { ProcedimentoMetadata } from '../model/procedimento';
 import { isRuleSatisfied, campiCondizione, getActiveRules, equals } from '@model/regola';
+import { Pipeline } from '../utils/pipeline';
+import { rulesApplicator } from '../utils/filters/rulesApplicator';
+import { stateRulesUpdater } from '../utils/filters/stateRulesUpdater';
 
 
 export const ProcedimentoContext = createContext();
@@ -178,6 +182,8 @@ export const ProcedimentoProvider = ({ children }) => {
   const [alertSeverity, setAlertSeverity] = React.useState('error');
   const [alertMessage, setAlertMessage] = React.useState(null);
   const [isBackdropOpen, setIsBackdropOpen] = React.useState(false);
+  console.log(Pipeline);
+  const rulePipeline = new Pipeline([rulesApplicator, stateRulesUpdater]);
 
   const notify = (message, severity) => {
     setShowAlert(true);
@@ -187,18 +193,24 @@ export const ProcedimentoProvider = ({ children }) => {
 
   // Effetti
   React.useEffect(() => {
-    const regoleAttiveCorrenti = getActiveRules({ procedimento, persone, metadatiProcedimento, regole } )
-    console.log('regoleAttiveCorrenti', regoleAttiveCorrenti);
-    const updatedRegole = regole.map(r => ({
-      ...r,
-      isApplicata: regoleAttiveCorrenti.some(rule => equals(rule, r))
-    }));
-    setRegole(updatedRegole);
+     // Crea copie profonde di `procedimento` e `regole`
+     const procedimentoCopy = _.cloneDeep(procedimento);
+     const regoleCopy = _.cloneDeep(regole);
+    const ctx = rulePipeline.process({ procedimento, persone, regole });
+    console.log('ctx', ctx);
+
+    // Usa una condizione per controllare se lo stato deve essere aggiornato
+  if (!_.isEqual(ctx.regole, regoleCopy)) {
+    setRegole([...ctx.regole]);
+  }
+  if (!_.isEqual(ctx.procedimento, procedimentoCopy)) {
+    setProcedimento({ ...ctx.procedimento });
+  }
   }, [
     ...React.useMemo(
       () => campiCondizione.map((key) => procedimento[key]),
       [procedimento]),
-    JSON.stringify(regole.map(r => r.stato)) // Serializzazione per mantenere una dipendenza costante
+    regole
   ]);
   
 

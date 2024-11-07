@@ -3,7 +3,7 @@ import InputAdornment from '@mui/material/InputAdornment';
 import EuroSymbolIcon from '@mui/icons-material/EuroSymbol';
 import { CssTextField } from '@theme/MainTheme';
 
-const ImportoInput = ({ onChange, label = "", sx, id, value = 0, error = false, helperText = '' }) => {
+const ImportoInput = ({ onChange, onBlur, label = "", sx, id, value = 0, error = false, helperText = '' }) => {
   // State
   const [importo, setImporto] = useState('0,00');
 
@@ -247,7 +247,10 @@ const ImportoInput = ({ onChange, label = "", sx, id, value = 0, error = false, 
       helperText={helperText}
       onChange={handleValueChange}
       id={id}
-      onBlur={() => setImporto(importo)} // Mantieni il valore formattato
+      onBlur={() => {
+        setImporto(importo)
+        if (onBlur) onBlur();
+      }} 
       label={label}
       variant="outlined"
       size="small"
