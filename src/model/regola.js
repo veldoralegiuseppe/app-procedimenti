@@ -308,19 +308,59 @@ function getEspressione(regola) {
   return regola.espressione.formula;
 }
 
+function isRuleSatisfied(regola, context) {
+  const { procedimento } = context;
+  //console.log('Procedimento:', procedimento);
+
+  return regola.condizioni.every((condizione) => {
+    let { campo, operatore, valore } = condizione;
+    const valoreContext = procedimento?.[campo.key];
+
+    // Se il valore del contesto è undefined, interrompi e considera la condizione non soddisfatta
+    if (valoreContext === undefined) {
+      console.warn(`Valore per il campo ${campo.key} non trovato nel contesto.`);
+      return false;
+    }
+
+    // Applica l'operatore utilizzando una mappa di operatori per tipo
+    operatore = jsOperatorMap[operatore] || operatore;
+    //console.log('Valore:', valoreContext, 'Operatore:', operatore, 'Valore atteso:', valore);
+
+    switch (operatore) {
+      case '>':
+        return valoreContext > valore;
+      case '>=':
+        return valoreContext >= valore;
+      case '<':
+        return valoreContext < valore;
+      case '<=':
+        return valoreContext <= valore;
+      case '===':
+        return valoreContext === valore;
+      case 'compreso tra':
+        return Array.isArray(valore) && valoreContext >= valore[0] && valoreContext <= valore[1];
+      case 'contiene':
+        return typeof valoreContext === 'string' && valoreContext.includes(valore);
+      case 'non contiene':
+        return typeof valoreContext === 'string' && !valoreContext.includes(valore);
+      default:
+        console.error(`Operatore non supportato: ${operatore}`);
+        return false;
+    }
+  });
+}
+
 function getActiveRule(targetKey, context) {
-  // Filtra le regole attive, specifiche per il target, e soddisfatte dal contesto
-  const regoleAttive = context.regole
-    .filter(
-      (r) =>
-        r.espressione.target.key === targetKey &&
-        r.stato === 'ATTIVA' &&
-        isRuleSatisfied(r, context)
-    )
-    .sort((a, b) => b.condizioni.length - a.condizioni.length); // Ordina per specificità
+  // Ottieni tutte le regole attive e soddisfatte nel contesto
+  const regoleAttive = getActiveRules(context);
+
+  // Filtra le regole specifiche per il target
+  const regoleTarget = regoleAttive.filter(
+    (r) => r.espressione.target.key === targetKey
+  );
 
   // Ritorna la regola più specifica soddisfatta, oppure null se nessuna è valida
-  return regoleAttive[0] || null;
+  return regoleTarget[0] || null;
 }
 
 function getActiveRules(context) {
@@ -354,45 +394,35 @@ function getActiveRules(context) {
   return regoleFiltrate;
 }
 
-function isRuleSatisfied(regola, context) {
-  const { procedimento } = context;
-  //console.log('Procedimento:', procedimento);
+function getApplicableRules(context) {
+  // Filtra le regole attive e soddisfatte nel contesto
+  const regoleAttiveSoddisfatte = context.regole.filter(
+    (regola) => isRuleSatisfied(regola, context)
+  );
 
-  return regola.condizioni.every((condizione) => {
-    let { campo, operatore, valore } = condizione;
-    const valoreContext = procedimento?.[campo.key];
+  // Ordina le regole in base alla specificità (numero di condizioni, discendente)
+  regoleAttiveSoddisfatte.sort((a, b) => b.condizioni.length - a.condizioni.length);
 
-    // Se il valore del contesto è undefined, interrompi e considera la condizione non soddisfatta
-    if (valoreContext === undefined) {
-      console.warn(`Valore per il campo ${campo.key} non trovato nel contesto.`);
-      return false;
-    }
+  // Filtra solo le regole più specifiche
+  const regoleFiltrate = [];
+  
+  regoleAttiveSoddisfatte.forEach((regola) => {
+    // Controlla se la regola è già coperta da una regola più specifica in `regoleFiltrate`
+    const isCovered = regoleFiltrate.some((regolaSpecifica) =>
+      regola.condizioni.every((condizione) =>
+        regolaSpecifica.condizioni.some((condSpecifica) =>
+          areConditionsOverlapping(condizione, condSpecifica)
+        )
+      )
+    );
 
-    // Applica l'operatore utilizzando una mappa di operatori per tipo
-    operatore = jsOperatorMap[operatore] || operatore;
-
-    switch (operatore) {
-      case '>':
-        return valoreContext > valore;
-      case '>=':
-        return valoreContext >= valore;
-      case '<':
-        return valoreContext < valore;
-      case '<=':
-        return valoreContext <= valore;
-      case '===':
-        return valoreContext === valore;
-      case 'compreso tra':
-        return Array.isArray(valore) && valoreContext >= valore[0] && valoreContext <= valore[1];
-      case 'contiene':
-        return typeof valoreContext === 'string' && valoreContext.includes(valore);
-      case 'non contiene':
-        return typeof valoreContext === 'string' && !valoreContext.includes(valore);
-      default:
-        console.error(`Operatore non supportato: ${operatore}`);
-        return false;
+    // Aggiungi la regola solo se non è coperta da una regola più specifica
+    if (!isCovered) {
+      regoleFiltrate.push(regola);
     }
   });
+
+  return regoleFiltrate;
 }
 
 function calculateValueByActiveRule(targetKey, context) {
@@ -459,7 +489,6 @@ function equals(a, b) {
 }
 
 
-
 export {
   operatoriMap,
   campiCondizione,
@@ -476,5 +505,6 @@ export {
   isRuleSatisfied,
   validateConflitti,
   calculateValueByActiveRule,
+  getApplicableRules,
   equals,
 };
