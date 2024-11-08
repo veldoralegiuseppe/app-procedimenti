@@ -3,8 +3,6 @@ import { CssTextField } from '@theme/MainTheme';
 import InputAdornment from '@mui/material/InputAdornment';
 import { Box, useTheme } from '@mui/material';
 
-const isNumber = (str) => /^[0-9]+$/g.test(str.trim());
-
 const fillProtocollo = (numProtocollo) => numProtocollo.padStart(6, '0');
 
 export default function ProtocolloInput({
@@ -13,6 +11,7 @@ export default function ProtocolloInput({
   anno = new Date().getFullYear(),
   error,
   helperText,
+  label = '',
   sx = {},
 }) {
   const theme = useTheme();
@@ -139,7 +138,7 @@ export default function ProtocolloInput({
         ),
       }}
       id="outlined-basic"
-      label="Numero di Protocollo"
+      label={label}
       variant="outlined"
       size="small"
       required

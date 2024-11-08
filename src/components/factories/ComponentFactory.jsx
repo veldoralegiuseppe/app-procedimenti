@@ -67,7 +67,7 @@ const InputFactory = ({ fieldKey, ...props }) => {
 
   // Props
   const commonProps = {
-    label: 'label',
+    label: Procedimento.getMetadati(fieldKey)?.label || '',
     value: value === undefined ? procedimento[fieldKey] : value,
     error: hasError,
     helperText: hasError ? 'Campo obbligatorio' : '',
@@ -135,7 +135,7 @@ const InputFactory = ({ fieldKey, ...props }) => {
     case 'causaleDemandata':
       return (
         <Select
-          options={Procedimento.getMetadata(fieldKey)?.options || []}
+          options={Procedimento.getMetadati(fieldKey)?.options || []}
           {...commonProps}
         />
       );
@@ -198,7 +198,7 @@ const InputFactory = ({ fieldKey, ...props }) => {
               titoliMediatore.filter((titolo) => titolo !== deletedTitolo)
             );
           }}
-          options={Procedimento.getMetadata(fieldKey)?.options || []}
+          options={Procedimento.getMetadati(fieldKey)?.options || []}
           {...commonProps}
         />
       );
