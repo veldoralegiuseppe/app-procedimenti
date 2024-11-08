@@ -191,9 +191,11 @@ export const ProcedimentoProvider = ({ children }) => {
   const metadatiProcedimento = React.useRef(new ProcedimentoMetadata());
   const [persone, setPersone] = React.useState([]);
   const [regole, setRegole] = React.useState(mockedRegole());
+
   const [showAlert, setShowAlert] = React.useState(false);
   const [alertSeverity, setAlertSeverity] = React.useState('error');
   const [alertMessage, setAlertMessage] = React.useState(null);
+
   const [isBackdropOpen, setIsBackdropOpen] = React.useState(false);
   const rulePipeline = new Pipeline([rulesApplicator, stateRulesUpdater]);
 
@@ -203,15 +205,12 @@ export const ProcedimentoProvider = ({ children }) => {
     setAlertSeverity(severity);
   };
 
-  // Effetti
+  // Effetto per la gestione delle regole
   React.useEffect(() => {
-    // Crea copie profonde di `procedimento` e `regole`
     const procedimentoCopy = _.cloneDeep(procedimento);
     const regoleCopy = _.cloneDeep(regole);
     const ctx = rulePipeline.process({ procedimento, persone, regole });
-    console.log('ctx', ctx);
-
-    // Usa una condizione per controllare se lo stato deve essere aggiornato
+    
     if (!_.isEqual(ctx.regole, regoleCopy)) {
       setRegole([...ctx.regole]);
     }
