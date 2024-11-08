@@ -5,7 +5,6 @@ import {
   MobileDateTimePicker,
 } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import dayjs from 'dayjs';
 import { itIT } from '@mui/x-date-pickers/locales';
 import { useTheme } from '@mui/material/styles';
 import InputAdornment from '@mui/material/InputAdornment';
@@ -16,8 +15,7 @@ import ProtocolloInput from '@components/ProtocolloInput';
 import ImportoInput from '@components/ImportoInput';
 import { CssTextField, labelColor } from '@theme/MainTheme';
 import Select from '@components/Select';
-import { ProcedimentoContext } from '@context/Procedimento';
-import { Procedimento } from '@model/procedimento';
+
 
 const InputFactory = ({ fieldKey, ...props }) => {
   // Styles
@@ -31,20 +29,10 @@ const InputFactory = ({ fieldKey, ...props }) => {
     height: '36px',
   };
 
-  // Context
-  const context = React.useContext(ProcedimentoContext);
-  const { procedimento, handleInputChange, errors } = context;
+  // Props
+  const { value, error, sx, onChange, label, helperText, options, ...restProps } = props;
 
-  // Utils
-  const {
-    value,
-    error,
-    sx,
-    onChange,
-    additionalErrorConditions,
-    ...restProps
-  } = props;
-
+  // Handlers
   const getOnChange = () => {
     return fieldKey !== 'numProtocollo'
       ? (change) => handleChanges({ [fieldKey]: change })
@@ -56,23 +44,16 @@ const InputFactory = ({ fieldKey, ...props }) => {
     //handleInputChange(changes);
     console.log('changes', changes);
   };
-  const hasError = (() => {
-    if (!errors) return false;
-    let additionalConditions =
-      (additionalErrorConditions && additionalErrorConditions()) || true;
-    return error !== undefined
-      ? error
-      : errors[fieldKey] && additionalConditions;
-  })();
 
-  // Props
+  // Commons
   const commonProps = {
-    label: Procedimento.getMetadati(fieldKey)?.label || '',
-    value: value === undefined ? procedimento[fieldKey] : value,
-    error: hasError,
-    helperText: hasError ? 'Campo obbligatorio' : '',
+    label: label || '',
+    value: value,
+    error: error,
+    helperText: helperText || '',
     onChange: getOnChange(),
     sx: { ...inputStyles, ...sx },
+    options: options,
     ...restProps,
   };
 
@@ -93,7 +74,7 @@ const InputFactory = ({ fieldKey, ...props }) => {
             slots={{ textField: CssTextField }}
             slotProps={{
               textField: {
-                error: hasError,
+                error: error,
                 InputProps: {
                   endAdornment: (
                     <InputAdornment position="end">
@@ -105,11 +86,6 @@ const InputFactory = ({ fieldKey, ...props }) => {
               },
             }}
             {...commonProps}
-            value={
-              value === undefined
-                ? dayjs(procedimento.dataDeposito)
-                : dayjs(value)
-            }
           />
         </LocalizationProvider>
       );
@@ -132,10 +108,7 @@ const InputFactory = ({ fieldKey, ...props }) => {
     case 'modalitaSvolgimento':
     case 'causaleDemandata':
       return (
-        <Select
-          options={Procedimento.getMetadati(fieldKey)?.options || []}
-          {...commonProps}
-        />
+        <Select {...commonProps} />
       );
 
     case 'dataOraIncontro':
@@ -155,7 +128,7 @@ const InputFactory = ({ fieldKey, ...props }) => {
                 InputProps: {
                   endAdornment: (
                     <InputAdornment position="end">
-                      {procedimento[fieldKey] ? (
+                      {value ? (
                         <CloseIcon
                           onClick={(event) => {
                             event.stopPropagation();
@@ -188,16 +161,16 @@ const InputFactory = ({ fieldKey, ...props }) => {
     case 'titoloMediatore':
       return (
         <SelectQualificaPersona
-          onSubmit={(newTitolo) => {
-            setTitoliMediatore([...titoliMediatore, newTitolo]);
-          }}
-          onDelete={(deletedTitolo) => {
-            setTitoliMediatore(
-              titoliMediatore.filter((titolo) => titolo !== deletedTitolo)
-            );
-          }}
-          options={Procedimento.getMetadati(fieldKey)?.options || []}
           {...commonProps}
+          // Devono essere passati come props
+          // onSubmit={(newTitolo) => {
+          //   setTitoliMediatore([...titoliMediatore, newTitolo]);
+          // }}
+          // onDelete={(deletedTitolo) => {
+          //   setTitoliMediatore(
+          //     titoliMediatore.filter((titolo) => titolo !== deletedTitolo)
+          //   );
+          // }}
         />
       );
 
