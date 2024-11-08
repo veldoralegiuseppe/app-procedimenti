@@ -115,8 +115,6 @@ const InputFactory = ({ fieldKey, ...props }) => {
       );
 
     case 'valoreControversia':
-    case 'incassoParti':
-    case 'incassoControparti':
     case 'compensoMediatore':
     case 'speseAvvioSedeSecondaria':
     case 'speseIndennitaSedeSecondaria':

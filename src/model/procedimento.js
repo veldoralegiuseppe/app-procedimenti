@@ -1,5 +1,6 @@
 import dayjs from 'dayjs';
 import 'dayjs/locale/it';
+import { validators } from '@utils/validators';
 
 export class Procedimento {
   constructor({
@@ -17,8 +18,6 @@ export class Procedimento {
     cognomeMediatore,
     titoloMediatore,
     totaleIncontri = 0,
-    incassoParti = 0,
-    incassoControparti = 0,
     compensoMediatore = 0,
     speseAvvioSedeSecondaria = 0,
     speseIndennitaSedeSecondaria = 0,
@@ -43,8 +42,6 @@ export class Procedimento {
     this.isDemandata = isDemandata;
     this.causaleDemandata = causaleDemandata;
     this.materiaCausaleDemandata = materiaCausaleDemandata;
-    this.incassoParti = incassoParti;
-    this.incassoControparti = incassoControparti;
     this.compensoMediatore = compensoMediatore;
     this.speseAvvioSedeSecondaria = speseAvvioSedeSecondaria;
     this.speseIndennitaSedeSecondaria = speseIndennitaSedeSecondaria;
@@ -78,7 +75,7 @@ export class Procedimento {
   }
 }
 
-// Constants 
+// Constants
 const esitiMediazione = [
   'IN CORSO',
   'NEGATIVO INCONTRO FILTRO',
@@ -95,11 +92,7 @@ const causaliDemandata = [
   'VOLONTARIA IN MATERIA DI',
 ];
 
-const modalitaSvolgimento = [
-  'PRESENZA',
-  'TELEMATICA',
-  'TELEMATICA MISTA',
-];
+const modalitaSvolgimento = ['PRESENZA', 'TELEMATICA', 'TELEMATICA MISTA'];
 
 const oggettiControversia = [
   'ALTRE NATURE DELLA CONTROVERSIA',
@@ -121,9 +114,7 @@ const oggettiControversia = [
   'SUBFORNITURA',
 ];
 
-const titoliMediatore = [
-  { maschile: 'AVV', femminile: 'AVV.SSA' },
-];
+const titoliMediatore = [{ maschile: 'AVV', femminile: 'AVV.SSA' }];
 
 const metadatiProcedimento = {
   numProtocollo: {
@@ -143,24 +134,45 @@ const metadatiProcedimento = {
     label: 'Data deposito',
     type: 'date',
     descrizione: 'DATI GENERALI',
+    validation: (value) => {
+      return [
+        validators.required(value),
+      ].filter((result) => result !== true);
+    },
   },
   sedeDeposito: {
     key: 'sedeDeposito',
     label: 'Sede deposito',
     type: 'string',
     descrizione: 'DATI GENERALI',
+    validation: (value) => {
+      return [
+        validators.required(value),
+        validators.onlyAlphanumeric(value),
+      ].filter((result) => result !== true);
+    },
   },
   sedeSvolgimento: {
     key: 'sedeSvolgimento',
     label: 'Sede svolgimento',
     type: 'string',
     descrizione: 'DATI GENERALI',
+    validation: (value) => {
+      return [
+        validators.onlyAlphanumeric(value),
+      ].filter((result) => result !== true);
+    },
   },
   dataOraIncontro: {
     key: 'dataOraIncontro',
     label: 'Data e ora incontro',
     type: 'datetime',
     descrizione: 'DATI GENERALI',
+    validation: (value) => {
+      return [
+        validators.isDateTime(value),
+      ].filter((result) => result !== true);
+    },
   },
   oggettoControversia: {
     key: 'oggettoControversia',
@@ -168,12 +180,23 @@ const metadatiProcedimento = {
     type: 'string',
     descrizione: 'DATI GENERALI',
     options: oggettiControversia,
+    validation: (value) => {
+      return [
+        validators.required(value),
+      ].filter((result) => result !== true);
+    },
   },
   valoreControversia: {
     key: 'valoreControversia',
     label: 'Valore controversia',
     type: 'number',
     descrizione: 'DATI GENERALI',
+    validation: (value) => {
+      return [
+        validators.required(value),
+        validators.onlyNumber(value),
+      ].filter((result) => result !== true);
+    },
   },
   esitoMediazione: {
     key: 'esitoMediazione',
@@ -181,6 +204,11 @@ const metadatiProcedimento = {
     type: 'string',
     descrizione: 'DATI GENERALI',
     options: esitiMediazione,
+    validation: (value) => {
+      return [
+        validators.onlyAlphabetic(value),
+      ].filter((result) => result !== true);
+    },
   },
   modalitaSvolgimento: {
     key: 'modalitaSvolgimento',
@@ -188,18 +216,33 @@ const metadatiProcedimento = {
     type: 'string',
     descrizione: 'DATI GENERALI',
     options: modalitaSvolgimento,
+    validation: (value) => {
+      return [
+        validators.onlyAlphabetic(value),
+      ].filter((result) => result !== true);
+    },
   },
   nomeMediatore: {
     key: 'nomeMediatore',
     label: 'Nome mediatore',
     type: 'string',
     descrizione: 'DATI GENERALI',
+    validation: (value) => {
+      return [
+        validators.onlyAlphabetic(value),
+      ].filter((result) => result !== true);
+    },
   },
   cognomeMediatore: {
     key: 'cognomeMediatore',
     label: 'Cognome mediatore',
     type: 'string',
     descrizione: 'DATI GENERALI',
+    validation: (value) => {
+      return [
+        validators.onlyAlphabetic(value),
+      ].filter((result) => result !== true);
+    },
   },
   titoloMediatore: {
     key: 'titoloMediatore',
@@ -207,22 +250,15 @@ const metadatiProcedimento = {
     type: 'string',
     descrizione: 'DATI GENERALI',
     options: titoliMediatore,
+    validation: (value) => {
+      return [
+        validators.onlyAlphabetic(value),
+      ].filter((result) => result !== true);
+    },
   },
   totaleIncontri: {
     key: 'totaleIncontri',
     label: 'Totale incontri',
-    type: 'number',
-    descrizione: 'DATI GENERALI',
-  },
-  incassoParti: {
-    key: 'incassoParti',
-    label: 'Incasso parti',
-    type: 'number',
-    descrizione: 'DATI GENERALI',
-  },
-  incassoControparti: {
-    key: 'incassoControparti',
-    label: 'Incasso controparti',
     type: 'number',
     descrizione: 'DATI GENERALI',
   },
@@ -231,6 +267,11 @@ const metadatiProcedimento = {
     label: 'Compenso mediatore',
     type: 'number',
     descrizione: 'DATI GENERALI',
+    validation: (value) => {
+      return [
+        validators.onlyNumber(value),
+      ].filter((result) => result !== true);
+    },
   },
   isDemandata: {
     key: 'isDemandata',
@@ -244,23 +285,43 @@ const metadatiProcedimento = {
     type: 'string',
     descrizione: 'DATI GENERALI',
     options: causaliDemandata,
+    validation: (value) => {
+      return [
+        validators.onlyAlphabetic(value),
+      ].filter((result) => result !== true);
+    },
   },
   materiaCausaleDemandata: {
     key: 'materiaCausaleDemandata',
     label: 'Materia causale demandata',
     type: 'string',
     descrizione: 'DATI GENERALI',
+    validation: (value) => {
+      return [
+        validators.onlyAlphanumeric(value),
+      ].filter((result) => result !== true);
+    },
   },
   speseAvvioSedeSecondaria: {
     key: 'speseAvvioSedeSecondaria',
     label: 'Spese avvio sede secondaria',
     type: 'number',
     descrizione: 'DATI GENERALI',
+    validation: (value) => {
+      return [
+        validators.onlyNumber(value),
+      ].filter((result) => result !== true);
+    },
   },
   speseIndennitaSedeSecondaria: {
     key: 'speseIndennitaSedeSecondaria',
     label: 'Spese indennità sede secondaria',
     type: 'number',
     descrizione: 'DATI GENERALI',
+    validation: (value) => {
+      return [
+        validators.onlyNumber(value),
+      ].filter((result) => result !== true);
+    },
   },
 };
