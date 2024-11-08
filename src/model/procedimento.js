@@ -73,6 +73,57 @@ export class Procedimento {
   static getMetadati(key) {
     return key ? metadatiProcedimento[key] : metadatiProcedimento;
   }
+
+  validateIncontro() {
+    if (this.dataOraIncontro && this.dataDeposito) {
+      const dataDeposito = dayjs(this.dataDeposito);
+      const dataOraIncontro = dayjs(this.dataOraIncontro);
+      if (dataOraIncontro.isBefore(dataDeposito)) {
+        throw new Error('La data e ora dell\'incontro non può essere precedente alla data di deposito.');
+      }
+    }
+  }
+
+  validateValoreControversia(){
+    if (this.valoreControversia < 80) {
+      throw new Error('Il valore della controversia non può essere inferiore a 80.');
+    }
+  }
+
+  validateDemandata(){
+    if (this.isDemandata && !this.causaleDemandata) {
+      throw new Error('La causale della demandata è obbligatoria.');
+    }
+
+    if (this.causaleDemandata === 'VOLONTARIA IN MATERIA DI' && !this.materiaCausaleDemandata) {
+      throw new Error('La materia della causale demandata è obbligatoria quando la causale è "VOLONTARIA IN MATERIA DI".');
+    }
+
+  }
+
+  validateCompensoMediatore(){
+    if (this.compensoMediatore > this.valoreControversia) {
+      throw new Error('Il compenso del mediatore non può essere superiore al valore della controversia.');
+    }
+  }
+
+  validateSpeseSedeSecondaria(){
+    if (this.speseAvvioSedeSecondaria > this.valoreControversia) {
+      throw new Error('Le spese di avvio della sede secondaria non possono essere superiori al valore della controveria.');
+    }
+
+    if (this.speseIndennitaSedeSecondaria > this.valoreControversia) {
+      throw new Error('Le spese di indennità della sede secondaria non possono essere superiori al valore della controveria.');
+    }
+  }
+
+  validate() {
+    this.validateIncontro();
+    this.validateValoreControversia();
+    this.validateDemandata();
+    this.validateCompensoMediatore();
+    this.validateSpeseSedeSecondaria();
+  }
 }
 
 // Constants
