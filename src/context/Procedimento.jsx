@@ -188,7 +188,6 @@ function mockedRegole() {
 
 export const ProcedimentoProvider = ({ children }) => {
   const [procedimento, setProcedimento] = React.useState(new Procedimento());
-  const metadatiProcedimento = React.useRef(new ProcedimentoMetadata());
   const [persone, setPersone] = React.useState([]);
   const [regole, setRegole] = React.useState(mockedRegole());
 
@@ -229,7 +228,6 @@ export const ProcedimentoProvider = ({ children }) => {
     <ProcedimentoContext.Provider
       value={{
         procedimento,
-        metadatiProcedimento,
         setProcedimento,
         persone,
         setPersone,

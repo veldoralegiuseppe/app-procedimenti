@@ -5,6 +5,7 @@ import Popper from '@mui/material/Popper';
 import { CssTextField } from '@theme/MainTheme';
 import { ProcedimentoContext } from '@context/Procedimento';
 import { Target } from '@model/regola';
+import { Procedimento } from '@model/procedimento';
 
 const StyledPopper = styled((props) => <Popper {...props} />)(({ theme }) => ({
   '& .MuiPaper-root': {
@@ -40,10 +41,10 @@ class TargetsStrategy extends Component {
   }
 
   getTargets() {
-    const { metadatiProcedimento } = this._context;
+    const metadatiProcedimento = Procedimento.getMetadati();
     let fields = [];
 
-    fields = Object.values(metadatiProcedimento.current)
+    fields = Object.values(metadatiProcedimento)
     .filter((field) => this._targetList.includes(field.key))
     .map((field) => ({ ...new Target(field.key, field.label, field.type, field.descrizione), scope: field.descrizione }));
 

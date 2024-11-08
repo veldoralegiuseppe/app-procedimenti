@@ -72,142 +72,150 @@ export class Procedimento {
       ? dayjs(this.dataOraIncontro).format('DD/MM/YYYY HH:mm')
       : null;
   }
+
+  static getMetadati() {
+    return metadatiProcedimento;
+  }
 }
 
-export class ProcedimentoMetadata {
-  numProtocollo = {
+const metadatiProcedimento = {
+  numProtocollo: {
     key: 'numProtocollo',
     label: 'Numero Protocollo',
     type: 'string',
     descrizione: 'DATI GENERALI',
-  };
-  annoProtocollo = {
+  },
+  annoProtocollo: {
     key: 'annoProtocollo',
     label: 'Anno Protocollo',
     type: 'string',
     descrizione: 'DATI GENERALI',
-  };
-  dataDeposito = {
+  },
+  dataDeposito: {
     key: 'dataDeposito',
     label: 'Data Deposito',
     type: 'date',
     descrizione: 'DATI GENERALI',
-  };
-  sedeDeposito = {
+  },
+  sedeDeposito: {
     key: 'sedeDeposito',
     label: 'Sede Deposito',
     type: 'string',
     descrizione: 'DATI GENERALI',
-  };
-  sedeSvolgimento = {
+  },
+  sedeSvolgimento: {
     key: 'sedeSvolgimento',
     label: 'Sede Svolgimento',
     type: 'string',
     descrizione: 'DATI GENERALI',
-  };
-  dataOraIncontro = {
+  },
+  dataOraIncontro: {
     key: 'dataOraIncontro',
     label: 'Data e Ora Incontro',
     type: 'datetime',
     descrizione: 'DATI GENERALI',
-  };
-  oggettoControversia = {
+  },
+  oggettoControversia: {
     key: 'oggettoControversia',
     label: 'Oggetto Controversia',
     type: 'string',
     descrizione: 'DATI GENERALI',
-  };
-  valoreControversia = {
+    options: oggettiControversia,
+  },
+  valoreControversia: {
     key: 'valoreControversia',
     label: 'Valore Controversia',
     type: 'number',
     descrizione: 'DATI GENERALI',
-  };
-  esitoMediazione = {
+  },
+  esitoMediazione: {
     key: 'esitoMediazione',
     label: 'Esito Mediazione',
     type: 'string',
     descrizione: 'DATI GENERALI',
-  };
-  modalitaSvolgimento = {
+    options: esitiMediazione,
+  },
+  modalitaSvolgimento: {
     key: 'modalitaSvolgimento',
     label: 'Modalità Svolgimento',
     type: 'string',
     descrizione: 'DATI GENERALI',
-  };
-  nomeMediatore = {
+    options: modalitaSvolgimento,
+  },
+  nomeMediatore: {
     key: 'nomeMediatore',
     label: 'Nome Mediatore',
     type: 'string',
     descrizione: 'DATI GENERALI',
-  };
-  cognomeMediatore = {
+  },
+  cognomeMediatore: {
     key: 'cognomeMediatore',
     label: 'Cognome Mediatore',
     type: 'string',
     descrizione: 'DATI GENERALI',
-  };
-  titoloMediatore = {
+  },
+  titoloMediatore: {
     key: 'titoloMediatore',
     label: 'Titolo Mediatore',
     type: 'string',
     descrizione: 'DATI GENERALI',
-  };
-  totaleIncontri = {
+  },
+  totaleIncontri: {
     key: 'totaleIncontri',
     label: 'Totale Incontri',
     type: 'number',
     descrizione: 'DATI GENERALI',
-  };
-  incassoParti = {
+  },
+  incassoParti: {
     key: 'incassoParti',
     label: 'Incasso Parti',
     type: 'number',
     descrizione: 'DATI GENERALI',
-  };
-  incassoControparti = {
+  },
+  incassoControparti: {
     key: 'incassoControparti',
     label: 'Incasso Controparti',
     type: 'number',
     descrizione: 'DATI GENERALI',
-  };
-  compensoMediatore = {
+  },
+  compensoMediatore: {
     key: 'compensoMediatore',
     label: 'Compenso mediatore',
     type: 'number',
     descrizione: 'DATI GENERALI',
-  };
-  isDemandata = {
+  },
+  isDemandata: {
     key: 'isDemandata',
     label: 'È Demandata',
     type: 'boolean',
     descrizione: 'DATI GENERALI',
-  };
-  causaleDemandata = {
+  },
+  causaleDemandata: {
     key: 'causaleDemandata',
     label: 'Causale Demandata',
     type: 'string',
     descrizione: 'DATI GENERALI',
-  };
-  materiaCausaleDemandata = {
+    options: causaliDemandata,
+  },
+  materiaCausaleDemandata: {
     key: 'materiaCausaleDemandata',
     label: 'Materia Causale Demandata',
     type: 'string',
     descrizione: 'DATI GENERALI',
-  };
-  speseAvvioSedeSecondaria = {
+  },
+  speseAvvioSedeSecondaria: {
     key: 'speseAvvioSedeSecondaria',
     label: 'Spese avvio sede secondaria',
     type: 'number',
     descrizione: 'DATI GENERALI',
-  };
-  speseIndennitaSedeSecondaria = {
+  },
+  speseIndennitaSedeSecondaria: {
     key: 'speseIndennitaSedeSecondaria',
     label: 'Spese indennità sede secondaria',
     type: 'number',
     descrizione: 'DATI GENERALI',
-  };
-}
+  },
+};
 export const sedePrincipale = 'NOLA';
 
 export const esitiMediazione = [

@@ -7,6 +7,7 @@ import { CssTextField } from '@theme/MainTheme';
 import ImportoInput from '@components/ImportoInput';
 import { ProcedimentoContext } from '@context/Procedimento';
 import { Target, operatoriMap, campiCondizione } from '@model/regola';
+import {Procedimento} from '@model/procedimento';
 import Select from '@components/Select';
 import { oggettiControversia, esitiMediazione } from '@model/procedimento';
 
@@ -44,10 +45,10 @@ class ContextStrategy extends Component {
   }
 
   getTargets() {
-    const { metadatiProcedimento } = this._context;
+    const metadatiProcedimento = Procedimento.getMetadati();
     let fields = [];
 
-    fields = Object.values(metadatiProcedimento.current)
+    fields = Object.values(metadatiProcedimento)
       .filter((field) => this._campiCondizioni.includes(field.key))
       .map((field) => ({
         ...new Target(field.key, field.label, field.type),
