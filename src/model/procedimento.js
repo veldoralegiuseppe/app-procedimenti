@@ -121,6 +121,10 @@ const oggettiControversia = [
   'SUBFORNITURA',
 ];
 
+const titoliMediatore = [
+  { maschile: 'AVV', femminile: 'AVV.SSA' },
+];
+
 const metadatiProcedimento = {
   numProtocollo: {
     key: 'numProtocollo',
@@ -202,6 +206,7 @@ const metadatiProcedimento = {
     label: 'Titolo Mediatore',
     type: 'string',
     descrizione: 'DATI GENERALI',
+    options: titoliMediatore,
   },
   totaleIncontri: {
     key: 'totaleIncontri',
