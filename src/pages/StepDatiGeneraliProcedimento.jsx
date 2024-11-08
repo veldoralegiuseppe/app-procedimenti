@@ -132,7 +132,13 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
 
       if (typeof enableNextStep === 'function') {
         //console.log('enable next');
-        enableNextStep(!hasErrors && requiredFieldsFilled());
+        try{
+          procedimento.validate();
+          enableNextStep(!hasErrors && requiredFieldsFilled());
+        } catch (error) {
+          console.log('error', error);
+          enableNextStep(false);
+        }
         //enableNextStep(true)
       }
     }, [errors, procedimento]);
