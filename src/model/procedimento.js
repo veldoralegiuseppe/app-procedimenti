@@ -73,10 +73,53 @@ export class Procedimento {
       : null;
   }
 
-  static getMetadati() {
-    return metadatiProcedimento;
+  static getMetadati(key) {
+    return key ? metadatiProcedimento[key] : metadatiProcedimento;
   }
 }
+
+// Constants 
+const esitiMediazione = [
+  'IN CORSO',
+  'NEGATIVO INCONTRO FILTRO',
+  'NEGATIVO MANCATA ADESIONE',
+  'NEGATIVO MANCATO ACCORDO',
+  'POSITIVO',
+];
+
+const causaliDemandata = [
+  'CONDIZIONE DI PROCEDIBILITÀ',
+  'DEMANDATA DAL GIUDICE PER IMPROCEDIBILITÀ',
+  'DEMANDATA DAL GIUDICE PER LE MATERIE NON OBBLIGATORIE',
+  'DEMANDATA DAL GIUDICE PER MANCATA CONCILIAZIONE',
+  'VOLONTARIA IN MATERIA DI',
+];
+
+const modalitaSvolgimento = [
+  'PRESENZA',
+  'TELEMATICA',
+  'TELEMATICA MISTA',
+];
+
+const oggettiControversia = [
+  'ALTRE NATURE DELLA CONTROVERSIA',
+  'CONTRATTI BANCARI',
+  'CONTRATTI FINANZIARI',
+  "CONTRATTI D'OPERA",
+  'CONTRATTI DI RETE',
+  'CONTRATTI DI SOMMINISTRAZIONE',
+  'CONSORZIO',
+  'DIRITTI REALI',
+  'DIVISIONE',
+  'FRANCHISING',
+  'LOCAZIONE',
+  'PATTI DI FAMIGLIA',
+  'RESPONSABILITÀ MEDICA',
+  'RISARCIMENTO DANNI MEZZO STAMPA',
+  'SUCCESSIONE EREDITARIA',
+  'SOCIETÀ DI PERSONE',
+  'SUBFORNITURA',
+];
 
 const metadatiProcedimento = {
   numProtocollo: {
@@ -216,46 +259,3 @@ const metadatiProcedimento = {
     descrizione: 'DATI GENERALI',
   },
 };
-export const sedePrincipale = 'NOLA';
-
-export const esitiMediazione = [
-  'IN CORSO',
-  'NEGATIVO INCONTRO FILTRO',
-  'NEGATIVO MANCATA ADESIONE',
-  'NEGATIVO MANCATO ACCORDO',
-  'POSITIVO',
-];
-
-export const causaliDemandata = [
-  'CONDIZIONE DI PROCEDIBILITÀ',
-  'DEMANDATA DAL GIUDICE PER IMPROCEDIBILITÀ',
-  'DEMANDATA DAL GIUDICE PER LE MATERIE NON OBBLIGATORIE',
-  'DEMANDATA DAL GIUDICE PER MANCATA CONCILIAZIONE',
-  'VOLONTARIA IN MATERIA DI',
-];
-
-export const modalitaSvolgimento = [
-  'PRESENZA',
-  'TELEMATICA',
-  'TELEMATICA MISTA',
-];
-
-export const oggettiControversia = [
-  'ALTRE NATURE DELLA CONTROVERSIA',
-  'CONTRATTI BANCARI',
-  'CONTRATTI FINANZIARI',
-  "CONTRATTI D'OPERA",
-  'CONTRATTI DI RETE',
-  'CONTRATTI DI SOMMINISTRAZIONE',
-  'CONSORZIO',
-  'DIRITTI REALI',
-  'DIVISIONE',
-  'FRANCHISING',
-  'LOCAZIONE',
-  'PATTI DI FAMIGLIA',
-  'RESPONSABILITÀ MEDICA',
-  'RISARCIMENTO DANNI MEZZO STAMPA',
-  'SUCCESSIONE EREDITARIA',
-  'SOCIETÀ DI PERSONE',
-  'SUBFORNITURA',
-];

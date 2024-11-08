@@ -21,10 +21,6 @@ import ImportoInput from '@components/ImportoInput';
 import { CssTextField, ClearButton, labelColor } from '@theme/MainTheme';
 import {
   Procedimento,
-  oggettiControversia,
-  modalitaSvolgimento,
-  causaliDemandata,
-  esitiMediazione,
 } from '@model/procedimento';
 import Select from '@components/Select';
 import { ProcedimentoContext } from '@context/Procedimento';
@@ -32,6 +28,7 @@ import NumberInput from '@components/NumberInput';
 import SelectQualificaPersona from '@components/SelectQualificaPersona';
 import TabellaSpese from '../components/TabellaSpese';
 import { calculateValueByActiveRule } from '@model/regola';
+import ComponentFactory from '../components/factories/ComponentFactory';
 
 // Constants
 const inputHeight = 36;
@@ -69,7 +66,7 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
 
     // Context
     const procedimentoContext = React.useContext(ProcedimentoContext);
-    const { procedimento, setProcedimento, regole, metadatiProcedimento } =
+    const { procedimento, setProcedimento, regole } =
       procedimentoContext;
 
     // State
@@ -88,7 +85,10 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
     const [bodySpese, setBodySpese] = React.useState([
       [{ nome: 'Incasso dalle parti', tipo: 'entrata' }, 0, 'da saldare'],
       [{ nome: 'Incasso dalle controparti', tipo: 'entrata' }, 0, 'da saldare'],
-      [{ nome: 'Compenso mediatore', tipo: 'uscita' },procedimento.compensoMediatore, 'da saldare',
+      [
+        { nome: 'Compenso mediatore', tipo: 'uscita' },
+        procedimento.compensoMediatore,
+        'da saldare',
       ],
       [
         { nome: 'Spese avvio sede secondaria', tipo: 'uscita' },
@@ -101,7 +101,7 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
         'da saldare',
       ],
     ]);
-    
+
     // Refs
     const containerFormDemandataRef = React.useRef(null);
 
@@ -129,7 +129,7 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
     React.useEffect(() => {
       // Gestione prossimo step
       let hasErrors = Object.values(errors).some((hasError) => hasError);
-      
+
       if (typeof enableNextStep === 'function') {
         //console.log('enable next');
         enableNextStep(!hasErrors && requiredFieldsFilled());
@@ -143,8 +143,16 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
       // Aggiornamento spese
       let bodySpese = [
         [{ nome: 'Incasso dalle parti', tipo: 'entrata' }, 0, 'da saldare'],
-        [{ nome: 'Incasso dalle controparti', tipo: 'entrata' }, 0, 'da saldare'],
-        [{ nome: 'Compenso mediatore', tipo: 'uscita' }, procedimento.compensoMediatore, 'da saldare'],
+        [
+          { nome: 'Incasso dalle controparti', tipo: 'entrata' },
+          0,
+          'da saldare',
+        ],
+        [
+          { nome: 'Compenso mediatore', tipo: 'uscita' },
+          procedimento.compensoMediatore,
+          'da saldare',
+        ],
         [
           { nome: 'Spese avvio sede secondaria', tipo: 'uscita' },
           procedimento.speseAvvioSedeSecondaria,
@@ -155,10 +163,15 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
           procedimento.speseIndennitaSedeSecondaria,
           'da saldare',
         ],
-      ]
+      ];
       setBodySpese(bodySpese);
       console.log('bodySpese', bodySpese);
-    }, [regole, procedimento.compensoMediatore, procedimento.speseAvvioSedeSecondaria, procedimento.speseIndennitaSedeSecondaria]);
+    }, [
+      regole,
+      procedimento.compensoMediatore,
+      procedimento.speseAvvioSedeSecondaria,
+      procedimento.speseIndennitaSedeSecondaria,
+    ]);
 
     // Handlers
     const handleReset = () => {
@@ -265,7 +278,7 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
 
           {/* Protocollo */}
           <Grid size={{ xs: 4 }} sx={{ width: 'auto' }}>
-            <ProtocolloInput
+            {/* <ProtocolloInput
               onChange={(numProtocollo, anno) => {
                 //console.log(numProtocollo, anno);
                 handleInputChange({ numProtocollo, annoProtocollo: anno });
@@ -292,7 +305,8 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
                 '0',
                 backgroundColor
               )}
-            />
+            /> */}
+            <ComponentFactory.InputFactory fieldKey='numProtocollo' />
           </Grid>
 
           {/* Data deposito */}
@@ -422,7 +436,7 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
                   ? 'Campo obbligatorio'
                   : ''
               }
-              options={oggettiControversia}
+              options={Procedimento.getMetadati('oggettoControversia').options}
             />
           </Grid>
 
@@ -437,7 +451,7 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
             <Select
               label="Demandata"
               value={procedimento.causaleDemandata || ''}
-              options={causaliDemandata}
+              options={Procedimento.getMetadati('causaleDemandata').options}
               onChange={(event) => {
                 const showFormMateriaVolontaria =
                   event.target.value === CAUSALE_VOLONTARIA_IN_MATERIA;
@@ -524,7 +538,7 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
                 handleInputChange({ esitoMediazione: event })
               }
               error={touchedFields.esitoMediazione && errors.esitoMediazione}
-              options={esitiMediazione}
+              options={Procedimento.getMetadati('esitoMediazione').options}
               sx={inputStyles(
                 theme,
                 maxWidth,
@@ -581,7 +595,7 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
               onChange={(event) =>
                 handleInputChange({ modalitaSvolgimento: event })
               }
-              options={modalitaSvolgimento}
+              options={Procedimento.getMetadati('modalitaSvolgimento').options}
               renderOptions={(selected) => {
                 const tooltipMessage = {
                   PRESENZA: 'Partecipazione sia in presenza che da remoto.',
@@ -918,19 +932,19 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
                 },
                 {
                   label: 'Totale in entrata',
-                  value: 0
+                  value: 0,
                 },
                 {
                   label: 'Totale in uscita',
-                  value: 
-                  procedimento.speseAvvioSedeSecondaria +
-                  procedimento.speseIndennitaSedeSecondaria +
-                  procedimento.compensoMediatore,
+                  value:
+                    procedimento.speseAvvioSedeSecondaria +
+                    procedimento.speseIndennitaSedeSecondaria +
+                    procedimento.compensoMediatore,
                 },
               ]}
               onImportoChange={(row, importo) => {
                 const label = row[0].nome;
-                const key = Object.values(metadatiProcedimento.current).find(
+                const key = Object.values(Procedimento.getMetadati()).find(
                   (field) => field.label === label
                 )?.key;
 

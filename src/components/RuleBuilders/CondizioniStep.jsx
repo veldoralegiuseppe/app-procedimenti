@@ -9,7 +9,6 @@ import { ProcedimentoContext } from '@context/Procedimento';
 import { Target, operatoriMap, campiCondizione } from '@model/regola';
 import {Procedimento} from '@model/procedimento';
 import Select from '@components/Select';
-import { oggettiControversia, esitiMediazione } from '@model/procedimento';
 
 const StyledPopper = styled((props) => <Popper {...props} />)(({ theme }) => ({
   '& .MuiPaper-root': {
@@ -142,14 +141,14 @@ const TargetInput = ({
     oggettoControversia: (
       <Select
         {...targetInputProps}
-        options={oggettiControversia}
+        options={Procedimento.getMetadati('oggettoControversia').options}
         sx={{ height: '34.13px' }}
       />
     ),
     esitoMediazione: (
       <Select
         {...targetInputProps}
-        options={esitiMediazione}
+        options={Procedimento.getMetadati('esitoMediazione').options}
         sx={{ height: '34.13px' }}
       />
     ),
