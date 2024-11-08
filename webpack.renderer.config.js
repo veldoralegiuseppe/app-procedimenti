@@ -31,6 +31,8 @@ module.exports = {
       '@src': path.resolve(__dirname, 'src/'),
       '@theme': path.resolve(__dirname, 'src/theme/'),
       '@context': path.resolve(__dirname, 'src/context/'),
+      '@utils': path.resolve(__dirname, 'src/utils/'),
+      '@filters': path.resolve(__dirname, 'src/utils/filters/'),
     },
   },
   plugins: [

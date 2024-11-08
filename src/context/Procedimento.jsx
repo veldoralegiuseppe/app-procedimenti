@@ -11,11 +11,12 @@ import { PersonaGiuridica } from '@model/personaGiuridica';
 import { Comune } from '@model/comune.js';
 import NotificationAlert from '@components/NotificationAlert';
 import { ProcedimentoMetadata } from '../model/procedimento';
-import { isRuleSatisfied, campiCondizione, getActiveRules, equals } from '@model/regola';
-import { Pipeline } from '../utils/pipeline';
-import { rulesApplicator } from '../utils/filters/rulesApplicator';
-import { stateRulesUpdater } from '../utils/filters/stateRulesUpdater';
-
+import {
+  campiCondizione,
+} from '@model/regola';
+import { Pipeline } from '@utils/pipeline';
+import { rulesApplicator } from '@filters/rulesApplicator';
+import { stateRulesUpdater } from '@filters/stateRulesUpdater';
 
 export const ProcedimentoContext = createContext();
 
@@ -150,23 +151,35 @@ function mockedProcedimento() {
     dataDeposito: new Date(),
     sedeDeposito: 'NOLA',
     sedeSvolgimento: 'SAVIANO',
-    dataOraIncontro: dayjs().toISOString(), 
+    dataOraIncontro: dayjs().toISOString(),
     oggettoControversia: 'DIVISIONE',
     valoreControversia: 15000,
   });
 }
 
-function mockedRegole(){
+function mockedRegole() {
   const regoleMockate = [
     {
       espressione: {
-        target: { key: 'compensoMediatore', label: 'Compenso Mediatore', type: 'number' },
-        formula: 'SOMMA SPESE POSTALI DELLE PARTI * 1.2'
+        target: {
+          key: 'compensoMediatore',
+          label: 'Compenso Mediatore',
+          type: 'number',
+        },
+        formula: 'SOMMA SPESE POSTALI DELLE PARTI * 1.2',
       },
       condizioni: [
-        { campo: { key: 'valoreControversia', label: 'Valore Controversia', type: 'number' }, operatore: '>', valore: 1000 }
+        {
+          campo: {
+            key: 'valoreControversia',
+            label: 'Valore Controversia',
+            type: 'number',
+          },
+          operatore: '>',
+          valore: 1000,
+        },
       ],
-      stato: 'ATTIVA'
+      stato: 'ATTIVA',
     },
   ];
 
@@ -182,7 +195,6 @@ export const ProcedimentoProvider = ({ children }) => {
   const [alertSeverity, setAlertSeverity] = React.useState('error');
   const [alertMessage, setAlertMessage] = React.useState(null);
   const [isBackdropOpen, setIsBackdropOpen] = React.useState(false);
-  console.log(Pipeline);
   const rulePipeline = new Pipeline([rulesApplicator, stateRulesUpdater]);
 
   const notify = (message, severity) => {
@@ -193,33 +205,44 @@ export const ProcedimentoProvider = ({ children }) => {
 
   // Effetti
   React.useEffect(() => {
-     // Crea copie profonde di `procedimento` e `regole`
-     const procedimentoCopy = _.cloneDeep(procedimento);
-     const regoleCopy = _.cloneDeep(regole);
+    // Crea copie profonde di `procedimento` e `regole`
+    const procedimentoCopy = _.cloneDeep(procedimento);
+    const regoleCopy = _.cloneDeep(regole);
     const ctx = rulePipeline.process({ procedimento, persone, regole });
     console.log('ctx', ctx);
 
     // Usa una condizione per controllare se lo stato deve essere aggiornato
-  if (!_.isEqual(ctx.regole, regoleCopy)) {
-    setRegole([...ctx.regole]);
-  }
-  if (!_.isEqual(ctx.procedimento, procedimentoCopy)) {
-    setProcedimento({ ...ctx.procedimento });
-  }
+    if (!_.isEqual(ctx.regole, regoleCopy)) {
+      setRegole([...ctx.regole]);
+    }
+    if (!_.isEqual(ctx.procedimento, procedimentoCopy)) {
+      setProcedimento({ ...ctx.procedimento });
+    }
   }, [
     ...React.useMemo(
       () => campiCondizione.map((key) => procedimento[key]),
-      [procedimento]),
-    regole
+      [procedimento]
+    ),
+    regole,
   ]);
-  
 
   return (
     <ProcedimentoContext.Provider
-      value={{ procedimento, metadatiProcedimento, setProcedimento, persone, setPersone, notify, isBackdropOpen, setIsBackdropOpen, regole, setRegole }}
+      value={{
+        procedimento,
+        metadatiProcedimento,
+        setProcedimento,
+        persone,
+        setPersone,
+        notify,
+        isBackdropOpen,
+        setIsBackdropOpen,
+        regole,
+        setRegole,
+      }}
     >
       {children}
-     
+
       <NotificationAlert
         isOpen={showAlert}
         message={alertMessage}
@@ -229,7 +252,7 @@ export const ProcedimentoProvider = ({ children }) => {
           setAlertMessage(null);
         }}
       />
-      <Backdrop open={isBackdropOpen}/>
+      <Backdrop open={isBackdropOpen} />
     </ProcedimentoContext.Provider>
   );
 };
