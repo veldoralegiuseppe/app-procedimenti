@@ -19,7 +19,6 @@ import Select from '@components/Select';
 import { ProcedimentoContext } from '@context/Procedimento';
 import { Procedimento } from '@model/procedimento';
 
-
 const InputFactory = ({ fieldKey, ...props }) => {
   // Styles
   const theme = useTheme();
@@ -116,14 +115,30 @@ const InputFactory = ({ fieldKey, ...props }) => {
       );
 
     case 'valoreControversia':
+    case 'incassoParti':
+    case 'incassoControparti':
+    case 'compensoMediatore':
+    case 'speseAvvioSedeSecondaria':
+    case 'speseIndennitaSedeSecondaria':
       return <ImportoInput {...commonProps} />;
 
     case 'sedeDeposito':
     case 'sedeSvolgimento':
+    case 'nomeMediatore':
+    case 'cognomeMediatore':
+    case 'materiaCausaleDemandata':
       return <CssTextField {...commonProps} />;
 
     case 'oggettoControversia':
-      return <Select options={Procedimento.getMetadata(fieldKey)?.options || []} {...commonProps} />;
+    case 'esitoMediazione':
+    case 'modalitaSvolgimento':
+    case 'causaleDemandata':
+      return (
+        <Select
+          options={Procedimento.getMetadata(fieldKey)?.options || []}
+          {...commonProps}
+        />
+      );
 
     case 'dataOraIncontro':
       return (
@@ -170,6 +185,22 @@ const InputFactory = ({ fieldKey, ...props }) => {
             }
           />
         </LocalizationProvider>
+      );
+
+    case 'titoloMediatore':
+      return (
+        <SelectQualificaPersona
+          onSubmit={(newTitolo) => {
+            setTitoliMediatore([...titoliMediatore, newTitolo]);
+          }}
+          onDelete={(deletedTitolo) => {
+            setTitoliMediatore(
+              titoliMediatore.filter((titolo) => titolo !== deletedTitolo)
+            );
+          }}
+          options={Procedimento.getMetadata(fieldKey)?.options || []}
+          {...commonProps}
+        />
       );
 
     default:
