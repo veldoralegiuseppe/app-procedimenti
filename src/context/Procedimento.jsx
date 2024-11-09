@@ -10,13 +10,12 @@ import { PersonaFisica } from '@model/personaFisica';
 import { PersonaGiuridica } from '@model/personaGiuridica';
 import { Comune } from '@model/comune.js';
 import NotificationAlert from '@components/NotificationAlert';
-import { ProcedimentoMetadata } from '../model/procedimento';
-import {
-  campiCondizione,
-} from '@model/regola';
+import { campiCondizione } from '@model/regola';
 import { Pipeline } from '@utils/pipeline';
 import { rulesApplicator } from '@filters/rulesApplicator';
 import { stateRulesUpdater } from '@filters/stateRulesUpdater';
+import { inputValidator } from '@filters/inputValidator';
+import { updateValidator } from '@filters/updateValidator';
 
 export const ProcedimentoContext = createContext();
 
@@ -187,21 +186,46 @@ function mockedRegole() {
 }
 
 export const ProcedimentoProvider = ({ children }) => {
+  // States
   const [procedimento, setProcedimento] = React.useState(new Procedimento());
   const [persone, setPersone] = React.useState([]);
   const [regole, setRegole] = React.useState(mockedRegole());
 
+  // TODO: da rifattorizzare
   const [showAlert, setShowAlert] = React.useState(false);
   const [alertSeverity, setAlertSeverity] = React.useState('error');
   const [alertMessage, setAlertMessage] = React.useState(null);
 
   const [isBackdropOpen, setIsBackdropOpen] = React.useState(false);
-  const rulePipeline = new Pipeline([rulesApplicator, stateRulesUpdater]);
 
+  // Pipelines
+  const rulePipeline = new Pipeline([rulesApplicator, stateRulesUpdater]);
+  const updateModelPipeline = new Pipeline([inputValidator, updateValidator]);
+
+  // Helper
   const notify = (message, severity) => {
     setShowAlert(true);
     setAlertMessage(message);
     setAlertSeverity(severity);
+  };
+
+  const handleProcedimentoChange = (changes) => {
+    const [key, valueOrEvent] = Object.entries(changes)[0];
+    const metadati = Procedimento.getMetadati();
+    const context = { procedimento, persone, regole };
+    const errorMessage = { [key]: undefined };
+
+    const results = updateModelPipeline.process({
+      key,
+      valueOrEvent,
+      metadati,
+      context,
+      errorMessage,
+    });
+
+    setProcedimento((prev) => ({ ...prev, [key]: results.valore }));
+    //console.log('error', results.errorMessage);
+    return results.errorMessage;
   };
 
   // Effetto per la gestione delle regole
@@ -209,7 +233,7 @@ export const ProcedimentoProvider = ({ children }) => {
     const procedimentoCopy = _.cloneDeep(procedimento);
     const regoleCopy = _.cloneDeep(regole);
     const ctx = rulePipeline.process({ procedimento, persone, regole });
-    
+
     if (!_.isEqual(ctx.regole, regoleCopy)) {
       setRegole([...ctx.regole]);
     }
@@ -229,6 +253,7 @@ export const ProcedimentoProvider = ({ children }) => {
       value={{
         procedimento,
         setProcedimento,
+        handleProcedimentoChange,
         persone,
         setPersone,
         notify,
