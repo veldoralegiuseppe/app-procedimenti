@@ -7,7 +7,7 @@ import { useTheme } from '@mui/material/styles';
 
 function Select({ 
   label, 
-  value, 
+  value = '', 
   onChange, 
   required = false,
   options = [], 
