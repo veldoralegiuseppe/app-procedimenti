@@ -74,6 +74,24 @@ export class Procedimento {
     return key ? metadatiProcedimento[key] : metadatiProcedimento;
   }
 
+  validateRequiredFields(){
+    if (!this.dataDeposito) {
+      throw new Error('La data di deposito è obbligatoria.');
+    }
+
+    if (!this.sedeDeposito) {
+      throw new Error('La sede di deposito è obbligatoria.');
+    }
+
+    if (!this.oggettoControversia) {
+      throw new Error('L\'oggetto della controversia è obbligatorio.');
+    }
+
+    if (!this.valoreControversia) {
+      throw new Error('Il valore della controversia è obbligatorio.');
+    }
+  }
+
   validateIncontro() {
     if (this.dataOraIncontro && this.dataDeposito) {
       const dataDeposito = dayjs(this.dataDeposito);
@@ -118,6 +136,7 @@ export class Procedimento {
   }
 
   validate() {
+    this.validateRequiredFields();
     this.validateIncontro();
     this.validateValoreControversia();
     this.validateDemandata();
@@ -172,33 +191,27 @@ const metadatiProcedimento = {
     key: 'numProtocollo',
     label: 'Numero protocollo',
     type: 'string',
-    descrizione: 'DATI GENERALI',
+    sezione: 'Istanza di mediazione',
   },
   annoProtocollo: {
     key: 'annoProtocollo',
     label: 'Anno protocollo',
     type: 'string',
-    descrizione: 'DATI GENERALI',
+    sezione: 'Istanza di mediazione',
   },
   dataDeposito: {
     key: 'dataDeposito',
     label: 'Data deposito',
     type: 'date',
-    descrizione: 'DATI GENERALI',
-    validation: (value) => {
-      return [
-        validators.required(value),
-      ].filter((result) => result !== true);
-    },
+    sezione: 'Istanza di mediazione',
   },
   sedeDeposito: {
     key: 'sedeDeposito',
     label: 'Sede deposito',
     type: 'string',
-    descrizione: 'DATI GENERALI',
+    sezione: 'Istanza di mediazione',
     validation: (value) => {
       return [
-        validators.required(value),
         validators.onlyAlphanumeric(value),
       ].filter((result) => result !== true);
     },
@@ -207,7 +220,7 @@ const metadatiProcedimento = {
     key: 'sedeSvolgimento',
     label: 'Sede svolgimento',
     type: 'string',
-    descrizione: 'DATI GENERALI',
+    sezione: 'DATI GENERALI',
     validation: (value) => {
       return [
         validators.onlyAlphanumeric(value),
@@ -218,7 +231,7 @@ const metadatiProcedimento = {
     key: 'dataOraIncontro',
     label: 'Data e ora incontro',
     type: 'datetime',
-    descrizione: 'DATI GENERALI',
+    sezione: 'DATI GENERALI',
     validation: (value) => {
       return [
         validators.isDateTime(value),
@@ -229,22 +242,16 @@ const metadatiProcedimento = {
     key: 'oggettoControversia',
     label: 'Oggetto controversia',
     type: 'string',
-    descrizione: 'DATI GENERALI',
+    sezione: 'Istanza di mediazione',
     options: oggettiControversia,
-    validation: (value) => {
-      return [
-        validators.required(value),
-      ].filter((result) => result !== true);
-    },
   },
   valoreControversia: {
     key: 'valoreControversia',
     label: 'Valore controversia',
     type: 'number',
-    descrizione: 'DATI GENERALI',
+    sezione: 'Istanza di mediazione',
     validation: (value) => {
       return [
-        validators.required(value),
         validators.onlyNumber(value),
       ].filter((result) => result !== true);
     },
@@ -253,7 +260,7 @@ const metadatiProcedimento = {
     key: 'esitoMediazione',
     label: 'Esito mediazione',
     type: 'string',
-    descrizione: 'DATI GENERALI',
+    sezione: 'Istanza di mediazione',
     options: esitiMediazione,
     validation: (value) => {
       return [
@@ -265,7 +272,7 @@ const metadatiProcedimento = {
     key: 'modalitaSvolgimento',
     label: 'Modalità svolgimento',
     type: 'string',
-    descrizione: 'DATI GENERALI',
+    sezione: 'DATI GENERALI',
     options: modalitaSvolgimento,
     validation: (value) => {
       return [
@@ -277,7 +284,7 @@ const metadatiProcedimento = {
     key: 'nomeMediatore',
     label: 'Nome mediatore',
     type: 'string',
-    descrizione: 'DATI GENERALI',
+    sezione: 'DATI GENERALI',
     validation: (value) => {
       return [
         validators.onlyAlphabetic(value),
@@ -288,7 +295,7 @@ const metadatiProcedimento = {
     key: 'cognomeMediatore',
     label: 'Cognome mediatore',
     type: 'string',
-    descrizione: 'DATI GENERALI',
+    sezione: 'DATI GENERALI',
     validation: (value) => {
       return [
         validators.onlyAlphabetic(value),
@@ -299,7 +306,7 @@ const metadatiProcedimento = {
     key: 'titoloMediatore',
     label: 'Titolo mediatore',
     type: 'string',
-    descrizione: 'DATI GENERALI',
+    sezione: 'DATI GENERALI',
     options: titoliMediatore,
     validation: (value) => {
       return [
@@ -311,13 +318,13 @@ const metadatiProcedimento = {
     key: 'totaleIncontri',
     label: 'Totale incontri',
     type: 'number',
-    descrizione: 'DATI GENERALI',
+    sezione: 'DATI GENERALI',
   },
   compensoMediatore: {
     key: 'compensoMediatore',
     label: 'Compenso mediatore',
     type: 'number',
-    descrizione: 'DATI GENERALI',
+    sezione: 'DATI GENERALI',
     validation: (value) => {
       return [
         validators.onlyNumber(value),
@@ -328,13 +335,13 @@ const metadatiProcedimento = {
     key: 'isDemandata',
     label: 'È Demandata',
     type: 'boolean',
-    descrizione: 'DATI GENERALI',
+    sezione: 'Istanza di mediazione',
   },
   causaleDemandata: {
     key: 'causaleDemandata',
     label: 'Causale demandata',
     type: 'string',
-    descrizione: 'DATI GENERALI',
+    sezione: 'Istanza di mediazione',
     options: causaliDemandata,
     validation: (value) => {
       return [
@@ -346,7 +353,7 @@ const metadatiProcedimento = {
     key: 'materiaCausaleDemandata',
     label: 'Materia causale demandata',
     type: 'string',
-    descrizione: 'DATI GENERALI',
+    sezione: 'Istanza di mediazione',
     validation: (value) => {
       return [
         validators.onlyAlphanumeric(value),
@@ -357,7 +364,7 @@ const metadatiProcedimento = {
     key: 'speseAvvioSedeSecondaria',
     label: 'Spese avvio sede secondaria',
     type: 'number',
-    descrizione: 'DATI GENERALI',
+    sezione: 'DATI GENERALI',
     validation: (value) => {
       return [
         validators.onlyNumber(value),
@@ -368,7 +375,7 @@ const metadatiProcedimento = {
     key: 'speseIndennitaSedeSecondaria',
     label: 'Spese indennità sede secondaria',
     type: 'number',
-    descrizione: 'DATI GENERALI',
+    sezione: 'DATI GENERALI',
     validation: (value) => {
       return [
         validators.onlyNumber(value),
