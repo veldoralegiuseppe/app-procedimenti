@@ -10,12 +10,14 @@ import { useTheme } from '@mui/material/styles';
 import InputAdornment from '@mui/material/InputAdornment';
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
 import CloseIcon from '@mui/icons-material/Close';
+import dayjs from 'dayjs';
+import 'dayjs/locale/it';
 
 import ProtocolloInput from '@components/ProtocolloInput';
 import ImportoInput from '@components/ImportoInput';
 import { CssTextField, labelColor } from '@theme/MainTheme';
 import Select from '@components/Select';
-
+import { size } from 'lodash';
 
 const InputFactory = ({ fieldKey, ...props }) => {
   // Styles
@@ -30,7 +32,16 @@ const InputFactory = ({ fieldKey, ...props }) => {
   };
 
   // Props
-  const { value, error, sx, onChange, label, helperText, options, ...restProps } = props;
+  const {
+    value,
+    error,
+    sx,
+    onChange,
+    label,
+    helperText,
+    options,
+    ...restProps
+  } = props;
 
   // Handlers
   const getOnChange = () => {
@@ -48,12 +59,13 @@ const InputFactory = ({ fieldKey, ...props }) => {
   // Commons
   const commonProps = {
     label: label || '',
-    value: value,
+    value: value !== undefined ? value : '',
     error: error,
     helperText: helperText || '',
     onChange: getOnChange(),
     sx: { ...inputStyles, ...sx },
     options: options,
+    size: 'small',
     ...restProps,
   };
 
@@ -86,6 +98,7 @@ const InputFactory = ({ fieldKey, ...props }) => {
               },
             }}
             {...commonProps}
+            value={value ? dayjs(value) : null}
           />
         </LocalizationProvider>
       );
@@ -107,9 +120,7 @@ const InputFactory = ({ fieldKey, ...props }) => {
     case 'esitoMediazione':
     case 'modalitaSvolgimento':
     case 'causaleDemandata':
-      return (
-        <Select {...commonProps} />
-      );
+      return <Select {...commonProps} />;
 
     case 'dataOraIncontro':
       return (
