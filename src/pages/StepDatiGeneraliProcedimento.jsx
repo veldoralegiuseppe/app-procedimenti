@@ -284,7 +284,7 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
 
           {/* Protocollo */}
           <Grid size={{ xs: 4 }} sx={{ width: 'auto' }}>
-            {/* <ProtocolloInput
+            <ProtocolloInput
               onChange={(numProtocollo, anno) => {
                 //console.log(numProtocollo, anno);
                 handleInputChange({ numProtocollo, annoProtocollo: anno });
@@ -311,8 +311,7 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
                 '0',
                 backgroundColor
               )}
-            /> */}
-            <ComponentFactory.InputFactory fieldKey='numProtocollo' />
+            />
           </Grid>
 
           {/* Data deposito */}

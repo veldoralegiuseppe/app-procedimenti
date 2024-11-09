@@ -6,6 +6,7 @@ import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import CreaProcedimento from '@pages/CreaProcedimento.jsx';
 import Dashboard from '@pages/Dashboard';
 import RuleBuilder from '@components/RuleBuilders/RuleBuilder';
+import DatiGeneraliContainer from '@components/FormDatiGenerali/DatiGeneraliContainer';
 
 export const routes = [
   {
@@ -27,7 +28,7 @@ export const routes = [
         path: '/cerca',
         icon: <SearchOutlinedIcon/>,
         label: 'Ricerca procedimento',
-        component: <RuleBuilder />,
+        component: <DatiGeneraliContainer/>,
       },
     ],
   },
