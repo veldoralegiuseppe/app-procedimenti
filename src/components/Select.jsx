@@ -46,8 +46,12 @@ function Select({
 
   // Handlers
   const handleClear = () => {
-    if(onChange) onChange({ target: { value: undefined } });
+    if(onChange) onChange({ target: { value: '' } });
   };
+  const handleChange = (event) => {
+    console.log('Select.jsx handleChange event:', event);
+    if(onChange) onChange(event);
+  }
 
   return (
     <FormControl 
@@ -69,8 +73,8 @@ function Select({
         value={value}
         label={label}
         size='small'
-        renderValue={(selected) => selected?.replaceAll('_', ' ') || ''}
-        onChange={(event) => onChange? onChange(event) : null}
+        renderValue={(selected) => (selected && String(selected).replaceAll('_', ' ')) || ''}
+        onChange={handleChange}
         IconComponent={value ? () => null : ArrowDropDownIcon}
         endAdornment={
           value && (
