@@ -24,17 +24,10 @@ export class Pipeline {
    * @returns {Object} - Il contesto elaborato.
    */
   process(context) {
-
-    const result = this._filters.reduce((ctx, filter) => {
-      try {
-        return filter.process(ctx);
-      } catch (error) {
-        console.error(`Errore nel filtro ${filter.constructor.name}:`, error);
-        return ctx; 
-      }
+    const result = this._filters.reduce((data, filter) => {
+      return filter.process(data);
     }, context);
 
-    console.log('Pipeline', result);
     return result;
   }
 }
