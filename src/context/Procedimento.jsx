@@ -225,6 +225,7 @@ export const ProcedimentoProvider = ({ children }) => {
 
     setProcedimento((prev) => ({ ...prev, [key]: results.valore }));
     //console.log('error', results.errorMessage);
+    //console.log('valore', results.valore);
     return results.errorMessage;
   };
 

@@ -16,7 +16,8 @@ const DatiGeneraliForm = ({errors, touchField, onChange, sezione, procedimento})
                         fieldKey={campo.key}
                         value={procedimento[campo.key]}
                         label={campo.label}
-                        error={errors[campo.key]}
+                        error={!!errors[campo.key]}
+                        helperText={errors[campo.key]}
                         onChange={onChange}
                         options={campo.options}
                     />

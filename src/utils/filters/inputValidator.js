@@ -30,9 +30,10 @@ const validateInput = (key, valore, metadati) => {
  */
 export const inputValidator = {
   process: ({key, valueOrEvent, metadati, context, errorMessage }) => {
-    const valore = valueOrEvent?.target?.value ?? valueOrEvent;
-    console.log('valore', valore);
-    const isValidOrErrorMessage = validateInput(key, valore === '' ? undefined : valore, metadati);
+    let valore = valueOrEvent?.target?.value ?? valueOrEvent;
+    valore = valore === '' ? undefined : valore;
+    
+    const isValidOrErrorMessage = validateInput(key, valore, metadati);
     
     if (isValidOrErrorMessage !== true) errorMessage[key] = isValidOrErrorMessage;
     return {key, valore, metadati, context, errorMessage };

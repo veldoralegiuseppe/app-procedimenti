@@ -5,16 +5,17 @@ import { ProcedimentoContext } from '@context/Procedimento';
 
 const DatiGeneraliContainer = () => {
   const [errors, setErrors] = React.useState({});
-  const [touchedFields, setTouchedFields] = React.useState({});
+  const { procedimento, handleProcedimentoChange } = React.useContext(ProcedimentoContext);
 
-  const { procedimento, handleProcedimentoChange, setProcedimento } = React.useContext(ProcedimentoContext);
+  const setProcedimento = (changes) => {
+    setErrors(handleProcedimentoChange(changes));
+  }
   
   return (
     <DatiGeneraliForm
       errors={errors}
-      touchedFields={touchedFields}
       procedimento={procedimento}
-      onChange={handleProcedimentoChange}
+      onChange={setProcedimento}
       sezione={'Istanza di mediazione'}
     />
   );
