@@ -3,9 +3,8 @@ import {Procedimento} from '@model/procedimento';
 import ComponentFactory from '../factories/ComponentFactory';
 import Grid from '@mui/material/Grid2';
 
-const DatiGeneraliForm = ({errors, touchField, onChange, sezione, procedimento}) => {
+const DatiGeneraliForm = ({errors, metadati, touchField, onChange, sezione, procedimento}) => {
 
-    const metadati = Procedimento.getMetadati();
     const campiSezione = Object.values(metadati).filter((campo) => campo.sezione === sezione);
 
     return (

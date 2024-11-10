@@ -209,9 +209,9 @@ export const ProcedimentoProvider = ({ children }) => {
     setAlertSeverity(severity);
   };
 
-  const handleProcedimentoChange = (changes) => {
+  const handleInputChange = (changes, metadati) => {
     const [key, valueOrEvent] = Object.entries(changes)[0];
-    const metadati = Procedimento.getMetadati();
+    const className = metadati.className; 
     const context = { procedimento, persone, regole };
     const errorMessage = { [key]: undefined };
 
@@ -223,7 +223,15 @@ export const ProcedimentoProvider = ({ children }) => {
       errorMessage,
     });
 
-    setProcedimento((prev) => ({ ...prev, [key]: results.valore }));
+    switch (className) {
+      case 'Procedimento':
+        setProcedimento((prev) => ({ ...prev, [key]: results.valore }));
+        break;
+
+      default:
+        throw new Error('Classe non gestita');
+    }
+    
     //console.log('error', results.errorMessage);
     //console.log('valore', results.valore);
     return results.errorMessage;
@@ -254,7 +262,7 @@ export const ProcedimentoProvider = ({ children }) => {
       value={{
         procedimento,
         setProcedimento,
-        handleProcedimentoChange,
+        handleInputChange,
         persone,
         setPersone,
         notify,
