@@ -5,7 +5,7 @@ import Grid from '@mui/material/Grid2';
 
 const DatiGeneraliForm = ({errors, metadati, touchField, onChange, sezione, procedimento}) => {
 
-    const campiSezione = Object.values(metadati).filter((campo) => campo.sezione === sezione);
+    const campiSezione = Object.values(metadati).filter((campo) => String(campo.sezione).toLowerCase() === String(sezione).toLowerCase());
 
     return (
         <Grid container size={{xs: 12}}>
