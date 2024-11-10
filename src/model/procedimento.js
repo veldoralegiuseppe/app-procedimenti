@@ -71,7 +71,8 @@ export class Procedimento {
   }
 
   static getMetadati(key) {
-    return key ? metadatiProcedimento[key] : metadatiProcedimento;
+    const metadati = { ...metadatiProcedimento, className: this.name };
+    return key ? metadati[key] : metadati;
   }
 
   validateRequiredFields(){
