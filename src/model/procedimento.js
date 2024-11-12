@@ -187,30 +187,36 @@ const oggettiControversia = [
 
 const titoliMediatore = [{ maschile: 'AVV', femminile: 'AVV.SSA' }];
 
+const SEZIONI = {
+  ISTANZA_MEDIAZIONE: 'Istanza di mediazione',
+  FISSAZIONE_INCONTRO: 'Fissazione incontro',
+  MEDIATORE: 'Mediatore',
+};
+
 const metadatiProcedimento = {
   numProtocollo: {
     key: 'numProtocollo',
     label: 'Numero protocollo',
     type: 'string',
-    sezione: 'Istanza di mediazione',
+    sezione: SEZIONI.ISTANZA_MEDIAZIONE,
   },
   annoProtocollo: {
     key: 'annoProtocollo',
     label: 'Anno protocollo',
     type: 'string',
-    sezione: 'Istanza di mediazione',
+    sezione: SEZIONI.ISTANZA_MEDIAZIONE,
   },
   dataDeposito: {
     key: 'dataDeposito',
     label: 'Data deposito',
     type: 'date',
-    sezione: 'Istanza di mediazione',
+    sezione: SEZIONI.ISTANZA_MEDIAZIONE,
   },
   sedeDeposito: {
     key: 'sedeDeposito',
     label: 'Sede deposito',
     type: 'string',
-    sezione: 'Istanza di mediazione',
+    sezione: SEZIONI.ISTANZA_MEDIAZIONE,
     validation: (value) => {
       return [
         validators.onlyAlphanumeric(value),
@@ -221,7 +227,7 @@ const metadatiProcedimento = {
     key: 'sedeSvolgimento',
     label: 'Sede svolgimento',
     type: 'string',
-    sezione: 'DATI GENERALI',
+    sezione: SEZIONI.FISSAZIONE_INCONTRO,
     validation: (value) => {
       return [
         validators.onlyAlphanumeric(value),
@@ -232,7 +238,7 @@ const metadatiProcedimento = {
     key: 'dataOraIncontro',
     label: 'Data e ora incontro',
     type: 'datetime',
-    sezione: 'DATI GENERALI',
+    sezione: SEZIONI.FISSAZIONE_INCONTRO,
     validation: (value) => {
       return [
         validators.isDateTime(value),
@@ -243,14 +249,14 @@ const metadatiProcedimento = {
     key: 'oggettoControversia',
     label: 'Oggetto controversia',
     type: 'string',
-    sezione: 'Istanza di mediazione',
+    sezione: SEZIONI.ISTANZA_MEDIAZIONE,
     options: oggettiControversia,
   },
   valoreControversia: {
     key: 'valoreControversia',
     label: 'Valore controversia',
     type: 'number',
-    sezione: 'Istanza di mediazione',
+    sezione: SEZIONI.ISTANZA_MEDIAZIONE,
     validation: (value) => {
       return [
         validators.onlyNumber(value),
@@ -261,7 +267,7 @@ const metadatiProcedimento = {
     key: 'esitoMediazione',
     label: 'Esito mediazione',
     type: 'string',
-    sezione: 'Istanza di mediazione',
+    sezione: SEZIONI.ISTANZA_MEDIAZIONE,
     options: esitiMediazione,
     validation: (value) => {
       return [
@@ -273,7 +279,7 @@ const metadatiProcedimento = {
     key: 'modalitaSvolgimento',
     label: 'Modalità svolgimento',
     type: 'string',
-    sezione: 'DATI GENERALI',
+    sezione: SEZIONI.FISSAZIONE_INCONTRO,
     options: modalitaSvolgimento,
     validation: (value) => {
       return [
@@ -285,7 +291,7 @@ const metadatiProcedimento = {
     key: 'nomeMediatore',
     label: 'Nome mediatore',
     type: 'string',
-    sezione: 'DATI GENERALI',
+    sezione: SEZIONI.MEDIATORE,
     validation: (value) => {
       return [
         validators.onlyAlphabetic(value),
@@ -296,7 +302,7 @@ const metadatiProcedimento = {
     key: 'cognomeMediatore',
     label: 'Cognome mediatore',
     type: 'string',
-    sezione: 'DATI GENERALI',
+    sezione: SEZIONI.MEDIATORE,
     validation: (value) => {
       return [
         validators.onlyAlphabetic(value),
@@ -307,7 +313,7 @@ const metadatiProcedimento = {
     key: 'titoloMediatore',
     label: 'Titolo mediatore',
     type: 'string',
-    sezione: 'DATI GENERALI',
+    sezione: SEZIONI.MEDIATORE,
     options: titoliMediatore,
     validation: (value) => {
       return [
@@ -319,30 +325,30 @@ const metadatiProcedimento = {
     key: 'totaleIncontri',
     label: 'Totale incontri',
     type: 'number',
-    sezione: 'DATI GENERALI',
+    sezione: SEZIONI.FISSAZIONE_INCONTRO,
   },
   compensoMediatore: {
     key: 'compensoMediatore',
     label: 'Compenso mediatore',
     type: 'number',
-    sezione: 'DATI GENERALI',
+    sezione: SEZIONI.MEDIATORE,
     validation: (value) => {
       return [
         validators.onlyNumber(value),
       ].filter((result) => result !== true);
     },
   },
-  isDemandata: {
-    key: 'isDemandata',
-    label: 'È Demandata',
-    type: 'boolean',
-    sezione: 'Istanza di mediazione',
-  },
+  // isDemandata: {
+  //   key: 'isDemandata',
+  //   label: 'È Demandata',
+  //   type: 'boolean',
+  //   sezione: 'Istanza di mediazione',
+  // },
   causaleDemandata: {
     key: 'causaleDemandata',
     label: 'Causale demandata',
     type: 'string',
-    sezione: 'Istanza di mediazione',
+    sezione: SEZIONI.ISTANZA_MEDIAZIONE,
     options: causaliDemandata,
     validation: (value) => {
       return [
@@ -350,37 +356,37 @@ const metadatiProcedimento = {
       ].filter((result) => result !== true);
     },
   },
-  materiaCausaleDemandata: {
-    key: 'materiaCausaleDemandata',
-    label: 'Materia causale demandata',
-    type: 'string',
-    sezione: 'Istanza di mediazione',
-    validation: (value) => {
-      return [
-        validators.onlyAlphanumeric(value),
-      ].filter((result) => result !== true);
-    },
-  },
-  speseAvvioSedeSecondaria: {
-    key: 'speseAvvioSedeSecondaria',
-    label: 'Spese avvio sede secondaria',
-    type: 'number',
-    sezione: 'DATI GENERALI',
-    validation: (value) => {
-      return [
-        validators.onlyNumber(value),
-      ].filter((result) => result !== true);
-    },
-  },
-  speseIndennitaSedeSecondaria: {
-    key: 'speseIndennitaSedeSecondaria',
-    label: 'Spese indennità sede secondaria',
-    type: 'number',
-    sezione: 'DATI GENERALI',
-    validation: (value) => {
-      return [
-        validators.onlyNumber(value),
-      ].filter((result) => result !== true);
-    },
-  },
+  // materiaCausaleDemandata: {
+  //   key: 'materiaCausaleDemandata',
+  //   label: 'Materia causale demandata',
+  //   type: 'string',
+  //   sezione: 'Istanza di mediazione',
+  //   validation: (value) => {
+  //     return [
+  //       validators.onlyAlphanumeric(value),
+  //     ].filter((result) => result !== true);
+  //   },
+  // },
+  // speseAvvioSedeSecondaria: {
+  //   key: 'speseAvvioSedeSecondaria',
+  //   label: 'Spese avvio sede secondaria',
+  //   type: 'number',
+  //   sezione: 'DATI GENERALI',
+  //   validation: (value) => {
+  //     return [
+  //       validators.onlyNumber(value),
+  //     ].filter((result) => result !== true);
+  //   },
+  // },
+  // speseIndennitaSedeSecondaria: {
+  //   key: 'speseIndennitaSedeSecondaria',
+  //   label: 'Spese indennità sede secondaria',
+  //   type: 'number',
+  //   sezione: 'DATI GENERALI',
+  //   validation: (value) => {
+  //     return [
+  //       validators.onlyNumber(value),
+  //     ].filter((result) => result !== true);
+  //   },
+  // },
 };
