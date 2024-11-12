@@ -40,7 +40,7 @@ function App() {
               margin: `0 !important`,
               backgroundColor: 'background.paper',
               padding: '2rem 5rem',
-              minHeight: '100vh',
+              //minHeight: '100vh',
               minWidth: '100%',
             }}
           >
