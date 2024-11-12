@@ -1,5 +1,4 @@
 import * as React from 'react';
-import {Procedimento} from '@model/procedimento';
 import ComponentFactory from '../factories/ComponentFactory';
 import Grid from '@mui/material/Grid2';
 

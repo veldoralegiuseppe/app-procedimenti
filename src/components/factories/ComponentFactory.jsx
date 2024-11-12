@@ -17,7 +17,7 @@ import ProtocolloInput from '@components/ProtocolloInput';
 import ImportoInput from '@components/ImportoInput';
 import { CssTextField, labelColor } from '@theme/MainTheme';
 import Select from '@components/Select';
-import { size } from 'lodash';
+import SelectQualificaPersona from '@components/SelectQualificaPersona';
 
 const InputFactory = ({ fieldKey, ...props }) => {
   // Styles
