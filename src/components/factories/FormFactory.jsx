@@ -6,7 +6,6 @@ import { Typography } from '@mui/material';
 const FormFactory = ({
   errors,
   campi = [],
-  responsiveSizeOverrides,
   touchField,
   onChange,
   titolo = '',
@@ -14,7 +13,11 @@ const FormFactory = ({
   renderOverrides = {},
 }) => {
   return (
-    <Grid container sx={{ columnGap: '1rem', rowGap: '1.7rem' }} size={{ xs: 12 }}>
+    <Grid
+      container
+      sx={{ columnGap: '1rem', rowGap: '1.7rem' }}
+      size={{ xs: 12 }}
+    >
       {/* Titolo della form */}
       <Grid
         size={{ xs: 12 }}
@@ -30,7 +33,9 @@ const FormFactory = ({
 
       {/* Form */}
       {campi.map((campo) => {
-        const CustomComponent = renderOverrides[campo.key];
+        const CustomComponent = renderOverrides[campo.key]?.component;
+        const sxOverrides = renderOverrides[campo.key]?.sx;
+        const responsiveSizeOverrides = renderOverrides[campo.key]?.size;
         const componentProps = {
           fieldKey: campo.key,
           value: model[campo.key],
@@ -39,6 +44,7 @@ const FormFactory = ({
           helperText: errors[campo.key],
           onChange: onChange,
           options: campo.options,
+          sx: sxOverrides,
         };
 
         if (CustomComponent) {
