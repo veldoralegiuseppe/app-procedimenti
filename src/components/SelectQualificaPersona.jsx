@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { fontSize, styled, useTheme } from '@mui/system';
+import { styled, useTheme } from '@mui/system';
 import {
   Autocomplete,
   Popper,
@@ -98,11 +98,12 @@ export default function SelectQualificaPersona({
     }
     if (!newValue) {
       document.activeElement.blur(); // Close the popper by blurring the input
-    }
-    if (onChange) {
       setValue(newValue ? newValue : null);
-      onChange({ target: { value: newValue ? newValue : undefined } });
+      if (onChange) {
+        onChange({ target: { value: newValue ? newValue : undefined } });
+      }
     }
+   
   };
   const filterOptions = (options, { inputValue }) => {
     const optionsFiltered = options.filter(

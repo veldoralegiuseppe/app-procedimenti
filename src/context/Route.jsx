@@ -2,11 +2,14 @@ import * as React from 'react';
 import { createContext } from 'react';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
+import { CssTextField } from '@theme/MainTheme';
 
 import CreaProcedimento from '@pages/CreaProcedimento.jsx';
 import Dashboard from '@pages/Dashboard';
 import RuleBuilder from '@components/RuleBuilders/RuleBuilder';
 import ProcedimentoFormContainer from '@components/forms/ProcedimentoFormContainer';
+import OptionsAutocomplete from '@components/common/OptionsAutocomplete';
+import TitoliAutocomplete from '@components/features/persona/TitoliAutocomplete';
 
 export const routes = [
   {
@@ -21,14 +24,16 @@ export const routes = [
       {
         path: '/crea',
         label: 'Nuovo procedimento',
-        icon:  <AddOutlinedIcon />,
+        icon: <AddOutlinedIcon />,
         component: <CreaProcedimento />,
       },
       {
         path: '/cerca',
-        icon: <SearchOutlinedIcon/>,
+        icon: <SearchOutlinedIcon />,
         label: 'Ricerca procedimento',
-        component: <ProcedimentoFormContainer/>,
+        component: (
+          <TitoliAutocomplete label="Titolo" />
+        ),
       },
     ],
   },

@@ -17,7 +17,7 @@ import ProtocolloInput from '@components/ProtocolloInput';
 import ImportoInput from '@components/ImportoInput';
 import { CssTextField, labelColor } from '@theme/MainTheme';
 import Select from '@components/Select';
-import SelectQualificaPersona from '@components/SelectQualificaPersona';
+import TitoliAutocomplete from '@components/features/persona/TitoliAutocomplete';
 
 const InputFactory = ({ fieldKey, ...props }) => {
   // Styles
@@ -171,18 +171,7 @@ const InputFactory = ({ fieldKey, ...props }) => {
 
     case 'titoloMediatore':
       return (
-        <SelectQualificaPersona
-          {...commonProps}
-          // Devono essere passati come props
-          // onSubmit={(newTitolo) => {
-          //   setTitoliMediatore([...titoliMediatore, newTitolo]);
-          // }}
-          // onDelete={(deletedTitolo) => {
-          //   setTitoliMediatore(
-          //     titoliMediatore.filter((titolo) => titolo !== deletedTitolo)
-          //   );
-          // }}
-        />
+       <TitoliAutocomplete {...commonProps} />
       );
 
     default:
