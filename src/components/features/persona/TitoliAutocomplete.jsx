@@ -1,5 +1,5 @@
 import * as React from 'react';
-import OptionsAutocomplete from '@components/common/OptionsAutocomplete';
+import OptionsAutocomplete from '@components/commons/OptionsAutocomplete';
 import FormTitoloPersona from '@components/forms/dialogs/FormTitoloPersona';
 
 const TitoliAutocomplete = ({ label, sx }) => {

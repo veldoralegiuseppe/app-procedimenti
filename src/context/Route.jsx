@@ -8,7 +8,7 @@ import CreaProcedimento from '@pages/CreaProcedimento.jsx';
 import Dashboard from '@pages/Dashboard';
 import RuleBuilder from '@components/RuleBuilders/RuleBuilder';
 import ProcedimentoFormContainer from '@components/forms/ProcedimentoFormContainer';
-import OptionsAutocomplete from '@components/common/OptionsAutocomplete';
+import OptionsAutocomplete from '@components/commons/OptionsAutocomplete';
 import TitoliAutocomplete from '@components/features/persona/TitoliAutocomplete';
 
 export const routes = [

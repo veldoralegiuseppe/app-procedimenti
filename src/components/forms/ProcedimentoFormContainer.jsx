@@ -6,17 +6,17 @@ import Grid from '@mui/material/Grid2';
 import _ from 'lodash';
 
 
-const commonWidthOverride = { width: '29.2rem' };
+const commonSx = { width: '29.2rem' };
 
 const renderOverrides = {
-  oggettoControversia: { sx: commonWidthOverride,},
-  esitoMediazione: { sx: commonWidthOverride },
-  causaleDemandata: { sx: commonWidthOverride },
-  modalitaSvolgimento: { sx: commonWidthOverride },
-  sedeSvolgimento: { sx: commonWidthOverride },
-  titoloMediatore: { sx: commonWidthOverride },
-  nomeMediatore: { sx: commonWidthOverride },
-  cognomeMediatore: { sx: commonWidthOverride },
+  oggettoControversia: { sx: commonSx,},
+  esitoMediazione: { sx: commonSx },
+  causaleDemandata: { sx: commonSx },
+  modalitaSvolgimento: { sx: commonSx },
+  sedeSvolgimento: { sx: commonSx },
+  titoloMediatore: { sx: commonSx },
+  nomeMediatore: { sx: commonSx },
+  cognomeMediatore: { sx: commonSx },
 };
 
 
