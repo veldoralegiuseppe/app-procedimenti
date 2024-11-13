@@ -14,7 +14,7 @@ rules.push(
       { loader: 'css-loader' },
       { loader: 'sass-loader' },
     ],
-  },
+  }
 );
 
 module.exports = {
@@ -23,6 +23,10 @@ module.exports = {
   },
   resolve: {
     extensions: ['.js', '.jsx', '.json', '.wasm', '.svg'],
+    fallback: {
+      fs: false,
+      path: require.resolve('path-browserify'),
+    },
     alias: {
       '@components': path.resolve(__dirname, 'src/components/'),
       '@pages': path.resolve(__dirname, 'src/pages/'),
