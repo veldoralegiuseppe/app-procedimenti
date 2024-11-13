@@ -41,7 +41,10 @@ const TitoliAutocomplete = ({ label, sx }) => {
           },
         ]);
       }}
-      onDelete={(option) => {setTitoli(titoli.filter((titolo) => titolo !== option.value));}}
+      onDelete={(option) => {
+        console.log('onDelete', option);
+        setTitoli(titoli.filter((titolo) => titolo !== option.value));
+      }}
       sx={sx}
     />
   );

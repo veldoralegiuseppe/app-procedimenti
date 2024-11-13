@@ -217,22 +217,12 @@ const metadatiProcedimento = {
     label: 'Sede deposito',
     type: 'string',
     sezione: SEZIONI.ISTANZA_MEDIAZIONE,
-    validation: (value) => {
-      return [
-        validators.onlyAlphanumeric(value),
-      ].filter((result) => result !== true);
-    },
   },
   sedeSvolgimento: {
     key: 'sedeSvolgimento',
     label: 'Sede svolgimento',
     type: 'string',
     sezione: SEZIONI.FISSAZIONE_INCONTRO,
-    validation: (value) => {
-      return [
-        validators.onlyAlphanumeric(value),
-      ].filter((result) => result !== true);
-    },
   },
   dataOraIncontro: {
     key: 'dataOraIncontro',

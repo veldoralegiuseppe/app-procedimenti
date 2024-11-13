@@ -1,24 +1,13 @@
 import * as React from 'react';
-import { ProcedimentoContext } from '@context/Procedimento';
-import { Procedimento } from '@model/procedimento';
-import FormFactory from '../factories/FormFactory';
 import Grid from '@mui/material/Grid2';
 import _ from 'lodash';
+import { ProcedimentoContext } from '@context/Procedimento';
+import { Procedimento } from '@model/procedimento';
+import FormFactory from '@components/factories/FormFactory';
+import useDynamicOptions from '@components/commons/hooks/useDynamicOptions';
 
 
 const commonSx = { width: '29.2rem' };
-
-const renderOverrides = {
-  oggettoControversia: { sx: commonSx,},
-  esitoMediazione: { sx: commonSx },
-  causaleDemandata: { sx: commonSx },
-  modalitaSvolgimento: { sx: commonSx },
-  sedeSvolgimento: { sx: commonSx },
-  titoloMediatore: { sx: commonSx },
-  nomeMediatore: { sx: commonSx },
-  cognomeMediatore: { sx: commonSx },
-};
-
 
 /**
  * @file ProcedimentoFormContainer.jsx
@@ -41,7 +30,8 @@ const renderOverrides = {
 const ProcedimentoFormContainer = () => {
   // States
   const [errors, setErrors] = React.useState({});
-
+  const { options: sediSvolgimento, addOption: addSedeSvolgimento, removeOption: removeSedeSvolgimento } = useDynamicOptions(['Option A', 'Option B']);
+ 
   // Context
   const { procedimento, handleInputChange } =
     React.useContext(ProcedimentoContext);
@@ -51,6 +41,16 @@ const ProcedimentoFormContainer = () => {
     _.groupBy(Procedimento.getMetadati(), 'sezione'),
     undefined
   );
+  const renderOverrides = {
+    oggettoControversia: { sx: commonSx,},
+    esitoMediazione: { sx: commonSx },
+    causaleDemandata: { sx: commonSx },
+    modalitaSvolgimento: { sx: commonSx },
+    sedeSvolgimento: { sx: commonSx, options: sediSvolgimento, onSubmit: addSedeSvolgimento, onDelete: removeSedeSvolgimento },
+    titoloMediatore: { sx: commonSx },
+    nomeMediatore: { sx: commonSx },
+    cognomeMediatore: { sx: commonSx },
+  };
 
   // Handlers
   const setProcedimento = (changes) => {

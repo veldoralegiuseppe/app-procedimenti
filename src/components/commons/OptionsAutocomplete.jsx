@@ -16,6 +16,7 @@ import {
 import DeleteIcon from '@mui/icons-material/Delete';
 import PropTypes from 'prop-types';
 import { CssTextField, labelColor } from '@theme/MainTheme';
+import {validators} from '@utils/validators';
 
 const StyledPopper = styled((props) => <Popper {...props} />)(({ theme }) => ({
   '& .MuiPaper-root': {
@@ -86,6 +87,7 @@ const OptionsAutocomplete = ({
   const [options, setOptions] = React.useState(items || []);
   const [dialogValue, setDialogValue] = React.useState({});
   const [isFormValid, setIsFormValid] = React.useState(false);
+  const [errorMessage, setErrorMessage] = React.useState('');
 
   React.useEffect(() => {
     setOptions(items);
@@ -93,11 +95,14 @@ const OptionsAutocomplete = ({
 
   const handleChange = (event, newValue) => {
     if (typeof newValue === 'string' || (newValue && newValue.inputValue)) {
-      console.log('open dialog', newValue);
+      const value = (newValue.inputValue || newValue).toUpperCase()
+      console.log('open dialog', value);
       setOpen(true);
-      setDialogValue({
-        value: (newValue.inputValue || newValue).toUpperCase(),
-      });
+      setDialogValue({value: value,});
+
+      const errorMessage = validators.onlyAlphanumeric(value);
+      setIsFormValid(errorMessage === true);
+      setErrorMessage(errorMessage !== true ? errorMessage : null);
     } else {
       setValue(newValue?.value ?? null);
       onChange?.({ target: { value: newValue?.value ?? undefined } });
@@ -108,7 +113,7 @@ const OptionsAutocomplete = ({
     const filteredOptions = filterOptionsProp
       ? filterOptionsProp(options, inputValue)
       : options.filter((option) =>
-          option.value.toUpperCase().includes(inputValue.toUpperCase())
+          option.value?.toUpperCase().includes(inputValue.toUpperCase())
         );
 
     if (filteredOptions.length === 0 && inputValue) {
@@ -330,8 +335,8 @@ const OptionsAutocomplete = ({
               })
             ) : (
               <CssTextField
-                error={!dialogValue.value}
-                helperText={!dialogValue.value ? 'Campo obbligatorio' : ''}
+                error={!isFormValid}
+                helperText={errorMessage}
                 autoFocus
                 required
                 margin="dense"
@@ -339,7 +344,9 @@ const OptionsAutocomplete = ({
                 value={dialogValue.value || ''}
                 onChange={(event) => {
                   const upperCaseValue = event.target.value.toUpperCase();
-                  setIsFormValid(!!upperCaseValue);
+                  const errorMessage = typeof validators.required(upperCaseValue) === 'string' ? validators.required(upperCaseValue) : validators.onlyAlphanumeric(upperCaseValue);
+                  setIsFormValid(errorMessage === true);
+                  setErrorMessage(errorMessage !== true ? errorMessage : null);
                   setDialogValue({ ...dialogValue, value: upperCaseValue });
                 }}
                 label={label || ''}

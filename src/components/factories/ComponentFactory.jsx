@@ -70,6 +70,8 @@ const InputFactory = ({ fieldKey, ...props }) => {
     ...restProps,
   };
 
+  //console.log('commonProps', commonProps);  
+
   switch (fieldKey) {
     case 'numProtocollo':
       return <ProtocolloInput {...commonProps} />;
@@ -110,13 +112,13 @@ const InputFactory = ({ fieldKey, ...props }) => {
     case 'speseIndennitaSedeSecondaria':
       return <ImportoInput {...commonProps} />;
 
-    case 'sedeSvolgimento':
     case 'nomeMediatore':
     case 'cognomeMediatore':
     case 'materiaCausaleDemandata':
       return <CssTextField {...commonProps} />;
 
     case 'sedeDeposito':
+    case 'sedeSvolgimento':
       return <OptionsAutocomplete {...commonProps} />;
 
     case 'oggettoControversia':
@@ -173,9 +175,7 @@ const InputFactory = ({ fieldKey, ...props }) => {
       );
 
     case 'titoloMediatore':
-      return (
-       <TitoliAutocomplete {...commonProps} />
-      );
+      return <TitoliAutocomplete {...commonProps} />;
 
     default:
       return null;
