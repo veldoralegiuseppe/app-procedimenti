@@ -9,7 +9,7 @@ import _ from 'lodash';
 const commonWidthOverride = { width: '29.2rem' };
 
 const renderOverrides = {
-  oggettoControversia: { sx: commonWidthOverride },
+  oggettoControversia: { sx: commonWidthOverride,},
   esitoMediazione: { sx: commonWidthOverride },
   causaleDemandata: { sx: commonWidthOverride },
   modalitaSvolgimento: { sx: commonWidthOverride },

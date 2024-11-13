@@ -18,6 +18,7 @@ import ImportoInput from '@components/ImportoInput';
 import { CssTextField, labelColor } from '@theme/MainTheme';
 import Select from '@components/Select';
 import TitoliAutocomplete from '@components/features/persona/TitoliAutocomplete';
+import OptionsAutocomplete from 'components/common/OptionsAutocomplete';
 
 const InputFactory = ({ fieldKey, ...props }) => {
   // Styles
@@ -109,12 +110,14 @@ const InputFactory = ({ fieldKey, ...props }) => {
     case 'speseIndennitaSedeSecondaria':
       return <ImportoInput {...commonProps} />;
 
-    case 'sedeDeposito':
     case 'sedeSvolgimento':
     case 'nomeMediatore':
     case 'cognomeMediatore':
     case 'materiaCausaleDemandata':
       return <CssTextField {...commonProps} />;
+
+    case 'sedeDeposito':
+      return <OptionsAutocomplete {...commonProps} />;
 
     case 'oggettoControversia':
     case 'esitoMediazione':

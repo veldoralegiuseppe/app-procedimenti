@@ -32,7 +32,7 @@ export const routes = [
         icon: <SearchOutlinedIcon />,
         label: 'Ricerca procedimento',
         component: (
-          <TitoliAutocomplete label="Titolo" />
+          <ProcedimentoFormContainer />
         ),
       },
     ],

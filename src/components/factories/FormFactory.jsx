@@ -8,7 +8,7 @@ import { Typography } from '@mui/material';
  *
  * @param {Object} props - Le proprietà passate al componente.
  * @param {Object} props.errors - Oggetto che contiene gli errori di validazione per i campi del form.
- * @param {Array} [props.campi=[]] - Array di oggetti che descrivono i campi del form.
+ * @param {Array} [props.campi=[]] - Array di metadati che descrivono i campi del form.
  * @param {Function} props.touchField - Funzione chiamata quando un campo viene toccato.
  * @param {Function} props.onChange - Funzione chiamata quando il valore di un campo cambia.
  * @param {string} [props.titolo=''] - Titolo del form.
@@ -48,8 +48,12 @@ const FormFactory = ({
       {/* Form */}
       {campi.map((campo) => {
         const CustomComponent = renderOverrides[campo.key]?.component;
-        const sxOverrides = renderOverrides[campo.key]?.sx;
-        const responsiveSizeOverrides = renderOverrides[campo.key]?.size;
+        const {
+          size: responsiveSizeOverrides,
+          options: optionsOverrides,
+          ...restOverride
+        } = renderOverrides[campo.key] || {};
+      
         const componentProps = {
           fieldKey: campo.key,
           value: model[campo.key],
@@ -57,16 +61,16 @@ const FormFactory = ({
           error: !!errors[campo.key],
           helperText: errors[campo.key],
           onChange: onChange,
-          options: campo.options,
-          sx: sxOverrides,
+          options: optionsOverrides || campo.options,
+          ...restOverride,
         };
 
         if (CustomComponent) {
           return (
             <Grid
               key={campo.key}
-              {...(responsiveSizeOverrides && responsiveSizeOverrides[campo.key]
-                ? { size: responsiveSizeOverrides[campo.key] }
+              {...(responsiveSizeOverrides
+                ? { size: responsiveSizeOverrides }
                 : {})}
             >
               <CustomComponent {...componentProps} />
@@ -81,12 +85,12 @@ const FormFactory = ({
         if (!DefaultComponent) {
           return null;
         }
-
+       
         return (
           <Grid
             key={campo.key}
-            {...(responsiveSizeOverrides && responsiveSizeOverrides[campo.key]
-              ? { size: responsiveSizeOverrides[campo.key] }
+            {...(responsiveSizeOverrides
+              ? { size: responsiveSizeOverrides }
               : {})}
           >
             {DefaultComponent}
