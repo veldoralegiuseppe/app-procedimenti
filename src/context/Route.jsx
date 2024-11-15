@@ -32,12 +32,17 @@ export const routes = [
         icon: <SearchOutlinedIcon />,
         label: 'Ricerca procedimento',
         component: (
+          // <OptionsAutocomplete 
+          // label="Titolo" 
+          // validations={{maschile: ['required']}}
+          // onFormPopulate={(inputValue) => String(inputValue).endsWith('A') ? {maschile: '', femminile: inputValue} : {maschile: inputValue, femminile: ''}}
+          // options={[{maschile: 'EROE', femminile: ''}, {maschile: 'AVV', femminile: 'AVV.SSA'}, {maschile: 'INGEGNERE', femminile: ''}, {maschile: 'DOTT', femminile: 'DOTT.SSA'},  {maschile: 'ASSESSORE', femminile: ''}]}
+          // groupBy={(option) => option.maschile && option.femminile ? "GENERE SPECIFICO" : "GENERE COMUNE"}
+          // />
           <OptionsAutocomplete 
-          label="Titolo" 
-          validations={{maschile: ['required']}}
-          onFormPopulate={(inputValue) => String(inputValue).endsWith('A') ? {maschile: '', femminile: inputValue} : {maschile: inputValue, femminile: ''}}
-          options={[{maschile: 'EROE', femminile: ''}, {maschile: 'AVV', femminile: 'AVV.SSA'}, {maschile: 'INGEGNERE', femminile: ''}, {maschile: 'DOTT', femminile: 'DOTT.SSA'},  {maschile: 'ASSESSORE', femminile: ''}]}
-          groupBy={(option) => option.maschile && option.femminile ? "GENERE SPECIFICO" : "GENERE COMUNE"}
+          label="Sede" 
+          validations={{sede: ['required']}}
+          options={['online', 'in presenza', 'ibrida']}
           />
         ),
       },

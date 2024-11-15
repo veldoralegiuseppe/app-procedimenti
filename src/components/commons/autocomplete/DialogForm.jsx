@@ -35,8 +35,8 @@ const DialogForm = ({
 
   const handleFieldChange = (key, value, isValid) => {
     const newInputsValue = key ? { ...inputsValue, [key]: value } : value;
-    const newInputsValidity = key ? { ...inputsValidity, [key]: isValid } : isValid;
-
+    const newInputsValidity = key ? { ...inputsValidity, [key]: isValid } : {[label.toLowerCase()] : isValid};
+   
     if(!_.isEqual(newInputsValue, inputsValue)) setInputsValue(newInputsValue);
     if(!_.isEqual(newInputsValidity, inputsValidity)) setInputsValidity(newInputsValidity);
   };
@@ -53,7 +53,7 @@ const DialogForm = ({
           key={`input-${label}`}
           label={label}
           value={inputsValue}
-          validations={validations?.[label]}
+          validations={validations?.[label.toLowerCase()]}
           onValueChange={(value, isValid) =>
             handleFieldChange(null, value, isValid)
           }

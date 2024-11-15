@@ -92,7 +92,7 @@ const OptionsAutocomplete = ({
         sx={sx}
         error={error}
         helperText={helperText}
-        groupBy={(option) => groupBy(option?.value)}
+        groupBy={groupBy ? (option) => groupBy?.(option?.value) : null}
         filterOptions={filterOptions}
         onOptionSelected={onOptionSelected}
       />

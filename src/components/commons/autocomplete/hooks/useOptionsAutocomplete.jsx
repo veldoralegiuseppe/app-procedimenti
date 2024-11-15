@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import _, { get } from 'lodash';
+import _ from 'lodash';
 
 export const useOptionsAutocomplete = ({
   initialValue,
@@ -23,7 +23,8 @@ export const useOptionsAutocomplete = ({
       setDialogValue(option);
       openDialog();
     } else {
-      onChange?.(value ?? undefined);
+      console.log('onChange',(value == '' || value == null) ? undefined : value);
+      onChange?.((value == '' || value == null) ? undefined : value);
     }
   };
 
