@@ -94,6 +94,7 @@ const OptionsAutocomplete = ({
   }, [items]);
 
   const handleChange = (event, newValue) => {
+    console.log('handleChange', newValue);
     if (typeof newValue === 'string' || (newValue && newValue.inputValue)) {
       const value = (newValue.inputValue || newValue).toUpperCase()
       console.log('open dialog', value);
