@@ -39,7 +39,6 @@ const AutocompleteWrapper = ({
   helperText,
   groupBy,
   filterOptions,
-  valueFormat,
   onOptionSelected,
 }) => {
   const theme = useTheme();
@@ -79,8 +78,8 @@ const AutocompleteWrapper = ({
 
   return (
     <Autocomplete
-      value={typeof value === 'string' ? value : valueFormat?.(value) || ''}
-      onChange={handleChange}
+      value={value}
+      onChange={(event, value, reason) => handleChange(event, null, value, reason)}
       filterOptions={filterOptions}
       groupBy={groupBy}
       selectOnFocus
@@ -110,7 +109,7 @@ const AutocompleteWrapper = ({
       renderInput={(params) => (
         <CssTextField
           {...params}
-          value={valueFormat?.(value) || value?.value || ''}
+          value={value?.value || ''}
           error={error}
           helperText={error ? helperText || '' : ''}
           sx={{

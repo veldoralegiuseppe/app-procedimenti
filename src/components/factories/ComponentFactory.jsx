@@ -18,7 +18,7 @@ import ImportoInput from '@components/ImportoInput';
 import { CssTextField, labelColor } from '@theme/MainTheme';
 import Select from '@components/Select';
 import TitoliAutocomplete from '@components/features/persona/TitoliAutocomplete';
-import OptionsAutocomplete from '@components/commons/OptionsAutocomplete';
+import OptionsAutocomplete from '@components/commons/autocomplete/OptionsAutocomplete';
 
 const InputFactory = ({ fieldKey, ...props }) => {
   // Styles

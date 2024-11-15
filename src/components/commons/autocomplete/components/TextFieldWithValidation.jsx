@@ -1,38 +1,27 @@
-import React, { useEffect } from 'react';
+import * as React from 'react';
 import { CssTextField } from '@theme/MainTheme';
-import { useValidation } from '../hooks/useValidation';
 
 const TextFieldWithValidation = ({
   label,
-  value = '',
-  validations,
+  value,
+  error,
+  helperText,
+  required,
   onValueChange,
 }) => {
- 
-  const {
-    isFormValid: isInputValid,
-    errorMessage,
-    validateInput,
-  } = useValidation();
-
-  useEffect(() => {
-    const { isFormValid: isValid } = validateInput(value, validations);
-    onValueChange(value, isValid);
-  }, []);
 
   const handleChange = (event) => {
     const upperCaseValue = event.target.value.toUpperCase();
-    const { isFormValid: isValid } = validateInput(upperCaseValue, validations);
-    onValueChange(upperCaseValue, isValid);
+    onValueChange(upperCaseValue);
   };
 
   return (
     <CssTextField
       key={`${label}-text-field`}
-      error={!isInputValid}
-      helperText={!isInputValid ? errorMessage : ''}
+      error={error}
+      helperText={helperText || ''}
       autoFocus
-      required={validations?.includes('required')}
+      required={required}
       margin="dense"
       id={`${label}-text-field`}
       value={value}

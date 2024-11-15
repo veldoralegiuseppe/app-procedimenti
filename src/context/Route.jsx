@@ -35,15 +35,12 @@ export const routes = [
           // <OptionsAutocomplete 
           // label="Titolo" 
           // validations={{maschile: ['required']}}
+          // optionModel={['maschile', 'femminile']}
           // onFormPopulate={(inputValue) => String(inputValue).endsWith('A') ? {maschile: '', femminile: inputValue} : {maschile: inputValue, femminile: ''}}
           // options={[{maschile: 'EROE', femminile: ''}, {maschile: 'AVV', femminile: 'AVV.SSA'}, {maschile: 'INGEGNERE', femminile: ''}, {maschile: 'DOTT', femminile: 'DOTT.SSA'},  {maschile: 'ASSESSORE', femminile: ''}]}
           // groupBy={(option) => option.maschile && option.femminile ? "GENERE SPECIFICO" : "GENERE COMUNE"}
           // />
-          <OptionsAutocomplete 
-          label="Sede" 
-          validations={{sede: ['required']}}
-          options={['online', 'in presenza', 'ibrida']}
-          />
+          <ProcedimentoFormContainer />
         ),
       },
     ],

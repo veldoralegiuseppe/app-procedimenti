@@ -5,6 +5,7 @@ import { useValidation } from './hooks/useValidation';
 import AutocompleteWrapper from './components/AutocompleteWrapper';
 import DialogForm from './components/DialogForm';
 import PropTypes from 'prop-types';
+import _, { set } from 'lodash';
 
 /**
  * Componente OptionsAutocomplete
@@ -44,7 +45,9 @@ const OptionsAutocomplete = ({
   dialogForm,
   validations,
   onFormPopulate,
+  optionModel,
 }) => {
+  
   // Hooks
   const { open, dialogValue, openDialog, closeDialog, setDialogValue } =
     useDialog();
@@ -62,30 +65,36 @@ const OptionsAutocomplete = ({
   const { isFormValid, errorMessage, validateInput } = useValidation();
 
   // Handlers
-  const onDialogSubmit = (dialogValue) => {
-    console.log('aggiuntan nuova opzione', dialogValue);
-    onSubmit?.(dialogValue);
+  const onCreationSubmit = (newOption, fristTruthyKey) => {
+    //console.log('aggiunta nuova opzione', newOption, fristTruthyKey);
+    const newValue = fristTruthyKey ? newOption[fristTruthyKey] : newOption;
+   
+    onSubmit?.(newOption);
+    handleChange(null, null, newValue);
+    setValue(newValue);
     closeDialog();
   };
 
-  const onDialogClose = () => {
+  const onCreationAbort = () => {
     closeDialog();
-    setDialogValue({ value: '' });
-    setValue('');
+    setValue(null);
+    setDialogValue({ value: null });
   };
 
   const onOptionSelected = (option, newValue) => {
     if (option?.key === 'add') {
       const newOption = {};
 
-      if (!options || typeof options[0].value === 'string') {
+      const isString = !optionModel || Array.isArray(optionModel) && optionModel.length === 1;
+      
+      if (isString) {
         newOption.value = newValue;
       } else {
         newOption.value = {};
 
         if (onFormPopulate) newOption.value = onFormPopulate(newValue);
         else {
-          Object.keys(options[0].value).forEach((key, index) => {
+          (optionModel || Object.keys(options[0].value)).forEach((key, index) => {
             newOption.value[key] = index === 0 ? newValue : '';
           });
         }
@@ -93,13 +102,18 @@ const OptionsAutocomplete = ({
      
       option.value = newOption.value;
     }
-    setValue(newValue);
     handleChange(null, option, newValue);
+    setValue(newValue);
   };
 
   const onOptionDelete = (option) => {
-    console.log('rimozione opzione', option);
-    onDelete?.(option);
+    //console.log('onOptionDelete', option);
+    onDelete?.(option.value);
+
+    const isSameValue = typeof option.value === 'string' && _.isEqual(option.value, value);
+    const isSameObject = _.isEqual(option.value, value) || _.some(option.value, (val, key) => _.isEqual(val, value));
+    
+    if(isSameValue || isSameObject) handleChange(null, null, null, 'clear');
   };
 
   return (
@@ -127,10 +141,12 @@ const OptionsAutocomplete = ({
         isFormValid={isFormValid}
         errorMessage={errorMessage}
         validateInput={validateInput}
-        onClose={onDialogClose}
-        onSubmit={onDialogSubmit}
+        onClose={closeDialog}
+        onSubmit={onCreationSubmit}
+        onAbort={onCreationAbort}
         validations={validations}
         label={label}
+        optionModel={optionModel}
       />
     </React.Fragment>
   );

@@ -8,7 +8,6 @@ const OptionItem = ({ option, onDelete, onOptionSelected }) => {
   const theme = useTheme();
 
   const handleButtonClick = (option, value) => {
-    console.log('handleButtonClick', option, value);
     if (onOptionSelected) {
       onOptionSelected(option, value);
     }

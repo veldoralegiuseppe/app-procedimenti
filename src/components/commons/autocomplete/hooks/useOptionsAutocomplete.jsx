@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import _ from 'lodash';
+import { re } from 'mathjs';
 
 export const useOptionsAutocomplete = ({
   initialValue,
@@ -9,23 +10,26 @@ export const useOptionsAutocomplete = ({
   setDialogValue,
   groupBy,
 }) => {
-  const [value, setValue] = useState(initialValue || '');
+  const [value, setValue] = useState(initialValue);
   const [options, setOptions] = useState(() => getOptions());
 
   useEffect(() => setOptions(getOptions()), [items]);
+  useEffect(() => {
+    setValue(initialValue);
+  }, [initialValue]);
 
-  const handleChange = (event, option, newValue) => {
-    const value = newValue === 'clear' ? '' : newValue;
-    setValue(value);
-
+  const handleChange = (event, option, newValue, reason) => {
     if (option?.key === 'add') {
-      console.log('aggiunta nuova opzione', option);
+      //console.log('creazione di una nuova opzione', option);
       setDialogValue(option);
       openDialog();
     } else {
-      console.log('onChange',(value == '' || value == null) ? undefined : value);
-      onChange?.((value == '' || value == null) ? undefined : value);
+      //console.log('onChange', !newValue ? undefined : newValue);
+      onChange?.(!newValue ? undefined : newValue);
+      if(reason === 'clear') setValue(null);
     }
+
+    //setValue(newValue);
   };
 
   const filterOptions = (options, { inputValue }) => {
@@ -51,10 +55,9 @@ export const useOptionsAutocomplete = ({
     return filtered;
   };
 
-  function getOptions(){
+  function getOptions() {
     if (groupBy) {
       const groupedItems = _.groupBy(items, (item) => groupBy(item));
-      console.log('groupedItems',groupedItems);
       const sortedItems = [];
 
       Object.keys(groupedItems)
@@ -70,11 +73,10 @@ export const useOptionsAutocomplete = ({
       );
     } else {
       return (
-        items.map((option) => (option.value ? option : { value: option })) ||
-        []
+        items.map((option) => (option.value ? option : { value: option })) || []
       );
     }
-  };
+  }
 
   return { value, setValue, options, handleChange, filterOptions };
 };

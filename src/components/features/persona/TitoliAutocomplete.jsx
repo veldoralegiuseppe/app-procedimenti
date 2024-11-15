@@ -1,11 +1,11 @@
 import * as React from 'react';
-import OptionsAutocomplete from '@components/commons/OptionsAutocomplete';
+import OptionsAutocomplete from '@components/commons/autocomplete/OptionsAutocomplete';
+import useDynamicOptions from '../../commons/hooks/useDynamicOptions';
 
 const TitoliAutocomplete = ({ label, sx }) => {
-  const [titoli, setTitoli] = React.useState([
-    { maschile: 'AVV', femminile: 'AVV.SSA' },
-  ]);
 
+  const {addOption, options: titoli, removeOption} = useDynamicOptions();
+ 
   return (
     <OptionsAutocomplete
       label={label || 'Titolo'}
@@ -15,20 +15,15 @@ const TitoliAutocomplete = ({ label, sx }) => {
           ? { maschile: '', femminile: inputValue }
           : { maschile: inputValue, femminile: '' }
       }
+      optionModel={['maschile', 'femminile']}
       options={titoli}
       groupBy={(option) =>
         option.maschile && option.femminile
-          ? 'GENERE SPECIFICO'
-          : 'GENERE COMUNE'
+          ? 'Genere specifico'
+          : 'Genere comune'
       }
-      onSubmit={(option) => {
-        //console.log('onSubmit', option);
-        setTitoli([...titoli, option]);
-      }}
-      onDelete={(option) => {
-        //console.log('onDelete', option);
-        setTitoli(titoli.filter((titolo) => titolo !== option));
-      }}
+      onSubmit={addOption}
+      onDelete={removeOption}
     />
   );
 };
