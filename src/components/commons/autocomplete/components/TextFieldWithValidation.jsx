@@ -1,7 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect } from 'react';
 import { CssTextField } from '@theme/MainTheme';
-import { useValidation } from './hooks/useValidation';
-import { height } from '@mui/system';
+import { useValidation } from '../hooks/useValidation';
 
 const TextFieldWithValidation = ({
   label,

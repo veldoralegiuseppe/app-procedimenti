@@ -2,10 +2,32 @@ import * as React from 'react';
 import { useDialog } from './hooks/useDialog';
 import { useOptionsAutocomplete } from './hooks/useOptionsAutocomplete';
 import { useValidation } from './hooks/useValidation';
-import AutocompleteWrapper from './AutocompleteWrapper';
-import DialogForm from './DialogForm';
+import AutocompleteWrapper from './components/AutocompleteWrapper';
+import DialogForm from './components/DialogForm';
 import PropTypes from 'prop-types';
 
+/**
+ * Componente OptionsAutocomplete
+ * 
+ * @param {Object} props - Le proprietà del componente.
+ * @param {string} props.label - L'etichetta per l'autocomplete.
+ * @param {function} props.onChange - Funzione chiamata quando il valore cambia.
+ * @param {function} props.onSubmit - Funzione chiamata quando viene creata una nuova opzione.
+ * @param {function} props.onDelete - Funzione chiamata quando viene eliminata un'opzione.
+ * @param {Array} props.options - Le opzioni disponibili per l'autocomplete.
+ * @param {Object} props.sx - Stili personalizzati per il componente.
+ * @param {any} [props.value=null] - Il valore iniziale dell'autocomplete.
+ * @param {boolean} [props.error=false] - Indica se c'è un errore.
+ * @param {string} [props.helperText=''] - Testo di aiuto mostrato sotto l'input.
+ * @param {string} [props.dialogDescriptionText=''] - Testo descrittivo per il dialogo.
+ * @param {string} [props.dialogTitle='Crea'] - Titolo del dialogo.
+ * @param {function} props.groupBy - Funzione per raggruppare le opzioni.
+ * @param {React.Element} props.dialogForm - Il form visualizzato nel dialogo.
+ * @param {Object} props.validations - Le validazioni per il form del dialogo.
+ * @param {function} props.onFormPopulate - Funzione per popolare il form del dialogo.
+ * 
+ * @returns {React.Element} Il componente OptionsAutocomplete.
+ */
 const OptionsAutocomplete = ({
   label,
   onChange,
@@ -18,7 +40,6 @@ const OptionsAutocomplete = ({
   helperText = '',
   dialogDescriptionText = '',
   dialogTitle = 'Crea',
-  valueFormat,
   groupBy,
   dialogForm,
   validations,
@@ -116,26 +137,27 @@ const OptionsAutocomplete = ({
 };
 
 OptionsAutocomplete.propTypes = {
-  label: PropTypes.string.isRequired,
+  label: PropTypes.string,
   onChange: PropTypes.func,
   onSubmit: PropTypes.func,
   onDelete: PropTypes.func,
   options: PropTypes.arrayOf(
-    PropTypes.shape({
-      value: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
-    })
-  ).isRequired,
+    PropTypes.oneOfType([
+      PropTypes.string,
+      PropTypes.object,
+    ])
+  ),
   sx: PropTypes.object,
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
   error: PropTypes.bool,
   helperText: PropTypes.string,
   dialogDescriptionText: PropTypes.string,
   dialogTitle: PropTypes.string,
-  valueFormat: PropTypes.func,
   groupBy: PropTypes.func,
   filterOptions: PropTypes.func,
   dialogForm: PropTypes.element,
   validations: PropTypes.objectOf(PropTypes.arrayOf(PropTypes.string)),
+  onFormPopulate: PropTypes.func,
 };
 
 export default OptionsAutocomplete;

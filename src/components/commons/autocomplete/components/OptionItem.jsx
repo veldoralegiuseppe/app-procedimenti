@@ -1,5 +1,5 @@
 import React from 'react';
-import { Button, IconButton, Divider } from '@mui/material';
+import { Button, IconButton} from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useTheme } from '@mui/material/styles';
 import _ from 'lodash';
