@@ -7,24 +7,11 @@ import { CssTextField } from '@theme/MainTheme';
 import CreaProcedimento from '@pages/CreaProcedimento.jsx';
 import Dashboard from '@pages/Dashboard';
 import ProcedimentoFormContainer from '@components/forms/ProcedimentoFormContainer';
-import TableFactory from '@components/factories/tableFactory/TableFactory';
-import { minHeight, styled } from '@mui/system';
+import TableFactory from '@components/factories/TableFactory/TableFactory';
+import { styled } from '@mui/system';
 import { TableCell, TableHead } from '@mui/material';
 
-
-const data = [
-  { id: 1, name: 'Alice', age: 25 },
-  { id: 2, name: 'Bob', age: 30 },
-  { id: 3, name: 'Charlie', age: 35 },
-];
-
 const headerConfig = {
-  
-  columns: [
-    { field: 'id', headerName: 'ID', sortable: true },
-    { field: 'name', headerName: 'Name', sortable: true },
-    { field: 'age', headerName: 'Age', sortable: false },
-  ],
   onSort: (field, order) => {
     console.log('Ordinamento:', field, order);
   },
@@ -51,9 +38,7 @@ const headerConfig = {
 };
 
 const rowConfig = {
-  data,
-  columns: headerConfig.columns,
-  onRowClick: (row) => console.log('Riga cliccata:', row),
+  //onRowClick: (row) => console.log('Riga cliccata:', row),
   collapsibleConfig: {
     renderComponent: (row) => (
       <div>
@@ -64,18 +49,17 @@ const rowConfig = {
     ),
   },
   selectableConfig: {
-    onSelect: (row) => console.log('Riga selezionata:', row),
-    isSelected: (row) => row.id === 1, // Esempio: seleziona solo la riga con ID 1
+    isMultiSelect: false,
+    initialSelected: [1],
   },
-  sx: {'& .MuiTableCell-root': {paddingLeft: '4px'}},
+  sx: { '& .MuiTableCell-root': { paddingLeft: '4px' } },
 };
 
 const footerConfig = {
   pagination: true,
-  data,
   page: 0,
   rowsPerPage: 5,
-  sx: {minHeight: '3rem'},
+  sx: { minHeight: '3rem' },
   onPageChange: (event, newPage) => console.log('Pagina cambiata:', newPage),
   onRowsPerPageChange: (event) =>
     console.log('Righe per pagina cambiate:', event.target.value),
@@ -106,6 +90,16 @@ export const routes = [
             headerConfig={headerConfig}
             rowConfig={rowConfig}
             footerConfig={footerConfig}
+            columns={[
+              { field: 'id', headerName: 'ID', sortable: true },
+              { field: 'name', headerName: 'Name', type: 'chip', sortable: true },
+              { field: 'age', headerName: 'Age', sortable: false },
+            ]}
+            data={[
+              { id: 1, name: 'Alice', age: 25 },
+              { id: 2, name: 'Bob', age: 30 },
+              { id: 3, name: 'Charlie', age: 35 },
+            ]}
           />
         ),
       },

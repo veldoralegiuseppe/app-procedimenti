@@ -1,12 +1,13 @@
 import React from 'react';
 import { TableCell, Checkbox } from '@mui/material';
+import {useSelectableRows} from './hooks/useSelectableRows'; // Importa il hook
 
-const SelectableDecorator = (WrappedRow) => ({ selectableConfig, row, columns, children, ...props }) => {
-  const { onSelect, isSelected } = selectableConfig;
+const SelectableDecorator = (WrappedRow) => ({ row, columns, children, ...props }) => {
+  const { toggleRowSelection, isRowSelected } = useSelectableRows(); 
 
   const handleSelect = (e) => {
     e.stopPropagation();
-    onSelect && onSelect(row);
+    toggleRowSelection(row); 
   };
 
   return (
@@ -14,8 +15,9 @@ const SelectableDecorator = (WrappedRow) => ({ selectableConfig, row, columns, c
       {React.Children.toArray(children)}
       <TableCell style={{ width: '50px' }} padding="checkbox">
         <Checkbox
-          checked={isSelected ? isSelected(row) : false}
-          onChange={handleSelect}
+          checked={isRowSelected(row)} 
+          onChange={handleSelect} 
+          onClick={(e) => e.stopPropagation()}
         />
       </TableCell>
     </WrappedRow>

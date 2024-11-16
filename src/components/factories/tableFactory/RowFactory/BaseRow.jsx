@@ -1,6 +1,6 @@
 import React from 'react';
 import { TableRow } from '@mui/material';
-import CellFactory from '../CellFactory';
+import CellFactory from '../CellFactory/CellFactory';
 
 const BaseRow = ({ row, columns, onRowClick, children, sx }) => {
   return (

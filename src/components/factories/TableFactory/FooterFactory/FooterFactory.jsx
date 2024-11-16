@@ -1,5 +1,6 @@
 import React from 'react';
 import { TableFooter, TableRow, TablePagination } from '@mui/material';
+import PropTypes from 'prop-types';
 
 const FooterFactory = ({
   pagination = false,
@@ -13,7 +14,7 @@ const FooterFactory = ({
   sx,
 }) => {
   return (
-    <TableFooter sx={{...sx}}>
+    <TableFooter sx={{ ...sx }}>
       {pagination && (
         <TableRow>
           <TablePagination
@@ -31,4 +32,19 @@ const FooterFactory = ({
   );
 };
 
+export const footerFactoryPropTypes = {
+  pagination: PropTypes.bool,
+  page: PropTypes.number,
+  rowsPerPage: PropTypes.number,
+  sx: PropTypes.object,
+  onPageChange: PropTypes.func,
+  onRowPerPageChange: PropTypes.func,
+  components: PropTypes.shape({
+    TableFooter: PropTypes.elementType,
+    TableRow: PropTypes.elementType,
+    TablePagination: PropTypes.elementType,
+  }),
+};
+
+FooterFactory.propTypes = footerFactoryPropTypes;
 export default FooterFactory;
