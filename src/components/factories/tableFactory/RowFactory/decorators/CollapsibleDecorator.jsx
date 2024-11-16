@@ -12,10 +12,10 @@ const CollapsibleDecorator = (WrappedRow) => ({ collapsibleConfig, row, columns,
 
   return (
     <>
-      <WrappedRow {...props} row={row} columns={columns}>
+      <WrappedRow {...props} open={open} row={row} columns={columns}>
         {React.Children.toArray(children)}
         {collapsibleConfig && (
-          <TableCell style={{ width: '50px' }}>
+          <TableCell data-type="collapsible" style={{ width: '50px' }}>
             <IconButton aria-label="expand row" size="small" onClick={handleToggle}>
               {open ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
             </IconButton>
@@ -36,5 +36,6 @@ const CollapsibleDecorator = (WrappedRow) => ({ collapsibleConfig, row, columns,
     </>
   );
 };
+CollapsibleDecorator.displayName = 'CollapsibleDecorator';
 
 export default CollapsibleDecorator;

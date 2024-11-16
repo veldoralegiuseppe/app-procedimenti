@@ -12,7 +12,6 @@ const HeaderFactory = ({
   order,
   orderBy,
 }) => {
-  
   // Recupera i componenti sovrascrivibili o utilizza quelli di default
   const TableHeadComponent = components.TableHead || 'thead';
   const TableRowComponent = components.TableRow || TableRow;
@@ -28,7 +27,7 @@ const HeaderFactory = ({
     <TableHeadComponent sx={{ ...sx }}>
       <TableRowComponent>
         {selectableConfig && <TableCellComponent sx={{ width: '4.5rem' }} />}
-        {collapsibleConfig && <TableCellComponent sx={{ width: '4.5rem' }} />}
+
         {columns.map((column) => (
           <TableCellComponent key={column.field} align={column.align || 'left'}>
             {column.sortable ? (
@@ -44,6 +43,8 @@ const HeaderFactory = ({
             )}
           </TableCellComponent>
         ))}
+
+        {collapsibleConfig && <TableCellComponent sx={{ width: '4.5rem' }} />}
       </TableRowComponent>
     </TableHeadComponent>
   );

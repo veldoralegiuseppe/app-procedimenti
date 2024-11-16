@@ -75,6 +75,7 @@ export default function FormModal({ open, handleClose, title = '', children }) {
             ? React.cloneElement(child, {
                 onError: onFormError,
                 onSuccess: onFormSuccess,
+                handleClose: handleCloseModal,
               })
             : null
         )}
