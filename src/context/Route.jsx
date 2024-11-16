@@ -6,10 +6,80 @@ import { CssTextField } from '@theme/MainTheme';
 
 import CreaProcedimento from '@pages/CreaProcedimento.jsx';
 import Dashboard from '@pages/Dashboard';
-import RuleBuilder from '@components/RuleBuilders/RuleBuilder';
 import ProcedimentoFormContainer from '@components/forms/ProcedimentoFormContainer';
-import OptionsAutocomplete from '@components/commons/autocomplete/OptionsAutocomplete';
-import TitoliAutocomplete from '@components/features/persona/TitoliAutocomplete';
+import TableFactory from '@components/factories/tableFactory/TableFactory';
+import { minHeight, styled } from '@mui/system';
+import { TableCell, TableHead } from '@mui/material';
+
+
+const data = [
+  { id: 1, name: 'Alice', age: 25 },
+  { id: 2, name: 'Bob', age: 30 },
+  { id: 3, name: 'Charlie', age: 35 },
+];
+
+const headerConfig = {
+  
+  columns: [
+    { field: 'id', headerName: 'ID', sortable: true },
+    { field: 'name', headerName: 'Name', sortable: true },
+    { field: 'age', headerName: 'Age', sortable: false },
+  ],
+  onSort: (field, order) => {
+    console.log('Ordinamento:', field, order);
+  },
+  components: {
+    TableHead: styled(TableHead)(({ theme }) => ({
+      backgroundColor: theme.palette.background.default,
+    })),
+
+    TableCell: styled(TableCell)(({ theme }) => ({
+      color: '#4a769b',
+      fontSize: '1rem',
+      textTransform: 'uppercase',
+      fontWeight: '500',
+      backgroundColor: '#ecf6ff',
+      borderBottom: '1px solid #3e678f4d',
+      '& .MuiButtonBase-root:hover': { color: '#ff9f32a8' },
+      '& .MuiButtonBase-root.Mui-active': {
+        color: theme.palette.logo.secondary,
+        '& svg': { color: theme.palette.logo.secondary },
+      },
+      padding: '4px',
+    })),
+  },
+};
+
+const rowConfig = {
+  data,
+  columns: headerConfig.columns,
+  onRowClick: (row) => console.log('Riga cliccata:', row),
+  collapsibleConfig: {
+    renderComponent: (row) => (
+      <div>
+        <h4>Dettagli di {row.name}</h4>
+        <p>ID: {row.id}</p>
+        <p>Età: {row.age}</p>
+      </div>
+    ),
+  },
+  selectableConfig: {
+    onSelect: (row) => console.log('Riga selezionata:', row),
+    isSelected: (row) => row.id === 1, // Esempio: seleziona solo la riga con ID 1
+  },
+  sx: {'& .MuiTableCell-root': {paddingLeft: '4px'}},
+};
+
+const footerConfig = {
+  pagination: true,
+  data,
+  page: 0,
+  rowsPerPage: 5,
+  sx: {minHeight: '3rem'},
+  onPageChange: (event, newPage) => console.log('Pagina cambiata:', newPage),
+  onRowsPerPageChange: (event) =>
+    console.log('Righe per pagina cambiate:', event.target.value),
+};
 
 export const routes = [
   {
@@ -32,15 +102,11 @@ export const routes = [
         icon: <SearchOutlinedIcon />,
         label: 'Ricerca procedimento',
         component: (
-          // <OptionsAutocomplete 
-          // label="Titolo" 
-          // validations={{maschile: ['required']}}
-          // optionModel={['maschile', 'femminile']}
-          // onFormPopulate={(inputValue) => String(inputValue).endsWith('A') ? {maschile: '', femminile: inputValue} : {maschile: inputValue, femminile: ''}}
-          // options={[{maschile: 'EROE', femminile: ''}, {maschile: 'AVV', femminile: 'AVV.SSA'}, {maschile: 'INGEGNERE', femminile: ''}, {maschile: 'DOTT', femminile: 'DOTT.SSA'},  {maschile: 'ASSESSORE', femminile: ''}]}
-          // groupBy={(option) => option.maschile && option.femminile ? "GENERE SPECIFICO" : "GENERE COMUNE"}
-          // />
-          <ProcedimentoFormContainer />
+          <TableFactory
+            headerConfig={headerConfig}
+            rowConfig={rowConfig}
+            footerConfig={footerConfig}
+          />
         ),
       },
     ],
