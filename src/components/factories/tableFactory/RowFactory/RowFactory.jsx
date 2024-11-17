@@ -57,6 +57,7 @@ export const rowFactoryPropTypes = {
   selectableConfig: PropTypes.shape({
     isMultiSelect: PropTypes.bool,
     initialSelected: PropTypes.arrayOf(PropTypes.number),
+    onSelected: PropTypes.func,
   }),
   onRowClick: PropTypes.func,
   totalColumns: PropTypes.number,

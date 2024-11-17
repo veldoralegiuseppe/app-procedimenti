@@ -9,7 +9,7 @@ import FooterFactory, {
 } from './FooterFactory/FooterFactory';
 import { SelectableProvider } from './RowFactory/decorators/hooks/useSelectableRows';
 import PropTypes from 'prop-types';
-import useSortableRows from './hooks/useSortableRows';
+import { useSortableRows, useTableRows } from './hooks';
 
 /**
  * Componente TableFactory
@@ -42,7 +42,8 @@ const TableFactory = ({
   size = 'small',
   sx,
 }) => {
-  const { rows, handleSort, order, orderBy } = useSortableRows(data || []);
+  const {rows: tableRows} = useTableRows(columns, data);
+  const { rows, handleSort, order, orderBy } = useSortableRows(tableRows || []);
 
   const totalColumns =
     columns.length +

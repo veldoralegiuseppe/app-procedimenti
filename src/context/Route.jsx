@@ -51,6 +51,7 @@ const rowConfig = {
   selectableConfig: {
     isMultiSelect: false,
     initialSelected: [1],
+    onSelected: (selected) => console.log('Selezionati:', selected),
   },
   sx: { '& .MuiTableCell-root': { paddingLeft: '4px' } },
 };
@@ -91,14 +92,14 @@ export const routes = [
             rowConfig={rowConfig}
             footerConfig={footerConfig}
             columns={[
-              { field: 'id', headerName: 'ID', sortable: true },
-              { field: 'name', headerName: 'Name', type: 'chip', sortable: true },
-              { field: 'age', headerName: 'Age', sortable: false },
+             
+              { field: 'name', headerName: 'Name', type: 'chip', sortable: true, align: 'center' },
+              { field: 'age', headerName: 'Age', sortable: false, align: 'center' },
             ]}
             data={[
-              { id: 1, name: 'Alice', age: 25 },
-              { id: 2, name: 'Bob', age: 30 },
-              { id: 3, name: 'Charlie', age: 35 },
+              {name: 'Alice', age: 25 },
+              {name: 'Bob', age: 30 },
+              {name: 'Charlie', age: 35 },
             ]}
           />
         ),

@@ -3,7 +3,12 @@ import React, { createContext, useContext, useState } from 'react';
 // Crea il context
 const SelectableContext = createContext();
 
-export const SelectableProvider = ({ children, isMultiSelect = true, initialSelected = [] }) => {
+export const SelectableProvider = ({
+  children,
+  isMultiSelect = true,
+  initialSelected = [],
+  onSelected = () => {}, // Callback invocata al cambio di selezione
+}) => {
   // Inizializza le righe selezionate in base alla modalità
   const [selectedRows, setSelectedRows] = useState(() => {
     if (isMultiSelect) {
@@ -15,22 +20,29 @@ export const SelectableProvider = ({ children, isMultiSelect = true, initialSele
 
   const toggleRowSelection = (row) => {
     setSelectedRows((prevSelected) => {
+      let updatedSelection;
       if (isMultiSelect) {
         // Selezione multipla
-        return prevSelected.includes(row.id)
+        updatedSelection = prevSelected.includes(row.id)
           ? prevSelected.filter((id) => id !== row.id)
           : [...prevSelected, row.id];
       } else {
         // Selezione esclusiva
-        return prevSelected.includes(row.id) ? [] : [row.id];
+        updatedSelection = prevSelected.includes(row.id) ? [] : [row.id];
       }
+
+      // Invoca la callback con la selezione aggiornata
+      onSelected(updatedSelection);
+      return updatedSelection;
     });
   };
 
   const isRowSelected = (row) => selectedRows.includes(row.id);
 
   return (
-    <SelectableContext.Provider value={{ selectedRows, toggleRowSelection, isRowSelected }}>
+    <SelectableContext.Provider
+      value={{ selectedRows, toggleRowSelection, isRowSelected }}
+    >
       {children}
     </SelectableContext.Provider>
   );
@@ -39,7 +51,9 @@ export const SelectableProvider = ({ children, isMultiSelect = true, initialSele
 export const useSelectableRows = () => {
   const context = useContext(SelectableContext);
   if (!context) {
-    throw new Error('useSelectableRows must be used within a SelectableProvider');
+    throw new Error(
+      'useSelectableRows must be used within a SelectableProvider'
+    );
   }
   return context;
 };
