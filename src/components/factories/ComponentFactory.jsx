@@ -45,12 +45,6 @@ const InputFactory = ({ fieldKey, ...props }) => {
   } = props;
 
   // Handlers
-  const getOnChange = () => {
-    return fieldKey !== 'numProtocollo'
-      ? (change) => handleChanges({ [fieldKey]: change })
-      : (numProtocollo, annoProtocollo) =>
-          handleChanges({ numProtocollo, annoProtocollo });
-  };
   const handleChanges = (changes) => {
     if (onChange) onChange(changes);
     //handleInputChange(changes);
@@ -63,7 +57,7 @@ const InputFactory = ({ fieldKey, ...props }) => {
     value: value !== undefined ? value : '',
     error: error,
     helperText: helperText || '',
-    onChange: getOnChange(),
+    onChange: (change) => handleChanges({ [fieldKey]: change }),
     sx: { ...inputStyles, ...sx },
     options: options,
     size: 'small',

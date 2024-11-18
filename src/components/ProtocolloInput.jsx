@@ -2,9 +2,12 @@ import * as React from 'react';
 import { CssTextField } from '@theme/MainTheme';
 import InputAdornment from '@mui/material/InputAdornment';
 import { Box, useTheme } from '@mui/material';
-import {validators} from '@utils/validators';
+import { validators } from '@utils/validators';
 
-const fillProtocollo = (protocollo) => protocollo.padStart(6, '0');
+const fillProtocollo = (protocollo) => {
+  if (protocollo === '') return '';
+  else return protocollo.padStart(6, '0');
+};
 
 export default function ProtocolloInput({
   onChange,
@@ -19,7 +22,9 @@ export default function ProtocolloInput({
   const annoRef = React.useRef(null);
   const textFieldRef = React.useRef(null);
   const [anno, setAnno] = React.useState(numProtocollo.split('/')[1]);
-  const [protocollo, setProtocollo] = React.useState(numProtocollo.split('/')[0]);
+  const [protocollo, setProtocollo] = React.useState(
+    numProtocollo.split('/')[0]
+  );
 
   // Gestisce il riempimento del numero di protocollo quando si clicca fuori dal componente
   React.useEffect(() => {
@@ -44,7 +49,9 @@ export default function ProtocolloInput({
 
   // Aggiorna il campo quando i valori di protocollo e anno cambiano
   React.useEffect(() => {
-    const numProtocollo = `${fillProtocollo(numProtocolloRef.current.value)}/${annoRef.current.value}`;
+    const numProtocollo = `${fillProtocollo(numProtocolloRef.current.value)}/${
+      annoRef.current.value
+    }`;
     onChange(numProtocollo);
   }, [protocollo, anno]);
 
@@ -62,7 +69,9 @@ export default function ProtocolloInput({
       error={error}
       helperText={helperText}
       ref={textFieldRef}
-      onBlur={() => {setProtocollo(fillProtocollo(protocollo));}}
+      onBlur={() => {
+        setProtocollo(fillProtocollo(protocollo));
+      }}
       sx={{
         margin: '18px 20px 10px 10px',
         backgroundColor: theme.palette.background.default,
@@ -99,9 +108,9 @@ export default function ProtocolloInput({
                   backgroundColor: 'transparent', // Mantiene lo stile di background del TextField
                 }}
                 onChange={(e) => handleChange(e, setProtocollo)}
-                />
+              />
 
-                {/* Separator "/". Serve per separare il numero di protocollo dall'anno */}
+              {/* Separator "/". Serve per separare il numero di protocollo dall'anno */}
               <span
                 style={{
                   padding: '0 5px',
