@@ -2,6 +2,7 @@ import * as React from 'react';
 import { CssTextField } from '@theme/MainTheme';
 import InputAdornment from '@mui/material/InputAdornment';
 import { Box, useTheme } from '@mui/material';
+import {validators} from '@utils/validators';
 
 const fillProtocollo = (protocollo) => protocollo.padStart(6, '0');
 
@@ -47,6 +48,15 @@ export default function ProtocolloInput({
     onChange(numProtocollo);
   }, [protocollo, anno]);
 
+  const handleChange = (e, callback) => {
+    if (validators.onlyNumber(e.target.value) === true) {
+      callback(e.target.value);
+    } else {
+      e.preventDefault();
+      e.target.value = e.target.value.slice(0, -1);
+    }
+  };
+
   return (
     <CssTextField
       error={error}
@@ -88,10 +98,10 @@ export default function ProtocolloInput({
                   paddingRight: '1px',
                   backgroundColor: 'transparent', // Mantiene lo stile di background del TextField
                 }}
-                onChange={() => setProtocollo(numProtocolloRef.current.value)}
-              />
+                onChange={(e) => handleChange(e, setProtocollo)}
+                />
 
-              {/* Separator "/". Serve per separare il numero di protocollo dall'anno */}
+                {/* Separator "/". Serve per separare il numero di protocollo dall'anno */}
               <span
                 style={{
                   padding: '0 5px',
@@ -119,7 +129,7 @@ export default function ProtocolloInput({
                   padding: '0',
                   backgroundColor: 'transparent', // Mantiene lo stile di background del TextField
                 }}
-                onChange={() => setAnno(annoRef.current.value)}
+                onChange={(e) => handleChange(e, setAnno)}
               />
             </Box>
           </InputAdornment>
