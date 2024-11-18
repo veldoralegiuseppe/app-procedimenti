@@ -95,12 +95,12 @@ export const routes = [
             columns={[
              
               { field: 'name', headerName: 'Name', type: 'chip', sortable: true, align: 'center' },
-              { field: 'age', headerName: 'Age', sortable: false, align: 'center' },
+              { field: 'age', headerName: 'Age', type: 'input', sortable: false, align: 'center' },
             ]}
             data={[
-              {name: {value: 'Alice', status: 'error'}, age: 25 },
-              {name: {value: 'Bob', status: 'correct'}, age: 30 },
-              {name: {value: 'Charlie', status: 'warning'}, age: 35 },
+              {name: {value: 'Alice', status: 'error'}, age: {fieldKey: 'valoreControversia', value: 0} },
+              {name: {value: 'Bob', status: 'correct'}, age: {component: CssTextField, label: 'Custom'} },
+              // {name: {value: 'Charlie', status: 'warning'}, age: 35 },
             ]}
           />
         ),

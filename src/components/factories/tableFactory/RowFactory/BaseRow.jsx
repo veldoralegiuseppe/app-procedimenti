@@ -2,7 +2,7 @@ import React from 'react';
 import { TableRow } from '@mui/material';
 import CellFactory from '../CellFactory/CellFactory';
 
-const BaseRow = ({ row, columns, onRowClick, children, sx }) => {
+const BaseRow = ({ row, columns, onRowClick, children, sx, components={} }) => {
   // Trova il SelectableDecorator basato su data-type
   const selectableChild = React.Children.toArray(children).find(
     (child) => child.props?.['data-type'] === 'selectable'
@@ -13,8 +13,10 @@ const BaseRow = ({ row, columns, onRowClick, children, sx }) => {
     (child) => child.props?.['data-type'] !== 'selectable'
   );
 
+  const TableRowComponent = components.TableRow || TableRow;
+
   return (
-    <TableRow
+    <TableRowComponent
       sx={{...sx }}
       onClick={(e) => {
         if (onRowClick) onRowClick(row);
@@ -31,7 +33,7 @@ const BaseRow = ({ row, columns, onRowClick, children, sx }) => {
 
       {/* Renderizza gli altri children */}
       {otherChildren}
-    </TableRow>
+    </TableRowComponent>
   );
 };
 
