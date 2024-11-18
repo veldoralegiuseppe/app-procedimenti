@@ -5,7 +5,6 @@ import { validators } from '@utils/validators';
 export class Procedimento {
   constructor({
     numProtocollo,
-    annoProtocollo = String(new Date().getFullYear()),
     dataDeposito = new Date().toDateString(),
     sedeDeposito,
     sedeSvolgimento,
@@ -26,7 +25,6 @@ export class Procedimento {
     materiaCausaleDemandata,
   } = {}) {
     this.numProtocollo = numProtocollo;
-    this.annoProtocollo = annoProtocollo;
     this.dataDeposito = dataDeposito;
     this.sedeDeposito = sedeDeposito;
     this.sedeSvolgimento = sedeSvolgimento;
@@ -197,12 +195,6 @@ const metadatiProcedimento = {
   numProtocollo: {
     key: 'numProtocollo',
     label: 'Numero protocollo',
-    type: 'string',
-    sezione: SEZIONI.ISTANZA_MEDIAZIONE,
-  },
-  annoProtocollo: {
-    key: 'annoProtocollo',
-    label: 'Anno protocollo',
     type: 'string',
     sezione: SEZIONI.ISTANZA_MEDIAZIONE,
   },
