@@ -29,7 +29,7 @@ const RowFactory = ({
     <tbody>
       {data.map((row, index) => (
         <RowComponent
-          sx={{ ...sx }}
+          sx={{ '& td':{borderBottom: collapsibleConfig ? 'none' : '1px solid rgba(224, 224, 224, 1)'}, ...sx }}
           key={index}
           row={row}
           columns={columns}

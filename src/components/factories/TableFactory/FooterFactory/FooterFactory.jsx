@@ -1,5 +1,6 @@
 import React from 'react';
 import { TableFooter, TableRow, TablePagination } from '@mui/material';
+import { useTheme } from '@mui/material/styles';
 import PropTypes from 'prop-types';
 
 const FooterFactory = ({
@@ -13,11 +14,17 @@ const FooterFactory = ({
   components = {},
   sx,
 }) => {
+  const theme = useTheme();
+
   return (
-    <TableFooter sx={{ ...sx }}>
+    <TableFooter sx={{ '& .MuiToolbar-root': { minHeight: '2rem' }, ...sx }}>
       {pagination && (
         <TableRow>
           <TablePagination
+            sx={{
+              backgroundColor: '#4a769b',
+              color: theme.palette.background.default,
+            }}
             rowsPerPageOptions={[5, 10, 25]}
             colSpan={colSpan}
             count={data.length}
@@ -25,6 +32,12 @@ const FooterFactory = ({
             page={page}
             onPageChange={onPageChange}
             onRowsPerPageChange={onRowsPerPageChange}
+            labelRowsPerPage={'Elementi per pagina'}
+            labelDisplayedRows={({ from, to, count }) =>
+              `Visualizzati da ${from} a ${to} di ${
+                count !== -1 ? count : `più di ${to}`
+              } risultati`
+            }
           />
         </TableRow>
       )}

@@ -21,12 +21,12 @@ const headerConfig = {
     })),
 
     TableCell: styled(TableCell)(({ theme }) => ({
-      color: '#4a769b',
+      color: '#255a89',
       fontSize: '1rem',
       textTransform: 'uppercase',
       fontWeight: '500',
-      backgroundColor: '#ecf6ff',
-      borderBottom: '1px solid #3e678f4d',
+      backgroundColor: '#c8dcec',
+      //borderBottom: '1px solid #3e678f4d',
       '& .MuiButtonBase-root:hover': { color: '#ff9f32a8' },
       '& .MuiButtonBase-root.Mui-active': {
         color: theme.palette.logo.secondary,
@@ -90,6 +90,7 @@ export const routes = [
           <TableFactory
             headerConfig={headerConfig}
             rowConfig={rowConfig}
+            sx={{border: '1px solid rgba(224, 224, 224, 1)', borderTop: 'none', borderBottom: 'none'}}
             footerConfig={footerConfig}
             columns={[
              
@@ -97,9 +98,9 @@ export const routes = [
               { field: 'age', headerName: 'Age', sortable: false, align: 'center' },
             ]}
             data={[
-              {name: 'Alice', age: 25 },
-              {name: 'Bob', age: 30 },
-              {name: 'Charlie', age: 35 },
+              {name: {value: 'Alice', status: 'error'}, age: 25 },
+              {name: {value: 'Bob', status: 'correct'}, age: 30 },
+              {name: {value: 'Charlie', status: 'warning'}, age: 35 },
             ]}
           />
         ),

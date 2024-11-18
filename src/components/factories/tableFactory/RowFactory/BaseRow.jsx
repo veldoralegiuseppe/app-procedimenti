@@ -15,7 +15,7 @@ const BaseRow = ({ row, columns, onRowClick, children, sx }) => {
 
   return (
     <TableRow
-      sx={{ ...sx }}
+      sx={{...sx }}
       onClick={(e) => {
         if (onRowClick) onRowClick(row);
       }}

@@ -52,7 +52,7 @@ const TableFactory = ({
 
   return (
     <SelectableProvider {...rowConfig?.selectableConfig}>
-      <TableContainer sx={{ ...sx }} component={Paper}>
+      <TableContainer sx={{ ...sx }}>
         <Table style={{ tableLayout: 'fixed' }} size={size}>
           {/* Header */}
           {headerConfig && (

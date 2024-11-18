@@ -1,15 +1,16 @@
 import React from 'react';
-import { TableCell, Chip, TextField } from '@mui/material';
+import { TableCell, TextField } from '@mui/material';
+import ChipCell from './components/ChipCell';
 
 const CellFactory = ({ column, row, sx }) => {
   const cellData = row[column.field];
-  const cellType = column.type || 'text'; // Tipo predefinito è 'text'
+  const cellType = column.type || 'text'; 
 
   // Rendering condizionale basato sul tipo di cella
   const renderCellContent = () => {
     switch (cellType) {
       case 'chip':
-        return <Chip label={cellData} />;
+        return <ChipCell value={cellData} />;
       case 'input':
         return (
           <TextField

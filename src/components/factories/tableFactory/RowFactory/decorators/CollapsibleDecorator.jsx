@@ -24,7 +24,7 @@ const CollapsibleDecorator = (WrappedRow) => ({ collapsibleConfig, row, columns,
       </WrappedRow>
       {collapsibleConfig && (
         <TableRow>
-          <TableCell colSpan={totalColumns} style={{ paddingBottom: 0, paddingTop: 0 }}>
+          <TableCell colSpan={totalColumns} style={{ paddingBottom: 0, paddingTop: 0,  }}>
             <Collapse in={open} timeout="auto" unmountOnExit>
               <Box margin={2}>
                 {collapsibleConfig.renderComponent && collapsibleConfig.renderComponent(row)}
