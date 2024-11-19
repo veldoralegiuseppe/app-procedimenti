@@ -1,6 +1,8 @@
-import React, { useState } from 'react';
-import { TableRow, TableCell, TableSortLabel } from '@mui/material';
+import React from 'react';
+import { TableRow, TableCell } from '@mui/material';
 import PropTypes from 'prop-types';
+import TooltipDecorator from './decorators/TooltipDecorator';
+import SortableDecorator from './decorators/SortableDecorator';
 
 const HeaderFactory = ({
   columns,
@@ -26,32 +28,52 @@ const HeaderFactory = ({
   return (
     <TableHeadComponent sx={{ ...sx }}>
       <TableRowComponent>
-        {selectableConfig && <TableCellComponent sx={{ width: '4.5rem' }} />}
+        {selectableConfig && <TableCellComponent sx={{ width: '2.5rem' }} />}
 
-        {columns.map((column) => (
-          <TableCellComponent key={column.field} align={column.align || 'left'}>
-            {column.sortable ? (
-              <TableSortLabel
+        {columns.map((column) => {
+          // Applica i decoratori condizionalmente
+          let HeaderContent = (props) => <div style={{...props.sx}}>{props.children}</div>; // Componente base
+
+          if (column.tooltip) {
+            HeaderContent = TooltipDecorator(HeaderContent);
+          }
+
+          if (column.sortable) {
+            HeaderContent = SortableDecorator(HeaderContent);
+          }
+
+          return (
+            <TableCellComponent key={column.field} align={column.align || 'left'}>
+              <HeaderContent
+                tooltip={column.tooltip}
+                sortable={column.sortable}
                 active={orderBy === column.field}
                 direction={orderBy === column.field ? order : 'asc'}
-                onClick={() => handleSort(column)}
+                onSort={() => handleSort(column)}
+                sx={{ fontSize: '.9rem' }}
               >
                 {column.headerName}
-              </TableSortLabel>
-            ) : (
-              column.headerName
-            )}
-          </TableCellComponent>
-        ))}
+              </HeaderContent>
+            </TableCellComponent>
+          );
+        })}
 
-        {collapsibleConfig && <TableCellComponent sx={{ width: '4.5rem' }} />}
+        {collapsibleConfig && <TableCellComponent sx={{ width: '2.5rem' }} />}
       </TableRowComponent>
     </TableHeadComponent>
   );
 };
 
 export const headerFactoryPropTypes = {
-  columns: PropTypes.array.isRequired,
+  columns: PropTypes.arrayOf(
+    PropTypes.shape({
+      field: PropTypes.string.isRequired,
+      headerName: PropTypes.string.isRequired,
+      sortable: PropTypes.bool,
+      align: PropTypes.oneOf(['left', 'right', 'center']),
+      tooltip: PropTypes.string,
+    })
+  ).isRequired,
   components: PropTypes.shape({
     TableHead: PropTypes.elementType,
     TableCell: PropTypes.elementType,

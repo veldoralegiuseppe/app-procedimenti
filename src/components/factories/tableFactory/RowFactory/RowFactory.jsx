@@ -1,4 +1,5 @@
 import React from 'react';
+import { TableRow, TableCell } from '@mui/material';
 import BaseRow from './BaseRow';
 import CollapsibleDecorator from './decorators/CollapsibleDecorator';
 import SelectableDecorator from './decorators/SelectableDecorator';
@@ -27,18 +28,39 @@ const RowFactory = ({
 
   return (
     <tbody>
-      {data.map((row, index) => (
-        <RowComponent
-          sx={{ '& td':{borderBottom: collapsibleConfig ? 'none' : '1px solid rgba(224, 224, 224, 1)'}, ...sx }}
-          key={index}
-          row={row}
-          columns={columns}
-          onRowClick={onRowClick}
-          collapsibleConfig={collapsibleConfig}
-          selectableConfig={selectableConfig}
-          totalColumns={totalColumns}
-        />
-      ))}
+      {data.length == 0 ? (
+        <TableRow>
+          <TableCell
+            colSpan={totalColumns}
+            sx={{
+              whiteSpace: 'nowrap',
+              textAlign: 'center',
+            }}
+          >
+            Nessun elemento da visualizzare
+          </TableCell>
+        </TableRow>
+      ) : (
+        data.map((row, index) => (
+          <RowComponent
+            sx={{
+              '& td': {
+                borderBottom: collapsibleConfig
+                  ? 'none'
+                  : '1px solid rgba(224, 224, 224, 1)',
+              },
+              ...sx,
+            }}
+            key={index}
+            row={row}
+            columns={columns}
+            onRowClick={onRowClick}
+            collapsibleConfig={collapsibleConfig}
+            selectableConfig={selectableConfig}
+            totalColumns={totalColumns}
+          />
+        ))
+      )}
     </tbody>
   );
 };
