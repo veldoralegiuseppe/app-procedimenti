@@ -42,41 +42,37 @@ const TableFactory = ({
   size = 'small',
   sx,
 }) => {
-  const {rows: tableRows} = useTableRows(columns, data);
+  const { rows: tableRows } = useTableRows(columns, data);
   const { rows, handleSort, order, orderBy } = useSortableRows(tableRows || []);
 
   const totalColumns =
     columns.length +
-    (rowConfig.collapsibleConfig ? 1 : 0) +
-    (rowConfig.selectableConfig ? 1 : 0);
+    (rowConfig?.collapsibleConfig ? 1 : 0) +
+    (rowConfig?.selectableConfig ? 1 : 0);
 
   return (
     <SelectableProvider {...rowConfig?.selectableConfig}>
       <TableContainer sx={{ ...sx }}>
         <Table size={size}>
           {/* Header */}
-          {headerConfig && (
-            <HeaderFactory
-              {...headerConfig}
-              collapsibleConfig={rowConfig.collapsibleConfig}
-              selectableConfig={rowConfig.selectableConfig}
-              totalColumns={totalColumns}
-              onSort={handleSort}
-              order={order}
-              orderBy={orderBy}
-              columns={columns}
-            />
-          )}
+          <HeaderFactory
+            {...headerConfig}
+            collapsibleConfig={{...rowConfig?.collapsibleConfig}}
+            selectableConfig={{...rowConfig?.selectableConfig}}
+            totalColumns={totalColumns}
+            onSort={handleSort}
+            order={order}
+            orderBy={orderBy}
+            columns={columns}
+          />
 
           {/* Rows */}
-          {rowConfig && (
-            <RowFactory
-              {...rowConfig}
-              columns={columns}
-              data={rows}
-              totalColumns={totalColumns}
-            />
-          )}
+          <RowFactory
+            {...rowConfig}
+            columns={columns}
+            data={rows}
+            totalColumns={totalColumns}
+          />
 
           {/* Footer (opzionale) */}
           {footerConfig && (

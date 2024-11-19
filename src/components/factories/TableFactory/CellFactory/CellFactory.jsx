@@ -15,7 +15,7 @@ const CellFactory = ({ column, row, sx }) => {
       case 'input':
         return <InputCell {...cellData} />;
       case 'custom':
-        return column.render ? column.render(cellData, row) : cellData; // Usa il render personalizzato
+        return column.render ? column.render(cellData, row) : cellData; 
       case 'text':
       default:
         return cellData; // Contenuto testuale predefinito

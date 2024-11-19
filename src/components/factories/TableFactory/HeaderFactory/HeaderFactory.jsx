@@ -28,7 +28,7 @@ const HeaderFactory = ({
   return (
     <TableHeadComponent sx={{ ...sx }}>
       <TableRowComponent>
-        {selectableConfig && <TableCellComponent sx={{ width: '2.5rem' }} />}
+        {selectableConfig && Object.keys(selectableConfig).length > 0 && <TableCellComponent sx={{ width: '2.5rem' }} />}
 
         {columns.map((column) => {
           // Applica i decoratori condizionalmente
@@ -43,7 +43,7 @@ const HeaderFactory = ({
           }
 
           return (
-            <TableCellComponent key={column.field} align={column.align || 'left'}>
+            <TableCellComponent sx={column.sx} key={column.field} align={column.align || 'left'}>
               <HeaderContent
                 tooltip={column.tooltip}
                 sortable={column.sortable}
@@ -58,7 +58,7 @@ const HeaderFactory = ({
           );
         })}
 
-        {collapsibleConfig && <TableCellComponent sx={{ width: '2.5rem' }} />}
+        {collapsibleConfig && Object.keys(collapsibleConfig).length > 0 && <TableCellComponent sx={{ width: '2.5rem' }} />}
       </TableRowComponent>
     </TableHeadComponent>
   );
