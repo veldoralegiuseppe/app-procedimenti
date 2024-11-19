@@ -3,7 +3,17 @@ import InputAdornment from '@mui/material/InputAdornment';
 import EuroSymbolIcon from '@mui/icons-material/EuroSymbol';
 import { CssTextField } from '@theme/MainTheme';
 
-const ImportoInput = ({ onChange, onBlur, label = "", sx, id, value = 0, error = false, helperText = '' }) => {
+const ImportoInput = ({
+  onChange,
+  onBlur,
+  label = '',
+  sx,
+  id,
+  value = 0,
+  error = false,
+  helperText = '',
+  disabled = false,
+}) => {
   // State
   const [importo, setImporto] = useState('0,00');
 
@@ -143,18 +153,18 @@ const ImportoInput = ({ onChange, onBlur, label = "", sx, id, value = 0, error =
       !/^[0-9]+,[0-9]+$/.test(inputValue.replaceAll('.', '')) ||
       numeroDiPunti > numeroDiPuntiPrevisti
     ) {
-
       // caso ,xx
-      if(/^,\d{2}$/.test(inputValue)){
-        inputValue = '0' + inputValue.slice(inputValue.indexOf(',')).padEnd(2, '0');
+      if (/^,\d{2}$/.test(inputValue)) {
+        inputValue =
+          '0' + inputValue.slice(inputValue.indexOf(',')).padEnd(2, '0');
         event.target.value = inputValue;
-        setImporto(inputValue)
-        if(onChange) onChange(0);
-        let nextCursor = 0
+        setImporto(inputValue);
+        if (onChange) onChange(0);
+        let nextCursor = 0;
         event.target.selectionStart = nextCursor;
         event.target.selectionEnd = nextCursor;
         event.target.setSelectionRange(nextCursor, nextCursor);
-        return
+        return;
       }
 
       // Immissione dati sporchi
@@ -173,17 +183,17 @@ const ImportoInput = ({ onChange, onBlur, label = "", sx, id, value = 0, error =
       }
     }
 
-    // Gestione degli zero a sinistra 
-    if(/^0+(?=\d+[,\.]\d+)/.test(inputValue)){
+    // Gestione degli zero a sinistra
+    if (/^0+(?=\d+[,\.]\d+)/.test(inputValue)) {
       //console.log('zeri a sx')
       inputValue = inputValue.replace(/^0+(?![,0])/, '');
-      event.target.value = inputValue
-      startCursorPosition = Math.max(startCursorPosition-1, 0);
+      event.target.value = inputValue;
+      startCursorPosition = Math.max(startCursorPosition - 1, 0);
       event.target.selectionStart = startCursorPosition;
       event.target.selectionEnd = startCursorPosition;
       event.target.setSelectionRange(startCursorPosition, startCursorPosition);
     }
-    
+
     // Controlla se l'input è vuoto e imposta "0,00"
     if (!inputValue) {
       setImporto('0,00');
@@ -248,10 +258,11 @@ const ImportoInput = ({ onChange, onBlur, label = "", sx, id, value = 0, error =
       onChange={handleValueChange}
       id={id}
       onBlur={() => {
-        setImporto(importo)
+        setImporto(importo);
         if (onBlur) onBlur();
-      }} 
+      }}
       label={label}
+      disabled={disabled}
       variant="outlined"
       size="small"
       sx={{ ...sx }} // Usa il tuo stile personalizzato
