@@ -11,6 +11,7 @@ import TableFactory from '@components/factories/TableFactory/TableFactory';
 import { styled } from '@mui/system';
 import { TableCell, TableHead } from '@mui/material';
 import TabellaPartiControparti from '../components/features/persona/TabellaPartiControparti';
+import TabellaRiepilogoSpese from '../components/features/procedimento/TabellaRiepilogoSpese/TabellaRiepilogoSpese';
 
 
 export const routes = [
@@ -33,7 +34,10 @@ export const routes = [
         path: '/cerca',
         icon: <SearchOutlinedIcon />,
         label: 'Ricerca procedimento',
-        component: (<TabellaPartiControparti />),
+        component: (
+        // <TabellaPartiControparti />
+        <TabellaRiepilogoSpese />
+      ),
       },
     ],
   },
