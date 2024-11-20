@@ -5,7 +5,7 @@ import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 
 import CreaProcedimento from '@pages/CreaProcedimento.jsx';
 import Dashboard from '@pages/Dashboard';
-import TabellaTransazioni from '@components/features/procedimento/TabellaRiepilogoSpese/TabellaTransazioni';
+import TabellaTransazioni from '@components/commons/TabellaTransazioni/TabellaTransazioni';
 import { Transazione } from '@model/transazione';
 
 const data = [
