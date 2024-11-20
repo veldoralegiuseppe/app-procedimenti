@@ -58,7 +58,7 @@ const headerConfig = {
 };
 
 const TabellaTransazioni = ({ data: transazioni, rowConfig, onChange }) => {
-  const {data} = useTransazioneTableRow(transazioni, rowConfig);
+  const {data} = useTransazioneTableRow(transazioni, rowConfig, onChange);
 
   return (
     <TableFactory

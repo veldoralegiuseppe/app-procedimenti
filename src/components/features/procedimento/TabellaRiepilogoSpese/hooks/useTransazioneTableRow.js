@@ -97,7 +97,7 @@ const getNextStatus = (currentStato) => {
  * @param {Transazione[]} transazioni - Array di transazioni iniziali.
  * @returns {Object} Stato e metodi per gestire le righe.
  */
-const useTransazioneTableRow = (transazioni, rowConfig = {}) => {
+const useTransazioneTableRow = (transazioni, rowConfig = {}, onChange) => {
   const { disabled = [] } = rowConfig;
 
   // Pre-elaborare i nomi disabilitati (normalizzati per confronto case-insensitive)
@@ -125,21 +125,30 @@ const useTransazioneTableRow = (transazioni, rowConfig = {}) => {
   );
 
   // Gestione delle modifiche
-  const handleChange = React.useCallback((transazione, key, value) => {
-    setData((prevData) =>
-      prevData.map((row) => {
-        if (!_.isEqual(getId(transazione), row.id)) return row;
+  const handleChange = React.useCallback(
+    (transazione, key, value) => {
+      setData((prevData) =>
+        prevData.map((row, index) => {
+          if (!_.isEqual(getId(transazione), row.id)) return row;
 
-        // Crea una nuova transazione aggiornata
-        const updatedTransazione = new Transazione({
-          ...transazione,
-          [key]: value,
-        });
+          // Crea una nuova transazione aggiornata
+            const updatedTransazione = new Transazione({
+            nome: transazione.nome,
+            tipo: transazione.tipo,
+            importoDovuto: key === 'importoDovuto' ? value : transazione.importoDovuto,
+            importoCorrisposto: key === 'importoCorrisposto' ? value : transazione.importoCorrisposto,
+            stato: key === 'stato' ? value : transazione.stato
+            });
 
-        return mapRow(updatedTransazione, disabledTransactions);
-      })
-    );
-  }, [disabledTransactions]);
+          //console.log('updatedTransazione', updatedTransazione);
+          onChange?.(updatedTransazione, index);
+
+          return mapRow(updatedTransazione, disabledTransactions);
+        })
+      );
+    },
+    [disabledTransactions]
+  );
 
   return { data, setData };
 };
