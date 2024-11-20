@@ -2,17 +2,24 @@ import * as React from 'react';
 import { createContext } from 'react';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
-import { CssTextField } from '@theme/MainTheme';
 
 import CreaProcedimento from '@pages/CreaProcedimento.jsx';
 import Dashboard from '@pages/Dashboard';
-import ProcedimentoFormContainer from '@components/forms/ProcedimentoFormContainer';
-import TableFactory from '@components/factories/TableFactory/TableFactory';
-import { styled } from '@mui/system';
-import { TableCell, TableHead } from '@mui/material';
-import TabellaPartiControparti from '../components/features/persona/TabellaPartiControparti';
-import TabellaRiepilogoSpese from '../components/features/procedimento/TabellaRiepilogoSpese/TabellaRiepilogoSpese';
+import TabellaTransazioni from '@components/features/procedimento/TabellaRiepilogoSpese/TabellaTransazioni';
+import { Transazione } from '@model/transazione';
 
+const data = [
+  new Transazione({nome: 'Incasso parti', tipo: 'entrata', importoDovuto: 1000}),
+  new Transazione({nome: 'Incasso controparti', tipo: 'entrata'}),
+  new Transazione({nome: 'Compenso mediatore', tipo: 'uscita'}),
+  new Transazione({nome: 'Spese avvio sede secondaria', tipo: 'uscita'}),
+  new Transazione({nome: 'Spese indennità sede secondaria', tipo: 'uscita'}),
+];
+
+const rowConfig = {
+  disabled: ['Incasso parti', 'Incasso controparti'],
+}
+  
 
 export const routes = [
   {
@@ -35,9 +42,9 @@ export const routes = [
         icon: <SearchOutlinedIcon />,
         label: 'Ricerca procedimento',
         component: (
-        // <TabellaPartiControparti />
-        <TabellaRiepilogoSpese />
-      ),
+          // <TabellaPartiControparti />
+          <TabellaTransazioni data={data} rowConfig={rowConfig}/>
+        ),
       },
     ],
   },

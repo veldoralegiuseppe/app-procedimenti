@@ -11,7 +11,7 @@ const CellFactory = ({ column, row, sx }) => {
   const renderCellContent = () => {
     switch (cellType) {
       case 'chip':
-        return <ChipCell {...cellData} />;
+        return <ChipCell {...cellData} row={row} />;
       case 'input':
         return <InputCell {...cellData} />;
       case 'custom':

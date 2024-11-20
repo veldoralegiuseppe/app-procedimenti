@@ -9,38 +9,29 @@ import { Chip } from '@mui/material';
  * @param {string} props.value.value - Il testo da visualizzare nel Chip.
  * @param {string} props.value.status - Lo stato iniziale del Chip (error, warning, correct).
  */
-const ChipCell = ({ value: label, status: state }) => {
-  const statusArray = ['error', 'warning', 'correct'];
-  const [status, setStatus] = React.useState(state);
-
-  const statusOptions = {
-    error: { color: '#ffcccb', textColor: '#b71c1c' },
-    warning: { color: '#fff3cd', textColor: '#856404' },
-    correct: { color: '#c8e6c9', textColor: '#2e7d32' },
+const ChipCell = ({ value: label, status, onClick, row }) => {
+  
+  const statusFlagOptions = {
+    red: { color: '#ffcccb', textColor: '#b71c1c' },
+    yellow: { color: '#fff3cd', textColor: '#856404' },
+    green: { color: '#c8e6c9', textColor: '#2e7d32' },
   };
 
   const chipStyles = {
-    backgroundColor: statusOptions[status].color,
-    color: statusOptions[status].textColor,
+    backgroundColor: statusFlagOptions[status].color,
+    color: statusFlagOptions[status].textColor,
     cursor: 'pointer',
     fontWeight: 'bold',
     '&:hover': {
-      backgroundColor: statusOptions[status].color,
+      backgroundColor: statusFlagOptions[status].color,
     },
-  };
-
-  const handleChipClick = () => {
-    setStatus((prevStato) => {
-      const currentIndex = statusArray.indexOf(prevStato);
-      return statusArray[(currentIndex + 1) % statusArray.length];
-    });
   };
 
   return (
     <Chip
       size="small"
       label={label || ''}
-      onClick={handleChipClick}
+      onClick={() => onClick?.(row)}
       sx={chipStyles}
     />
   );
@@ -48,7 +39,7 @@ const ChipCell = ({ value: label, status: state }) => {
 
 ChipCell.propTypes = {
   value: PropTypes.string.isRequired,
-  status: PropTypes.oneOf(['error', 'warning', 'correct']).isRequired,
+  status: PropTypes.oneOf(['red', 'yellow', 'green']).isRequired,
 };
 
 export default ChipCell;

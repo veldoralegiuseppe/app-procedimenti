@@ -33,12 +33,12 @@ const ProcedimentoFormContainer = () => {
     options: sediSvolgimento,
     addOption: addSedeSvolgimento,
     removeOption: removeSedeSvolgimento,
-  } = useDynamicOptions(['Option A', 'Option B']);
+  } = useDynamicOptions([]);
   const {
     options: sediDeposito,
     addOption: addSedeDeposito,
     removeOption: removeSedeDeposito,
-  } = useDynamicOptions(['Option A', 'Option B']);
+  } = useDynamicOptions([]);
 
   // Context
   const { procedimento, handleInputChange } =

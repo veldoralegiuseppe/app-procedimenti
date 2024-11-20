@@ -1,6 +1,7 @@
 import dayjs from 'dayjs';
 import 'dayjs/locale/it';
 import { validators } from '@utils/validators';
+import { Transazione } from './transazione';
 
 export class Procedimento {
   constructor({
@@ -17,9 +18,9 @@ export class Procedimento {
     cognomeMediatore,
     titoloMediatore,
     totaleIncontri = 0,
-    compensoMediatore = 0,
-    speseAvvioSedeSecondaria = 0,
-    speseIndennitaSedeSecondaria = 0,
+    compensoMediatore = new Transazione('USCITA', 0, 0, 'DA SALDARE'),
+    speseAvvioSedeSecondaria = new Transazione('USCITA', 0, 0, 'DA SALDARE'),
+    speseIndennitaSedeSecondaria = new Transazione('USCITA', 0, 0, 'DA SALDARE'),
     isDemandata = false,
     causaleDemandata,
     materiaCausaleDemandata,
@@ -43,17 +44,6 @@ export class Procedimento {
     this.compensoMediatore = compensoMediatore;
     this.speseAvvioSedeSecondaria = speseAvvioSedeSecondaria;
     this.speseIndennitaSedeSecondaria = speseIndennitaSedeSecondaria;
-  }
-
-  getProtocollo() {
-    return this.numProtocollo && this.annoProtocollo
-      ? `${this.numProtocollo}/${this.annoProtocollo}`
-      : null;
-  }
-
-  equals(p) {
-    if (!p || !(p instanceof Procedimento)) return false;
-    return JSON.stringify(this) === JSON.stringify(p);
   }
 
   getDataDepositoLocale() {
@@ -189,6 +179,7 @@ const SEZIONI = {
   ISTANZA_MEDIAZIONE: 'Istanza di mediazione',
   FISSAZIONE_INCONTRO: 'Fissazione incontro',
   MEDIATORE: 'Mediatore',
+  RIEPILOGO_TRANSAZIONI: 'Riepilogo transazioni',
 };
 
 const metadatiProcedimento = {
@@ -313,7 +304,7 @@ const metadatiProcedimento = {
     key: 'compensoMediatore',
     label: 'Compenso mediatore',
     type: 'number',
-    sezione: SEZIONI.MEDIATORE,
+    sezione: SEZIONI.RIEPILOGO_TRANSAZIONI,
     validation: (value) => {
       return [
         validators.onlyNumber(value),
@@ -349,26 +340,26 @@ const metadatiProcedimento = {
   //     ].filter((result) => result !== true);
   //   },
   // },
-  // speseAvvioSedeSecondaria: {
-  //   key: 'speseAvvioSedeSecondaria',
-  //   label: 'Spese avvio sede secondaria',
-  //   type: 'number',
-  //   sezione: 'DATI GENERALI',
-  //   validation: (value) => {
-  //     return [
-  //       validators.onlyNumber(value),
-  //     ].filter((result) => result !== true);
-  //   },
-  // },
-  // speseIndennitaSedeSecondaria: {
-  //   key: 'speseIndennitaSedeSecondaria',
-  //   label: 'Spese indennità sede secondaria',
-  //   type: 'number',
-  //   sezione: 'DATI GENERALI',
-  //   validation: (value) => {
-  //     return [
-  //       validators.onlyNumber(value),
-  //     ].filter((result) => result !== true);
-  //   },
-  // },
+  speseAvvioSedeSecondaria: {
+    key: 'speseAvvioSedeSecondaria',
+    label: 'Spese avvio sede secondaria',
+    type: 'number',
+    sezione: SEZIONI.RIEPILOGO_TRANSAZIONI,
+    validation: (value) => {
+      return [
+        validators.onlyNumber(value),
+      ].filter((result) => result !== true);
+    },
+  },
+  speseIndennitaSedeSecondaria: {
+    key: 'speseIndennitaSedeSecondaria',
+    label: 'Spese indennità sede secondaria',
+    type: 'number',
+    sezione: SEZIONI.RIEPILOGO_TRANSAZIONI,
+    validation: (value) => {
+      return [
+        validators.onlyNumber(value),
+      ].filter((result) => result !== true);
+    },
+  },
 };

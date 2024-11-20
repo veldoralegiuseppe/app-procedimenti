@@ -10,21 +10,16 @@ import { useMemo } from 'react';
  */
 const useTableRows = (columns, data) => {
   const rows = useMemo(() => {
-    // Mappa per tenere traccia degli ID già visti
     const idSet = new Set();
-
-    // Prepara le righe con ID garantiti
     const processedRows = data.map((row, index) => {
-      // Determina l'ID della riga
+    
       const id = row.hasOwnProperty('id') ? row.id : index;
-
-      // Controlla se l'ID è duplicato
       if (idSet.has(id)) {
         throw new Error(`Duplicate ID found: ${id}`);
       }
+
       idSet.add(id);
 
-      // Restituisce la riga con l'ID garantito
       return {
         ...row,
         id,
@@ -32,9 +27,9 @@ const useTableRows = (columns, data) => {
     });
 
     return processedRows;
-  }, [columns, data]); // Aggiorna solo se cambiano columns o data
+  }, [columns, data]);
 
-  return {rows};
+  return { rows };
 };
 
 export default useTableRows;

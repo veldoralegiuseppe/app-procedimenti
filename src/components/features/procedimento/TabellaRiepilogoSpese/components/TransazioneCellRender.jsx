@@ -6,8 +6,8 @@ const TransazioneCellRender = (cellData, row) => {
  
   let color;
   let icon;
-
-  switch (row?.transazione.tipo) {
+  
+  switch (row.id.tipo.toLowerCase()) {
     case 'entrata':
       color = '#176938';
       icon = (
@@ -38,7 +38,7 @@ const TransazioneCellRender = (cellData, row) => {
       }}
     >
       {icon}
-      <span>{row?.transazione.nome || ''}</span>
+      <span>{row?.id.nome || ''}</span>
     </div>
   );
 };

@@ -42,6 +42,7 @@ const TableFactory = ({
   size = 'small',
   sx,
 }) => {
+
   const { rows: tableRows } = useTableRows(columns, data);
   const { rows, handleSort, order, orderBy } = useSortableRows(tableRows || []);
 

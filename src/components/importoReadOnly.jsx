@@ -66,7 +66,7 @@ export default function ImportoReadOnly({
         },
       }}
       sx={{
-        backgroundColor: backgroundColor || theme.palette.background.default, // Colore di sfondo fisso
+        
         '& .MuiOutlinedInput-root': {
           cursor: 'not-allowed', // Imposta il cursore per l'intero campo
           borderRadius: '4px',
