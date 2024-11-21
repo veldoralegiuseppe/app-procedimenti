@@ -172,7 +172,7 @@ OptionsAutocomplete.propTypes = {
   groupBy: PropTypes.func,
   filterOptions: PropTypes.func,
   dialogForm: PropTypes.element,
-  validations: PropTypes.objectOf(PropTypes.arrayOf(PropTypes.string)),
+  validations: PropTypes.oneOfType([PropTypes.array, PropTypes.objectOf(PropTypes.arrayOf(PropTypes.string))]),
   onFormPopulate: PropTypes.func,
 };
 

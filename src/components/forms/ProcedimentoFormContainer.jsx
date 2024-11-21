@@ -2,7 +2,7 @@ import * as React from 'react';
 import Grid from '@mui/material/Grid2';
 import _ from 'lodash';
 import { ProcedimentoContext } from '@context/Procedimento';
-import { Procedimento } from '@model/procedimento';
+import { Procedimento, SEZIONI } from '@model/procedimento';
 import FormFactory from '@components/factories/FormFactory';
 import useDynamicOptions from '@components/commons/hooks/useDynamicOptions';
 
@@ -45,32 +45,39 @@ const ProcedimentoFormContainer = () => {
     React.useContext(ProcedimentoContext);
 
   // Constants
-  const sezioneCampi = _.omit(
+  const campiPerSezione = _.omit(
     _.groupBy(Procedimento.getMetadati(), 'sezione'),
     undefined
   );
   const renderOverrides = {
-    oggettoControversia: { sx: commonSx },
-    esitoMediazione: { sx: commonSx },
-    causaleDemandata: { sx: commonSx },
-    modalitaSvolgimento: { sx: commonSx },
-    sedeDeposito: {
-      sx: commonSx,
-      options: sediDeposito,
-      onSubmit: addSedeDeposito,
-      onDelete: removeSedeDeposito,
-      validations: ['required'],
+    campi: {
+      oggettoControversia: { sx: commonSx },
+      esitoMediazione: { sx: commonSx },
+      causaleDemandata: { sx: commonSx },
+      modalitaSvolgimento: { sx: commonSx },
+      sedeDeposito: {
+        sx: commonSx,
+        options: sediDeposito,
+        onSubmit: addSedeDeposito,
+        onDelete: removeSedeDeposito,
+        validations: ['required'],
+      },
+      sedeSvolgimento: {
+        sx: commonSx,
+        options: sediSvolgimento,
+        onSubmit: addSedeSvolgimento,
+        onDelete: removeSedeSvolgimento,
+        validations: ['required'],
+      },
+      titoloMediatore: { sx: commonSx },
+      nomeMediatore: { sx: commonSx },
+      cognomeMediatore: { sx: commonSx },
     },
-    sedeSvolgimento: {
-      sx: commonSx,
-      options: sediSvolgimento,
-      onSubmit: addSedeSvolgimento,
-      onDelete: removeSedeSvolgimento,
-      validations: ['required'],
+    sezioni: {
+      [SEZIONI.RIEPILOGO_TRANSAZIONI]: {
+        component: () => <div>Prova</div>,
+      },
     },
-    titoloMediatore: { sx: commonSx },
-    nomeMediatore: { sx: commonSx },
-    cognomeMediatore: { sx: commonSx },
   };
 
   // Handlers
@@ -80,17 +87,19 @@ const ProcedimentoFormContainer = () => {
 
   return (
     <Grid container sx={{ rowGap: '3rem' }}>
-      {Object.entries(sezioneCampi).map(([sezione, campi]) => (
-        <FormFactory
-          key={sezione}
-          errors={errors}
-          campi={campi}
-          titolo={sezione}
-          model={procedimento}
-          onChange={setProcedimento}
-          renderOverrides={renderOverrides}
-        />
-      ))}
+      {Object.entries(campiPerSezione).map(([sezione, campi]) => {
+        return (
+          <FormFactory
+            key={sezione}
+            errors={errors}
+            campi={campi}
+            sezione={sezione}
+            model={procedimento}
+            onChange={setProcedimento}
+            renderOverrides={renderOverrides}
+          />
+        );
+      })}
     </Grid>
   );
 };

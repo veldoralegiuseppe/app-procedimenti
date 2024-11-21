@@ -175,7 +175,7 @@ const oggettiControversia = [
 
 const titoliMediatore = [{ maschile: 'AVV', femminile: 'AVV.SSA' }];
 
-const SEZIONI = {
+export const SEZIONI = {
   ISTANZA_MEDIAZIONE: 'Istanza di mediazione',
   FISSAZIONE_INCONTRO: 'Fissazione incontro',
   MEDIATORE: 'Mediatore',
@@ -311,12 +311,7 @@ const metadatiProcedimento = {
       ].filter((result) => result !== true);
     },
   },
-  // isDemandata: {
-  //   key: 'isDemandata',
-  //   label: 'È Demandata',
-  //   type: 'boolean',
-  //   sezione: 'Istanza di mediazione',
-  // },
+ 
   causaleDemandata: {
     key: 'causaleDemandata',
     label: 'Causale demandata',
@@ -340,26 +335,26 @@ const metadatiProcedimento = {
   //     ].filter((result) => result !== true);
   //   },
   // },
-  speseAvvioSedeSecondaria: {
-    key: 'speseAvvioSedeSecondaria',
-    label: 'Spese avvio sede secondaria',
-    type: 'number',
-    sezione: SEZIONI.RIEPILOGO_TRANSAZIONI,
-    validation: (value) => {
-      return [
-        validators.onlyNumber(value),
-      ].filter((result) => result !== true);
-    },
-  },
-  speseIndennitaSedeSecondaria: {
-    key: 'speseIndennitaSedeSecondaria',
-    label: 'Spese indennità sede secondaria',
-    type: 'number',
-    sezione: SEZIONI.RIEPILOGO_TRANSAZIONI,
-    validation: (value) => {
-      return [
-        validators.onlyNumber(value),
-      ].filter((result) => result !== true);
-    },
-  },
+  // speseAvvioSedeSecondaria: {
+  //   key: 'speseAvvioSedeSecondaria',
+  //   label: 'Spese avvio sede secondaria',
+  //   type: 'number',
+  //   sezione: SEZIONI.RIEPILOGO_TRANSAZIONI,
+  //   validation: (value) => {
+  //     return [
+  //       validators.onlyNumber(value),
+  //     ].filter((result) => result !== true);
+  //   },
+  // },
+  // speseIndennitaSedeSecondaria: {
+  //   key: 'speseIndennitaSedeSecondaria',
+  //   label: 'Spese indennità sede secondaria',
+  //   type: 'number',
+  //   sezione: SEZIONI.RIEPILOGO_TRANSAZIONI,
+  //   validation: (value) => {
+  //     return [
+  //       validators.onlyNumber(value),
+  //     ].filter((result) => result !== true);
+  //   },
+  // },
 };

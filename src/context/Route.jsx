@@ -7,6 +7,7 @@ import CreaProcedimento from '@pages/CreaProcedimento.jsx';
 import Dashboard from '@pages/Dashboard';
 import TabellaTransazioni from '@components/commons/TabellaTransazioni/TabellaTransazioni';
 import { Transazione } from '@model/transazione';
+import ProcedimentoFormContainer from '@components/forms/ProcedimentoFormContainer';
 
 const data = [
   new Transazione({nome: 'Incasso parti', tipo: 'entrata', importoDovuto: 1000}),
@@ -43,7 +44,8 @@ export const routes = [
         label: 'Ricerca procedimento',
         component: (
           // <TabellaPartiControparti />
-          <TabellaTransazioni data={data} rowConfig={rowConfig}/>
+          //<TabellaTransazioni data={data} rowConfig={rowConfig}/>
+          <ProcedimentoFormContainer />
         ),
       },
     ],
