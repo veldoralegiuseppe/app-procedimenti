@@ -2,7 +2,7 @@ import * as React from 'react';
 import OptionsAutocomplete from '@components/commons/autocomplete/OptionsAutocomplete';
 import useDynamicOptions from '../../commons/hooks/useDynamicOptions';
 
-const TitoliAutocomplete = ({ label, sx }) => {
+const TitoliAutocomplete = ({ label, sx, onBlur }) => {
 
   const {addOption, options: titoli, removeOption} = useDynamicOptions();
  
@@ -24,6 +24,7 @@ const TitoliAutocomplete = ({ label, sx }) => {
       }
       onSubmit={addOption}
       onDelete={removeOption}
+      onBlur={onBlur}
       sx={sx}
     />
   );

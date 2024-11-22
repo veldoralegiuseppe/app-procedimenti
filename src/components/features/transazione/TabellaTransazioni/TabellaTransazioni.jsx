@@ -59,8 +59,8 @@ const headerConfig = {
   },
 };
 
-const TabellaTransazioni = ({ data: transazioni, rowConfig, onChange, errors, totali, metadati}) => {
-  const { data } = useTransazioneTableRow(transazioni, rowConfig, onChange, errors, metadati);
+const TabellaTransazioni = ({ data: transazioni, rowConfig, onChange, onBlur, errors, totali, metadati}) => {
+  const { data } = useTransazioneTableRow({transazioni, rowConfig, onChange, onBlur, errors, metadati});
 
   return (
     <Grid container size={{ xs: 12 }} sx={{rowGap: '1.5rem'}}>

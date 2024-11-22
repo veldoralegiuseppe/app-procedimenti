@@ -15,8 +15,9 @@ import { campiCondizione } from '@model/regola';
 import { Pipeline } from '@utils/pipeline';
 import { rulesApplicator } from '@filters/rulesApplicator';
 import { stateRulesUpdater } from '@filters/stateRulesUpdater';
-import { inputValidator } from '@filters/inputValidator';
+import  {inputValidator} from '@filters/inputValidator';
 import { updateValidator } from '@filters/updateValidator';
+import { useModelManager } from './Procedimento/hooks/useModelManager';
 
 export const ProcedimentoContext = createContext();
 
@@ -187,10 +188,9 @@ function mockedRegole() {
 }
 
 export const ProcedimentoProvider = ({ children }) => {
+
   // States
-  const [procedimento, setProcedimento] = React.useState(new Procedimento());
-  const [persone, setPersone] = React.useState([]);
-  const [regole, setRegole] = React.useState(mockedRegole());
+  const { models: { procedimento, persone, regole }, updateModel, resetModel, initialModels } = useModelManager();
 
   // TODO: da rifattorizzare
   const [showAlert, setShowAlert] = React.useState(false);
@@ -200,7 +200,8 @@ export const ProcedimentoProvider = ({ children }) => {
   const [isBackdropOpen, setIsBackdropOpen] = React.useState(false);
 
   // Pipelines
-  const rulePipeline = new Pipeline([rulesApplicator, stateRulesUpdater]);
+  //const rulePipeline = new Pipeline([rulesApplicator, stateRulesUpdater]);
+  const rulePipeline = new Pipeline([]);
   const updateModelPipeline = new Pipeline([inputValidator, updateValidator]);
 
   // Helper
@@ -210,37 +211,28 @@ export const ProcedimentoProvider = ({ children }) => {
     setAlertSeverity(severity);
   };
 
-  const handleInputChange = (changes, metadati) => {
-    console.log('changes', changes);
+  const handleInputChange = (changes, model) => {
+    
     const [key, valueOrEvent] = Object.entries(changes)[0];
-    const className = metadati.className;
+    let value = valueOrEvent?.target?.value ?? valueOrEvent;
+    value = value === '' ? undefined : value;
     const context = { procedimento, persone, regole };
-    const errorMessage = { [key]: undefined };
-
+    
     const results = updateModelPipeline.process({
       key,
-      valueOrEvent,
-      metadati,
+      value,
+      model,
       context,
-      errorMessage,
+      updateModel: () => updateModel({model, key, value}),
+      initialModel: initialModels[model.constructor.name],
     });
 
-    switch (className) {
-      case 'Procedimento':
-        setProcedimento((prev) =>
-          produce(prev, (draft) => {
-            draft[key] = results.valore;
-          })
-        );
-        break;
+    console.log('results', results);
+    return { errors: results.errorMessage || { [key]: undefined}} 
+  };
 
-      default:
-        throw new Error('Classe non gestita');
-    }
-
-    //console.log('error', results.errorMessage);
-    console.log('valore', results.valore);
-    return results.errorMessage;
+  const handleReset = (model) => {
+    resetModel(model);
   };
 
   // Effetto per la gestione delle regole
@@ -267,15 +259,14 @@ export const ProcedimentoProvider = ({ children }) => {
     <ProcedimentoContext.Provider
       value={{
         procedimento,
-        setProcedimento,
         handleInputChange,
+        handleReset,
         persone,
-        setPersone,
         notify,
         isBackdropOpen,
         setIsBackdropOpen,
         regole,
-        setRegole,
+        initialModels,
       }}
     >
       {children}

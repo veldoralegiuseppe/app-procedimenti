@@ -3,10 +3,11 @@ import 'dayjs/locale/it';
 import { validators } from '@utils/validators';
 import { Transazione } from './transazione';
 import { immerable } from 'immer';
+import _ from 'lodash';
 
 export class Procedimento {
   static [immerable] = true;
-  
+
   static getMetadati(key) {
     const metadati = { ...metadatiProcedimento, className: this.name };
     return key ? metadati[key] : metadati;
@@ -59,6 +60,7 @@ export class Procedimento {
     this.speseIndennitaSedeSecondaria = speseIndennitaSedeSecondaria;
   }
 
+  // Custom getters
   getDataDepositoLocale() {
     return this.dataDeposito
       ? dayjs(this.dataDeposito).format('DD/MM/YYYY')
@@ -71,6 +73,7 @@ export class Procedimento {
       : null;
   }
 
+  // Validators
   validateRequiredFields() {
     if (!this.dataDeposito) {
       throw new Error('La data di deposito è obbligatoria.');
@@ -153,6 +156,47 @@ export class Procedimento {
     this.validateDemandata();
     this.validateCompensoMediatore();
     this.validateSpeseSedeSecondaria();
+  }
+
+  // Equals
+  equals(otherInstance, key) {
+    if (!(otherInstance instanceof Procedimento)) {
+      throw new Error(
+        "Il parametro deve essere un'istanza della stessa classe"
+      );
+    }
+
+    if (key) {
+      // Confronto mirato per una singola proprietà
+      const thisValue = this[key];
+      const otherValue = otherInstance[key];
+
+      // Se è un oggetto con un metodo equals, usalo
+      if (thisValue?.equals && typeof thisValue.equals === 'function') {
+        return thisValue.equals(otherValue);
+      }
+
+      // Altrimenti confronta i valori con Lodash
+      return _.isEqual(thisValue, otherValue);
+    }
+
+    // Confronto globale: iteriamo su tutte le proprietà
+    for (const prop in this) {
+      const thisValue = this[prop];
+      const otherValue = otherInstance[prop];
+
+      // Se la proprietà è un oggetto con un metodo equals, usalo
+      if (thisValue?.equals && typeof thisValue.equals === 'function') {
+        if (!thisValue.equals(otherValue)) {
+          return false;
+        }
+      } else if (!_.isEqual(thisValue, otherValue)) {
+        // Confronta direttamente con Lodash
+        return false;
+      }
+    }
+
+    return true;
   }
 }
 

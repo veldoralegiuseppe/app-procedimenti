@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
 
-const useTabellaProps = (transazioni, totali, metadati) => {
+const useTabellaProps = ({transazioni, totali, metadati, onBlur}) => {
   
 
   return useMemo(() => {
@@ -10,6 +10,7 @@ const useTabellaProps = (transazioni, totali, metadati) => {
         disabled: ['Incasso parti', 'Incasso controparti'],
       },
       totali: totali,
+      onBlur: onBlur,
       metadati: metadati,
     };
   }, [transazioni, totali]);

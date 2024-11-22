@@ -33,6 +33,7 @@ const AutocompleteWrapper = ({
   value,
   options,
   handleChange,
+  onBlur,
   onDelete,
   sx,
   error,
@@ -82,6 +83,7 @@ const AutocompleteWrapper = ({
       onChange={(event, value, reason) => handleChange(event, null, value, reason)}
       filterOptions={filterOptions}
       groupBy={groupBy}
+      onBlur={(e) => onBlur(e.target.value ? e.target.value.toUpperCase() : undefined)}
       selectOnFocus
       clearOnBlur
       disableClearable={!value}

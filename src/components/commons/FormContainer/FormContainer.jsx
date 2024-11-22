@@ -2,6 +2,7 @@ import * as React from 'react';
 import Grid from '@mui/material/Grid2';
 import FormPresenter from '@components/commons/FormPresenter/FormPresenter';
 import useFormContainer from './hooks/useFormContainer';
+import ClearButton from '@components/commons/ClearButton/ClearButton';
 import PropTypes from 'prop-types';
 
 /**
@@ -26,31 +27,40 @@ const FormContainer = ({ config = {}, sezioni = null }) => {
     errors,
     renderOverrides,
     filteredSezioni,
+    touchedFields,
+    handleReset,
     updateModel,
+    onBlur,
     isMissingProps,
   } = useFormContainer(config, sezioni);
-  
+
   return (
     <Grid container sx={{ rowGap: '3rem' }}>
-      {isMissingProps || filteredSezioni.length === 0 ? (
-        null
-      ) : (
-        filteredSezioni.map(([sezione, campi]) => (
-          <FormPresenter
-            key={sezione}
-            errors={errors}
-            campi={campi}
-            sezione={sezione}
-            model={config.model}
-            onChange={updateModel}
-            renderOverrides={renderOverrides}
-          />
-        ))
+      {isMissingProps || filteredSezioni.length === 0
+        ? null
+        : filteredSezioni.map(([sezione, campi]) => (
+            <FormPresenter
+              key={sezione}
+              errors={errors}
+              campi={campi}
+              sezione={sezione}
+              model={config.model}
+              onChange={updateModel}
+              onBlur={onBlur}
+              renderOverrides={renderOverrides}
+            />
+          ))}
+
+      {!isMissingProps && config.clearable && (
+        <ClearButton
+          touchedFields={touchedFields}
+          model={config.model}
+          onClick={() => handleReset(config.model)}
+        />
       )}
     </Grid>
   );
 };
-
 
 FormContainer.propTypes = {
   config: PropTypes.shape({

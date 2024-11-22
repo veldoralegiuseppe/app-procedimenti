@@ -5,7 +5,7 @@ import { Typography } from '@mui/material';
 import PropTypes from 'prop-types';
 
 /**
- * FormFactory è un componente React che genera un form dinamico basato sui campi forniti.
+ * FormPresenter è un componente React che renderizza un form basato sui campi forniti.
  *
  * @param {Object} props - Le proprietà del componente.
  * @param {Object} props.errors - Oggetto che contiene gli errori di validazione per i campi del form.
@@ -18,7 +18,7 @@ import PropTypes from 'prop-types';
  * @param {Object} props.renderOverrides.campi - Oggetto che permette di sovrascrivere il rendering dei singoli campi.
  * @param {Object} props.renderOverrides.sezioni - Oggetto che permette di sovrascrivere il rendering delle sezioni.
  *
- * @returns {React.Element} Il componente FormFactory.
+ * @returns {React.Element} Il componente FormPresenter.
  */
 const FormPresenter = ({
   errors,
@@ -27,6 +27,7 @@ const FormPresenter = ({
   onChange,
   sezione = '',
   model,
+  onBlur,
   renderOverrides = {},
 }) => {
   const renderCustomSection = () => {
@@ -62,6 +63,7 @@ const FormPresenter = ({
         error: !!errors[campo.key],
         helperText: errors[campo.key],
         onChange: onChange,
+        onBlur: onBlur,
         options: optionsOverrides || campo.options,
         ...restOverride,
       };

@@ -9,6 +9,7 @@ function Select({
   label, 
   value = '', 
   onChange, 
+  onBlur,
   required = false,
   options = [], 
   error = false, 
@@ -46,7 +47,8 @@ function Select({
 
   // Handlers
   const handleClear = () => {
-    if(onChange) onChange({ target: { value: '' } });
+    onChange?.({ target: { value: '' } });
+    onBlur?.(undefined)
   };
   const handleChange = (event) => {
     console.log('Select.jsx handleChange event:', event);
@@ -72,6 +74,7 @@ function Select({
         labelId={`${label}-input-label`}
         value={value}
         label={label}
+        onBlur={(e)=> onBlur(e.target.value ? e.target.value.toUpperCase() : undefined)}
         size='small'
         renderValue={(selected) => (selected && String(selected).replaceAll('_', ' ')) || ''}
         onChange={handleChange}

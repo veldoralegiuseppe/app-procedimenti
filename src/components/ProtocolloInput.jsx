@@ -3,17 +3,23 @@ import { CssTextField } from '@theme/MainTheme';
 import InputAdornment from '@mui/material/InputAdornment';
 import { Box, useTheme } from '@mui/material';
 import { validators } from '@utils/validators';
+import _ from 'lodash';
 
 const fillProtocollo = (protocollo) => {
-  if (protocollo === '') return '';
+  if (!protocollo) return '';
   else return protocollo.padStart(6, '0');
+};
+
+const isValid = (protocollo) => {
+  return validators.isProtocollo(protocollo) === true;
 };
 
 export default function ProtocolloInput({
   onChange,
-  numProtocollo = `/${new Date().getFullYear()}`,
+  value = '',
   error,
   helperText,
+  onBlur,
   label = '',
   sx = {},
 }) {
@@ -21,47 +27,44 @@ export default function ProtocolloInput({
   const numProtocolloRef = React.useRef(null);
   const annoRef = React.useRef(null);
   const textFieldRef = React.useRef(null);
-  const [anno, setAnno] = React.useState(numProtocollo.split('/')[1]);
-  const [protocollo, setProtocollo] = React.useState(
-    numProtocollo.split('/')[0]
-  );
-
-  // Gestisce il riempimento del numero di protocollo quando si clicca fuori dal componente
-  React.useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (
-        textFieldRef.current &&
-        !textFieldRef.current.contains(event.target)
-      ) {
-        if (numProtocolloRef.current.value) {
-          numProtocolloRef.current.value = fillProtocollo(
-            numProtocolloRef.current.value
-          );
-          //onChange(numProtocolloRef.current.value, annoRef.current.value);
-        }
-      }
-    };
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [onChange]);
+  const [numProtocollo, setNumProtocollo] = React.useState(value);
 
   // Aggiorna il campo quando i valori di protocollo e anno cambiano
   React.useEffect(() => {
-    const numProtocollo = `${fillProtocollo(numProtocolloRef.current.value)}/${
-      annoRef.current.value
-    }`;
-    onChange(numProtocollo);
-  }, [protocollo, anno]);
+    const numProt = value ? fillProtocollo(value.split('/')[0]) : '';
+    const annoProt = value
+      ? value.split('/')[1]
+      : `${new Date().getFullYear()}`;
+    const updatedProtocollo = `${numProt}/${annoProt}`;
 
-  const handleChange = (e, callback) => {
-    if (validators.onlyNumber(e.target.value) === true) {
-      callback(e.target.value);
-    } else {
+    numProtocolloRef.current.value = numProt;
+    annoRef.current.value = annoProt;
+
+    if (!_.isEqual(numProtocollo, updatedProtocollo)) {
+      setNumProtocollo(updatedProtocollo);
+    }
+  }, [value]);
+
+  React.useEffect(() => {
+    if (!isValid(numProtocollo)) {
+      if (!value) return;
+      else onChange?.(undefined);
+    } else onChange?.(numProtocollo);
+  }, [numProtocollo]);
+
+  const handleChange = (e) => {
+    if (!validators.onlyNumber(e.target.value) === true) {
       e.preventDefault();
       e.target.value = e.target.value.slice(0, -1);
     }
+  };
+
+  const handleOnBlur = () => {
+    const protocollo = fillProtocollo(numProtocolloRef.current.value);
+    const anno = annoRef.current.value;
+    const numProtocollo = `${protocollo}/${anno}`;
+    onBlur?.(numProtocollo);
+    setNumProtocollo(numProtocollo);
   };
 
   return (
@@ -69,9 +72,6 @@ export default function ProtocolloInput({
       error={error}
       helperText={helperText}
       ref={textFieldRef}
-      onBlur={() => {
-        setProtocollo(fillProtocollo(protocollo));
-      }}
       sx={{
         margin: '18px 20px 10px 10px',
         backgroundColor: theme.palette.background.default,
@@ -93,7 +93,6 @@ export default function ProtocolloInput({
               <input
                 ref={numProtocolloRef}
                 maxLength="6"
-                defaultValue={protocollo}
                 type="text"
                 style={{
                   width: '60%', // Lo spazio occupato dal numero di protocollo
@@ -107,7 +106,8 @@ export default function ProtocolloInput({
                   paddingRight: '1px',
                   backgroundColor: 'transparent', // Mantiene lo stile di background del TextField
                 }}
-                onChange={(e) => handleChange(e, setProtocollo)}
+                onChange={(e) => handleChange(e)}
+                onBlur={handleOnBlur}
               />
 
               {/* Separator "/". Serve per separare il numero di protocollo dall'anno */}
@@ -124,7 +124,6 @@ export default function ProtocolloInput({
               {/* Input dell'anno */}
               <input
                 ref={annoRef}
-                defaultValue={anno}
                 maxLength="4"
                 type="text"
                 style={{
@@ -138,7 +137,8 @@ export default function ProtocolloInput({
                   padding: '0',
                   backgroundColor: 'transparent', // Mantiene lo stile di background del TextField
                 }}
-                onChange={(e) => handleChange(e, setAnno)}
+                onChange={(e) => handleChange(e)}
+                onBlur={handleOnBlur}
               />
             </Box>
           </InputAdornment>

@@ -29,13 +29,17 @@ const validateInput = (key, valore, metadati) => {
  * @returns {Object} Ritorna un oggetto contenente la chiave, il valore, i metadati e il contesto se l'input è valido.
  */
 export const inputValidator = {
-  process: ({key, valueOrEvent, metadati, context, errorMessage }) => {
-    let valore = valueOrEvent?.target?.value ?? valueOrEvent;
-    valore = valore === '' ? undefined : valore;
+  process: ({ key, value, model, context, ...rest }) => {
+    const errorMessage = rest.errorMessage || {};
     
-    const isValidOrErrorMessage = validateInput(key, valore, metadati);
-    
-    if (isValidOrErrorMessage !== true) errorMessage[key] = isValidOrErrorMessage;
-    return {key, valore, metadati, context, errorMessage };
+    if (errorMessage[key]) return { key, value, model, context, ...rest };
+
+    const isValidOrErrorMessage = validateInput(key, value, model.constructor.getMetadati());
+    if (isValidOrErrorMessage !== true) {
+      errorMessage[key] = isValidOrErrorMessage;
+      return { key, value, model, context, errorMessage, ...rest };
+    }
+
+    return { key, value, model, context, ...rest };
   },
 };

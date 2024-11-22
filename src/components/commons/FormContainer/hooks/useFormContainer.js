@@ -10,8 +10,9 @@ import { ProcedimentoContext } from '@context/Procedimento';
  */
 const useFormContainer = (config, sezioni) => {
   const [errors, setErrors] = useState({});
+  const [touchedFields, setTouchedFields] = useState({});
   const { model, modelClass, renderOverrides } = config;
-  const { handleInputChange } = useContext(ProcedimentoContext) || {};
+  const { handleInputChange, handleReset } = useContext(ProcedimentoContext) || {};
 
   // Estrae i metadati dal modello
   const metadati = useMemo(() => {
@@ -56,16 +57,33 @@ const useFormContainer = (config, sezioni) => {
         );
         return;
       }
-      setErrors(handleInputChange(changes, metadati || []));
+      const {errors} = handleInputChange(changes, model);
+      
+      setErrors(errors);
     },
     [handleInputChange, metadati]
+  );
+
+  const onBlur = useCallback(
+    (changes) => {
+      setTouchedFields((prev) => {
+        const updatedTouchedFields = { ...prev, ...changes };
+        //console.log('Touched fields:', updatedTouchedFields);
+        return updatedTouchedFields;
+      });
+      config.onBlur?.(changes);
+    },
+    []
   );
 
   return {
     errors,
     renderOverrides,
     filteredSezioni,
+    touchedFields,
     updateModel,
+    onBlur,
+    handleReset,
     isMissingProps,
   };
 };

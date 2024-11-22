@@ -10,15 +10,20 @@ const RiepilogoTransazioniFormContainer = ({ config = {} }) => {
   const metadati = modelClass?.getMetadati();
 
   // Hooks
-  const { transazioni, totali } = useTransazioniProcedimento(procedimento, metadati);
-  const tabellaProps = useTabellaProps(transazioni, totali, metadati);
+  const { transazioni, totali } = useTransazioniProcedimento(
+    procedimento,
+    metadati
+  );
+  const tabellaProps = useTabellaProps({transazioni, totali, metadati, onBlur: config?.onBlur});
 
   // Config
   const renderOverrides = React.useMemo(() => {
     return {
       sezioni: {
         [SEZIONI.RIEPILOGO_TRANSAZIONI]: {
-          component: (props) => <TabellaTransazioni {...{ ...props, ...tabellaProps }} />,
+          component: (props) => (
+            <TabellaTransazioni {...{ ...props, ...tabellaProps }} />
+          ),
         },
       },
     };

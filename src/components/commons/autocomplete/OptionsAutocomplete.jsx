@@ -32,6 +32,7 @@ import _ from 'lodash';
 const OptionsAutocomplete = ({
   label,
   onChange,
+  onBlur,
   onSubmit,
   onDelete,
   options: items,
@@ -79,6 +80,7 @@ const OptionsAutocomplete = ({
     closeDialog();
     setValue(null);
     setDialogValue({ value: null });
+    onBlur?.(undefined)
   };
 
   const onOptionSelected = (option, newValue) => {
@@ -124,6 +126,7 @@ const OptionsAutocomplete = ({
         options={options}
         handleChange={handleChange}
         onDelete={onOptionDelete}
+        onBlur={onBlur}
         sx={sx}
         error={error}
         helperText={helperText}

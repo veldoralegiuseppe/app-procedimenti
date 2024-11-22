@@ -1,4 +1,5 @@
 import { immerable } from 'immer';
+import _ from 'lodash';
 
 export class Transazione {
   static [immerable] = true;
@@ -132,6 +133,32 @@ export class Transazione {
         throw new Error('Stato non valido');
     }
   }
+
+  // Equals 
+  equals(otherInstance, key) {
+    if (!(otherInstance instanceof Transazione)) {
+      throw new Error('Il parametro deve essere un\'istanza della classe Transazione');
+    }
+  
+    if (key) {
+      // Se viene specificata una chiave, confronta la proprietà corrispondente
+      const thisValue = this[`#${key}`] || this[key];
+      const otherValue = otherInstance[`#${key}`] || otherInstance[key];
+  
+      // Usa Lodash per confrontare i valori
+      return _.isEqual(thisValue, otherValue);
+    }
+  
+    // Confronto generale: confronta tutte le proprietà private e pubbliche
+    return (
+      _.isEqual(this.#nome, otherInstance.#nome) &&
+      _.isEqual(this.#tipo, otherInstance.#tipo) &&
+      _.isEqual(this.#importoDovuto, otherInstance.#importoDovuto) &&
+      _.isEqual(this.#importoCorrisposto, otherInstance.#importoCorrisposto) &&
+      _.isEqual(this.#stato, otherInstance.#stato)
+    );
+  }
+  
 }
 
 // Constants

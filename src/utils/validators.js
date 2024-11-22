@@ -9,6 +9,7 @@ export const validators = {
     onlyAlphabetic: (value) => /^[a-zA-ZÀ-ÿ\s']+$/.test(value) || 'Caratteri non validi',
     onlyAlphanumeric: (value) => /^[a-zA-Z0-9À-ÿ\s']+$/.test(value) || 'Caratteri non validi',
     isDate: (value) => dayjs(value, 'YYYY-MM-DD', true).isValid() || 'Data non valida',
-    isDateTime: (value) => dayjs(value, 'YYYY-MM-DDTHH:mm', true).isValid() || 'Data e ora non valide'
+    isDateTime: (value) => dayjs(value, 'YYYY-MM-DDTHH:mm', true).isValid() || 'Data e ora non valide',
+    isProtocollo: (value) => /^[0-9]{6}\/[0-9]{4}$/.test(value) || 'Formato protocollo non valido',
 };
   

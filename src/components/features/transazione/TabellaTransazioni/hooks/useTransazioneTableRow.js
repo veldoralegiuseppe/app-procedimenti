@@ -106,7 +106,7 @@ const getNextStatus = (currentStato) => {
  * @param {Transazione[]} transazioni - Array di transazioni iniziali.
  * @returns {Object} Stato e metodi per gestire le righe.
  */
-const useTransazioneTableRow = (transazioni, rowConfig = {}, onChange, errors, metadati) => {
+const useTransazioneTableRow = ({transazioni, rowConfig = {}, onChange, onBlur, errors, metadati}) => {
   const { disabled = [] } = rowConfig;
 
   // Pre-elaborare i nomi disabilitati (normalizzati per confronto case-insensitive)
@@ -153,7 +153,10 @@ const useTransazioneTableRow = (transazioni, rowConfig = {}, onChange, errors, m
           //console.log('key', key, 'value', value, 'updatedTransazione', updatedTransazione);
           if(metadati){
             const modelKey = Object.values(metadati).find((m) => m.label === transazione.nome)?.key;
-            modelKey && onChange?.({ [modelKey]: updatedTransazione }, metadati);
+            if(modelKey){
+              onChange?.({ [modelKey]: updatedTransazione }, metadati);
+              onBlur?.({ [modelKey]: updatedTransazione });
+            }
           }
          
           return mapRow(updatedTransazione, disabledTransactions);

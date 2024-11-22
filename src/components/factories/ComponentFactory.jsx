@@ -38,17 +38,20 @@ const InputFactory = ({ fieldKey, ...props }) => {
     error,
     sx,
     onChange,
+    onBlur,
     label,
     helperText,
     options,
     ...restProps
   } = props;
 
+  //console.log('props', props);
+
   // Handlers
   const handleChanges = (changes) => {
     if (onChange) onChange(changes);
     //handleInputChange(changes);
-    console.log('changes', changes);
+    //console.log('changes', changes);
   };
 
   // Commons
@@ -59,12 +62,13 @@ const InputFactory = ({ fieldKey, ...props }) => {
     helperText: helperText || '',
     onChange: (change) => handleChanges({ [fieldKey]: change }),
     sx: { ...inputStyles, ...sx },
+    onBlur: (change) => onBlur({ [fieldKey]: change }),
     options: options,
     size: 'small',
     ...restProps,
   };
 
-  //console.log('commonProps', commonProps);  
+  //console.log('commonProps', commonProps);
 
   switch (fieldKey) {
     case 'numProtocollo':
@@ -84,6 +88,12 @@ const InputFactory = ({ fieldKey, ...props }) => {
             slotProps={{
               textField: {
                 error: error,
+                onBlur: (e) => {
+                  console.log('blurDataDeposito', e.target.value);
+                  commonProps.onBlur?.(
+                    e.target.value ? e.target.value.toUpperCase() : undefined
+                  );
+                },
                 InputProps: {
                   endAdornment: (
                     <InputAdornment position="end">
@@ -94,7 +104,17 @@ const InputFactory = ({ fieldKey, ...props }) => {
                 size: 'small',
               },
             }}
-            {...commonProps}
+            {...{
+              ...commonProps,
+              onChange: (change) => {
+                commonProps.onChange(
+                  change ? change.format('YYYY-MM-DD') : undefined
+                );
+                commonProps.onBlur(
+                  change ? change.format('YYYY-MM-DD') : undefined
+                );
+              },
+            }}
             value={value ? dayjs(value) : null}
           />
         </LocalizationProvider>
@@ -104,12 +124,34 @@ const InputFactory = ({ fieldKey, ...props }) => {
     case 'compensoMediatore':
     case 'speseAvvioSedeSecondaria':
     case 'speseIndennitaSedeSecondaria':
-      return <ImportoInput {...commonProps} />;
+      return (
+        <ImportoInput
+          {...{
+            ...commonProps,
+            onChange: undefined,
+            onBlur: (change) => {
+              commonProps.onBlur(change);
+              commonProps.onChange(change);
+            },
+          }}
+        />
+      );
 
     case 'nomeMediatore':
     case 'cognomeMediatore':
     case 'materiaCausaleDemandata':
-      return <CssTextField {...commonProps} />;
+      return (
+        <CssTextField
+          {...{
+            ...commonProps,
+            onBlur: (e) => {
+              commonProps.onBlur(
+                e.target.value ? e.target.value.toUpperCase() : undefined
+              );
+            },
+          }}
+        />
+      );
 
     case 'sedeDeposito':
     case 'sedeSvolgimento':
@@ -138,11 +180,12 @@ const InputFactory = ({ fieldKey, ...props }) => {
                 InputProps: {
                   endAdornment: (
                     <InputAdornment position="end">
-                      {value ? (
+                      {commonProps.value ? (
                         <CloseIcon
                           onClick={(event) => {
                             event.stopPropagation();
-                            commonProps.onChange(null);
+                            commonProps.onChange?.(undefined);
+                            commonProps.onBlur?.(undefined);
                           }}
                           sx={{
                             cursor: 'pointer',
@@ -159,11 +202,12 @@ const InputFactory = ({ fieldKey, ...props }) => {
               },
             }}
             {...commonProps}
-            onChange={(date) =>
-              commonProps.onChange(
-                date ? date.format('YYYY-MM-DDTHH:mm') : null
-              )
-            }
+            value={commonProps.value ? dayjs(commonProps.value) : null}
+            onChange={(date) =>{
+              const newDateTime = date ? date.format('YYYY-MM-DDTHH:mm') : undefined;
+              commonProps.onChange?.(newDateTime);               
+              commonProps.onBlur?.(newDateTime);
+            }}
           />
         </LocalizationProvider>
       );

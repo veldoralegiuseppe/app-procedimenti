@@ -1,4 +1,5 @@
 import { getActiveRules } from '@model/regola';
+import _ from 'lodash';
 
 const isUpdateApplicable = (key, context) => {
   const regoleAttive = getActiveRules(context);
@@ -10,16 +11,26 @@ const isUpdateApplicable = (key, context) => {
       rule.espressione.target.key === key
   );
 
-  if (!regolaCampo) return true 
-  else return regolaCampo
+  if (!regolaCampo) return true;
+  else return regolaCampo;
 };
 
 export const updateValidator = {
-  process: ({key, valore, metadati, context, errorMessage }) => {
-    if(errorMessage[key]) return {key, valore, metadati, context, errorMessage };
-    const isUpdatable = isUpdateApplicable(key, context);
+  process: ({ key, value, model, context, ...rest }) => {
+    const errorMessage = rest.errorMessage || {};
 
-    if (isUpdatable !== true) error[key] = 'Campo non modificabile';
-    return {key, valore, metadati, context, errorMessage };
+    // TODO: spostare questa logica in un filtro specifico
+    // const isUpdatable = isUpdateApplicable(key, context);
+    // if (isUpdatable !== true) error[key] = 'Campo non modificabile';
+
+    if (!errorMessage[key] && rest?.updateModel) {
+      try {
+        rest.updateModel();
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    return { key, value, model, context, ...rest };
   },
 };
