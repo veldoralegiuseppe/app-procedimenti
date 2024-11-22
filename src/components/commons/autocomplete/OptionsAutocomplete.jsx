@@ -5,7 +5,7 @@ import { useValidation } from './hooks/useValidation';
 import AutocompleteWrapper from './components/AutocompleteWrapper';
 import DialogForm from './components/DialogForm';
 import PropTypes from 'prop-types';
-import _, { set } from 'lodash';
+import _ from 'lodash';
 
 /**
  * Componente OptionsAutocomplete

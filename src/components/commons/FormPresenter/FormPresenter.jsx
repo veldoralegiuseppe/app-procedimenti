@@ -1,5 +1,5 @@
 import * as React from 'react';
-import ComponentFactory from '../factories/ComponentFactory';
+import ComponentFactory from '@components/factories/ComponentFactory';
 import Grid from '@mui/material/Grid2';
 import { Typography } from '@mui/material';
 import PropTypes from 'prop-types';
@@ -20,7 +20,7 @@ import PropTypes from 'prop-types';
  *
  * @returns {React.Element} Il componente FormFactory.
  */
-const FormFactory = ({
+const FormPresenter = ({
   errors,
   campi = [],
   touchField,
@@ -111,7 +111,7 @@ const FormFactory = ({
   );
 };
 
-FormFactory.propTypes = {
+FormPresenter.propTypes = {
   errors: PropTypes.object.isRequired,
   campi: PropTypes.array,
   touchField: PropTypes.func,
@@ -134,4 +134,4 @@ FormFactory.propTypes = {
   }),
 };
 
-export default FormFactory;
+export default FormPresenter;

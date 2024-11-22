@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Grid from '@mui/material/Grid2';
-import FormFactory from '@components/factories/FormFactory';
+import FormPresenter from '@components/commons/FormPresenter/FormPresenter';
 import useFormContainer from './hooks/useFormContainer';
 import PropTypes from 'prop-types';
 
@@ -36,7 +36,7 @@ const FormContainer = ({ config = {}, sezioni = null }) => {
         null
       ) : (
         filteredSezioni.map(([sezione, campi]) => (
-          <FormFactory
+          <FormPresenter
             key={sezione}
             errors={errors}
             campi={campi}
