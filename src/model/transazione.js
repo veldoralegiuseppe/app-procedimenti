@@ -1,4 +1,8 @@
+import { immerable } from 'immer';
+
 export class Transazione {
+  static [immerable] = true;
+
   static stati = {
     SALDATO: 'SALDATO',
     DA_SALDARE: 'DA SALDARE',

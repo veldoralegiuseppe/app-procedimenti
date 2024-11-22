@@ -96,7 +96,7 @@ TableFactory.propTypes = {
       headerName: PropTypes.string.isRequired,
       align: PropTypes.oneOf(['left', 'right', 'center']),
       sortable: PropTypes.bool,
-      type: PropTypes.oneOf(['text', 'chip', 'input', 'custom']),
+      type: PropTypes.oneOf(['text', 'chip', 'input', 'custom', 'infoChip']),
       render: PropTypes.func,
     })
   ).isRequired,

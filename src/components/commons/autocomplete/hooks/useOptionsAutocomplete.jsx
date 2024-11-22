@@ -67,13 +67,13 @@ export const useOptionsAutocomplete = ({
         });
 
       return (
-        sortedItems.map((option) =>
+        sortedItems?.map((option) =>
           option.value ? option : { value: option }
         ) || []
       );
     } else {
       return (
-        items.map((option) => (option.value ? option : { value: option })) || []
+        items?.map((option) => (option.value ? option : { value: option })) || []
       );
     }
   }

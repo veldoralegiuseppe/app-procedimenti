@@ -8,8 +8,12 @@ import { Chip } from '@mui/material';
  * @param {Object} props.value - L'oggetto contenente il valore e lo stato del Chip.
  * @param {string} props.value.value - Il testo da visualizzare nel Chip.
  * @param {string} props.value.status - Lo stato iniziale del Chip (error, warning, correct).
+ * @param {function} [props.onClick] - La funzione da eseguire al click sul Chip.
+ * @param {Object} [props.row] - La riga della tabella associata al Chip.
+ * @param {Object} [props.sx] - Le proprietà di stile aggiuntive.
+ * 
  */
-const ChipCell = ({ value: label, status, onClick, row }) => {
+const ChipCell = ({ value: label, status, onClick, row, sx }) => {
   
   const statusFlagOptions = {
     red: { color: '#ffcccb', textColor: '#b71c1c' },
@@ -25,6 +29,7 @@ const ChipCell = ({ value: label, status, onClick, row }) => {
     '&:hover': {
       backgroundColor: statusFlagOptions[status].color,
     },
+    ...sx,
   };
 
   return (
@@ -38,8 +43,11 @@ const ChipCell = ({ value: label, status, onClick, row }) => {
 };
 
 ChipCell.propTypes = {
-  value: PropTypes.string.isRequired,
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
   status: PropTypes.oneOf(['red', 'yellow', 'green']).isRequired,
+  onClick: PropTypes.func,
+  row: PropTypes.object,
+  sx: PropTypes.object,
 };
 
 export default ChipCell;

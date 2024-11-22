@@ -10,9 +10,16 @@ import _ from 'lodash';
  * @param {Function} handleChange - Callback per gestire le modifiche.
  * @returns {Object} Rappresentazione della riga.
  */
-const mapToRow = (transazione, handleChange, disabled) => {
+const mapToRow = (transazione, handleChange, disabled, errors) => {
+  //console.log('errors', errors);
   const isParzialmenteSaldato =
     transazione.stato === Transazione.stati.PARZIALMENTE_SALDATO;
+
+  const tooltipMessage = (() => {
+    if (disabled) return 'Calcolato automaticamente';
+    else if(isParzialmenteSaldato) return `Rimanente: € ${transazione.importoDovuto - transazione.importoCorrisposto}`;
+    else return '';
+  })();
 
   return {
     id: getId(transazione),
@@ -22,7 +29,7 @@ const mapToRow = (transazione, handleChange, disabled) => {
       value: transazione.importoDovuto || 0,
       sx: { width: '12rem' },
       backgroundColor: !disabled ? 'transparent' : '#cacaca29',
-      onChange: disabled
+      onBlur: disabled
         ? () => {}
         : (value) => handleChange('importoDovuto', value),
     },
@@ -36,7 +43,7 @@ const mapToRow = (transazione, handleChange, disabled) => {
       value: transazione.importoCorrisposto || 0,
       sx: { width: '12rem' },
       backgroundColor: isParzialmenteSaldato ? 'transparent' : '#cacaca29',
-      onChange: disabled
+      onBlur: disabled
         ? () => {}
         : (value) => handleChange('importoCorrisposto', value),
     },
@@ -44,6 +51,8 @@ const mapToRow = (transazione, handleChange, disabled) => {
     stato: {
       value: transazione.stato,
       status: statoChipFlagMap[transazione.stato],
+      tooltipMessage: tooltipMessage,
+      sx: { minWidth: '92.3px'},
       onClick: disabled
         ? () => {}
         : () => handleChange('stato', getNextStatus(transazione.stato)),
@@ -97,7 +106,7 @@ const getNextStatus = (currentStato) => {
  * @param {Transazione[]} transazioni - Array di transazioni iniziali.
  * @returns {Object} Stato e metodi per gestire le righe.
  */
-const useTransazioneTableRow = (transazioni, rowConfig = {}, onChange) => {
+const useTransazioneTableRow = (transazioni, rowConfig = {}, onChange, errors, metadati) => {
   const { disabled = [] } = rowConfig;
 
   // Pre-elaborare i nomi disabilitati (normalizzati per confronto case-insensitive)
@@ -112,7 +121,8 @@ const useTransazioneTableRow = (transazioni, rowConfig = {}, onChange) => {
       mapToRow(
         transazione,
         (key, value) => handleChange(transazione, key, value),
-        disabledNames.includes(transazione.nome?.toUpperCase())
+        disabledNames.includes(transazione.nome?.toUpperCase()),
+        errors
       ),
     []
   );
@@ -140,9 +150,12 @@ const useTransazioneTableRow = (transazioni, rowConfig = {}, onChange) => {
             stato: key === 'stato' ? value : transazione.stato
             });
 
-          //console.log('updatedTransazione', updatedTransazione);
-          onChange?.(updatedTransazione, index);
-
+          //console.log('key', key, 'value', value, 'updatedTransazione', updatedTransazione);
+          if(metadati){
+            const modelKey = Object.values(metadati).find((m) => m.label === transazione.nome)?.key;
+            modelKey && onChange?.({ [modelKey]: updatedTransazione }, metadati);
+          }
+         
           return mapRow(updatedTransazione, disabledTransactions);
         })
       );

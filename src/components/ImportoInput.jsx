@@ -3,6 +3,19 @@ import InputAdornment from '@mui/material/InputAdornment';
 import EuroSymbolIcon from '@mui/icons-material/EuroSymbol';
 import { CssTextField } from '@theme/MainTheme';
 
+// Utility
+const formatValueFromNumber = (number) => {
+  if (number === 0 || !number) return '0,00';
+  const parts = number.toFixed(2).split('.');
+  const integerPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  const decimalPart = parts[1];
+  return `${integerPart},${decimalPart}`;
+};
+
+const formatNumberFromValue = (value) => {
+  return parseFloat(value.replace(/\./g, '').replace(',', '.'));
+};
+
 const ImportoInput = ({
   onChange,
   onBlur,
@@ -15,15 +28,7 @@ const ImportoInput = ({
   disabled = false,
 }) => {
   // State
-  const [importo, setImporto] = useState('0,00');
-
-  // Utility
-  const formatValueFromNumber = (number) => {
-    const parts = number.toFixed(2).split('.');
-    const integerPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-    const decimalPart = parts[1];
-    return `${integerPart},${decimalPart}`;
-  };
+  const [importo, setImporto] = useState(formatValueFromNumber(value));
 
   // Effect
   React.useEffect(() => {
@@ -259,7 +264,7 @@ const ImportoInput = ({
       id={id}
       onBlur={() => {
         setImporto(importo);
-        if (onBlur) onBlur();
+        if (onBlur) onBlur(formatNumberFromValue(importo));
       }}
       label={label}
       disabled={disabled}

@@ -2,6 +2,7 @@ import React from 'react';
 import { TableCell, TextField } from '@mui/material';
 import ChipCell from './components/ChipCell';
 import InputCell from './components/InputCell';
+import InfoChipCell from './components/InfoChipCell';
 
 const CellFactory = ({ column, row, sx }) => {
   const cellData = row[column.field];
@@ -12,6 +13,8 @@ const CellFactory = ({ column, row, sx }) => {
     switch (cellType) {
       case 'chip':
         return <ChipCell {...cellData} row={row} />;
+      case 'infoChip':
+        return <InfoChipCell {...cellData} row={row}/>;
       case 'input':
         return <InputCell {...cellData} />;
       case 'custom':

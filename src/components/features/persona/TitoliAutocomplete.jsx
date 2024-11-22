@@ -24,6 +24,7 @@ const TitoliAutocomplete = ({ label, sx }) => {
       }
       onSubmit={addOption}
       onDelete={removeOption}
+      sx={sx}
     />
   );
 };

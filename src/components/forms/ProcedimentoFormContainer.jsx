@@ -6,7 +6,6 @@ import { Procedimento, SEZIONI } from '@model/procedimento';
 import FormFactory from '@components/factories/FormFactory';
 import useDynamicOptions from '@components/commons/hooks/useDynamicOptions';
 
-const commonSx = { width: '29.2rem' };
 
 /**
  * @file ProcedimentoFormContainer.jsx
@@ -49,6 +48,7 @@ const ProcedimentoFormContainer = () => {
     _.groupBy(Procedimento.getMetadati(), 'sezione'),
     undefined
   );
+  const commonSx = { width: '29.2rem' };
   const renderOverrides = {
     campi: {
       oggettoControversia: { sx: commonSx },

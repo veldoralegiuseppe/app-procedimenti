@@ -5,22 +5,7 @@ import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 
 import CreaProcedimento from '@pages/CreaProcedimento.jsx';
 import Dashboard from '@pages/Dashboard';
-import TabellaTransazioni from '@components/commons/TabellaTransazioni/TabellaTransazioni';
-import { Transazione } from '@model/transazione';
-import ProcedimentoFormContainer from '@components/forms/ProcedimentoFormContainer';
-
-const data = [
-  new Transazione({nome: 'Incasso parti', tipo: 'entrata', importoDovuto: 1000}),
-  new Transazione({nome: 'Incasso controparti', tipo: 'entrata'}),
-  new Transazione({nome: 'Compenso mediatore', tipo: 'uscita'}),
-  new Transazione({nome: 'Spese avvio sede secondaria', tipo: 'uscita'}),
-  new Transazione({nome: 'Spese indennità sede secondaria', tipo: 'uscita'}),
-];
-
-const rowConfig = {
-  disabled: ['Incasso parti', 'Incasso controparti'],
-}
-  
+import FormDatiGeneraliContainer from '@components/features/procedimento/FormDatiGenerali/FormDatiGeneraliContainer';
 
 export const routes = [
   {
@@ -45,7 +30,8 @@ export const routes = [
         component: (
           // <TabellaPartiControparti />
           //<TabellaTransazioni data={data} rowConfig={rowConfig}/>
-          <ProcedimentoFormContainer />
+          //<ProcedimentoFormContainer />
+          <FormDatiGeneraliContainer/>
         ),
       },
     ],

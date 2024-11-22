@@ -4,6 +4,7 @@ import dayjs from 'dayjs';
 import 'dayjs/locale/it';
 import Backdrop from '@mui/material/Backdrop';
 import _ from 'lodash';
+import {produce} from 'immer';
 
 import { Procedimento } from '@model/procedimento.js';
 import { PersonaFisica } from '@model/personaFisica';
@@ -210,8 +211,9 @@ export const ProcedimentoProvider = ({ children }) => {
   };
 
   const handleInputChange = (changes, metadati) => {
+    console.log('changes', changes);
     const [key, valueOrEvent] = Object.entries(changes)[0];
-    const className = metadati.className; 
+    const className = metadati.className;
     const context = { procedimento, persone, regole };
     const errorMessage = { [key]: undefined };
 
@@ -225,15 +227,19 @@ export const ProcedimentoProvider = ({ children }) => {
 
     switch (className) {
       case 'Procedimento':
-        setProcedimento((prev) => ({ ...prev, [key]: results.valore }));
+        setProcedimento((prev) =>
+          produce(prev, (draft) => {
+            draft[key] = results.valore;
+          })
+        );
         break;
 
       default:
         throw new Error('Classe non gestita');
     }
-    
+
     //console.log('error', results.errorMessage);
-    //console.log('valore', results.valore);
+    console.log('valore', results.valore);
     return results.errorMessage;
   };
 

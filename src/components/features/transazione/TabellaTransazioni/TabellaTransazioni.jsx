@@ -1,9 +1,11 @@
 import * as React from 'react';
 import { styled } from '@mui/system';
 import { TableCell, TableHead } from '@mui/material';
+import Grid from '@mui/material/Grid2';
 import TableFactory from '@components/factories/TableFactory/TableFactory';
 import TransazioneCellRender from './components/TransazioneCellRender';
 import { useTransazioneTableRow } from './hooks/useTransazioneTableRow';
+import Totali from './components/Totali';
 
 const columns = [
   {
@@ -27,7 +29,7 @@ const columns = [
   {
     field: 'stato',
     headerName: 'Stato',
-    type: 'chip',
+    type: 'infoChip',
     sx: { width: '20%' },
     align: 'center',
   },
@@ -57,24 +59,30 @@ const headerConfig = {
   },
 };
 
-const TabellaTransazioni = ({ data: transazioni, rowConfig, onChange }) => {
-  const {data} = useTransazioneTableRow(transazioni, rowConfig, onChange);
+const TabellaTransazioni = ({ data: transazioni, rowConfig, onChange, errors, totali, metadati}) => {
+  const { data } = useTransazioneTableRow(transazioni, rowConfig, onChange, errors, metadati);
 
   return (
-    <TableFactory
-      columns={columns}
-      data={data}
-      headerConfig={headerConfig}
-      rowConfig={{ sx: { '& td': { padding: '6px 4px' } } }}
-      sx={{
-        '& table': {
-          tableLayout: 'fixed',
-          width: '100%',
-          overflowX: 'scroll',
-          minWidth: '48rem',
-        },
-      }}
-    />
+    <Grid container size={{ xs: 12 }} sx={{rowGap: '1.5rem'}}>
+      {/* Tabella transazioni */}
+      <TableFactory
+        columns={columns}
+        data={data}
+        headerConfig={headerConfig}
+        rowConfig={{ sx: { '& td': { padding: '6px 4px' } } }}
+        sx={{
+          '& table': {
+            tableLayout: 'fixed',
+            width: '100%',
+            overflowX: 'scroll',
+            minWidth: '48rem',
+          },
+        }}
+      />
+
+      {/* Riepilogo totali opzionale */}
+      {totali && <Totali totali={totali} />}
+    </Grid>
   );
 };
 

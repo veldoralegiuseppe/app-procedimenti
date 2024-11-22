@@ -2,8 +2,16 @@ import dayjs from 'dayjs';
 import 'dayjs/locale/it';
 import { validators } from '@utils/validators';
 import { Transazione } from './transazione';
+import { immerable } from 'immer';
 
 export class Procedimento {
+  static [immerable] = true;
+  
+  static getMetadati(key) {
+    const metadati = { ...metadatiProcedimento, className: this.name };
+    return key ? metadati[key] : metadati;
+  }
+
   constructor({
     numProtocollo,
     dataDeposito = new Date().toDateString(),
@@ -17,11 +25,18 @@ export class Procedimento {
     nomeMediatore,
     cognomeMediatore,
     titoloMediatore,
-    totaleIncontri = 0,
-    compensoMediatore = new Transazione('USCITA', 0, 0, 'DA SALDARE'),
-    speseAvvioSedeSecondaria = new Transazione('USCITA', 0, 0, 'DA SALDARE'),
-    speseIndennitaSedeSecondaria = new Transazione('USCITA', 0, 0, 'DA SALDARE'),
-    isDemandata = false,
+    compensoMediatore = new Transazione({
+      nome: metadatiProcedimento.compensoMediatore.label,
+      tipo: 'USCITA',
+    }),
+    speseAvvioSedeSecondaria = new Transazione({
+      nome: metadatiProcedimento.speseAvvioSedeSecondaria.label,
+      tipo: 'USCITA',
+    }),
+    speseIndennitaSedeSecondaria = new Transazione({
+      nome: metadatiProcedimento.speseIndennitaSedeSecondaria.label,
+      tipo: 'USCITA',
+    }),
     causaleDemandata,
     materiaCausaleDemandata,
   } = {}) {
@@ -34,11 +49,9 @@ export class Procedimento {
     this.valoreControversia = valoreControversia;
     this.esitoMediazione = esitoMediazione;
     this.modalitaSvolgimento = modalitaSvolgimento;
-    this.totaleIncontri = totaleIncontri;
     this.nomeMediatore = nomeMediatore;
     this.cognomeMediatore = cognomeMediatore;
     this.titoloMediatore = titoloMediatore;
-    this.isDemandata = isDemandata;
     this.causaleDemandata = causaleDemandata;
     this.materiaCausaleDemandata = materiaCausaleDemandata;
     this.compensoMediatore = compensoMediatore;
@@ -58,12 +71,7 @@ export class Procedimento {
       : null;
   }
 
-  static getMetadati(key) {
-    const metadati = { ...metadatiProcedimento, className: this.name };
-    return key ? metadati[key] : metadati;
-  }
-
-  validateRequiredFields(){
+  validateRequiredFields() {
     if (!this.dataDeposito) {
       throw new Error('La data di deposito è obbligatoria.');
     }
@@ -73,7 +81,7 @@ export class Procedimento {
     }
 
     if (!this.oggettoControversia) {
-      throw new Error('L\'oggetto della controversia è obbligatorio.');
+      throw new Error("L'oggetto della controversia è obbligatorio.");
     }
 
     if (!this.valoreControversia) {
@@ -86,41 +94,55 @@ export class Procedimento {
       const dataDeposito = dayjs(this.dataDeposito);
       const dataOraIncontro = dayjs(this.dataOraIncontro);
       if (dataOraIncontro.isBefore(dataDeposito)) {
-        throw new Error('La data e ora dell\'incontro non può essere precedente alla data di deposito.');
+        throw new Error(
+          "La data e ora dell'incontro non può essere precedente alla data di deposito."
+        );
       }
     }
   }
 
-  validateValoreControversia(){
+  validateValoreControversia() {
     if (this.valoreControversia < 80) {
-      throw new Error('Il valore della controversia non può essere inferiore a 80.');
+      throw new Error(
+        'Il valore della controversia non può essere inferiore a 80.'
+      );
     }
   }
 
-  validateDemandata(){
+  validateDemandata() {
     if (this.isDemandata && !this.causaleDemandata) {
       throw new Error('La causale della demandata è obbligatoria.');
     }
 
-    if (this.causaleDemandata === 'VOLONTARIA IN MATERIA DI' && !this.materiaCausaleDemandata) {
-      throw new Error('La materia della causale demandata è obbligatoria quando la causale è "VOLONTARIA IN MATERIA DI".');
+    if (
+      this.causaleDemandata === 'VOLONTARIA IN MATERIA DI' &&
+      !this.materiaCausaleDemandata
+    ) {
+      throw new Error(
+        'La materia della causale demandata è obbligatoria quando la causale è "VOLONTARIA IN MATERIA DI".'
+      );
     }
-
   }
 
-  validateCompensoMediatore(){
+  validateCompensoMediatore() {
     if (this.compensoMediatore > this.valoreControversia) {
-      throw new Error('Il compenso del mediatore non può essere superiore al valore della controversia.');
+      throw new Error(
+        'Il compenso del mediatore non può essere superiore al valore della controversia.'
+      );
     }
   }
 
-  validateSpeseSedeSecondaria(){
+  validateSpeseSedeSecondaria() {
     if (this.speseAvvioSedeSecondaria > this.valoreControversia) {
-      throw new Error('Le spese di avvio della sede secondaria non possono essere superiori al valore della controveria.');
+      throw new Error(
+        'Le spese di avvio della sede secondaria non possono essere superiori al valore della controveria.'
+      );
     }
 
     if (this.speseIndennitaSedeSecondaria > this.valoreControversia) {
-      throw new Error('Le spese di indennità della sede secondaria non possono essere superiori al valore della controveria.');
+      throw new Error(
+        'Le spese di indennità della sede secondaria non possono essere superiori al valore della controveria.'
+      );
     }
   }
 
@@ -195,6 +217,22 @@ const metadatiProcedimento = {
     type: 'date',
     sezione: SEZIONI.ISTANZA_MEDIAZIONE,
   },
+  valoreControversia: {
+    key: 'valoreControversia',
+    label: 'Valore controversia',
+    type: 'number',
+    sezione: SEZIONI.ISTANZA_MEDIAZIONE,
+    validation: (value) => {
+      return [validators.onlyNumber(value)].filter((result) => result !== true);
+    },
+  },
+  oggettoControversia: {
+    key: 'oggettoControversia',
+    label: 'Oggetto controversia',
+    type: 'string',
+    sezione: SEZIONI.ISTANZA_MEDIAZIONE,
+    options: oggettiControversia,
+  },
   sedeDeposito: {
     key: 'sedeDeposito',
     label: 'Sede deposito',
@@ -205,35 +243,18 @@ const metadatiProcedimento = {
     key: 'sedeSvolgimento',
     label: 'Sede svolgimento',
     type: 'string',
-    sezione: SEZIONI.FISSAZIONE_INCONTRO,
+    sezione: SEZIONI.ISTANZA_MEDIAZIONE,
   },
-  dataOraIncontro: {
-    key: 'dataOraIncontro',
-    label: 'Data e ora incontro',
-    type: 'datetime',
-    sezione: SEZIONI.FISSAZIONE_INCONTRO,
-    validation: (value) => {
-      return [
-        validators.isDateTime(value),
-      ].filter((result) => result !== true);
-    },
-  },
-  oggettoControversia: {
-    key: 'oggettoControversia',
-    label: 'Oggetto controversia',
+  causaleDemandata: {
+    key: 'causaleDemandata',
+    label: 'Causale demandata',
     type: 'string',
     sezione: SEZIONI.ISTANZA_MEDIAZIONE,
-    options: oggettiControversia,
-  },
-  valoreControversia: {
-    key: 'valoreControversia',
-    label: 'Valore controversia',
-    type: 'number',
-    sezione: SEZIONI.ISTANZA_MEDIAZIONE,
+    options: causaliDemandata,
     validation: (value) => {
-      return [
-        validators.onlyNumber(value),
-      ].filter((result) => result !== true);
+      return [validators.onlyAlphabetic(value)].filter(
+        (result) => result !== true
+      );
     },
   },
   esitoMediazione: {
@@ -243,9 +264,18 @@ const metadatiProcedimento = {
     sezione: SEZIONI.ISTANZA_MEDIAZIONE,
     options: esitiMediazione,
     validation: (value) => {
-      return [
-        validators.onlyAlphabetic(value),
-      ].filter((result) => result !== true);
+      return [validators.onlyAlphabetic(value)].filter(
+        (result) => result !== true
+      );
+    },
+  },
+  dataOraIncontro: {
+    key: 'dataOraIncontro',
+    label: 'Data e ora incontro',
+    type: 'datetime',
+    sezione: SEZIONI.FISSAZIONE_INCONTRO,
+    validation: (value) => {
+      return [validators.isDateTime(value)].filter((result) => result !== true);
     },
   },
   modalitaSvolgimento: {
@@ -255,31 +285,9 @@ const metadatiProcedimento = {
     sezione: SEZIONI.FISSAZIONE_INCONTRO,
     options: modalitaSvolgimento,
     validation: (value) => {
-      return [
-        validators.onlyAlphabetic(value),
-      ].filter((result) => result !== true);
-    },
-  },
-  nomeMediatore: {
-    key: 'nomeMediatore',
-    label: 'Nome mediatore',
-    type: 'string',
-    sezione: SEZIONI.MEDIATORE,
-    validation: (value) => {
-      return [
-        validators.onlyAlphabetic(value),
-      ].filter((result) => result !== true);
-    },
-  },
-  cognomeMediatore: {
-    key: 'cognomeMediatore',
-    label: 'Cognome mediatore',
-    type: 'string',
-    sezione: SEZIONI.MEDIATORE,
-    validation: (value) => {
-      return [
-        validators.onlyAlphabetic(value),
-      ].filter((result) => result !== true);
+      return [validators.onlyAlphabetic(value)].filter(
+        (result) => result !== true
+      );
     },
   },
   titoloMediatore: {
@@ -289,72 +297,49 @@ const metadatiProcedimento = {
     sezione: SEZIONI.MEDIATORE,
     options: titoliMediatore,
     validation: (value) => {
-      return [
-        validators.onlyAlphabetic(value),
-      ].filter((result) => result !== true);
+      return [validators.onlyAlphabetic(value)].filter(
+        (result) => result !== true
+      );
     },
   },
-  totaleIncontri: {
-    key: 'totaleIncontri',
-    label: 'Totale incontri',
-    type: 'number',
-    sezione: SEZIONI.FISSAZIONE_INCONTRO,
+  nomeMediatore: {
+    key: 'nomeMediatore',
+    label: 'Nome mediatore',
+    type: 'string',
+    sezione: SEZIONI.MEDIATORE,
+    validation: (value) => {
+      return [validators.onlyAlphabetic(value)].filter(
+        (result) => result !== true
+      );
+    },
+  },
+  cognomeMediatore: {
+    key: 'cognomeMediatore',
+    label: 'Cognome mediatore',
+    type: 'string',
+    sezione: SEZIONI.MEDIATORE,
+    validation: (value) => {
+      return [validators.onlyAlphabetic(value)].filter(
+        (result) => result !== true
+      );
+    },
   },
   compensoMediatore: {
     key: 'compensoMediatore',
-    label: 'Compenso mediatore',
+    label: 'Spese mediatore',
     type: 'number',
     sezione: SEZIONI.RIEPILOGO_TRANSAZIONI,
-    validation: (value) => {
-      return [
-        validators.onlyNumber(value),
-      ].filter((result) => result !== true);
-    },
   },
- 
-  causaleDemandata: {
-    key: 'causaleDemandata',
-    label: 'Causale demandata',
-    type: 'string',
-    sezione: SEZIONI.ISTANZA_MEDIAZIONE,
-    options: causaliDemandata,
-    validation: (value) => {
-      return [
-        validators.onlyAlphabetic(value),
-      ].filter((result) => result !== true);
-    },
+  speseAvvioSedeSecondaria: {
+    key: 'speseAvvioSedeSecondaria',
+    label: 'Spese avvio sede secondaria',
+    type: 'number',
+    sezione: SEZIONI.RIEPILOGO_TRANSAZIONI,
   },
-  // materiaCausaleDemandata: {
-  //   key: 'materiaCausaleDemandata',
-  //   label: 'Materia causale demandata',
-  //   type: 'string',
-  //   sezione: 'Istanza di mediazione',
-  //   validation: (value) => {
-  //     return [
-  //       validators.onlyAlphanumeric(value),
-  //     ].filter((result) => result !== true);
-  //   },
-  // },
-  // speseAvvioSedeSecondaria: {
-  //   key: 'speseAvvioSedeSecondaria',
-  //   label: 'Spese avvio sede secondaria',
-  //   type: 'number',
-  //   sezione: SEZIONI.RIEPILOGO_TRANSAZIONI,
-  //   validation: (value) => {
-  //     return [
-  //       validators.onlyNumber(value),
-  //     ].filter((result) => result !== true);
-  //   },
-  // },
-  // speseIndennitaSedeSecondaria: {
-  //   key: 'speseIndennitaSedeSecondaria',
-  //   label: 'Spese indennità sede secondaria',
-  //   type: 'number',
-  //   sezione: SEZIONI.RIEPILOGO_TRANSAZIONI,
-  //   validation: (value) => {
-  //     return [
-  //       validators.onlyNumber(value),
-  //     ].filter((result) => result !== true);
-  //   },
-  // },
+  speseIndennitaSedeSecondaria: {
+    key: 'speseIndennitaSedeSecondaria',
+    label: 'Spese indennità sede secondaria',
+    type: 'number',
+    sezione: SEZIONI.RIEPILOGO_TRANSAZIONI,
+  },
 };
