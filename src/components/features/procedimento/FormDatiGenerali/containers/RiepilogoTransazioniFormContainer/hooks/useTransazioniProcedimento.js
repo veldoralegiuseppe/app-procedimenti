@@ -3,7 +3,7 @@ import { Transazione } from '@model/transazione';
 import { SEZIONI } from '@model/procedimento';
 import { ProcedimentoContext } from '@context/Procedimento';
 
-const useTransazioniProcedimento = (procedimento, metadati) => {
+const useTransazioniProcedimento = (procedimento) => {
   const [transazioni, setTransazioni] = useState([]);
   const [totali, setTotali] = useState([]);
   const { handleInputChange } = useContext(ProcedimentoContext);
@@ -42,9 +42,9 @@ const useTransazioniProcedimento = (procedimento, metadati) => {
     const totaleUscita = {
       label: 'Totale spese',
       value: transazioni.reduce(
-        (acc, transazione) =>
-          transazione.tipo === 'uscita' ? acc + transazione.importoDovuto : acc,
-        0
+      (acc, transazione) =>
+        transazione.tipo.toLowerCase() === 'uscita' ? acc + transazione.importoDovuto : acc,
+      0
       ),
     };
 
@@ -52,7 +52,7 @@ const useTransazioniProcedimento = (procedimento, metadati) => {
       label: 'Totale incassi',
       value: transazioni.reduce(
         (acc, transazione) =>
-          transazione.tipo === 'entrata'
+          transazione.tipo.toLowerCase() === 'entrata'
             ? acc + transazione.importoDovuto
             : acc,
         0
@@ -62,22 +62,7 @@ const useTransazioniProcedimento = (procedimento, metadati) => {
     setTotali([totaleDovutoSedeSecondaria, totaleUscita, totaleEntrata]);
   }, [transazioni, procedimento]);
 
-  const onChange = (transazione, index) => {
-    if (!transazione || !metadati) return;
-
-    const modelField = Object.values(metadati || {})?.find(
-      (field) =>
-        field.sezione === SEZIONI.RIEPILOGO_TRANSAZIONI &&
-        field.label === transazione.nome
-    )?.key;
-
-    console.log('modelField', modelField);
-
-    if (!modelField) return;
-    else handleInputChange({ [modelField]: transazione }, metadati);
-  };
-
-  return { transazioni, totali, onChange };
+  return { transazioni, totali };
 };
 
 export { useTransazioniProcedimento };
