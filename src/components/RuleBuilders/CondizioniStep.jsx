@@ -7,7 +7,7 @@ import { CssTextField } from '@theme/MainTheme';
 import ImportoInput from '@components/ImportoInput';
 import { ProcedimentoContext } from '@context/Procedimento';
 import { Target, operatoriMap, campiCondizione } from '@model/regola';
-import {Procedimento} from '@model/procedimento';
+import {Procedimento} from '@model/Procedimento/procedimento';
 import Select from '@components/Select';
 
 const StyledPopper = styled((props) => <Popper {...props} />)(({ theme }) => ({

@@ -1,69 +1,90 @@
-import React from 'react';
+import React, {useMemo} from 'react';
 import { TableRow, TableCell } from '@mui/material';
 import BaseRow from './BaseRow';
 import CollapsibleDecorator from './decorators/CollapsibleDecorator';
 import SelectableDecorator from './decorators/SelectableDecorator';
 import PropTypes from 'prop-types';
 
-const RowFactory = ({
-  data,
-  columns,
-  onRowClick,
-  collapsibleConfig,
-  selectableConfig,
-  totalColumns,
-  components = {},
-  sx,
-}) => {
-  let RowComponent = BaseRow;
+const RowFactory = React.memo(
+  ({
+    data,
+    columns,
+    onRowClick,
+    collapsibleConfig,
+    selectableConfig,
+    totalColumns,
+    components = {},
+    sx,
+  }) => {
 
-  // Applica i decoratori in ordine
-  if (collapsibleConfig) {
-    RowComponent = CollapsibleDecorator(RowComponent);
+    const RowComponent = useMemo(() => {
+      let Component = BaseRow;
+      if (collapsibleConfig) {
+        Component = CollapsibleDecorator(Component);
+      }
+      if (selectableConfig) {
+        Component = SelectableDecorator(Component);
+      }
+      return Component;
+    }, [collapsibleConfig, selectableConfig]);
+
+    const renderedRows = useMemo(() => {
+      if (data.length === 0) {
+        return (
+          <TableRow>
+            <TableCell
+              colSpan={totalColumns}
+              sx={{
+                whiteSpace: 'nowrap',
+                textAlign: 'center',
+              }}
+            >
+              Nessun elemento da visualizzare
+            </TableCell>
+          </TableRow>
+        );
+      }
+
+      return data.map((row, index) => (
+        <RowComponent
+          sx={{
+            '& td': {
+              borderBottom: collapsibleConfig
+                ? 'none'
+                : '1px solid rgba(224, 224, 224, 1)',
+            },
+            ...sx,
+          }}
+          key={index}
+          row={row}
+          columns={columns}
+          onRowClick={onRowClick}
+          collapsibleConfig={collapsibleConfig}
+          selectableConfig={selectableConfig}
+          totalColumns={totalColumns}
+        />
+      ));
+    }, [
+      data,
+      RowComponent,
+      columns,
+      onRowClick,
+      collapsibleConfig,
+      selectableConfig,
+      totalColumns,
+      sx,
+    ]);
+
+    return <tbody>{renderedRows}</tbody>;
+  },
+  (prevProps, nextProps) => {
+    return (
+      _.isEqual(prevProps.data, nextProps.data) &&
+      _.isEqual(prevProps.sx, nextProps.sx)
+    );
   }
+);
 
-  if (selectableConfig) {
-    RowComponent = SelectableDecorator(RowComponent);
-  }
-
-  return (
-    <tbody>
-      {data.length == 0 ? (
-        <TableRow>
-          <TableCell
-            colSpan={totalColumns}
-            sx={{
-              whiteSpace: 'nowrap',
-              textAlign: 'center',
-            }}
-          >
-            Nessun elemento da visualizzare
-          </TableCell>
-        </TableRow>
-      ) : (
-        data.map((row, index) => (
-          <RowComponent
-            sx={{
-              '& td': {
-                borderBottom: collapsibleConfig
-                  ? 'none'
-                  : '1px solid rgba(224, 224, 224, 1)',
-              },
-              ...sx,
-            }}
-            key={index}
-            row={row}
-            columns={columns}
-            onRowClick={onRowClick}
-            collapsibleConfig={collapsibleConfig}
-            selectableConfig={selectableConfig}
-            totalColumns={totalColumns}
-          />
-        ))
-      )}
-    </tbody>
-  );
-};
 export const rowFactoryPropTypes = {
   data: PropTypes.array.isRequired,
   columns: PropTypes.array.isRequired,

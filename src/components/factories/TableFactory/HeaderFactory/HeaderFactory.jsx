@@ -3,8 +3,9 @@ import { TableRow, TableCell } from '@mui/material';
 import PropTypes from 'prop-types';
 import TooltipDecorator from './decorators/TooltipDecorator';
 import SortableDecorator from './decorators/SortableDecorator';
+import _ from 'lodash';
 
-const HeaderFactory = ({
+const HeaderFactoryComponent = ({
   columns,
   onSort,
   collapsibleConfig,
@@ -15,15 +16,15 @@ const HeaderFactory = ({
   orderBy,
 }) => {
   // Recupera i componenti sovrascrivibili o utilizza quelli di default
-  const TableHeadComponent = components.TableHead || 'thead';
-  const TableRowComponent = components.TableRow || TableRow;
-  const TableCellComponent = components.TableCell || TableCell;
+  const TableHeadComponent = React.useMemo(() => components.TableHead || 'thead', [components.TableHead]);
+  const TableRowComponent = React.useMemo(() => components.TableRow || TableRow, [components.TableRow]);
+  const TableCellComponent = React.useMemo(() => components.TableCell || TableCell, [components.TableCell]);
 
-  const handleSort = (column) => {
+  const handleSort = React.useCallback((column) => {
     const isAsc = orderBy === column.field && order === 'asc';
     const newOrder = isAsc ? 'desc' : 'asc';
     onSort && onSort(column.field, newOrder);
-  };
+  }, [order, orderBy, onSort]);
 
   return (
     <TableHeadComponent sx={{ ...sx }}>
@@ -32,15 +33,19 @@ const HeaderFactory = ({
 
         {columns.map((column) => {
           // Applica i decoratori condizionalmente
-          let HeaderContent = (props) => <div style={{...props.sx}}>{props.children}</div>; // Componente base
+            const HeaderContent = React.useMemo(() => {
+            let Component = (props) => <div style={{...props.sx}}>{props.children}</div>; 
 
-          if (column.tooltip) {
-            HeaderContent = TooltipDecorator(HeaderContent);
-          }
+            if (column.tooltip) {
+              Component = TooltipDecorator(Component);
+            }
 
-          if (column.sortable) {
-            HeaderContent = SortableDecorator(HeaderContent);
-          }
+            if (column.sortable) {
+              Component = SortableDecorator(Component);
+            }
+
+            return Component;
+            }, [column.tooltip, column.sortable]);
 
           return (
             <TableCellComponent sx={column.sx} key={column.field} align={column.align || 'left'}>
@@ -63,6 +68,15 @@ const HeaderFactory = ({
     </TableHeadComponent>
   );
 };
+
+const HeaderFactory = React.memo(HeaderFactoryComponent, (prevProps, nextProps) => {
+  return (
+    _.isEqual(prevProps.columns, nextProps.columns) &&
+    _.isEqual(prevProps.collapsibleConfig, nextProps.collapsibleConfig) &&
+    _.isEqual(prevProps.selectableConfig, nextProps.selectableConfig) &&
+    _.isEqual(prevProps.sx, nextProps.sx)
+  );
+});
 
 export const headerFactoryPropTypes = {
   columns: PropTypes.arrayOf(
@@ -88,4 +102,5 @@ export const headerFactoryPropTypes = {
 };
 
 HeaderFactory.propTypes = headerFactoryPropTypes;
+
 export default HeaderFactory;

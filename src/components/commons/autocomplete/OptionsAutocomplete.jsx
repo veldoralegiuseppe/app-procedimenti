@@ -67,7 +67,7 @@ const OptionsAutocomplete = ({
 
   // Handlers
   const onCreationSubmit = (newOption, fristTruthyKey) => {
-    //console.log('aggiunta nuova opzione', newOption, fristTruthyKey);
+    console.log('aggiunta nuova opzione', newOption, fristTruthyKey);
     const newValue = fristTruthyKey ? newOption[fristTruthyKey] : newOption;
    
     onSubmit?.(newOption);

@@ -1,3 +1,4 @@
+import './whyDidYouRender';
 import * as React from 'react';
 import { createRoot } from 'react-dom/client';
 import { ThemeProvider } from '@mui/material/styles';
@@ -10,41 +11,41 @@ import { ProcedimentoProvider } from '@context/Procedimento';
 
 const root = createRoot(document.getElementById('mainContainer'));
 
-root.render(<App></App>);
+root.render(<App />);
 
 function App() {
-  var { currentPath } = React.useContext(RouteContext);
+  const { currentPath } = React.useContext(RouteContext);
   const [path, setPath] = React.useState(currentPath);
 
+  // Memoize route component
+  const routeComponent = React.useMemo(() => getRoute(path).component, [path]);
+
+  // Memoize styles
+  const navbarStyles = React.useMemo(() => ({
+    transition: 'background-color 0.3s ease',
+    '&:hover': {
+      backgroundColor: 'primary.main',
+    },
+  }), []);
+
+  const contentGridStyles = React.useMemo(() => ({
+    margin: `0 !important`,
+    backgroundColor: 'background.paper',
+    padding: '2rem 5rem',
+    minWidth: '100%',
+  }), []);
+
+  // Memoize the button click handler
+  const handleButtonClick = React.useCallback((newPath) => setPath(newPath), [setPath]);
+
   return (
-    <RouteContext.Provider
-      value={{ currentPath: path, setCurrentPath: setPath }}
-    >
+    <RouteContext.Provider value={{ currentPath: path, setCurrentPath: setPath }}>
       <ThemeProvider theme={themeOne}>
         <CssBaseline />
-
-        <Navbar
-          onButtonClick={setPath}
-          sx={{
-            transition: 'background-color 0.3s ease', // transizione per cambio di colore
-            '&:hover': {
-              backgroundColor: 'primary.main', // effetto hover
-            },
-          }}
-        ></Navbar>
+        <Navbar onButtonClick={handleButtonClick} sx={navbarStyles} />
         <ProcedimentoProvider>
-          <ContentGrid
-            container
-            spacing={0}
-            sx={{
-              margin: `0 !important`,
-              backgroundColor: 'background.paper',
-              padding: '2rem 5rem',
-              //minHeight: '100vh',
-              minWidth: '100%',
-            }}
-          >
-            {getRoute(path).component}
+          <ContentGrid container spacing={0} sx={contentGridStyles}>
+            {routeComponent}
           </ContentGrid>
         </ProcedimentoProvider>
       </ThemeProvider>

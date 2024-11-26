@@ -5,10 +5,10 @@ import { useSelectableRows } from './hooks/useSelectableRows'; // Importa il hoo
 const SelectableDecorator = (WrappedRow) => ({ row, columns, children, ...props }) => {
   const { toggleRowSelection, isRowSelected } = useSelectableRows();
 
-  const handleSelect = (e) => {
+  const handleSelect = useMemo(() => (e) => {
     e.stopPropagation(); // Blocca la propagazione per evitare conflitti con onRowClick
     toggleRowSelection(row);
-  };
+  }, [row, toggleRowSelection]);
 
   return (
     <WrappedRow {...props} row={row} columns={columns}>

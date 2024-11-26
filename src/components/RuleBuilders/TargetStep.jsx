@@ -5,7 +5,7 @@ import Popper from '@mui/material/Popper';
 import { CssTextField } from '@theme/MainTheme';
 import { ProcedimentoContext } from '@context/Procedimento';
 import { Target } from '@model/regola';
-import { Procedimento } from '@model/procedimento';
+import { Procedimento } from '@model/Procedimento/procedimento';
 
 const StyledPopper = styled((props) => <Popper {...props} />)(({ theme }) => ({
   '& .MuiPaper-root': {

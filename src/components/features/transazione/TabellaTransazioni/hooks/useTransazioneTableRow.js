@@ -1,8 +1,9 @@
 import React from 'react';
 import ImportoReadOnly from '@components/ImportoReadOnly';
 import ImportoInput from '@components/ImportoInput';
-import { statoChipFlagMap, Transazione } from '@model/transazione';
+import { statoChipFlagMap, Transazione } from '@model/Transazione/transazione';
 import _ from 'lodash';
+import { useArrayStore } from '../../../../commons/hooks/useArrayStore';
 
 /**
  * Mappa una transazione in una riga della tabella.
@@ -10,28 +11,37 @@ import _ from 'lodash';
  * @param {Function} handleChange - Callback per gestire le modifiche.
  * @returns {Object} Rappresentazione della riga.
  */
-const mapToRow = (transazione, handleChange, disabled, errors) => {
+const mapToRow = ({transazione, onChange, disabled, errors, index, getItemProperty}) => {
   //console.log('errors', errors);
+  const importoDovuto = getItemProperty(index, 'importoDovuto') || 0;
+  const importoCorrisposto = getItemProperty(index, 'importoCorrisposto') || 0;
+  const stato = getItemProperty(index, 'stato') || Transazione.stati.DA_SALDARE;
+
   const isParzialmenteSaldato =
     transazione.stato === Transazione.stati.PARZIALMENTE_SALDATO;
 
   const tooltipMessage = (() => {
     if (disabled) return 'Calcolato automaticamente';
-    else if(isParzialmenteSaldato) return `Rimanente: € ${transazione.importoDovuto - transazione.importoCorrisposto}`;
+    else if (isParzialmenteSaldato)
+      return `Rimanente: € ${
+        transazione.importoDovuto - transazione.importoCorrisposto
+      }`;
     else return '';
   })();
 
   return {
     id: getId(transazione),
 
+    tipo: transazione.tipo,
+
     importoDovuto: {
       component: disabled ? ImportoReadOnly : ImportoInput,
-      value: transazione.importoDovuto || 0,
+      value: importoDovuto,
       sx: { width: '12rem' },
       backgroundColor: !disabled ? 'transparent' : '#cacaca29',
       onBlur: disabled
         ? () => {}
-        : (value) => handleChange('importoDovuto', value),
+        : (value) => onChange('importoDovuto', value),
     },
 
     importoCorrisposto: {
@@ -40,22 +50,22 @@ const mapToRow = (transazione, handleChange, disabled, errors) => {
         : isParzialmenteSaldato
         ? ImportoInput
         : ImportoReadOnly,
-      value: transazione.importoCorrisposto || 0,
+        value: importoCorrisposto,
       sx: { width: '12rem' },
       backgroundColor: isParzialmenteSaldato ? 'transparent' : '#cacaca29',
       onBlur: disabled
         ? () => {}
-        : (value) => handleChange('importoCorrisposto', value),
+        : (value) => onChange('importoCorrisposto', value),
     },
 
     stato: {
-      value: transazione.stato,
-      status: statoChipFlagMap[transazione.stato],
+      value: stato,
+      status: statoChipFlagMap[stato],
       tooltipMessage: tooltipMessage,
-      sx: { minWidth: '92.3px'},
+      sx: { minWidth: '92.3px' },
       onClick: disabled
         ? () => {}
-        : () => handleChange('stato', getNextStatus(transazione.stato)),
+        : () => onChange('stato', getNextStatus(stato)),
     },
   };
 };
@@ -83,7 +93,6 @@ const mapFromRow = (row) => {
  */
 const getId = (transazione) => ({
   nome: transazione.nome,
-  tipo: transazione.tipo,
 });
 
 /**
@@ -106,67 +115,63 @@ const getNextStatus = (currentStato) => {
  * @param {Transazione[]} transazioni - Array di transazioni iniziali.
  * @returns {Object} Stato e metodi per gestire le righe.
  */
-const useTransazioneTableRow = ({transazioni, rowConfig = {}, onChange, onBlur, errors, metadati}) => {
-  const { disabled = [] } = rowConfig;
+const useTransazioneTableRow = ({
+  store,
+  disabled,
+  onChange,
+  onBlur,
+  errors,
+}) => {
 
-  // Pre-elaborare i nomi disabilitati (normalizzati per confronto case-insensitive)
-  const disabledTransactions = React.useMemo(
-    () => disabled.map((nome) => nome?.toUpperCase()),
-    [disabled]
-  );
-
+  const { updateItem, filterItems, getItemProperty } = useArrayStore(store);
+ 
   // Funzione per mappare una transazione a una riga
   const mapRow = React.useCallback(
-    (transazione, disabledNames) =>
-      mapToRow(
+    ({transazione, index}) =>
+      mapToRow({
         transazione,
-        (key, value) => handleChange(transazione, key, value),
-        disabledNames.includes(transazione.nome?.toUpperCase()),
-        errors
-      ),
-    []
+        onChange: (key, value) => handleChange({key, value, index}),
+        disabled: disabled.includes(nome => nome?.toUpperCase() === transazione.nome?.toUpperCase()),
+        errors,
+        index,
+        store,
+        getItemProperty,
+      }),
+    [disabled, errors]
   );
 
-  // Inizializza i dati della tabella
-  const [data, setData] = React.useState(() =>
-    (transazioni || []).map((transazione) =>
-      mapRow(transazione, disabledTransactions)
-    )
-  );
+   // Recuperare i dati dalla store
+  const filteredItems = filterItems(() => true);
+  const data = React.useMemo(() => {
+    return filteredItems.map((transazione, index) =>
+      mapRow({transazione, index})
+    );
+  }, [filteredItems, mapRow]);
 
   // Gestione delle modifiche
   const handleChange = React.useCallback(
-    (transazione, key, value) => {
-      setData((prevData) =>
-        prevData.map((row, index) => {
-          if (!_.isEqual(getId(transazione), row.id)) return row;
+    ({key, value, index}) => {
+      // Crea nuova istanza della transazione con i valori aggiornati per non violare l'immutabilità
+      // const updatedTransazione = new Transazione({
+      //   nome: transazione.nome,
+      //   tipo: transazione.tipo,
+      //   importoDovuto:
+      //     key === 'importoDovuto' ? value : transazione.importoDovuto,
+      //   importoCorrisposto:
+      //     key === 'importoCorrisposto' ? value : transazione.importoCorrisposto,
+      //   stato: key === 'stato' ? value : transazione.stato,
+      // });
 
-          // Crea una nuova transazione aggiornata
-            const updatedTransazione = new Transazione({
-            nome: transazione.nome,
-            tipo: transazione.tipo,
-            importoDovuto: key === 'importoDovuto' ? value : transazione.importoDovuto,
-            importoCorrisposto: key === 'importoCorrisposto' ? value : transazione.importoCorrisposto,
-            stato: key === 'stato' ? value : transazione.stato
-            });
-
-          //console.log('key', key, 'value', value, 'updatedTransazione', updatedTransazione);
-          if(metadati){
-            const modelKey = Object.values(metadati).find((m) => m.label === transazione.nome)?.key;
-            if(modelKey){
-              onChange?.({ [modelKey]: updatedTransazione }, metadati);
-              onBlur?.({ [modelKey]: updatedTransazione });
-            }
-          }
-         
-          return mapRow(updatedTransazione, disabledTransactions);
-        })
-      );
+      updateItem(index, { [key]: value });
+      //onChange?.(index, { [key]: value });
+      //onBlur?.(index, { [modelKey]: updatedTransazione });
     },
-    [disabledTransactions]
+    [updateItem]
   );
 
-  return { data, setData };
+  return { data, handleChange };
 };
+
+export default useTransazioneTableRow;
 
 export { useTransazioneTableRow };

@@ -21,14 +21,13 @@ import ImportoInput from '@components/ImportoInput';
 import { CssTextField, ClearButton, labelColor } from '@theme/MainTheme';
 import {
   Procedimento,
-} from '@model/procedimento';
+} from '@model/Procedimento/procedimento';
 import Select from '@components/Select';
 import { ProcedimentoContext } from '@context/Procedimento';
 import NumberInput from '@components/NumberInput';
 import SelectQualificaPersona from '@components/SelectQualificaPersona';
 import TabellaSpese from '../components/TabellaSpese';
-import { calculateValueByActiveRule } from '@model/regola';
-import ComponentFactory from '../components/factories/ComponentFactory';
+
 
 // Constants
 const inputHeight = 36;

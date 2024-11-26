@@ -1,14 +1,11 @@
-import { useEffect, useState, useContext } from 'react';
-import { Transazione } from '@model/transazione';
-import { SEZIONI } from '@model/procedimento';
-import { ProcedimentoContext } from '@context/Procedimento';
+import { useEffect, useState } from 'react';
+import { Transazione } from '@model/Transazione/transazione';
+import { useProcedimento } from '@model/Procedimento/useProcedimento';
 
-const useTransazioniProcedimento = (procedimento) => {
-  const [transazioni, setTransazioni] = useState([]);
-  const [totali, setTotali] = useState([]);
-  const { handleInputChange } = useContext(ProcedimentoContext);
+const useTransazioniProcedimento = () => {
+  const getProperties = useProcedimento((state) => state.getProperties);
 
-  useEffect(() => {
+  const [transazioni, setTransazioni] = useState(() => {
     const incassoParti = new Transazione({
       nome: 'Incasso parti',
       tipo: 'entrata',
@@ -18,33 +15,37 @@ const useTransazioniProcedimento = (procedimento) => {
       tipo: 'entrata',
     });
 
-    setTransazioni([
+    const restTransazioni = getProperties([
+      'compensoMediatore',
+      'speseAvvioSedeSecondaria',
+      'speseIndennitaSedeSecondaria',
+    ]);
+
+    return [
       incassoParti,
       incassoControparti,
-      procedimento.compensoMediatore,
-      procedimento.speseAvvioSedeSecondaria,
-      procedimento.speseIndennitaSedeSecondaria,
-    ]);
-  }, [
-    procedimento.compensoMediatore,
-    procedimento.speseAvvioSedeSecondaria,
-    procedimento.speseIndennitaSedeSecondaria,
-  ]);
+      ...restTransazioni.map((t) => new Transazione({ ...t })),
+    ];
+  });
+  const [totali, setTotali] = useState([]);
 
   useEffect(() => {
     const totaleDovutoSedeSecondaria = {
       label: 'Totale spese sede secondaria',
-      value:
-        procedimento.speseAvvioSedeSecondaria.importoDovuto +
-        procedimento.speseIndennitaSedeSecondaria.importoDovuto,
+      value: getProperties([
+        'speseIndennitaSedeSecondaria',
+        'speseAvvioSedeSecondaria',
+      ])?.reduce((acc, prop) => acc + (prop?.importoDovuto || 0), 0) || 0,
     };
 
     const totaleUscita = {
       label: 'Totale spese',
       value: transazioni.reduce(
-      (acc, transazione) =>
-        transazione.tipo.toLowerCase() === 'uscita' ? acc + transazione.importoDovuto : acc,
-      0
+        (acc, transazione) =>
+          transazione.tipo.toLowerCase() === 'uscita'
+            ? acc + transazione.importoDovuto
+            : acc,
+        0
       ),
     };
 
@@ -60,7 +61,7 @@ const useTransazioniProcedimento = (procedimento) => {
     };
 
     setTotali([totaleDovutoSedeSecondaria, totaleUscita, totaleEntrata]);
-  }, [transazioni, procedimento]);
+  }, [transazioni]);
 
   return { transazioni, totali };
 };

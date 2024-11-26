@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import 'dayjs/locale/it';
 import { validators } from '@utils/validators';
-import { Transazione } from './transazione';
+import { Transazione } from '@model/Transazione/transazione';
 import { immerable } from 'immer';
 import _ from 'lodash';
 
@@ -15,10 +15,10 @@ export class Procedimento {
 
   constructor({
     numProtocollo,
-    dataDeposito = new Date().toDateString(),
+    dataDeposito = new Date().toISOString(),
     sedeDeposito,
     sedeSvolgimento,
-    dataOraIncontro = null,
+    dataOraIncontro,
     oggettoControversia,
     valoreControversia = 0,
     esitoMediazione,
@@ -158,7 +158,7 @@ export class Procedimento {
     this.validateSpeseSedeSecondaria();
   }
 
-  // Equals
+  // Utility
   equals(otherInstance, key) {
     if (!(otherInstance instanceof Procedimento)) {
       throw new Error(
@@ -198,6 +198,50 @@ export class Procedimento {
 
     return true;
   }
+
+  reset(){
+    this.numProtocollo = undefined;
+    this.dataDeposito = new Date().toDateString();
+    this.sedeDeposito = undefined;
+    this.sedeSvolgimento = undefined;
+    this.dataOraIncontro = undefined;
+    this.oggettoControversia = undefined;
+    this.valoreControversia = 0;
+    this.esitoMediazione = undefined;
+    this.modalitaSvolgimento = undefined;
+    this.nomeMediatore = undefined;
+    this.cognomeMediatore = undefined;
+    this.titoloMediatore = undefined;
+    this.causaleDemandata = undefined;
+    this.materiaCausaleDemandata = undefined;
+    this.compensoMediatore = this.compensoMediatore.reset();
+    this.speseAvvioSedeSecondaria = this.speseAvvioSedeSecondaria.reset();
+    this.speseIndennitaSedeSecondaria = this.speseIndennitaSedeSecondaria.reset();
+  }
+
+  toJSON() {
+    return {
+      numProtocollo: this.numProtocollo,
+      dataDeposito: this.dataDeposito,
+      sedeDeposito: this.sedeDeposito,
+      sedeSvolgimento: this.sedeSvolgimento,
+      dataOraIncontro: this.dataOraIncontro,
+      oggettoControversia: this.oggettoControversia,
+      valoreControversia: this.valoreControversia,
+      esitoMediazione: this.esitoMediazione,
+      modalitaSvolgimento: this.modalitaSvolgimento,
+      nomeMediatore: this.nomeMediatore,
+      cognomeMediatore: this.cognomeMediatore,
+      titoloMediatore: this.titoloMediatore,
+      causaleDemandata: this.causaleDemandata,
+      materiaCausaleDemandata: this.materiaCausaleDemandata,
+      compensoMediatore: this.compensoMediatore.toJSON(),
+      speseAvvioSedeSecondaria: this.speseAvvioSedeSecondaria.toJSON(),
+      speseIndennitaSedeSecondaria: this.speseIndennitaSedeSecondaria.toJSON(),
+    };
+  }
+
+
 }
 
 // Constants
@@ -295,11 +339,6 @@ const metadatiProcedimento = {
     type: 'string',
     sezione: SEZIONI.ISTANZA_MEDIAZIONE,
     options: causaliDemandata,
-    validation: (value) => {
-      return [validators.onlyAlphabetic(value)].filter(
-        (result) => result !== true
-      );
-    },
   },
   esitoMediazione: {
     key: 'esitoMediazione',

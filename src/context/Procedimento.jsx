@@ -1,4 +1,4 @@
-import * as React from 'react';
+import React, {useMemo, useCallback} from 'react';
 import { createContext, useState } from 'react';
 import dayjs from 'dayjs';
 import 'dayjs/locale/it';
@@ -6,7 +6,7 @@ import Backdrop from '@mui/material/Backdrop';
 import _ from 'lodash';
 import {produce} from 'immer';
 
-import { Procedimento } from '@model/procedimento.js';
+import { Procedimento } from '@model/Procedimento/procedimento.js';
 import { PersonaFisica } from '@model/personaFisica';
 import { PersonaGiuridica } from '@model/personaGiuridica';
 import { Comune } from '@model/comune.js';
@@ -187,88 +187,64 @@ function mockedRegole() {
   return regoleMockate;
 }
 
-export const ProcedimentoProvider = ({ children }) => {
+const ProcedimentoProvider = ({ children }) => {
 
-  // States
-  const { models: { procedimento, persone, regole }, updateModel, resetModel, initialModels } = useModelManager();
+  // Stati locali
+  const [showAlert, setShowAlert] = useState(false);
+  const [alertSeverity, setAlertSeverity] = useState('error');
+  const [alertMessage, setAlertMessage] = useState(null);
+  const [isBackdropOpen, setIsBackdropOpen] = useState(false);
 
-  // TODO: da rifattorizzare
-  const [showAlert, setShowAlert] = React.useState(false);
-  const [alertSeverity, setAlertSeverity] = React.useState('error');
-  const [alertMessage, setAlertMessage] = React.useState(null);
-
-  const [isBackdropOpen, setIsBackdropOpen] = React.useState(false);
-
-  // Pipelines
-  //const rulePipeline = new Pipeline([rulesApplicator, stateRulesUpdater]);
-  const rulePipeline = new Pipeline([]);
-  const updateModelPipeline = new Pipeline([inputValidator, updateValidator]);
-
-  // Helper
-  const notify = (message, severity) => {
+  // Funzione per notifiche
+  const notify = useCallback((message, severity) => {
     setShowAlert(true);
     setAlertMessage(message);
     setAlertSeverity(severity);
-  };
+  }, []);
+  
+  // Funzione per gestire i cambiamenti nel modello
+  // const handleInputChange = useCallback(
+  //   (changes, model) => {
+  //     const [key, valueOrEvent] = Object.entries(changes)[0];
+  //     let value = valueOrEvent?.target?.value ?? valueOrEvent;
+  //     value = value === '' ? undefined : value;
 
-  const handleInputChange = (changes, model) => {
-    
-    const [key, valueOrEvent] = Object.entries(changes)[0];
-    let value = valueOrEvent?.target?.value ?? valueOrEvent;
-    value = value === '' ? undefined : value;
-    const context = { procedimento, persone, regole };
-    
-    const results = updateModelPipeline.process({
-      key,
-      value,
-      model,
-      context,
-      updateModel: () => updateModel({model, key, value}),
-      initialModel: initialModels[model.constructor.name],
-    });
+  //     const context = { procedimento, persone, regole };
 
-    console.log('results', results);
-    return { errors: results.errorMessage || { [key]: undefined}} 
-  };
+  //     const results = updateModelPipeline.process({
+  //       key,
+  //       value,
+  //       model,
+  //       context,
+  //       updateModel: () => updateModel({ model, key, value }),
+  //       initialModel: initialModels[model.constructor.name],
+  //     });
 
-  const handleReset = (model) => {
-    resetModel(model);
-  };
+  //     return { errors: results.errorMessage || { [key]: undefined } };
+  //   },
+  //   [updateModel]
+  // );
 
-  // Effetto per la gestione delle regole
-  React.useEffect(() => {
-    const procedimentoCopy = _.cloneDeep(procedimento);
-    const regoleCopy = _.cloneDeep(regole);
-    const ctx = rulePipeline.process({ procedimento, persone, regole });
+  // Funzione per resettare un modello
+  // const handleReset = useCallback(
+  //   (model) => {
+  //     resetModel(model);
+  //   },
+  //   [resetModel]
+  // );
 
-    if (!_.isEqual(ctx.regole, regoleCopy)) {
-      setRegole([...ctx.regole]);
-    }
-    if (!_.isEqual(ctx.procedimento, procedimentoCopy)) {
-      setProcedimento({ ...ctx.procedimento });
-    }
-  }, [
-    ...React.useMemo(
-      () => campiCondizione.map((key) => procedimento[key]),
-      [procedimento]
-    ),
-    regole,
-  ]);
+  // Valori del contesto
+  const contextValue = useMemo(
+    () => ({
+      notify,
+      isBackdropOpen,
+      setIsBackdropOpen,
+    }),
+    [notify, isBackdropOpen]
+  );
 
   return (
-    <ProcedimentoContext.Provider
-      value={{
-        procedimento,
-        handleInputChange,
-        handleReset,
-        persone,
-        notify,
-        isBackdropOpen,
-        setIsBackdropOpen,
-        regole,
-        initialModels,
-      }}
-    >
+    <ProcedimentoContext.Provider value={contextValue}>
       {children}
 
       <NotificationAlert
@@ -284,3 +260,7 @@ export const ProcedimentoProvider = ({ children }) => {
     </ProcedimentoContext.Provider>
   );
 };
+
+//ProcedimentoProvider.whyDidYouRender = true;
+
+export {ProcedimentoProvider};

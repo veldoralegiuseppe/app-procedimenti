@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import _ from 'lodash';
 
 function useDynamicOptions(initialOptions = []) {
   const [options, setOptions] = useState(initialOptions);
 
-  const addOption = (newValue) => {
+  const addOption = useCallback((newValue) => {
     console.log('newValue', newValue);
     setOptions((prevOptions) => {
       if (!_.some(prevOptions, newValue)) {
@@ -12,14 +12,17 @@ function useDynamicOptions(initialOptions = []) {
       }
       return prevOptions;
     });
-  };
+  }, []);
 
-  const removeOption = (optionToRemove) => {
+  const removeOption = useCallback((optionToRemove) => {
     setOptions((prevOptions) => {
-      const newOptions = _.filter(prevOptions, (option) => !_.isEqual(option, optionToRemove));
+      const newOptions = _.filter(
+        prevOptions,
+        (option) => !_.isEqual(option, optionToRemove)
+      );
       return newOptions;
     });
-  };
+  }, []);
 
   return {
     options,

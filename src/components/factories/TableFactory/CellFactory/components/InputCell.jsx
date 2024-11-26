@@ -1,5 +1,5 @@
 import * as React from 'react';
-import ComponentFactory from '@components/factories/ComponentFactory';
+import ComponentFactory from '@components/factories/ComponentFactory/ComponentFactory';
 import PropTypes from 'prop-types';
 
 /**

@@ -47,7 +47,7 @@ const DialogForm = ({
 
     if (typeof inputsValue === 'string') {
       const inputValidations = !Array.isArray(validations)
-        ? Array.of(validations)
+        ? (validations ? Array.of(validations) : undefined)
         : validations;
 
       setInputsValidity({

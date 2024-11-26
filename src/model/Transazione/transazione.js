@@ -134,7 +134,7 @@ export class Transazione {
     }
   }
 
-  // Equals 
+  // Utility 
   equals(otherInstance, key) {
     if (!(otherInstance instanceof Transazione)) {
       throw new Error('Il parametro deve essere un\'istanza della classe Transazione');
@@ -157,6 +157,24 @@ export class Transazione {
       _.isEqual(this.#importoCorrisposto, otherInstance.#importoCorrisposto) &&
       _.isEqual(this.#stato, otherInstance.#stato)
     );
+  }
+
+  reset() {
+    //this.#nome = '';
+    this.#tipo = Transazione.tipi.ENTRATA;
+    this.#importoDovuto = 0;
+    this.#importoCorrisposto = 0;
+    this.#stato = Transazione.stati.DA_SALDARE;
+  }
+
+  toJSON() {
+    return {
+      nome: this.#nome,
+      tipo: this.#tipo,
+      importoDovuto: this.#importoDovuto,
+      importoCorrisposto: this.#importoCorrisposto,
+      stato: this.#stato,
+    };
   }
   
 }

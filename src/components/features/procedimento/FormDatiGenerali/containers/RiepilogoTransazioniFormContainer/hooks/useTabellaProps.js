@@ -1,17 +1,15 @@
 import { useMemo } from 'react';
+import { useTransazioni } from '@model/Transazione/useTransazioni';
 
-const useTabellaProps = ({transazioni, totali, metadati, onBlur}) => {
+const useTabellaProps = ({transazioni, totali, onBlur}) => {
   
 
   return useMemo(() => {
     return {
-      data: transazioni,
-      rowConfig: {
-        disabled: ['Incasso parti', 'Incasso controparti'],
-      },
+      store: useTransazioni(transazioni),
+      disabled: ['Incasso parti', 'Incasso controparti'],
       totali: totali,
       onBlur: onBlur,
-      metadati: metadati,
     };
   }, [transazioni, totali]);
 };

@@ -6,7 +6,6 @@ import {
 } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { itIT } from '@mui/x-date-pickers/locales';
-import { useTheme } from '@mui/material/styles';
 import InputAdornment from '@mui/material/InputAdornment';
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
 import CloseIcon from '@mui/icons-material/Close';
@@ -19,81 +18,25 @@ import { CssTextField, labelColor } from '@theme/MainTheme';
 import Select from '@components/Select';
 import TitoliAutocomplete from '@components/features/persona/TitoliAutocomplete';
 import OptionsAutocomplete from '@components/commons/autocomplete/OptionsAutocomplete';
+import useInputFactory from './hooks/useInputFactory';
 
-const InputFactory = ({ fieldKey, ...props }) => {
-  // Styles
-  const theme = useTheme();
-  const inputStyles = {
-    margin: '0',
-    backgroundColor: theme.palette.background.default,
-    width: '168px',
-    maxWidth: '30rem',
-    minWidth: '133px',
-    height: '36px',
-  };
+const InputFactory = ({ store, fieldKey, theme, ...props }) => {
 
-  // Props
-  const {
-    value,
-    error,
-    sx,
-    onChange,
-    onBlur,
-    label,
-    helperText,
-    options,
-    ...restProps
-  } = props;
+  const { value, commonProps } = useInputFactory({ store, fieldKey, theme, ...props });
 
-  //console.log('props', props);
-
-  // Handlers
-  const handleChanges = (changes) => {
-    if (onChange) onChange(changes);
-    //handleInputChange(changes);
-    //console.log('changes', changes);
-  };
-
-  // Commons
-  const commonProps = {
-    label: label || '',
-    value: value !== undefined ? value : '',
-    error: error,
-    helperText: helperText || '',
-    onChange: (change) => handleChanges({ [fieldKey]: change }),
-    sx: { ...inputStyles, ...sx },
-    onBlur: (change) => onBlur({ [fieldKey]: change }),
-    options: options,
-    size: 'small',
-    ...restProps,
-  };
-
-  //console.log('commonProps', commonProps);
-
+  // Switch per il rendering condizionale
   switch (fieldKey) {
     case 'numProtocollo':
       return <ProtocolloInput {...commonProps} />;
 
     case 'dataDeposito':
       return (
-        <LocalizationProvider
-          dateAdapter={AdapterDayjs}
-          adapterLocale="it"
-          localeText={
-            itIT.components.MuiLocalizationProvider.defaultProps.localeText
-          }
-        >
+        <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="it">
           <MobileDatePicker
             slots={{ textField: CssTextField }}
             slotProps={{
               textField: {
-                error: error,
-                onBlur: (e) => {
-                  console.log('blurDataDeposito', e.target.value);
-                  commonProps.onBlur?.(
-                    e.target.value ? e.target.value.toUpperCase() : undefined
-                  );
-                },
+                error: commonProps.error,
                 InputProps: {
                   endAdornment: (
                     <InputAdornment position="end">
@@ -107,12 +50,9 @@ const InputFactory = ({ fieldKey, ...props }) => {
             {...{
               ...commonProps,
               onChange: (change) => {
-                commonProps.onChange(
-                  change ? change.format('YYYY-MM-DD') : undefined
-                );
-                commonProps.onBlur(
-                  change ? change.format('YYYY-MM-DD') : undefined
-                );
+                const formatted = change ? change.format('YYYY-MM-DD') : undefined;
+                commonProps.onChange?.(formatted);
+                commonProps.onBlur?.(formatted);
               },
             }}
             value={value ? dayjs(value) : null}
@@ -128,6 +68,7 @@ const InputFactory = ({ fieldKey, ...props }) => {
         <ImportoInput
           {...{
             ...commonProps,
+            value: !commonProps.value ? 0 : commonProps.value,
             onChange: undefined,
             onBlur: (change) => {
               commonProps.onBlur(change);
@@ -165,13 +106,7 @@ const InputFactory = ({ fieldKey, ...props }) => {
 
     case 'dataOraIncontro':
       return (
-        <LocalizationProvider
-          dateAdapter={AdapterDayjs}
-          adapterLocale="it"
-          localeText={
-            itIT.components.MuiLocalizationProvider.defaultProps.localeText
-          }
-        >
+        <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="it">
           <MobileDateTimePicker
             slots={{ textField: CssTextField }}
             slotProps={{
@@ -189,7 +124,7 @@ const InputFactory = ({ fieldKey, ...props }) => {
                           }}
                           sx={{
                             cursor: 'pointer',
-                            color: theme.palette.error.main,
+                            color: theme?.palette.error.main,
                           }}
                         />
                       ) : (
@@ -203,9 +138,9 @@ const InputFactory = ({ fieldKey, ...props }) => {
             }}
             {...commonProps}
             value={commonProps.value ? dayjs(commonProps.value) : null}
-            onChange={(date) =>{
+            onChange={(date) => {
               const newDateTime = date ? date.format('YYYY-MM-DDTHH:mm') : undefined;
-              commonProps.onChange?.(newDateTime);               
+              commonProps.onChange?.(newDateTime);
               commonProps.onBlur?.(newDateTime);
             }}
           />
@@ -221,7 +156,7 @@ const InputFactory = ({ fieldKey, ...props }) => {
 };
 
 const ComponentFactory = {
-  InputFactory,
+  InputFactory: React.memo(InputFactory),
 };
 
 export default ComponentFactory;

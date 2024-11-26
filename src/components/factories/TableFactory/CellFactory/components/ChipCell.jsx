@@ -15,13 +15,13 @@ import { Chip } from '@mui/material';
  */
 const ChipCell = ({ value: label, status, onClick, row, sx }) => {
   
-  const statusFlagOptions = {
+  const statusFlagOptions = React.useMemo(() => ({
     red: { color: '#ffcccb', textColor: '#b71c1c' },
     yellow: { color: '#fff3cd', textColor: '#856404' },
     green: { color: '#c8e6c9', textColor: '#2e7d32' },
-  };
+  }), []);
 
-  const chipStyles = {
+  const chipStyles = React.useMemo(() => ({
     backgroundColor: statusFlagOptions[status].color,
     color: statusFlagOptions[status].textColor,
     cursor: 'pointer',
@@ -30,7 +30,7 @@ const ChipCell = ({ value: label, status, onClick, row, sx }) => {
       backgroundColor: statusFlagOptions[status].color,
     },
     ...sx,
-  };
+  }), [status, sx, statusFlagOptions]);
 
   return (
     <Chip

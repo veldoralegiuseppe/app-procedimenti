@@ -6,7 +6,7 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 import { ProcedimentoContext } from '@context/Procedimento';
 import { PersonaGiuridica } from '@model/personaGiuridica';
 import { PersonaFisica } from '@model/personaFisica';
-import { Procedimento } from '@model/procedimento';
+import { Procedimento } from '@model/Procedimento/procedimento';
 
 
 

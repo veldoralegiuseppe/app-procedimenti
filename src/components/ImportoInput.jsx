@@ -5,6 +5,7 @@ import { CssTextField } from '@theme/MainTheme';
 
 // Utility
 const formatValueFromNumber = (number) => {
+  //console.log('formatValueFromNumber', number);
   if (number === 0 || !number) return '0,00';
   const parts = number.toFixed(2).split('.');
   const integerPart = parts[0].replace(/\B(?=(\d{3})+(?!\d))/g, '.');

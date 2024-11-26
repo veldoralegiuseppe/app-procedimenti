@@ -1,9 +1,9 @@
 import * as React from 'react';
 import FormContainer from '@components/commons/FormContainer/FormContainer';
 import useDynamicOptions from '@components/commons/hooks/useDynamicOptions';
-import { SEZIONI } from '@model/procedimento';
+import { SEZIONI } from '@model/Procedimento/procedimento';
 
-const IstanzaFormContainer = ({ config = {} }) => {
+const IstanzaFormContainer = ({ config = {}, procedimentoStore }) => {
     
   const {
     options: sediDeposito,
@@ -11,29 +11,46 @@ const IstanzaFormContainer = ({ config = {} }) => {
     removeOption: removeSedeDeposito,
   } = useDynamicOptions([]);
 
-  const renderOverrides = {
-    campi: {
-      ...config?.renderOverrides?.campi,
-      
-      sedeDeposito: {
-        ...config?.renderOverrides?.campi?.sedeDeposito,
-        options: sediDeposito,
-        onSubmit: addSedeDeposito,
-        onDelete: removeSedeDeposito,
-        validations: ['required'],
+  const {
+    options: sediSvolgimento,
+    addOption: addSedeSvolgimento,
+    removeOption: removeSedeSvolgimento,
+  } = useDynamicOptions([]);
+
+  const configOverride = React.useMemo(() => {
+    const overriddenRenderOverrides = {
+      campi: {
+        ...config?.renderOverrides?.campi,
+        sedeDeposito: {
+          ...config?.renderOverrides?.campi?.sedeDeposito,
+          options: sediDeposito,
+          onSubmit: addSedeDeposito,
+          onDelete: removeSedeDeposito,
+          validations: ['required'],
+        },
+        sedeSvolgimento: {
+          ...config?.renderOverrides?.campi?.sedeSvolgimento,
+          options: sediSvolgimento,
+          onSubmit: addSedeSvolgimento,
+          onDelete: removeSedeSvolgimento,
+          validations: ['required'],
+        },
       },
-    },
-  };
+    };
+  
+    return {
+      ...config,
+      renderOverrides: overriddenRenderOverrides,
+    };
+  }, [config, sediDeposito, addSedeDeposito, removeSedeDeposito]);
 
-  const configOverride = {
-    ...config,
-    renderOverrides
-  };
-
+  const memorizedSezioni = React.useMemo(() => [SEZIONI.ISTANZA_MEDIAZIONE], []);
+  
   return (
     <FormContainer
       config={configOverride}
-      sezioni={[SEZIONI.ISTANZA_MEDIAZIONE]}
+      sezioni={memorizedSezioni}
+      store={procedimentoStore}
     />
   );
 };

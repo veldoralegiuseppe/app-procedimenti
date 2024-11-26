@@ -1,5 +1,5 @@
 import React from 'react';
-import { Paper, Table, TableContainer } from '@mui/material';
+import { Table, TableContainer } from '@mui/material';
 import HeaderFactory, {
   headerFactoryPropTypes,
 } from './HeaderFactory/HeaderFactory';
@@ -10,6 +10,7 @@ import FooterFactory, {
 import { SelectableProvider } from './RowFactory/decorators/hooks/useSelectableRows';
 import PropTypes from 'prop-types';
 import { useSortableRows, useTableRows } from './hooks';
+import _ from 'lodash';
 
 /**
  * Componente TableFactory
@@ -33,7 +34,7 @@ import { useSortableRows, useTableRows } from './hooks';
  *
  * @returns {JSX.Element} Il componente TableFactory.
  */
-const TableFactory = ({
+const TableFactoryComponent = ({
   columns,
   data,
   headerConfig,
@@ -46,10 +47,12 @@ const TableFactory = ({
   const { rows: tableRows } = useTableRows(columns, data);
   const { rows, handleSort, order, orderBy } = useSortableRows(tableRows || []);
 
-  const totalColumns =
+  const totalColumns = React.useMemo(() => 
     columns.length +
     (rowConfig?.collapsibleConfig ? 1 : 0) +
-    (rowConfig?.selectableConfig ? 1 : 0);
+    (rowConfig?.selectableConfig ? 1 : 0), 
+    [columns, rowConfig]
+  );
 
   return (
     <SelectableProvider {...rowConfig?.selectableConfig}>
@@ -89,6 +92,19 @@ const TableFactory = ({
   );
 };
 
+const TableFactory = React.memo(TableFactoryComponent, (prevProps, nextProps) => {
+  return (
+    _.isEqual(prevProps.columns, nextProps.columns) &&
+    _.isEqual(prevProps.data, nextProps.data) &&
+    _.isEqual(prevProps.headerConfig, nextProps.headerConfig) &&
+    _.isEqual(prevProps.rowConfig, nextProps.rowConfig) &&
+    _.isEqual(prevProps.footerConfig, nextProps.footerConfig) &&
+    _.isEqual(prevProps.sx, nextProps.sx)
+  );
+});
+
+TableFactory.whyDidYouRender = true;
+
 TableFactory.propTypes = {
   columns: PropTypes.arrayOf(
     PropTypes.shape({
@@ -107,4 +123,5 @@ TableFactory.propTypes = {
   size: PropTypes.oneOf(['small', 'medium']),
   sx: PropTypes.object,
 };
+
 export default TableFactory;

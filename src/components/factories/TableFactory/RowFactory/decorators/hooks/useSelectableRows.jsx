@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useState, useMemo } from 'react';
 
 // Crea il context
 const SelectableContext = createContext();
@@ -18,7 +18,7 @@ export const SelectableProvider = ({
     }
   });
 
-  const toggleRowSelection = (row) => {
+  const toggleRowSelection = useMemo(() => (row) => {
     setSelectedRows((prevSelected) => {
       let updatedSelection;
       if (isMultiSelect) {
@@ -35,9 +35,9 @@ export const SelectableProvider = ({
       onSelected(updatedSelection);
       return updatedSelection;
     });
-  };
+  }, [isMultiSelect, onSelected]);
 
-  const isRowSelected = (row) => selectedRows.includes(row.id);
+  const isRowSelected = useMemo(() => (row) => selectedRows.includes(row.id), [selectedRows]);
 
   return (
     <SelectableContext.Provider
@@ -55,5 +55,5 @@ export const useSelectableRows = () => {
       'useSelectableRows must be used within a SelectableProvider'
     );
   }
-  return context;
+  return useMemo(() => context, [context]);
 };

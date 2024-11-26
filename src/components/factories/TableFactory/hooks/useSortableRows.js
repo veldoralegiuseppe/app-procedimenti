@@ -4,20 +4,16 @@ import React, { useState } from 'react';
  * Hook per gestire l'ordinamento delle righe in base alla colonna.
  * @param {Array} initialRows - L'array iniziale delle righe.
  */
-const useSortableRows = (initialRows = []) => {
-  const [rows, setRows] = useState(initialRows);
+const useSortableRows = (initialRows) => {
+  const [rows, setRows] = useState(() => initialRows || []);
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState(null);
-
-  React.useEffect(() => {
-    setRows(initialRows);
-  }, [initialRows]);
 
   /**
    * Funzione per gestire l'ordinamento.
    * @param {string} columnField - Il campo della colonna da ordinare.
    */
-  const handleSort = (columnField) => {
+  const handleSort = React.useCallback((columnField) => {
     const isAsc = orderBy === columnField && order === 'asc';
     const newOrder = isAsc ? 'desc' : 'asc';
 
@@ -35,7 +31,7 @@ const useSortableRows = (initialRows = []) => {
     });
 
     setRows(sortedRows);
-  };
+  }, [order, orderBy, rows]);
 
   return {
     rows, // Righe ordinate

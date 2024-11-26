@@ -6,6 +6,30 @@ import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 import CreaProcedimento from '@pages/CreaProcedimento.jsx';
 import Dashboard from '@pages/Dashboard';
 import FormDatiGeneraliContainer from '@components/features/procedimento/FormDatiGenerali/FormDatiGeneraliContainer';
+import ComponentFactory from '@components/factories/ComponentFactory/ComponentFactory';
+import { useProcedimento } from '@model/Procedimento/useProcedimento';
+import FormPresenter from '../components/commons/FormPresenter/FormPresenter';
+import { Procedimento } from '@model/Procedimento/procedimento';
+import FormContainer from '../components/commons/FormContainer/FormContainer';
+
+const MyComponent = () => {
+  // Memoizza la configurazione del modello
+  const config = React.useMemo(() => ({
+    model: { class: Procedimento },
+  }), []);
+
+  // Memoizza le sezioni
+  const sezioni = React.useMemo(() => ['Istanza di mediazione'], []);
+
+  return (
+    <FormContainer
+      config={config} // Config stabilizzata
+      store={useProcedimento} // Store Zustand come funzione
+      sezioni={sezioni} // Sezioni stabilizzate
+    />
+  );
+};
+
 
 export const routes = [
   {
@@ -32,8 +56,18 @@ export const routes = [
           //<TabellaTransazioni data={data} rowConfig={rowConfig}/>
           //<ProcedimentoFormContainer />
           <FormDatiGeneraliContainer/>
+          //<ComponentFactory.InputFactory store={useProcedimento} fieldKey={"dataDeposito"}/>
+          // <FormPresenter
+          //   sezione="Istanza di mediazione"
+          //   store={useProcedimento}
+          //   errors={{}}
+          //   campi={Object.values(Procedimento.getMetadati()).filter(
+          //     (c) => c.sezione === 'Istanza di mediazione'
+          //   )}
+          // />
+          // <MyComponent />
         ),
-      },
+      }, 
     ],
   },
   {

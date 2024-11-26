@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import { Tooltip, Box } from '@mui/material';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
 import ChipCell from './ChipCell';
+import _ from 'lodash';
 
 /**
  * InfoChipCell: Un'estensione di ChipCell con un'icona di info a sinistra e un tooltip.
@@ -10,7 +11,7 @@ import ChipCell from './ChipCell';
  * @param {string} props.tooltipMessage - Il messaggio da visualizzare nel tooltip.
  * @param {Object} props.chipProps - Le props da passare a ChipCell.
  */
-const InfoChipCell = ({
+const InfoChipCellComponent = ({
   tooltipMessage,
   tooltipPlacement = 'right',
   ...chipProps
@@ -39,6 +40,15 @@ const InfoChipCell = ({
     <ChipCell {...modifiedChipProps} />
   );
 };
+
+const InfoChipCell = React.memo(InfoChipCellComponent, (prevProps, nextProps) => {
+  return (
+    _.isEqual(prevProps.tooltipMessage, nextProps.tooltipMessage) &&
+    _.isEqual(prevProps.tooltipPlacement, nextProps.tooltipPlacement) &&
+    _.isEqual(prevProps.chipProps, nextProps.chipProps)
+  );
+}
+);
 
 InfoChipCell.propTypes = {
   tooltipMessage: PropTypes.string,

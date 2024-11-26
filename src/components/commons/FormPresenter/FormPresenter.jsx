@@ -1,90 +1,28 @@
-import * as React from 'react';
-import ComponentFactory from '@components/factories/ComponentFactory';
+import React from 'react';
 import Grid from '@mui/material/Grid2';
 import { Typography } from '@mui/material';
 import PropTypes from 'prop-types';
+import useFormPresenter from './hooks/useFormPresenter';
+import _ from 'lodash';
 
-/**
- * FormPresenter è un componente React che renderizza un form basato sui campi forniti.
- *
- * @param {Object} props - Le proprietà del componente.
- * @param {Object} props.errors - Oggetto che contiene gli errori di validazione per i campi del form.
- * @param {Array} [props.campi=[]] - Array di oggetti che rappresentano i campi del form.
- * @param {Function} props.touchField - Funzione chiamata quando un campo viene toccato.
- * @param {Function} props.onChange - Funzione chiamata quando il valore di un campo cambia.
- * @param {string} [props.sezione=''] - Nome della sezione del form.
- * @param {Object} props.model - Oggetto che rappresenta il modello dei dati del form.
- * @param {Object} [props.renderOverrides={}] - Oggetto che permette di sovrascrivere il rendering di campi e sezioni.
- * @param {Object} props.renderOverrides.campi - Oggetto che permette di sovrascrivere il rendering dei singoli campi.
- * @param {Object} props.renderOverrides.sezioni - Oggetto che permette di sovrascrivere il rendering delle sezioni.
- *
- * @returns {React.Element} Il componente FormPresenter.
- */
-const FormPresenter = ({
+const FormPresenterComponent = ({
   errors,
   campi = [],
-  touchField,
   onChange,
-  sezione = '',
-  model,
   onBlur,
+  sezione = '',
   renderOverrides = {},
+  store,
 }) => {
-  const renderCustomSection = () => {
-    const override = renderOverrides.sezioni?.[sezione];
-    if (!override?.component) return null;
-
-    const CustomSectionComponent = override.component;
-    return (
-      <Grid size={{ xs: 12 }}>
-        <CustomSectionComponent
-          model={model}
-          errors={errors}
-          onChange={onChange}
-          touchField={touchField}
-        />
-      </Grid>
-    );
-  };
-
-  const renderFields = () =>
-    campi.map((campo) => {
-      const CustomComponent = renderOverrides.campi?.[campo.key]?.component;
-      const {
-        size: responsiveSizeOverrides,
-        options: optionsOverrides,
-        ...restOverride
-      } = renderOverrides.campi?.[campo.key] || {};
-
-      const componentProps = {
-        fieldKey: campo.key,
-        value: model[campo.key],
-        label: campo.label,
-        error: !!errors[campo.key],
-        helperText: errors[campo.key],
-        onChange: onChange,
-        onBlur: onBlur,
-        options: optionsOverrides || campo.options,
-        ...restOverride,
-      };
-
-      const FieldComponent = CustomComponent
-        ? React.createElement(CustomComponent, componentProps)
-        : ComponentFactory.InputFactory(componentProps);
-
-      if (!FieldComponent) return null;
-
-      return (
-        <Grid
-          key={campo.key}
-          {...(responsiveSizeOverrides
-            ? { size: responsiveSizeOverrides }
-            : {})}
-        >
-          {FieldComponent}
-        </Grid>
-      );
-    });
+  const { renderCustomSection, renderFields } = useFormPresenter({
+    errors,
+    campi,
+    renderOverrides,
+    onChange,
+    onBlur,
+    sezione,
+    store
+  });
 
   return (
     <Grid
@@ -106,19 +44,24 @@ const FormPresenter = ({
       </Grid>
 
       {/* Render di una sezione personalizzata o dei campi standard */}
-      {renderOverrides.sezioni?.[sezione]
-        ? renderCustomSection()
-        : renderFields()}
+      {renderCustomSection || renderFields}
     </Grid>
   );
 };
+const FormPresenter = React.memo(FormPresenterComponent, (prevProps, nextProps) => {
+  // Evita re-render se le props non cambiano
+  return (
+    _.isEqual(prevProps.errors, nextProps.errors) &&
+    _.isEqual(prevProps.campi, nextProps.campi) &&
+    _.isEqual(prevProps.model, nextProps.model) &&
+    _.isEqual(prevProps.renderOverrides, nextProps.renderOverrides)
+  );
+});
 
 FormPresenter.propTypes = {
   errors: PropTypes.object.isRequired,
   campi: PropTypes.array,
-  touchField: PropTypes.func,
   onChange: PropTypes.func.isRequired,
-  titolo: PropTypes.string,
   model: PropTypes.object.isRequired,
   renderOverrides: PropTypes.shape({
     campi: PropTypes.objectOf(
@@ -135,5 +78,7 @@ FormPresenter.propTypes = {
     ),
   }),
 };
+
+FormPresenter.whyDidYouRender = true;
 
 export default FormPresenter;

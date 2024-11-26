@@ -18,6 +18,7 @@ function Select({
   renderOptions,
   sx
 }) {
+  
   // Style
   const theme = useTheme();
   const sxStyles = {
@@ -51,7 +52,7 @@ function Select({
     onBlur?.(undefined)
   };
   const handleChange = (event) => {
-    console.log('Select.jsx handleChange event:', event);
+    //console.log('Select.jsx handleChange event:', event);
     if(onChange) onChange(event);
   }
 
@@ -74,7 +75,10 @@ function Select({
         labelId={`${label}-input-label`}
         value={value}
         label={label}
-        onBlur={(e)=> onBlur(e.target.value ? e.target.value.toUpperCase() : undefined)}
+        onBlur={(e)=> {
+          console.log('Select.jsx onBlur e:', e.target.value);
+          //onBlur(e?.target?.value ? e.target.value?.toUpperCase() : undefined)
+        }}
         size='small'
         renderValue={(selected) => (selected && String(selected).replaceAll('_', ' ')) || ''}
         onChange={handleChange}
