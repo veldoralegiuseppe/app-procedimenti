@@ -1,0 +1,1 @@
+export {default as ProcedimentoMetadata} from './ProcedimentoMetadata';

@@ -1,0 +1,50 @@
+const ProcedimentoEnums = {
+  esitoMediazione: [
+    'IN CORSO',
+    'NEGATIVO INCONTRO FILTRO',
+    'NEGATIVO MANCATA ADESIONE',
+    'NEGATIVO MANCATO ACCORDO',
+    'POSITIVO',
+  ],
+
+  causaleDemandata: [
+    'CONDIZIONE DI PROCEDIBILITÀ',
+    'DEMANDATA DAL GIUDICE PER IMPROCEDIBILITÀ',
+    'DEMANDATA DAL GIUDICE PER LE MATERIE NON OBBLIGATORIE',
+    'DEMANDATA DAL GIUDICE PER MANCATA CONCILIAZIONE',
+    'VOLONTARIA IN MATERIA DI',
+  ],
+
+  modalitaSvolgimento: ['PRESENZA', 'TELEMATICA', 'TELEMATICA MISTA'],
+
+  oggettoControversia: [
+    'ALTRE NATURE DELLA CONTROVERSIA',
+    'CONTRATTI BANCARI',
+    'CONTRATTI FINANZIARI',
+    "CONTRATTI D'OPERA",
+    'CONTRATTI DI RETE',
+    'CONTRATTI DI SOMMINISTRAZIONE',
+    'CONSORZIO',
+    'DIRITTI REALI',
+    'DIVISIONE',
+    'FRANCHISING',
+    'LOCAZIONE',
+    'PATTI DI FAMIGLIA',
+    'RESPONSABILITÀ MEDICA',
+    'RISARCIMENTO DANNI MEZZO STAMPA',
+    'SUCCESSIONE EREDITARIA',
+    'SOCIETÀ DI PERSONE',
+    'SUBFORNITURA',
+  ],
+
+  titoliMediatore: [{ maschile: 'AVV', femminile: 'AVV.SSA' }],
+
+  sezione: {
+    ISTANZA_MEDIAZIONE: 'Istanza di mediazione',
+    FISSAZIONE_INCONTRO: 'Fissazione incontro',
+    MEDIATORE: 'Mediatore',
+    RIEPILOGO_TRANSAZIONI: 'Riepilogo transazioni',
+  },
+};
+
+export default ProcedimentoEnums;

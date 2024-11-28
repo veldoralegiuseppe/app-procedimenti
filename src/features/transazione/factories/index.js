@@ -1,1 +1,1 @@
-export * from './transazione';
+export {default as TransazioneFactory} from './TransazioneFactory';
