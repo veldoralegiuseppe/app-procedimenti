@@ -3,13 +3,12 @@ import {
   render as rtlRender,
   fireEvent,
   screen,
-  waitFor
 } from '@testing-library/react';
 import '@testing-library/jest-dom';
 
 import { ThemeProvider } from '@mui/material/styles';
-import { themeOne } from '@theme/MainTheme';
-import ImportoInput from '@components/ImportoInput';
+import { themeOne } from '@shared/theme';
+import {ImportoInput} from '@shared/components';
 
 // Funzione di render astratta per includere il ThemeProvider
 const render = (ui, options = {}) => {

@@ -1,32 +1,34 @@
 import * as React from 'react';
-import Typography from '@mui/material/Typography';
+import {
+  Typography,
+  MenuItem,
+  FormControl,
+  InputLabel,
+  Alert,
+} from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import Grid from '@mui/material/Grid2';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { LocalizationProvider, DatePicker } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { itIT } from '@mui/x-date-pickers/locales';
 import dayjs from 'dayjs';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import MenuItem from '@mui/material/MenuItem';
-import FormControl from '@mui/material/FormControl';
-import InputLabel from '@mui/material/InputLabel';
 
-import ImportoInput from '@components/ImportoInput';
-import ProvinciaSelect from '@components/ProvinciaSelect';
-import ComuneSelect from '@components/ComuneSelect';
+import {
+  ImportoInput,
+  ProvinciaSelect,
+  ComuneSelect,
+  ImportoReadOnly,
+} from '@shared/components';
 import * as CodiceFiscaleUtils from '@assets/js/convalidaCodiceFiscale';
-import { Comune } from '@model/comune';
-import { PersonaFisica } from '@model/personaFisica';
-import Alert from '@mui/material/Alert';
-import ImportoReadOnly from '@components/ImportoReadOnly';
-import { Provincia } from '@model/provincia';
+import { Comune, Provincia } from '@shared/factories';
+import { PersonaFisica } from '@features/persona';
 import {
   CssTextField,
   labelColor,
   labelDisableColor,
   CssSelect,
   formControlStyles,
-} from '@theme/MainTheme';
+} from '@shared/theme';
 
 // Constants
 const inputHeight = 35;
@@ -464,7 +466,6 @@ function FormPersonaFisica(props, ref) {
           <DatePicker
             disabled={anagraficiDisabilitati}
             label="Data di nascita"
-            
             value={
               parteAttuale.dataNascita ? dayjs(parteAttuale.dataNascita) : null
             }
@@ -592,7 +593,7 @@ function FormPersonaFisica(props, ref) {
         {/* Provincia di nascita */}
         <ProvinciaSelect
           ref={provinciaNascitaRef}
-          id='pf-provincia-nascita'
+          id="pf-provincia-nascita"
           sx={{ ...textFieldSx(theme), minWidth: '246px', maxWidth: '250px' }}
           label="Provincia di nascita"
           disabled={anagraficiDisabilitati}
@@ -613,7 +614,7 @@ function FormPersonaFisica(props, ref) {
         <ComuneSelect
           ref={comuneNascitaRef}
           provincia={parteAttuale.luogoNascita?.provincia}
-          id='pf-comune-nascita'
+          id="pf-comune-nascita"
           label="Comune di nascita"
           disabled={anagraficiDisabilitati}
           onChange={(comune) => {
@@ -640,7 +641,7 @@ function FormPersonaFisica(props, ref) {
         <ProvinciaSelect
           ref={provinciaResidenzaRef}
           label="Provincia di residenza"
-          id='pf-provincia-residenza'
+          id="pf-provincia-residenza"
           onChange={(provincia) => {
             comuneResidenzaRef.current.setProvincia(
               Object.assign(new Provincia(), provincia)
@@ -660,7 +661,7 @@ function FormPersonaFisica(props, ref) {
           ref={comuneResidenzaRef}
           provincia={parteAttuale.provinciaResidenza}
           disabled={parteAttuale.provinciaResidenza}
-          id='pf-comune-residenza'
+          id="pf-comune-residenza"
           label="Comune di residenza"
           onChange={(comune) => {
             let comuneResidenza = comune ? comune : new Comune();

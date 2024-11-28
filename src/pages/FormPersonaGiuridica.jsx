@@ -3,14 +3,15 @@ import Grid from '@mui/material/Grid2';
 import Typography from '@mui/material/Typography';
 import { useTheme } from '@mui/material/styles';
 
-import ProvinciaSelect from '@components/ProvinciaSelect';
-import ComuneSelect from '@components/ComuneSelect';
-import ImportoInput from '@components/ImportoInput';
-import { PersonaGiuridica } from '@model/personaGiuridica';
-import ImportoReadOnly from '@components/ImportoReadOnly';
-import { CssTextField } from '@theme/MainTheme';
-import { Provincia } from '@model/provincia';
-import { Comune } from '@model/comune';
+import {
+  ProvinciaSelect,
+  ComuneSelect,
+  ImportoInput,
+  ImportoReadOnly,
+} from '@shared/components';
+import { PersonaGiuridica } from '@features/persona';
+import { CssTextField } from '@shared/theme';
+import { Provincia, Comune } from '@shared/factories';
 
 function FormPersonaGiuridica(props, ref) {
   // Costanti di layout
@@ -256,9 +257,13 @@ function FormPersonaGiuridica(props, ref) {
           label="Provincia"
           onChange={(provincia) => {
             let comuneSedeLegale = new Comune();
-            comuneSedeLegale.provincia = provincia ? Object.assign(new Provincia(), provincia) : null;
-            comuneSedeLegaleRef.current.setProvincia(comuneSedeLegale.provincia);
-            setParteAttuale({...parteAttuale, sedeLegale: comuneSedeLegale })
+            comuneSedeLegale.provincia = provincia
+              ? Object.assign(new Provincia(), provincia)
+              : null;
+            comuneSedeLegaleRef.current.setProvincia(
+              comuneSedeLegale.provincia
+            );
+            setParteAttuale({ ...parteAttuale, sedeLegale: comuneSedeLegale });
           }}
           sx={{ ...textFieldSx(theme), minWidth: '246px', maxWidth: '250px' }}
         />

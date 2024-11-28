@@ -1,24 +1,26 @@
 import * as React from 'react';
-import Typography from '@mui/material/Typography';
-import FormControl from '@mui/material/FormControl';
-import RadioGroup from '@mui/material/RadioGroup';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Radio from '@mui/material/Radio';
+import {
+  Typography,
+  FormControl,
+  RadioGroup,
+  FormControlLabel,
+  Radio,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  Button,
+} from '@mui/material';
 import Grid from '@mui/material/Grid2';
-import Accordion from '@mui/material/Accordion';
-import AccordionSummary from '@mui/material/AccordionSummary';
-import AccordionDetails from '@mui/material/AccordionDetails';
-import ArrowDownwardIcon from '@mui/icons-material/ArrowDownward';
-import Button from '@mui/material/Button';
-import ArrowBackOutlinedIcon from '@mui/icons-material/ArrowBackOutlined';
-import AddIcon from '@mui/icons-material/Add';
+import {
+  ArrowDownward as ArrowDownwardIcon,
+  ArrowBackOutlined as ArrowBackOutlinedIcon,
+  Add as AddIcon,
+} from '@mui/icons-material';
 import { useTheme } from '@mui/material/styles';
 
-import FormPersonaFisica from '@pages/FormPersonaFisica';
-import FormPersonaGiuridica from '@pages/FormPersonaGiuridica';
-import { ProcedimentoContext } from '@context/Procedimento';
-import { PersonaFisica } from '@model/personaFisica';
-import { PersonaGiuridica } from '@model/personaGiuridica';
+import {FormPersonaFisica, FormPersonaGiuridica} from '@pages';
+import { ProcedimentoContext } from '@shared/context';
+import { PersonaFisica, PersonaGiuridica } from '@features/persona';
 
 const formLabelFontSize = '1rem';
 const labelColor = 'rgb(105 105 105 / 60%)';

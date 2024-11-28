@@ -1,33 +1,40 @@
 import * as React from 'react';
-import { Typography, InputAdornment, useTheme } from '@mui/material';
-import Grid from '@mui/material/Grid2';
-import { LocalizationProvider, MobileDatePicker } from '@mui/x-date-pickers';
+import {
+  Typography,
+  InputAdornment,
+  useTheme,
+  Grid,
+  FormControlLabel,
+  Checkbox,
+  Tooltip,
+  Slide,
+} from '@mui/material';
+import {
+  LocalizationProvider,
+  MobileDatePicker,
+  MobileDateTimePicker,
+} from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { itIT } from '@mui/x-date-pickers/locales';
 import dayjs from 'dayjs';
 import 'dayjs/locale/it';
-import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
-import DeleteIcon from '@mui/icons-material/Delete';
-import { MobileDateTimePicker } from '@mui/x-date-pickers/MobileDateTimePicker';
-import CloseIcon from '@mui/icons-material/Close';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
-import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
-import Tooltip from '@mui/material/Tooltip';
-import Slide from '@mui/material/Slide';
-
-import ProtocolloInput from '@components/ProtocolloInput';
-import ImportoInput from '@components/ImportoInput';
-import { CssTextField, ClearButton, labelColor } from '@theme/MainTheme';
 import {
-  Procedimento,
-} from '@model/Procedimento/procedimento';
-import Select from '@components/Select';
-import { ProcedimentoContext } from '@context/Procedimento';
-import NumberInput from '@components/NumberInput';
-import SelectQualificaPersona from '@components/SelectQualificaPersona';
-import TabellaSpese from '../components/TabellaSpese';
+  CalendarMonthOutlined as CalendarMonthOutlinedIcon,
+  Delete as DeleteIcon,
+  Close as CloseIcon,
+  InfoOutlined as InfoOutlinedIcon,
+} from '@mui/icons-material';
 
+import {
+  ProtocolloInput,
+  ImportoInput,
+  Select,
+  NumberInput,
+} from '@shared/components';
+import { CssTextField, ClearButton, labelColor } from '@shared/theme';
+import { Procedimento, TabellaSpese } from '@features/procedimento';
+import { ProcedimentoContext } from '@shared/context';
+import { SelectQualificaPersona } from '@features/persona';
 
 // Constants
 const inputHeight = 36;
@@ -65,8 +72,7 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
 
     // Context
     const procedimentoContext = React.useContext(ProcedimentoContext);
-    const { procedimento, setProcedimento, regole } =
-      procedimentoContext;
+    const { procedimento, setProcedimento, regole } = procedimentoContext;
 
     // State
     const [initialProc] = React.useState(new Procedimento()); // Stato iniziale da comparare
@@ -131,7 +137,7 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
 
       if (typeof enableNextStep === 'function') {
         //console.log('enable next');
-        try{
+        try {
           //procedimento.validate();
           enableNextStep(!hasErrors && requiredFieldsFilled());
         } catch (error) {

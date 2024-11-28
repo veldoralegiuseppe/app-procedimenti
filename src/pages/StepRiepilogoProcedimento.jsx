@@ -3,10 +3,9 @@ import Grid from '@mui/material/Grid2';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 
-import { ProcedimentoContext } from '@context/Procedimento';
-import { PersonaGiuridica } from '@model/personaGiuridica';
-import { PersonaFisica } from '@model/personaFisica';
-import { Procedimento } from '@model/Procedimento/procedimento';
+import { ProcedimentoContext } from '@shared/context';
+import { PersonaFisica, PersonaGiuridica } from '@features/persona';
+import { Procedimento } from '@features/procedimento';
 
 
 

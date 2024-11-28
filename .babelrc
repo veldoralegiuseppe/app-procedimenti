@@ -10,11 +10,10 @@
         "root": ["./src"],
         "alias": {
           "@assets": "./src/assets",
-          "@components": "./src/components",
-          "@context": "./src/context",
           "@pages": "./src/pages",
-          "@utils": "./src/utils",
-          "@filters": "./src/utils/filters"
+          "@utils": "./src/shared/utils",
+          "@shared": "./src/shared",
+          "@features": "./src/features",
         }
       }
     ],

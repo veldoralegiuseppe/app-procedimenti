@@ -3,10 +3,10 @@ import Grid from '@mui/material/Grid2';
 import { Typography, Button } from '@mui/material';
 import AddIcon from '@mui/icons-material/Add';
 
-import TabellaPartiControparti from '@components/TabellaPartiControparti';
-import CreaParteControparte from '@pages/CreaParteControparte';
-import FormModal from '@components/FormModal';
-import { ProcedimentoContext } from '@context/Procedimento';
+import {TabellaPartiContropartiOld as TabellaPartiControparti} from '@features/persona';
+import {CreaParteControparte} from '@pages';
+import {FormModal} from '@shared/components';
+import { ProcedimentoContext } from '@shared/context';
 
 function AggiungiParteButton(props) {
   const [open, setOpen] = React.useState(false);

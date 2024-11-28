@@ -1,9 +1,9 @@
 import React from 'react';
 import { mount } from 'cypress/react';
 import { ThemeProvider } from '@mui/material/styles';
-import { ProcedimentoContext } from '@context/Procedimento';
-import FormPersonaFisica from '@pages/FormPersonaFisica';
-import { themeOne } from '@theme/MainTheme';
+import { ProcedimentoContext } from '@shared/context';
+import {FormPersonaFisica} from '@pages';
+import { themeOne } from '@shared/theme';
 import * as ComuniUtils from '@assets/js/comuni';
 import {
   provinceCampania,

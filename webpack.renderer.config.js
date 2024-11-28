@@ -28,15 +28,11 @@ module.exports = {
       path: require.resolve('path-browserify'),
     },
     alias: {
-      '@components': path.resolve(__dirname, 'src/components/'),
       '@pages': path.resolve(__dirname, 'src/pages/'),
-      '@model': path.resolve(__dirname, 'src/model/'),
       '@assets': path.resolve(__dirname, 'src/assets/'),
-      '@src': path.resolve(__dirname, 'src/'),
-      '@theme': path.resolve(__dirname, 'src/theme/'),
-      '@context': path.resolve(__dirname, 'src/context/'),
-      '@utils': path.resolve(__dirname, 'src/utils/'),
-      '@filters': path.resolve(__dirname, 'src/utils/filters/'),
+      '@utils': path.resolve(__dirname, 'src/shared/utils/'),
+      '@shared': path.resolve(__dirname, 'src/shared/'),
+      '@features': path.resolve(__dirname, 'src/features/'),
     },
   },
   plugins: [

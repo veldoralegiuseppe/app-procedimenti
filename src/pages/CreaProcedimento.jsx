@@ -2,21 +2,21 @@ import * as React from 'react';
 import { Typography, Box, Backdrop } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 
-
-import Breadcrumbs from '@components/Breadcrumbs.jsx';
-import Stepper from '@components/Stepper';
-import DatiGeneraliProcedimento from '@pages/StepDatiGeneraliProcedimento';
-import PartiControparti from '@pages/StepPartiControparti';
-import RiepilogoProcedimento from '@pages/StepRiepilogoProcedimento';
-import RobotToolbar from '@components/RobotToolbar';
+import { Breadcrumbs, Stepper } from '@shared/components';
+import {
+  StepDatiGeneraliProcedimento,
+  StepPartiControparti,
+  StepRiepilogoProcedimento,
+} from '@pages';
+import { RobotToolbar } from '@features/regola';
 
 export default function CreaProcedimento() {
   const theme = useTheme();
 
   const steps = [
-    { label: 'Dati generali', component: <DatiGeneraliProcedimento /> },
-    { label: 'Parti e controparti', component: <PartiControparti /> },
-    { label: 'Riepilogo', component: <RiepilogoProcedimento /> },
+    { label: 'Dati generali', component: <StepDatiGeneraliProcedimento /> },
+    { label: 'Parti e controparti', component: <StepPartiControparti /> },
+    { label: 'Riepilogo', component: <StepRiepilogoProcedimento /> },
   ];
 
   return (

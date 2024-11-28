@@ -1,0 +1,1 @@
+export {default as TabellaTransazioni} from './TabellaTransazioni/TabellaTransazioni';
