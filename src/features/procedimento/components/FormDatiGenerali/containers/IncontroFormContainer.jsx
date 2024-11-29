@@ -1,8 +1,10 @@
 import * as React from 'react';
 import {FormContainer} from '@shared/components';
-import { SEZIONI } from '@features/procedimento';
+import {ModelFactory} from '@shared/factories';
 
 const IncontroFormContainer = ({ config = {}, procedimentoStore }) => {
+  const sezioneIncontro = ModelFactory.getMetadata('procedimento').enums.sezioni[FISSAZIONE_INCONTRO]
+
   const renderOverrides = {
     campi: {
       ...config?.renderOverrides?.campi,
@@ -17,7 +19,7 @@ const IncontroFormContainer = ({ config = {}, procedimentoStore }) => {
   return (
     <FormContainer
       config={configOverride}
-      sezioni={[SEZIONI.FISSAZIONE_INCONTRO]}
+      sezioni={[sezioneIncontro]}
       store={procedimentoStore}
     />
   );

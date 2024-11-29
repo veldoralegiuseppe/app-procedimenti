@@ -1,5 +1,4 @@
-import { useMemo, useCallback } from 'react';
-import { Procedimento } from '@features/procedimento';
+import { useMemo } from 'react';
 import _ from 'lodash';
 
 const useFormDatiGenerali = () => {
@@ -26,7 +25,7 @@ const useFormDatiGenerali = () => {
   const config = useMemo(
     () => ({
       renderOverrides,
-      model: { class: Procedimento },
+      model: { class: 'procedimento' },
     }),
     [renderOverrides]
   );

@@ -1,5 +1,5 @@
 import { useMemo, useCallback } from 'react';
-import { useStore } from '@shared/hooks';
+import { useModelStore } from '@shared/hooks';
 import _ from 'lodash';
 
 /**
@@ -19,7 +19,7 @@ import _ from 'lodash';
  */
 const useFormContainer = ({ useStore: store, config, sezioni }) => {
   // Leggi le funzioni direttamente dallo store
-  const { touchedFields, setProperty, resetModel, setTouchedFields } = useStore(store);
+  const { touchedFields, setProperty, resetModel, setTouchedFields } = useModelStore(store);
   
   // Estrai i metadati dal modello
   const metadati = useMemo(() => {

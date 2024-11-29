@@ -1,17 +1,23 @@
 import { useEffect, useState } from 'react';
-import { Transazione } from '@features/transazione';
 import { useProcedimento } from '@features/procedimento';
+import {ModelFactory} from '@shared/factories';
 
 const useTransazioniProcedimento = () => {
   const getProperties = useProcedimento((state) => state.getProperties);
   const [transazioni, setTransazioni] = useState(() => {
-    const incassoParti = new Transazione({
-      nome: 'Incasso parti',
-      tipo: 'entrata',
+    const incassoParti = ModelFactory.create({
+      initialValue: {
+        nome: 'Incasso parti',
+        tipo: 'ENTRATA',
+      },
+      type: 'transazione',
     });
-    const incassoControparti = new Transazione({
-      nome: 'Incasso controparti',
-      tipo: 'entrata',
+    const incassoControparti = ModelFactory.create({
+      initialValue: {
+        nome: 'Incasso controparti',
+        tipo: 'ENTRATA',
+      },
+      type: 'transazione',
     });
 
     const restTransazioni = getProperties([
@@ -23,7 +29,7 @@ const useTransazioniProcedimento = () => {
     return [
       incassoParti,
       incassoControparti,
-      ...restTransazioni.map((t) => new Transazione({ ...t })),
+      ...restTransazioni,
     ];
   });
   const [totali, setTotali] = useState([]);
@@ -31,10 +37,11 @@ const useTransazioniProcedimento = () => {
   useEffect(() => {
     const totaleDovutoSedeSecondaria = {
       label: 'Totale spese sede secondaria',
-      value: getProperties([
-        'speseIndennitaSedeSecondaria',
-        'speseAvvioSedeSecondaria',
-      ])?.reduce((acc, prop) => acc + (prop?.importoDovuto || 0), 0) || 0,
+      value:
+        getProperties([
+          'speseIndennitaSedeSecondaria',
+          'speseAvvioSedeSecondaria',
+        ])?.reduce((acc, prop) => acc + (prop?.importoDovuto || 0), 0) || 0,
     };
 
     const totaleUscita = {

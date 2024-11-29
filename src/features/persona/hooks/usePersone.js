@@ -11,6 +11,5 @@ import { useModelArray } from '@shared/hooks';
  * @returns {Object} - Un oggetto contenente l'array di persone e le proprietà dell'hook useModelArray.
  */
 export const usePersone = ({ set, get, initialPersone = [], options = {} }) => ({
-  items: initialPersone,
-  ...useModelArray(set, get, options),
+  ...useModelArray({set, get, options, initalItems: initialPersone}),
 });

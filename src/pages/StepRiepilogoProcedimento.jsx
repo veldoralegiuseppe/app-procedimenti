@@ -5,9 +5,6 @@ import useMediaQuery from '@mui/material/useMediaQuery';
 
 import { ProcedimentoContext } from '@shared/context';
 import { PersonaFisica, PersonaGiuridica } from '@features/persona';
-import { Procedimento } from '@features/procedimento';
-
-
 
 function formatImporto(importo) {
 
@@ -336,7 +333,7 @@ const StepRiepilogoProcedimento = React.forwardRef((props, ref) => {
 
   React.useEffect(() => {
     if (procedimentoRow) {
-      const procedimentoInstance = Object.assign(new Procedimento(), procedimentoRow);
+      const procedimentoInstance = Object.assign(ModelFactory.create({type: "procedimento"}), procedimentoRow);
       setProcedimento(procedimentoInstance);
     }
   }, [procedimentoRow]);

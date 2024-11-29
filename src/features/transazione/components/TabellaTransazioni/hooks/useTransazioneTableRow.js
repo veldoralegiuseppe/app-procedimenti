@@ -1,8 +1,7 @@
 import React from 'react';
 import {ImportoReadOnly, ImportoInput} from '@shared/components';
-import { statoChipFlagMap, Transazione } from '@features/transazione';
 import _ from 'lodash';
-import { useArrayStore } from '@shared/hooks';
+import { useModelArrayStore } from '@shared/hooks';
 
 /**
  * Mappa una transazione in una riga della tabella.
@@ -17,7 +16,7 @@ const mapToRow = ({transazione, onChange, disabled, errors}) => {
   const stato = transazione.stato;
 
   const isParzialmenteSaldato =
-    transazione.stato === Transazione.stati.PARZIALMENTE_SALDATO;
+    transazione.stato === ModelFactory.getMetadata('transazione').enums.stato.PARZIALMENTE_SALDATO;
 
   const tooltipMessage = (() => {
     if (disabled) return 'Calcolato automaticamente';
@@ -27,6 +26,13 @@ const mapToRow = ({transazione, onChange, disabled, errors}) => {
       }`;
     else return '';
   })();
+
+  const statoEnums = ModelFactory.getMetadata('transazione').enums.stato;
+  const statoChipFlagMap = {
+    [statoEnums.SALDATO]: 'green',
+    [statoEnums.PARZIALMENTE_SALDATO]: 'yellow',
+    [statoEnums.DA_SALDARE]: 'red',
+  }
 
   return {
     id: getId(transazione),
@@ -82,7 +88,7 @@ const mapFromRow = (row) => {
     importoCorrisposto: row.importoCorrisposto.value,
     stato: row.stato.value,
   };
-  return new Transazione(transazioneParams);
+  return ModelFactory.create({type: 'transazione', initialValues: transazioneParams});
 };
 
 /**
@@ -100,10 +106,11 @@ const getId = (transazione) => ({
  * @returns {Object} Il prossimo stato e colore.
  */
 const getNextStatus = (currentStato) => {
+  const statoEnums = ModelFactory.getMetadata('transazione').enums.stato
   const nextStatusMap = {
-    [Transazione.stati.SALDATO]: Transazione.stati.DA_SALDARE,
-    [Transazione.stati.PARZIALMENTE_SALDATO]: Transazione.stati.SALDATO,
-    [Transazione.stati.DA_SALDARE]: Transazione.stati.PARZIALMENTE_SALDATO,
+    [statoEnums.SALDATO]: statoEnums.DA_SALDARE,
+    [statoEnums.PARZIALMENTE_SALDATO]: statoEnums.SALDATO,
+    [statoEnums.DA_SALDARE]: statoEnums.PARZIALMENTE_SALDATO,
   };
 
   return nextStatusMap[currentStato];
@@ -122,7 +129,7 @@ const useTransazioneTableRow = ({
   errors,
 }) => {
 
-  const { updateItem, filterItems } = useArrayStore(store);
+  const { updateItem, filterItems } = useModelArrayStore(store);
   
  
   // Funzione per mappare una transazione a una riga

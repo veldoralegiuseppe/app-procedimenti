@@ -13,16 +13,19 @@ const useProcedimento = ({ set, get, initialTransazione, options = {} }) => {
   const updateModelPipeline = new Pipeline([]);
 
   return {
-    model: initialTransazione,
-
-    ...useModel(set, get, {
-      ...options,
-      onSetProperty: (key, value) => {
-        const result = updateModelPipeline.process({ key, value });
-        if (result?.error) {
-          console.error(`Errore nella pipeline per ${key}:`, result.error);
-        }
+    ...useModel({
+      set,
+      get,
+      options: {
+        ...options,
+        onSetProperty: (key, value) => {
+          const result = updateModelPipeline.process({ key, value });
+          if (result?.error) {
+            console.error(`Errore nella pipeline per ${key}:`, result.error);
+          }
+        },
       },
+      initialModel: initialTransazione,
     }),
   };
 };

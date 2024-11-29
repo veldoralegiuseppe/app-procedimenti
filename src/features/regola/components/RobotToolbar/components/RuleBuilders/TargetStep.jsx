@@ -4,7 +4,7 @@ import { styled, useTheme } from '@mui/system';
 import { CssTextField } from '@shared/theme';
 import { ProcedimentoContext } from '@shared/context';
 import { Target } from '@features/regola';
-import { Procedimento } from '@features/procedimento';
+import { ModelFactory } from '@shared/factories';
 
 const StyledPopper = styled((props) => <Popper {...props} />)(({ theme }) => ({
   '& .MuiPaper-root': {
@@ -40,7 +40,7 @@ class TargetsStrategy extends Component {
   }
 
   getTargets() {
-    const metadatiProcedimento = Procedimento.getMetadati();
+    const metadatiProcedimento = ModelFactory.getMetadata('procedimento').metadata;
     let fields = [];
 
     fields = Object.values(metadatiProcedimento)

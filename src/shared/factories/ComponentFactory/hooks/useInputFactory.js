@@ -1,4 +1,4 @@
-import { useStore } from '@shared/hooks';
+import { useModelStore } from '@shared/hooks';
 import { useMemo, useCallback } from 'react';
 
 const useInputFactory = ({
@@ -10,7 +10,7 @@ const useInputFactory = ({
   ...props
 }) => {
   // Legge il valore direttamente dallo store
-  const {getProperty} = useStore(store);
+  const {getProperty} = useModelStore(store);
   const value = getProperty(fieldKey);
 
   // Memoizzazione degli styles

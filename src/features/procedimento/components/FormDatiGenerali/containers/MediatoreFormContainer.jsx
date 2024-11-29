@@ -1,6 +1,6 @@
 import * as React from 'react';
 import {FormContainer} from '@shared/components';
-import { SEZIONI } from '@features/procedimento';
+import {ModelFactory} from '@shared/factories';
 
 const MediatoreFormContainer = ({ config = {}, procedimentoStore }) => {
  
@@ -11,7 +11,7 @@ const MediatoreFormContainer = ({ config = {}, procedimentoStore }) => {
   return (
     <FormContainer
       config={configOverride}
-      sezioni={[SEZIONI.MEDIATORE]}
+      sezioni={[ModelFactory.getMetadata('procedimento').enums.sezioni[MEDIATORE]]}
       store={procedimentoStore}
     />
   );

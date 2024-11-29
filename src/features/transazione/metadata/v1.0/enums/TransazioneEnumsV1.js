@@ -1,4 +1,4 @@
-const TransazioneEnums = {
+const TransazioneEnumsV1 = {
   stato: {
     SALDATO: 'SALDATO',
     DA_SALDARE: 'DA SALDARE',
@@ -11,4 +11,4 @@ const TransazioneEnums = {
   },
 };
 
-export default TransazioneEnums;
+export default TransazioneEnumsV1;

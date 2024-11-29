@@ -6,7 +6,7 @@ import { CssTextField } from '@shared/theme';
 import {ImportoInput, Select} from '@shared/components';
 import { ProcedimentoContext } from '@shared/context';
 import { Target, operatoriMap, campiCondizione } from '@features/regola';
-import {Procedimento} from '@features/procedimento';
+import { Mode } from '@mui/icons-material';
 
 const StyledPopper = styled((props) => <Popper {...props} />)(({ theme }) => ({
   '& .MuiPaper-root': {
@@ -42,7 +42,7 @@ class ContextStrategy extends Component {
   }
 
   getTargets() {
-    const metadatiProcedimento = Procedimento.getMetadati();
+    const metadatiProcedimento = ModelFactory.getMetadata('procedimento').metadata;
     let fields = [];
 
     fields = Object.values(metadatiProcedimento)
@@ -139,14 +139,14 @@ const TargetInput = ({
     oggettoControversia: (
       <Select
         {...targetInputProps}
-        options={Procedimento.getMetadati('oggettoControversia').options}
+        options={ModelFactory.getMetadata('procedimento').enums.oggettoControversia}
         sx={{ height: '34.13px' }}
       />
     ),
     esitoMediazione: (
       <Select
         {...targetInputProps}
-        options={Procedimento.getMetadati('esitoMediazione').options}
+        options={ModelFactory.getMetadata('procedimento').enums.esitoMediazione}
         sx={{ height: '34.13px' }}
       />
     ),

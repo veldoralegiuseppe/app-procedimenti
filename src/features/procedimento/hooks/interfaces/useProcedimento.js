@@ -1,6 +1,7 @@
 import { useModel } from '@shared/hooks';
 import { Pipeline } from '@utils';
 import { inputValidator, updateValidator } from '@utils/filters';
+import { ModelFactory } from '@shared/factories';
 import _ from 'lodash';
 
 /**
@@ -10,7 +11,7 @@ import _ from 'lodash';
  * @param {Object} [options={}] - Opzioni aggiuntive per la configurazione del modello.
  * @returns {Object} - L'oggetto contenente il modello e le funzioni del modello.
  */
-export const useProcedimento = ({
+const useProcedimento = ({
   set,
   get,
   initialProcedimento,
@@ -18,11 +19,10 @@ export const useProcedimento = ({
 }) => {
   const updateModelPipeline = new Pipeline([]);
 
-  return {
-    model: initialProcedimento,
-  
-    // Interfaccia funzionale del model store
-    ...useModel(set, get, {
+  const modelInterface = useModel({
+    set,
+    get,
+    options: {
       ...options,
       onSetProperty: (key, value) => {
         const result = updateModelPipeline.process({ key, value });
@@ -30,17 +30,26 @@ export const useProcedimento = ({
           console.error(`Errore nella pipeline per ${key}:`, result.error);
         }
       },
-    }),
+    },
+    initialModel: initialProcedimento,
+  });
+
+  return {
+
+    // Interfaccia funzionale del model store
+    ...modelInterface,
 
     // Metodi specifici
-    getClassName: () => {
-      const path = options?.namespace ? `${options.namespace}.className` : 'className';
-      return _.get(get(), path);
-    },
-
     getTransazioni: () => {
-      const path = options?.namespace ? `${options.namespace}.model` : 'model';
-      return _.get(get(), path);
+      const transazioniKeys = Object.values(
+        ModelFactory.getMetadata('procedimento').metadata
+      )
+        .filter((m) => m.type === 'transazione')
+        .map((m) => m.key);
+
+      return modelInterface.getProperties(transazioniKeys);
     },
   };
 };
+
+export default useProcedimento;

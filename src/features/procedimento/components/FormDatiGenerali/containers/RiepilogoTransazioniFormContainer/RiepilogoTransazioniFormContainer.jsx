@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { FormContainer } from '@shared/components';
-import { SEZIONI } from '@features/procedimento';
 import { TabellaTransazioni } from '@features/transazione';
 import { useTransazioniProcedimento } from './hooks/useTransazioniProcedimento';
 import { useTabellaProps } from './hooks/useTabellaProps';
+import { ModelFactory } from '@shared/factories';
 
 const RiepilogoTransazioniFormContainer = ({
   config = {},
@@ -21,7 +21,7 @@ const RiepilogoTransazioniFormContainer = ({
   const renderOverrides = React.useMemo(() => {
     return {
       sezioni: {
-        [SEZIONI.RIEPILOGO_TRANSAZIONI]: {
+        [ModelFactory.getMetadata('procedimento').enums.sezioni[RIEPILOGO_TRANSAZIONI]]: {
           component: (props) => (
             <TabellaTransazioni {...{ ...props, ...tabellaProps }} />
           ),
@@ -41,7 +41,7 @@ const RiepilogoTransazioniFormContainer = ({
   return (
     <FormContainer
       config={configOverride}
-      sezioni={[SEZIONI.RIEPILOGO_TRANSAZIONI]}
+      sezioni={[ModelFactory.getMetadata('procedimento').enums.sezioni[RIEPILOGO_TRANSAZIONI]]}
       store={procedimentoStore}
     />
   );

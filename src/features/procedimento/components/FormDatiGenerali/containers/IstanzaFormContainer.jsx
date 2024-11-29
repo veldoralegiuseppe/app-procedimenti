@@ -1,10 +1,10 @@
 import * as React from 'react';
 import {FormContainer} from '@shared/components';
 import {useDynamicOptions} from '@shared/hooks';
-import { SEZIONI } from '@features/procedimento';
+import {ModelFactory} from '@shared/factories';
 
 const IstanzaFormContainer = ({ config = {}, procedimentoStore }) => {
-    
+
   const {
     options: sediDeposito,
     addOption: addSedeDeposito,
@@ -44,7 +44,7 @@ const IstanzaFormContainer = ({ config = {}, procedimentoStore }) => {
     };
   }, [config, sediDeposito, addSedeDeposito, removeSedeDeposito]);
 
-  const memorizedSezioni = React.useMemo(() => [SEZIONI.ISTANZA_MEDIAZIONE], []);
+  const memorizedSezioni = React.useMemo(() => [ModelFactory.getMetadata('procedimento').enums.sezioni[ISTANZA_MEDIAZIONE]], []);
   
   return (
     <FormContainer

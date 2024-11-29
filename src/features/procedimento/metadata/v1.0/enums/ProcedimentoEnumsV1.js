@@ -1,4 +1,4 @@
-const ProcedimentoEnums = {
+const ProcedimentoEnumsV1 = {
   esitoMediazione: [
     'IN CORSO',
     'NEGATIVO INCONTRO FILTRO',
@@ -47,4 +47,4 @@ const ProcedimentoEnums = {
   },
 };
 
-export default ProcedimentoEnums;
+export default ProcedimentoEnumsV1;

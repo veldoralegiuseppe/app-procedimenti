@@ -13,7 +13,7 @@ import { useCallback } from 'react';
  * @returns {Function} getItemProperty - Ottiene una proprietà di un elemento specifico dell'array store.
  * @returns {Function} getItem - Ottiene un elemento specifico dell'array store.
  */
-const useArrayStore = (arrayStore) => {
+const useModelArrayStore = (arrayStore) => {
   const addItem = useCallback((newItem) => arrayStore.getState().addItem(newItem), [arrayStore]);
   const updateItem = useCallback((index, updates) => arrayStore.getState().updateItem(index, updates), [arrayStore]);
   const removeItem = useCallback((index) => arrayStore.getState().removeItem(index), [arrayStore]);
@@ -26,4 +26,4 @@ const useArrayStore = (arrayStore) => {
   return { addItem, updateItem, removeItem, filterItems, findItem, getItemProperty, getItem };
 };
 
-export { useArrayStore };
+export default useModelArrayStore;

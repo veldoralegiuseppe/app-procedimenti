@@ -1,5 +1,5 @@
 import { validators } from '@utils';
-import TransazioneEnums from './enums/TransazioneEnums';
+import TransazioneEnumsV1 from './enums/TransazioneEnumsV1';
 
 const TransazioneMetadataV1 = {
   nome: {
@@ -16,13 +16,13 @@ const TransazioneMetadataV1 = {
     key: 'stato',
     label: 'Stato',
     type: 'string',
-    default: TransazioneEnums.stato.DA_SALDARE,
+    default: TransazioneEnumsV1.stato.DA_SALDARE,
     validations: {
       onConstruction: [
-        (value) => Object.values(TransazioneEnums.stato).includes(value),
+        (value) => Object.values(TransazioneEnumsV1.stato).includes(value),
       ],
       onPersistence: [
-        (value) => Object.values(TransazioneEnums.stato).includes(value),
+        (value) => Object.values(TransazioneEnumsV1.stato).includes(value),
       ],
     },
   },
@@ -31,13 +31,13 @@ const TransazioneMetadataV1 = {
     key: 'tipo',
     label: 'Tipo',
     type: 'string',
-    default: TransazioneEnums.tipo.USCITA,
+    default: TransazioneEnumsV1.tipo.USCITA,
     validations: {
       onConstruction: [
-        (value) => Object.values(TransazioneEnums.tipo).includes(value),
+        (value) => Object.values(TransazioneEnumsV1.tipo).includes(value),
       ],
       onPersistence: [
-        (value) => Object.values(TransazioneEnums.tipo).includes(value),
+        (value) => Object.values(TransazioneEnumsV1.tipo).includes(value),
       ],
     },
   },
@@ -48,8 +48,8 @@ const TransazioneMetadataV1 = {
     type: 'number',
     default: 0,
     validations: {
-      onConstruction: [validators.isNumber],
-      onPersistence: [validators.isNumber],
+      onConstruction: [validators.onlyNumber],
+      onPersistence: [validators.onlyNumber],
     },
   },
 
@@ -59,8 +59,8 @@ const TransazioneMetadataV1 = {
     type: 'number',
     default: 0,
     validations: {
-      onConstruction: [validators.isNumber],
-      onPersistence: [validators.isNumber],
+      onConstruction: [validators.onlyNumber],
+      onPersistence: [validators.onlyNumber],
     },
   },
 };

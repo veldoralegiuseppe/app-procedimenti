@@ -13,7 +13,7 @@
           "@pages": "./src/pages",
           "@utils": "./src/shared/utils",
           "@shared": "./src/shared",
-          "@features": "./src/features",
+          "@features": "./src/features"
         }
       }
     ],

@@ -32,7 +32,7 @@ import {
   NumberInput,
 } from '@shared/components';
 import { CssTextField, ClearButton, labelColor } from '@shared/theme';
-import { Procedimento, TabellaSpese } from '@features/procedimento';
+import { TabellaSpese } from '@features/procedimento';
 import { ProcedimentoContext } from '@shared/context';
 import { SelectQualificaPersona } from '@features/persona';
 
@@ -75,7 +75,7 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
     const { procedimento, setProcedimento, regole } = procedimentoContext;
 
     // State
-    const [initialProc] = React.useState(new Procedimento()); // Stato iniziale da comparare
+    const [initialProc] = React.useState(ModelFactory.create({type: 'procedimento'})); // Stato iniziale da comparare
     const [errors, setErrors] = React.useState({});
     const [touchedFields, setTouchedFields] = React.useState({});
     const [sedeUgualeCaricamento, setSedeUgualeCaricamento] =
@@ -186,7 +186,7 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
 
     // Handlers
     const handleReset = () => {
-      setProcedimento(new Procedimento());
+      setProcedimento(ModelFactory.create({type: 'procedimento'}));
       setTouchedFields({});
       setErrors({});
     };
@@ -446,7 +446,7 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
                   ? 'Campo obbligatorio'
                   : ''
               }
-              options={Procedimento.getMetadati('oggettoControversia').options}
+              options={ModelFactory.getMetadata('procedimento').enums.oggettoControversia}
             />
           </Grid>
 
@@ -461,7 +461,7 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
             <Select
               label="Demandata"
               value={procedimento.causaleDemandata || ''}
-              options={Procedimento.getMetadati('causaleDemandata').options}
+              options={ModelFactory.getMetadata('procedimento').enums.causaleDemandata}
               onChange={(event) => {
                 const showFormMateriaVolontaria =
                   event.target.value === CAUSALE_VOLONTARIA_IN_MATERIA;
@@ -548,7 +548,7 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
                 handleInputChange({ esitoMediazione: event })
               }
               error={touchedFields.esitoMediazione && errors.esitoMediazione}
-              options={Procedimento.getMetadati('esitoMediazione').options}
+              options={ModelFactory.getMetadata('procedimento').enums.esitoMediazione}
               sx={inputStyles(
                 theme,
                 maxWidth,
@@ -605,7 +605,7 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
               onChange={(event) =>
                 handleInputChange({ modalitaSvolgimento: event })
               }
-              options={Procedimento.getMetadati('modalitaSvolgimento').options}
+              options={ModelFactory.getMetadata('procedimento').enums.modalitaSvolgimento}
               renderOptions={(selected) => {
                 const tooltipMessage = {
                   PRESENZA: 'Partecipazione sia in presenza che da remoto.',
@@ -954,7 +954,7 @@ const StepDatiGeneraliProcedimento = React.forwardRef(
               ]}
               onImportoChange={(row, importo) => {
                 const label = row[0].nome;
-                const key = Object.values(Procedimento.getMetadati()).find(
+                const key = Object.values(ModelFactory.getMetadata('procedimento').metadata).find(
                   (field) => field.label === label
                 )?.key;
 

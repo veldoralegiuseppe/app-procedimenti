@@ -5,7 +5,6 @@ import 'dayjs/locale/it';
 import Backdrop from '@mui/material/Backdrop';
 import _ from 'lodash';
 
-import { Procedimento } from '@features/procedimento';
 import { PersonaFisica, PersonaGiuridica } from '@features/persona';
 import { Comune } from '@shared/factories';
 import {NotificationAlert} from '@shared/components';
@@ -137,7 +136,7 @@ function mockedPersone() {
 }
 
 function mockedProcedimento() {
-  return new Procedimento({
+  return{
     numProtocollo: '000001',
     annoProtocollo: '2024',
     dataDeposito: new Date(),
@@ -146,7 +145,7 @@ function mockedProcedimento() {
     dataOraIncontro: dayjs().toISOString(),
     oggettoControversia: 'DIVISIONE',
     valoreControversia: 15000,
-  });
+  };
 }
 
 function mockedRegole() {
@@ -193,37 +192,6 @@ const ProcedimentoProvider = ({ children }) => {
     setAlertSeverity(severity);
   }, []);
   
-  // Funzione per gestire i cambiamenti nel modello
-  // const handleInputChange = useCallback(
-  //   (changes, model) => {
-  //     const [key, valueOrEvent] = Object.entries(changes)[0];
-  //     let value = valueOrEvent?.target?.value ?? valueOrEvent;
-  //     value = value === '' ? undefined : value;
-
-  //     const context = { procedimento, persone, regole };
-
-  //     const results = updateModelPipeline.process({
-  //       key,
-  //       value,
-  //       model,
-  //       context,
-  //       updateModel: () => updateModel({ model, key, value }),
-  //       initialModel: initialModels[model.constructor.name],
-  //     });
-
-  //     return { errors: results.errorMessage || { [key]: undefined } };
-  //   },
-  //   [updateModel]
-  // );
-
-  // Funzione per resettare un modello
-  // const handleReset = useCallback(
-  //   (model) => {
-  //     resetModel(model);
-  //   },
-  //   [resetModel]
-  // );
-
   // Valori del contesto
   const contextValue = useMemo(
     () => ({

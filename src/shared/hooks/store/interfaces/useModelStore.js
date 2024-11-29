@@ -11,7 +11,7 @@ import { useCallback } from 'react';
  * @returns {undefined} setTouchedFields - Funzione per impostare i campi toccati (attualmente non implementato).
  * @returns {Function} getProperty - Funzione per ottenere una proprietà dallo store.
  */
-const useStore = (store) => {
+const useModelStore = (store) => {
   const setProperty = useCallback((key, value) => store.getState().setProperty(key, value), [store]);
   const resetModel = useCallback((newModel) => store.getState().resetModel(newModel), [store]);
   const getProperty = useCallback((key) => store.getState().getProperty(key), [store]);
@@ -19,4 +19,4 @@ const useStore = (store) => {
   return { touchedFields: undefined, setProperty, resetModel, setTouchedFields: undefined , getProperty};
 };
 
-export default useStore;
+export default useModelStore;

@@ -4,14 +4,14 @@ import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 
 import {CreaProcedimento, Dashboard} from '@pages';
-import {FormDatiGeneraliContainer, useProcedimento, Procedimento} from '@features/procedimento';
+import {FormDatiGeneraliContainer, useProcedimento} from '@features/procedimento';
 import {ComponentFactory} from '@shared/factories';
 import {FormPresenter, FormContainer} from '@shared/components';
 
 const MyComponent = () => {
   // Memoizza la configurazione del modello
   const config = React.useMemo(() => ({
-    model: { class: Procedimento },
+    model: { class: "procedimento" },
   }), []);
 
   // Memoizza le sezioni

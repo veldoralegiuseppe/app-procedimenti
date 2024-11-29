@@ -1,4 +1,4 @@
-import ProcedimentoEnums from './enums/ProcedimentoEnums';
+import ProcedimentoEnumsV1 from './enums/ProcedimentoEnumsV1';
 import dayjs from 'dayjs';
 import 'dayjs/locale/it';
 import { validators } from '@utils';
@@ -11,7 +11,7 @@ const ProcedimentoMetadataV1 = {
     label: 'Numero protocollo',
     type: 'string',
     default: `/${new Date().getFullYear()}`,
-    sezione: ProcedimentoEnums.sezione[ISTANZA_MEDIAZIONE],
+    sezione: ProcedimentoEnumsV1.sezione['ISTANZA_MEDIAZIONE'],
     validations: {
       onPresistence: [validators.required, validators.isProtocollo],
     },
@@ -21,7 +21,7 @@ const ProcedimentoMetadataV1 = {
     label: 'Data deposito',
     type: 'date',
     default: dayjs().format('YYYY-MM-DD'),
-    sezione: ProcedimentoEnums.sezione[ISTANZA_MEDIAZIONE],
+    sezione: ProcedimentoEnumsV1.sezione['ISTANZA_MEDIAZIONE'],
     validations: {
       onPresistence: [validators.required, validators.isDate],
     },
@@ -31,7 +31,7 @@ const ProcedimentoMetadataV1 = {
     label: 'Valore controversia',
     type: 'number',
     default: 0,
-    sezione: ProcedimentoEnums.sezione[ISTANZA_MEDIAZIONE],
+    sezione: ProcedimentoEnumsV1.sezione['ISTANZA_MEDIAZIONE'],
     validations: {
       onPresistence: [
         validators.required,
@@ -44,8 +44,8 @@ const ProcedimentoMetadataV1 = {
     key: 'oggettoControversia',
     label: 'Oggetto controversia',
     type: 'string',
-    sezione: ProcedimentoEnums.sezione[ISTANZA_MEDIAZIONE],
-    options: ProcedimentoEnums.oggettoControversia,
+    sezione: ProcedimentoEnumsV1.sezione['ISTANZA_MEDIAZIONE'],
+    options: ProcedimentoEnumsV1.oggettoControversia,
     validations: {
       onPresistence: [validators.required],
     },
@@ -54,7 +54,7 @@ const ProcedimentoMetadataV1 = {
     key: 'sedeDeposito',
     label: 'Sede deposito',
     type: 'string',
-    sezione: ProcedimentoEnums.sezione[ISTANZA_MEDIAZIONE],
+    sezione: ProcedimentoEnumsV1.sezione['ISTANZA_MEDIAZIONE'],
     validations: {
       onPresistence: [validators.required],
     },
@@ -63,27 +63,27 @@ const ProcedimentoMetadataV1 = {
     key: 'sedeSvolgimento',
     label: 'Sede svolgimento',
     type: 'string',
-    sezione: ProcedimentoEnums.sezione[ISTANZA_MEDIAZIONE],
+    sezione: ProcedimentoEnumsV1.sezione['ISTANZA_MEDIAZIONE'],
   },
   causaleDemandata: {
     key: 'causaleDemandata',
     label: 'Causale demandata',
     type: 'string',
-    sezione: ProcedimentoEnums.sezione[ISTANZA_MEDIAZIONE],
-    options: ProcedimentoEnums.causaleDemandata,
+    sezione: ProcedimentoEnumsV1.sezione['ISTANZA_MEDIAZIONE'],
+    options: ProcedimentoEnumsV1.causaleDemandata,
   },
   esitoMediazione: {
     key: 'esitoMediazione',
     label: 'Esito mediazione',
     type: 'string',
-    sezione: ProcedimentoEnums.sezione[ISTANZA_MEDIAZIONE],
-    options: ProcedimentoEnums.esitoMediazione,
+    sezione: ProcedimentoEnumsV1.sezione['ISTANZA_MEDIAZIONE'],
+    options: ProcedimentoEnumsV1.esitoMediazione,
   },
   dataOraIncontro: {
     key: 'dataOraIncontro',
     label: 'Data e ora incontro',
     type: 'datetime',
-    sezione: ProcedimentoEnums.sezione[FISSAZIONE_INCONTRO],
+    sezione: ProcedimentoEnumsV1.sezione['FISSAZIONE_INCONTRO'],
     validations: {
       onPresistence: [validators.isDateTime],
     },
@@ -92,21 +92,21 @@ const ProcedimentoMetadataV1 = {
     key: 'modalitaSvolgimento',
     label: 'Modalità svolgimento',
     type: 'string',
-    sezione: ProcedimentoEnums.sezione[FISSAZIONE_INCONTRO],
-    options: ProcedimentoEnums.modalitaSvolgimento,
+    sezione: ProcedimentoEnumsV1.sezione['FISSAZIONE_INCONTRO'],
+    options: ProcedimentoEnumsV1.modalitaSvolgimento,
   },
   titoloMediatore: {
     key: 'titoloMediatore',
     label: 'Titolo mediatore',
     type: 'string',
-    sezione: ProcedimentoEnums.sezione[MEDIATORE],
-    options: ProcedimentoEnums.titoliMediatore,
+    sezione: ProcedimentoEnumsV1.sezione['MEDIATORE'],
+    options: ProcedimentoEnumsV1.titoliMediatore,
   },
   nomeMediatore: {
     key: 'nomeMediatore',
     label: 'Nome mediatore',
     type: 'string',
-    sezione: ProcedimentoEnums.sezione[MEDIATORE],
+    sezione: ProcedimentoEnumsV1.sezione['MEDIATORE'],
     validations: {
       onPresistence: [validators.onlyAlphabetic],
     },
@@ -115,7 +115,7 @@ const ProcedimentoMetadataV1 = {
     key: 'cognomeMediatore',
     label: 'Cognome mediatore',
     type: 'string',
-    sezione: ProcedimentoEnums.sezione[MEDIATORE],
+    sezione: ProcedimentoEnumsV1.sezione['MEDIATORE'],
     validations: {
       onPresistence: [validators.onlyAlphabetic],
     },
@@ -123,12 +123,13 @@ const ProcedimentoMetadataV1 = {
   compensoMediatore: {
     key: 'compensoMediatore',
     label: 'Spese mediatore',
-    type: 'number',
-    default: new Transazione({
+    type: 'transazione',
+    default: {
       nome: 'Spese mediatore',
       tipo: 'USCITA',
-    }),
-    sezione: ProcedimentoEnums.sezione[RIEPILOGO_TRANSAZIONI],
+    },
+    version: '1.0',
+    sezione: ProcedimentoEnumsV1.sezione['RIEPILOGO_TRANSAZIONI'],
     validations: {
       onPresistence: [validators.required],
     },
@@ -136,12 +137,13 @@ const ProcedimentoMetadataV1 = {
   speseAvvioSedeSecondaria: {
     key: 'speseAvvioSedeSecondaria',
     label: 'Spese avvio sede secondaria',
-    type: 'Transazione',
-    default: new Transazione({
+    type: 'transazione',
+    default: {
       nome: 'Spese avvio sede secondaria',
       tipo: 'USCITA',
-    }),
-    sezione: ProcedimentoEnums.sezione[RIEPILOGO_TRANSAZIONI],
+    },
+    version: '1.0',
+    sezione: ProcedimentoEnumsV1.sezione['RIEPILOGO_TRANSAZIONI'],
     validations: {
       onPresistence: [validators.required],
     },
@@ -149,12 +151,13 @@ const ProcedimentoMetadataV1 = {
   speseIndennitaSedeSecondaria: {
     key: 'speseIndennitaSedeSecondaria',
     label: 'Spese indennità sede secondaria',
-    type: 'Transazione',
-    default: new Transazione({
+    type: 'transazione',
+    default: {
       nome: 'Spese indennità sede secondaria',
       tipo: 'USCITA',
-    }),
-    sezione: ProcedimentoEnums.sezione[RIEPILOGO_TRANSAZIONI],
+    },
+    version: '1.0',
+    sezione: ProcedimentoEnumsV1.sezione['RIEPILOGO_TRANSAZIONI'],
     validations: {
       onPresistence: [validators.required],
     },

@@ -20,10 +20,12 @@ import { produce } from 'immer';
  * @returns {Function} getProperties - Ottiene più proprietà dal modello.
  * @returns {Function} getModel - Ottiene l'intero modello o un sottoinsieme se namespace è definito.
  */
-const useModel = (set, get, options = {}) => {
+const useModel = ({set, get, initialModel={}, options = {}}) => {
   const rootPath = options?.namespace ? `${options.namespace}.model` : 'model';
 
   return {
+    model: initialModel,
+
     // Imposta una proprietà del modello
     setProperty: (key, value) => {
       const path = `${rootPath}.${key}`;

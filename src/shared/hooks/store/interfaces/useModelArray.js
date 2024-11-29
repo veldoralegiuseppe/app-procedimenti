@@ -43,12 +43,14 @@ import _ from 'lodash';
  * @param {string} property - La proprietà da ottenere.
  * @returns {any} Il valore della proprietà specificata.
  */
-const useModelArray = (set, get, options = {}) => {
+const useModelArray = ({set, get, initialItems=[], options = {}}) => {
   const getNamespace = (key) => {
     return options?.namespace ? `${options.namespace}.${key}` : key;
   };
 
   return {
+    items: initialItems,
+
     // Aggiunge un elemento all'array
     addItem: (newItem) => {
       set(
