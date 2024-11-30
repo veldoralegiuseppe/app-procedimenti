@@ -1,9 +1,14 @@
 import { useEffect, useState } from 'react';
-import { useProcedimento } from '@features/procedimento';
-import {ModelFactory} from '@shared/factories';
+import { useProcedimentoStore } from '@features/procedimento';
+import { ModelFactory } from '@shared/factories';
+import { useStoreContext } from '@shared/context';
 
 const useTransazioniProcedimento = () => {
-  const getProperties = useProcedimento((state) => state.getProperties);
+  // Store
+  const { procedimentoStore } = useStoreContext();
+  const { getTransazioni } = useProcedimentoStore(procedimentoStore);
+
+  // State
   const [transazioni, setTransazioni] = useState(() => {
     const incassoParti = ModelFactory.create({
       initialValue: {
@@ -12,6 +17,7 @@ const useTransazioniProcedimento = () => {
       },
       type: 'transazione',
     });
+
     const incassoControparti = ModelFactory.create({
       initialValue: {
         nome: 'Incasso controparti',
@@ -20,17 +26,9 @@ const useTransazioniProcedimento = () => {
       type: 'transazione',
     });
 
-    const restTransazioni = getProperties([
-      'compensoMediatore',
-      'speseAvvioSedeSecondaria',
-      'speseIndennitaSedeSecondaria',
-    ]);
+    const restTransazioni = getTransazioni();
 
-    return [
-      incassoParti,
-      incassoControparti,
-      ...restTransazioni,
-    ];
+    return [incassoParti, incassoControparti, ...restTransazioni];
   });
   const [totali, setTotali] = useState([]);
 
@@ -38,10 +36,11 @@ const useTransazioniProcedimento = () => {
     const totaleDovutoSedeSecondaria = {
       label: 'Totale spese sede secondaria',
       value:
-        getProperties([
-          'speseIndennitaSedeSecondaria',
-          'speseAvvioSedeSecondaria',
-        ])?.reduce((acc, prop) => acc + (prop?.importoDovuto || 0), 0) || 0,
+        transazioni
+          .filter((t) =>
+            String(t.nome).toLowerCase().includes('sedesecondaria')
+          )
+          ?.reduce((acc, prop) => acc + (prop?.importoDovuto || 0), 0) || 0,
     };
 
     const totaleUscita = {

@@ -1,27 +1,28 @@
 import { validators } from '@utils';
 import TransazioneEnumsV1 from './enums/TransazioneEnumsV1';
+import {FieldTypes, ValidationHooksTypes} from '@shared/metadata';
 
 const TransazioneMetadataV1 = {
   nome: {
     key: 'nome',
     label: 'Nome',
-    type: 'string',
+    type: FieldTypes.STRING,
     validations: {
-      onConstruction: [validators.required, validators.onlyAlphanumeric],
-      onPersistence: [validators.required, validators.onlyAlphanumeric],
+      [ValidationHooksTypes.ON_CONSTRUCTION]: [validators.required, validators.onlyAlphanumeric],
+      [ValidationHooksTypes.ON_PERSISTENCE]: [validators.required, validators.onlyAlphanumeric],
     },
   },
 
   stato: {
     key: 'stato',
     label: 'Stato',
-    type: 'string',
+    type: FieldTypes.STRING,
     default: TransazioneEnumsV1.stato.DA_SALDARE,
     validations: {
-      onConstruction: [
+      [ValidationHooksTypes.ON_CONSTRUCTION]: [
         (value) => Object.values(TransazioneEnumsV1.stato).includes(value),
       ],
-      onPersistence: [
+      [ValidationHooksTypes.ON_PERSISTENCE]: [
         (value) => Object.values(TransazioneEnumsV1.stato).includes(value),
       ],
     },
@@ -30,13 +31,13 @@ const TransazioneMetadataV1 = {
   tipo: {
     key: 'tipo',
     label: 'Tipo',
-    type: 'string',
+    type: FieldTypes.STRING,
     default: TransazioneEnumsV1.tipo.USCITA,
     validations: {
-      onConstruction: [
+      [ValidationHooksTypes.ON_CONSTRUCTION]: [
         (value) => Object.values(TransazioneEnumsV1.tipo).includes(value),
       ],
-      onPersistence: [
+      [ValidationHooksTypes.ON_PERSISTENCE]: [
         (value) => Object.values(TransazioneEnumsV1.tipo).includes(value),
       ],
     },
@@ -45,22 +46,22 @@ const TransazioneMetadataV1 = {
   importoDovuto: {
     key: 'importoDovuto',
     label: 'Importo dovuto',
-    type: 'number',
+    type: FieldTypes.NUMBER,
     default: 0,
     validations: {
-      onConstruction: [validators.onlyNumber],
-      onPersistence: [validators.onlyNumber],
+      [ValidationHooksTypes.ON_CONSTRUCTION]: [validators.onlyNumber],
+      [ValidationHooksTypes.ON_PERSISTENCE]: [validators.onlyNumber],
     },
   },
 
   importoCorrisposto: {
     key: 'importoCorrisposto',
     label: 'Importo corrisposto',
-    type: 'number',
+    type: FieldTypes.NUMBER,
     default: 0,
     validations: {
-      onConstruction: [validators.onlyNumber],
-      onPersistence: [validators.onlyNumber],
+      [ValidationHooksTypes.ON_CONSTRUCTION]: [validators.onlyNumber],
+      [ValidationHooksTypes.ON_PERSISTENCE]: [validators.onlyNumber],
     },
   },
 };

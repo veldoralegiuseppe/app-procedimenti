@@ -5,7 +5,7 @@ import { useCreateStore } from '@shared/hooks';
 export const StoreContext = createContext();
 
 const StoreProvider = ({ children }) => {
-  const procedimentoStore = useCreateStore(useProcedimento);
+  const procedimentoStore = useCreateStore({storeInterface: useProcedimento});
 
   return (
     <StoreContext.Provider value={{ procedimentoStore }}>

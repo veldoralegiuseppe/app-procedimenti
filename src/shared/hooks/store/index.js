@@ -1,4 +1,3 @@
-export {default as useGlobalStore} from './useGlobalStore';
 export {default as useModelArray} from './interfaces/useModelArray';
 export {default as useModel} from './interfaces/useModel';
 export {default as useModelArrayStore} from './interfaces/useModelArrayStore';

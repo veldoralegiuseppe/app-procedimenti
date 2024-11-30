@@ -1,14 +1,14 @@
-
-import  ProcedimentoMetadata from '../../features/procedimento/metadata/ProcedimentoMetadata';
+import { ProcedimentoMetadata } from '@features/procedimento';
 import { TransazioneMetadata } from '@features/transazione';
+import { FieldTypes, ValidationHooksTypes } from '@shared/metadata';
 
 /**
  * Classe per la creazione di oggetti basati su versioni specifiche e metadati.
  */
 export default class ModelFactory {
   static #metadata = {
-    procedimento: ProcedimentoMetadata,
-    transazione: TransazioneMetadata,
+    [FieldTypes.PROCEDIMENTO]: ProcedimentoMetadata,
+    [FieldTypes.TRANSAZIONE]: TransazioneMetadata,
   };
 
   /**
@@ -28,8 +28,7 @@ export default class ModelFactory {
     }
 
     const modelVersion = version ? version : Object.keys(typeMetadata).pop();
-    const metadata =
-      typeMetadata[modelVersion]?.metadata;
+    const metadata = typeMetadata[modelVersion]?.metadata;
 
     if (!metadata) {
       console.error(`Versione ${version} di ${type} non supportata`);
@@ -38,7 +37,7 @@ export default class ModelFactory {
 
     // Costruisce l'oggetto in base alla versione
     Object.entries(metadata).forEach(([key, value]) => {
-      if (value.type === 'transazione' || value.type === 'procedimento')
+      if (value.type === FieldTypes.TRANSAZIONE || value.type === FieldTypes.PROCEDIMENTO)
         model[key] = ModelFactory.create({
           initialValues: initialValues[key] || value.default || {},
           type: value.type,
@@ -48,7 +47,7 @@ export default class ModelFactory {
         model[key] = initialValues[key] || value.default;
         const validations =
           value.validations?.[
-            initialValues[key] ? 'onRetrieval' : 'onConstruction'
+            initialValues[key] ? ValidationHooksTypes.ON_RETRIEVAL : ValidationHooksTypes.ON_CONSTRUCTION
           ] || [];
 
         validations.forEach((validation) => {
@@ -89,4 +88,3 @@ export default class ModelFactory {
     return typeMetadata[version];
   }
 }
-

@@ -1,82 +1,79 @@
 import React, { useMemo } from 'react';
-import Grid from '@mui/material/Grid2';
-import {ComponentFactory} from '@shared/factories';
-import { useTheme } from '@mui/material/styles';
+import {useCreateStore, useModelArray} from '@shared/hooks'
+import FormComponent from '../components/FormComponent/FormComponent';
 
-const useFormPresenter = ({
-  errors,
-  campi,
-  renderOverrides,
-  onChange,
-  onBlur,
-  sezione,
-  store,
-}) => {
-  const theme = useTheme();
-  //console.log('FormPresenter', errors, campi, renderOverrides, onChange, onBlur, sezione, store);
-
-  // Memorizza il rendering della sezione personalizzata
-  const renderCustomSection = useMemo(() => {
-    const override = renderOverrides.sezioni?.[sezione];
-    if (!override?.component) return null;
-
-    const CustomSectionComponent = override.component;
-    return (
-      <CustomSectionComponent
-        store={store}
-        errors={errors}
-        onChange={onChange}
-      />
-    );
-  }, [renderOverrides.sezioni, sezione, store, errors, onChange]);
-
-  // Memorizza il rendering dei campi
+const useFormPresenter = (inputPropsArray) => {
+  
+  // Creazione dello store 
+  const propsArrayStore = useMemo(() => useCreateStore({storeInterface: useModelArray, initialItems: inputPropsArray}), [inputPropsArray]);
+  
+  // Calcolo dei componenti 
   const renderFields = useMemo(() => {
-    return campi.map((campo) => {
-      const CustomComponent = renderOverrides.campi?.[campo.key]?.component;
-      const {
-        size: responsiveSizeOverrides,
-        options: optionsOverrides,
-        ...restOverride
-      } = renderOverrides.campi?.[campo.key] || {};
+    return inputPropsArray.map((props, index) => (
+      <FormComponent key={`form-component-${props.key}`} {...props, index, propsArrayStore} />
+    )) || null;
+  }, [inputPropsArray]);
+  
+  // // Memorizza il rendering della sezione personalizzata
+  // // La memo dovrebbe essere indipendente dalle props che cambiano più spesso
+  // const renderCustomSection = useMemo(() => {
+  //   const override = renderOverrides.sezioni?.[sezione];
+  //   if (!override?.component) return null;
 
-      const componentProps = {
-        fieldKey: campo.key,
-        label: campo.label,
-        error: !!errors[campo.key],
-        helperText: errors[campo.key],
-        onChange,
-        onBlur,
-        options: optionsOverrides || campo.options,
-        theme,
-        store,
-        ...restOverride,
-      };
+  //   const CustomSectionComponent = override.component;
+  //   return (
+  //     <CustomSectionComponent
+  //       key={sezione}
+  //     />
+  //   );
+  // }, [renderOverrides.sezioni]);
 
-      // Usa InputFactory o un componente personalizzato
-      const FieldComponent = CustomComponent
-        ? React.createElement(CustomComponent, componentProps)
-        : React.createElement(ComponentFactory.InputFactory, {
-            ...componentProps,
-          });
+  // // Memorizza il rendering dei campi
+  // const renderFields = useMemo(() => {
+  //   return inputPropsArray.map((props) => {
+  //     const CustomComponent = renderOverrides.campi?.[props.key]?.component;
+  //     const {
+  //       size: responsiveSizeOverrides,
+  //       options: optionsOverrides,
+  //       ...restProps
+  //     } = renderOverrides.campi?.[props.key] || {};
 
-      if (!FieldComponent) return null;
+  //     const componentProps = {
+  //       fieldKey: props.key,
+  //       label: props.label,
+  //       error: !!errors[props.key],
+  //       helperText: errors[props.key],
+  //       onChange,
+  //       onBlur,
+  //       options: optionsOverrides || props.options,
+  //       theme,
+  //       store,
+  //       ...restProps,
+  //     };
 
-      return (
-        <Grid
-          key={campo.key}
-          {...(responsiveSizeOverrides
-            ? { size: responsiveSizeOverrides }
-            : {})}
-        >
-          {FieldComponent}
-        </Grid>
-      );
-    });
-  }, [campi, renderOverrides.campi, errors, onChange, onBlur]);
+  //     // Usa InputFactory o un componente personalizzato
+  //     const FieldComponent = CustomComponent
+  //       ? React.createElement(CustomComponent, componentProps)
+  //       : React.createElement(ComponentFactory.InputFactory, {
+  //           ...componentProps,
+  //         });
+
+  //     if (!FieldComponent) return null;
+
+  //     return (
+  //       <Grid
+  //         key={props.key}
+  //         {...(responsiveSizeOverrides
+  //           ? { size: responsiveSizeOverrides }
+  //           : {})}
+  //       >
+  //         {FieldComponent}
+  //       </Grid>
+  //     );
+  //   });
+  // }, [inputPropsArray, renderOverrides.campi, errors, onChange, onBlur]);
 
   return {
-    renderCustomSection,
     renderFields,
   };
 };

@@ -68,8 +68,9 @@ const useModel = ({set, get, initialModel={}, options = {}}) => {
     },
 
     // Ottiene una proprietà dal modello
-    getProperty: (key) => {
-      const path = `${rootPath}.${key}`;
+    getProperty: (key, namespace) => {
+      const fieldPath = namespace ? `${namespace}.${key}` : key;
+      const path = `${rootPath}.${fieldPath}`;
       return _.get(get(), path);
     },
 

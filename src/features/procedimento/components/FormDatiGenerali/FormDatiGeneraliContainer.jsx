@@ -15,13 +15,11 @@ const FormDatiGeneraliContainer = () => {
   const { config } = useFormDatiGenerali();
 
   // Queto deve spostarsi nel componente adibito alla creazione del procedimento
-
   const {procedimentoStore} = useStoreContext();
   const {resetModel} = useProcedimentoStore(procedimentoStore);
  
   React.useEffect(() => {
     const procedimento = ModelFactory.create({ type: 'procedimento' });
-    console.log('ModelFactory', procedimento);
     resetModel(procedimento);
   }, [resetModel]);
 

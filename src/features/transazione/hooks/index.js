@@ -1,3 +1,3 @@
-export { default as useTransazione } from './useTransazione';
-export { default as useTransazioni } from './useTransazioni';
+export { default as useTransazione } from './store/interfaces/useTransazione';
+export { default as useTransazioni } from './store/interfaces/useTransazioni';
 

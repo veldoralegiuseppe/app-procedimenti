@@ -2,6 +2,7 @@ import ProcedimentoEnumsV1 from './enums/ProcedimentoEnumsV1';
 import dayjs from 'dayjs';
 import 'dayjs/locale/it';
 import { validators } from '@utils';
+import {InputTypes, FieldTypes, ValidationHooksTypes} from '@shared/metadata';
 
 dayjs.locale('it');
 
@@ -9,31 +10,34 @@ const ProcedimentoMetadataV1 = {
   numProtocollo: {
     key: 'numProtocollo',
     label: 'Numero protocollo',
-    type: 'string',
+    type: FieldTypes.STRING,
+    inputType: InputTypes.PROTOCOLLO,
     default: `/${new Date().getFullYear()}`,
     sezione: ProcedimentoEnumsV1.sezione['ISTANZA_MEDIAZIONE'],
     validations: {
-      onPresistence: [validators.required, validators.isProtocollo],
+      [ValidationHooksTypes.ON_PERSISTENCE]: [validators.required, validators.isProtocollo],
     },
   },
   dataDeposito: {
     key: 'dataDeposito',
     label: 'Data deposito',
-    type: 'date',
+    type: FieldTypes.DATE,
+    inputType: InputTypes.DATE,
     default: dayjs().format('YYYY-MM-DD'),
     sezione: ProcedimentoEnumsV1.sezione['ISTANZA_MEDIAZIONE'],
     validations: {
-      onPresistence: [validators.required, validators.isDate],
+      [ValidationHooksTypes.ON_PERSISTENCE]: [validators.required, validators.isDate],
     },
   },
   valoreControversia: {
     key: 'valoreControversia',
     label: 'Valore controversia',
-    type: 'number',
+    type: FieldTypes.NUMBER,
+    inputType: InputTypes.IMPORTO,
     default: 0,
     sezione: ProcedimentoEnumsV1.sezione['ISTANZA_MEDIAZIONE'],
     validations: {
-      onPresistence: [
+      [ValidationHooksTypes.ON_PERSISTENCE]: [
         validators.required,
         validators.onlyNumber,
         validators.minValueNumber(80),
@@ -43,87 +47,97 @@ const ProcedimentoMetadataV1 = {
   oggettoControversia: {
     key: 'oggettoControversia',
     label: 'Oggetto controversia',
-    type: 'string',
+    type: FieldTypes.STRING,
+    inputType: InputTypes.SELECT,
     sezione: ProcedimentoEnumsV1.sezione['ISTANZA_MEDIAZIONE'],
     options: ProcedimentoEnumsV1.oggettoControversia,
     validations: {
-      onPresistence: [validators.required],
+      [ValidationHooksTypes.ON_PERSISTENCE]: [validators.required],
     },
   },
   sedeDeposito: {
     key: 'sedeDeposito',
     label: 'Sede deposito',
-    type: 'string',
+    type: FieldTypes.STRING,
+    inputType: InputTypes.AUTOCOMPLETE,
     sezione: ProcedimentoEnumsV1.sezione['ISTANZA_MEDIAZIONE'],
     validations: {
-      onPresistence: [validators.required],
+      [ValidationHooksTypes.ON_PERSISTENCE]: [validators.required],
     },
   },
   sedeSvolgimento: {
     key: 'sedeSvolgimento',
     label: 'Sede svolgimento',
-    type: 'string',
+    type: FieldTypes.STRING,
+    inputType: InputTypes.AUTOCOMPLETE,
     sezione: ProcedimentoEnumsV1.sezione['ISTANZA_MEDIAZIONE'],
   },
   causaleDemandata: {
     key: 'causaleDemandata',
     label: 'Causale demandata',
-    type: 'string',
+    type: FieldTypes.STRING,
+    inputType: InputTypes.SELECT,
     sezione: ProcedimentoEnumsV1.sezione['ISTANZA_MEDIAZIONE'],
     options: ProcedimentoEnumsV1.causaleDemandata,
   },
   esitoMediazione: {
     key: 'esitoMediazione',
     label: 'Esito mediazione',
-    type: 'string',
+    type: FieldTypes.STRING,
+    inputType: InputTypes.SELECT,
     sezione: ProcedimentoEnumsV1.sezione['ISTANZA_MEDIAZIONE'],
     options: ProcedimentoEnumsV1.esitoMediazione,
   },
   dataOraIncontro: {
     key: 'dataOraIncontro',
     label: 'Data e ora incontro',
-    type: 'datetime',
+    type: FieldTypes.DATE_TIME,
+    inputType: InputTypes.DATE_TIME,
     sezione: ProcedimentoEnumsV1.sezione['FISSAZIONE_INCONTRO'],
     validations: {
-      onPresistence: [validators.isDateTime],
+      [ValidationHooksTypes.ON_PERSISTENCE]: [validators.isDateTime],
     },
   },
   modalitaSvolgimento: {
     key: 'modalitaSvolgimento',
     label: 'Modalità svolgimento',
-    type: 'string',
+    type: FieldTypes.STRING,
+    inputType: InputTypes.SELECT,
     sezione: ProcedimentoEnumsV1.sezione['FISSAZIONE_INCONTRO'],
     options: ProcedimentoEnumsV1.modalitaSvolgimento,
   },
   titoloMediatore: {
     key: 'titoloMediatore',
     label: 'Titolo mediatore',
-    type: 'string',
+    type: FieldTypes.STRING,
+    inputType: InputTypes.TITOLO_PERSONA,
     sezione: ProcedimentoEnumsV1.sezione['MEDIATORE'],
     options: ProcedimentoEnumsV1.titoliMediatore,
   },
   nomeMediatore: {
     key: 'nomeMediatore',
     label: 'Nome mediatore',
-    type: 'string',
+    type: FieldTypes.STRING,
+    inputType: InputTypes.TEXT,
     sezione: ProcedimentoEnumsV1.sezione['MEDIATORE'],
     validations: {
-      onPresistence: [validators.onlyAlphabetic],
+      [ValidationHooksTypes.ON_PERSISTENCE]: [validators.onlyAlphabetic],
     },
   },
   cognomeMediatore: {
     key: 'cognomeMediatore',
     label: 'Cognome mediatore',
-    type: 'string',
+    type: FieldTypes.STRING,
+    inputType: InputTypes.TEXT,
     sezione: ProcedimentoEnumsV1.sezione['MEDIATORE'],
     validations: {
-      onPresistence: [validators.onlyAlphabetic],
+      [ValidationHooksTypes.ON_PERSISTENCE]: [validators.onlyAlphabetic],
     },
   },
   compensoMediatore: {
     key: 'compensoMediatore',
     label: 'Spese mediatore',
-    type: 'transazione',
+    type: FieldTypes.TRANSAZIONE,
     default: {
       nome: 'Spese mediatore',
       tipo: 'USCITA',
@@ -131,13 +145,13 @@ const ProcedimentoMetadataV1 = {
     version: '1.0',
     sezione: ProcedimentoEnumsV1.sezione['RIEPILOGO_TRANSAZIONI'],
     validations: {
-      onPresistence: [validators.required],
+      [ValidationHooksTypes.ON_PERSISTENCE]: [validators.required],
     },
   },
   speseAvvioSedeSecondaria: {
     key: 'speseAvvioSedeSecondaria',
     label: 'Spese avvio sede secondaria',
-    type: 'transazione',
+    type: FieldTypes.TRANSAZIONE,
     default: {
       nome: 'Spese avvio sede secondaria',
       tipo: 'USCITA',
@@ -145,13 +159,13 @@ const ProcedimentoMetadataV1 = {
     version: '1.0',
     sezione: ProcedimentoEnumsV1.sezione['RIEPILOGO_TRANSAZIONI'],
     validations: {
-      onPresistence: [validators.required],
+      [ValidationHooksTypes.ON_PERSISTENCE]: [validators.required],
     },
   },
   speseIndennitaSedeSecondaria: {
     key: 'speseIndennitaSedeSecondaria',
     label: 'Spese indennità sede secondaria',
-    type: 'transazione',
+    type: FieldTypes.TRANSAZIONE,
     default: {
       nome: 'Spese indennità sede secondaria',
       tipo: 'USCITA',
@@ -159,7 +173,7 @@ const ProcedimentoMetadataV1 = {
     version: '1.0',
     sezione: ProcedimentoEnumsV1.sezione['RIEPILOGO_TRANSAZIONI'],
     validations: {
-      onPresistence: [validators.required],
+      [ValidationHooksTypes.ON_PERSISTENCE]: [validators.required],
     },
   },
 };
