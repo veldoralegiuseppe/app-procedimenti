@@ -4,8 +4,10 @@ import Grid from '@mui/material/Grid2';
 import { ComponentFactory } from '@shared/factories';
 import _ from 'lodash';
 
-const FormComponentVanilla = (index, propsArrayStore) => {
+const FormComponentVanilla = ({index, propsArrayStore}) => {
+  //console.log('index', index, 'propsArrayStore', propsArrayStore);
   const { getItem } = useModelArrayStore(propsArrayStore);
+  
   const {size, component, value, ...props} = getItem(index);
 
   const CustomComponent = component;

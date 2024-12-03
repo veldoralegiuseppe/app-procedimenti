@@ -5,6 +5,7 @@ const FieldTypes = {
     DATE_TIME: 'dateTime',
     TRANSAZIONE: 'transazione',
     PERSONA: 'persona',
+    PROCEDIMENTO: 'procedimento',
 }
 
 export default FieldTypes;

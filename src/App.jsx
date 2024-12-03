@@ -9,10 +9,11 @@ import { themeOne, ContentGrid } from '@shared/theme';
 import { RouteContext, getRoute, ProcedimentoProvider, StoreProvider } from '@shared/context';
 
 const root = createRoot(document.getElementById('mainContainer'));
-
 root.render(<App />);
 
+
 function App() {
+  console.log('App rendered');
   const { currentPath } = React.useContext(RouteContext);
   const [path, setPath] = React.useState(currentPath);
 

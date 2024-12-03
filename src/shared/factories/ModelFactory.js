@@ -37,12 +37,13 @@ export default class ModelFactory {
 
     // Costruisce l'oggetto in base alla versione
     Object.entries(metadata).forEach(([key, value]) => {
-      if (value.type === FieldTypes.TRANSAZIONE || value.type === FieldTypes.PROCEDIMENTO)
+      if (value.type === FieldTypes.TRANSAZIONE || value.type === FieldTypes.PROCEDIMENTO){
         model[key] = ModelFactory.create({
           initialValues: initialValues[key] || value.default || {},
           type: value.type,
           version: value.version,
         });
+      }
       else {
         model[key] = initialValues[key] || value.default;
         const validations =
@@ -80,11 +81,12 @@ export default class ModelFactory {
    * @returns {Object} I metadati e gli enums per la versione corrente.
    */
   static getMetadata(type, version) {
+    //console.log('type', type, 'version', version)
     if (!type && !version) return ModelFactory.#metadata;
 
     const typeMetadata = ModelFactory.#metadata[type];
-    if (!version) return typeMetadata;
-
+    
+    if (!version) return typeMetadata[Object.keys(typeMetadata).pop()];
     return typeMetadata[version];
   }
 }

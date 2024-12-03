@@ -40,10 +40,9 @@ const ProcedimentoEnumsV1 = {
   titoliMediatore: [{ maschile: 'AVV', femminile: 'AVV.SSA' }],
 
   sezione: {
-    ISTANZA_MEDIAZIONE: 'Istanza di mediazione',
-    FISSAZIONE_INCONTRO: 'Fissazione incontro',
-    MEDIATORE: 'Mediatore',
-    RIEPILOGO_TRANSAZIONI: 'Riepilogo transazioni',
+    ISTANZA_MEDIAZIONE: ['numProtocollo', 'dataDeposito', 'valoreControversia', 'oggettoControversia', 'sedeDeposito', 'sedeSvolgimento', 'causaleDemandata', 'esitoMediazione'],
+    FISSAZIONE_INCONTRO: ['dataOraIncontro', 'modalitaSvolgimento'],
+    MEDIATORE: ['titoloMediatore', 'nomeMediatore', 'cognomeMediatore', 'codiceFiscaleMediatore', 'dataNascitaMediatore', 'luogoNascitaMediatore', 'indirizzoMediatore', 'capMediatore', 'cittaMediatore', 'provinciaMediatore', 'telefonoMediatore', 'emailMediatore'],
   },
 };
 

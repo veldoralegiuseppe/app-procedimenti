@@ -11,12 +11,11 @@ import _ from 'lodash';
  * Questo componente è responsabile della presentazione di una form con campi dinamici.
  *
  * ## Prestazioni
- * Data la staticità delle props in input, il componente sarà renderizzato solo una volta a dunque è indipendente
- * dai re-render del componente genitore. I children sono ottimizzati in modo da avere un re-render solo al cambiamento
- * del loro style o della size del rispettivo container Grid, tali cambiamenti, per quanto detto su,
- * esulano del parent e dunque dovranno essere gestiti direttamente da FormPresenter.
- * Nonostante ciò, usare il componente per molti campi potrebbe portare ad un tempo di rendering superiore a 16ms,
- * dunque è consigliabile scomporre la form in più componenti FormPresenter.
+ * Il componente è ottimizzato in modo da causare un re-render di FormComponent solo al cambiamento
+ * dello style, in tal caso il re-render sarà propagato ai children di FormComponent, o della size del container Grid, in tal caso il re-render è
+ * limitato a FormComponent stesso.
+ * Nonostante ciò, usare il componente FormPresenter per molti campi (inputPropsArray lungo) potrebbe portare ad un tempo di rendering 
+ * superiore a 16ms, dunque è consigliabile scomporre la form in più componenti FormPresenter.
  *
  * Nota:
  * Si assume che nelle gli input all'interno di FormComponent utilizzino uno store Zustand in modo da avere re-render
@@ -26,11 +25,12 @@ import _ from 'lodash';
  * @component
  * @param {Object[]} inputPropsArray - Array statico di oggetti che rappresentano le props di input per rispettivi campi.
  * @param {string} inputPropsArray[].key - Chiave univoca per il campo nello store.
- * @param {string} inputPropsArray[].store - Store Zustand da cui leggere i dati.
+ * @param {string} inputPropsArray[].store - Store Zustand da cui gli input leggono i dati.
+ * @param {string} inputPropsArray[].inputType - Tipo di input da renderizzare.
+ * @param {string} inputPropsArray[].component - Componente da renderizzare (sovrascrive inputType).
  * @param {string} [inputPropsArray[].label] - Etichetta opzionale per il campo.
  * @param {string} [inputPropsArray[].sx] - Styling.
  * @param {string} [inputPropsArray[].size] - Oggetto size del component Grid.
- * @param {string} inputPropsArray[].type - Tipo di input (es. 'text', 'number', ecc.).
  * @param {function} [inputPropsArray[].onChange] - Funzione di callback chiamata quando il valore del campo cambia.
  * @param {function} [inputPropsArray[].onBlur] - Funzione di callback chiamata sull'evento onBlur.
  * @param {string} [titolo=''] - Titolo statico e opzionale del modulo.

@@ -1,5 +1,6 @@
 import { styled } from '@mui/system';
 import { Select } from '@mui/material';
+import { labelColor } from '@shared/theme';
 
 export const CssSelect = styled(Select)(({ theme }) => ({
   '& .MuiInputLabel-root:not(.Mui-error, .Mui-disabled, .Mui-focused)': {

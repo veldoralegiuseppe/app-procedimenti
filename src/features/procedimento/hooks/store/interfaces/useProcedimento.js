@@ -2,7 +2,8 @@ import { useModel } from '@shared/hooks';
 import { Pipeline } from '@utils';
 import { inputValidator, updateValidator } from '@utils/filters';
 import { ModelFactory } from '@shared/factories';
-import _ from 'lodash';
+import {FieldTypes } from '@shared/metadata';
+import _, { initial } from 'lodash';
 
 /**
  * Interfaccia funzionale dello store Procedimento.
@@ -41,13 +42,12 @@ const useProcedimento = ({
 
     // Metodi specifici
     getTransazioni: () => {
-      const transazioniKeys = Object.values(
-        ModelFactory.getMetadata('procedimento').metadata
-      )
-        .filter((m) => m.type === 'transazione')
-        .map((m) => m.key);
-
-      return modelInterface.getProperties(transazioniKeys);
+      const metadata = ModelFactory.getMetadata(FieldTypes.PROCEDIMENTO).metadata;
+      const transazioni = Object.values(metadata)
+        .filter((m) => m.type === FieldTypes.TRANSAZIONE)
+        .map((m) => ModelFactory.create({ type: FieldTypes.TRANSAZIONE, version: m.version, initialValues: m.default }));
+  
+      return transazioni;
     },
   };
 };

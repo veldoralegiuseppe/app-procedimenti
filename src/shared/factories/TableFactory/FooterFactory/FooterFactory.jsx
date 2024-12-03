@@ -6,7 +6,7 @@ import _ from 'lodash';
 
 const FooterFactoryComponent = ({
   pagination = false,
-  data = [],
+  dataLength = 0,
   page = 0,
   rowsPerPage = 5,
   onPageChange = () => {},
@@ -28,7 +28,7 @@ const FooterFactoryComponent = ({
             }}
             rowsPerPageOptions={[5, 10, 25]}
             colSpan={colSpan}
-            count={data.length}
+            count={dataLength}
             rowsPerPage={rowsPerPage}
             page={page}
             onPageChange={onPageChange}

@@ -4,11 +4,11 @@ import { TableCell, TableHead } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import {TableFactory} from '@shared/factories';
 import TransazioneCellRender from './components/TransazioneCellRender';
-import { useTransazioneTableRow } from './hooks/useTransazioneTableRow';
+import useTransazioneTableRow  from './hooks/useTransazioneTableRow/useTransazioneTableRow';
 import Totali from './components/Totali';
 
-const TabellaTransazioniComponent = ({ store, disabled, onChange, onBlur, errors, totali }) => {
-  const { data } = useTransazioneTableRow({store, disabled, onChange, onBlur, errors});
+const TabellaTransazioniComponent = ({ transazioni, disabled, onChange, onBlur, errors, totali }) => {
+  const { data } = useTransazioneTableRow({transazioni, disabled, onChange, onBlur, errors});
 
   const columns = React.useMemo(() => [
     {
@@ -32,7 +32,7 @@ const TabellaTransazioniComponent = ({ store, disabled, onChange, onBlur, errors
     {
       field: 'stato',
       headerName: 'Stato',
-      type: 'infoChip',
+      type: 'chip',
       sx: { width: '20%' },
       align: 'center',
     },

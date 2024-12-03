@@ -150,6 +150,19 @@ const useModelArray = ({set, get, initialItems=[], options = {}}) => {
 
       return result;
     },
+
+    // Ottiene tutti gli elementi dell'array
+    getItems: () => {
+      const key = getNamespace('items');
+      const result = _.get(get(), key, []);
+
+      if (options?.onGetItems) {
+        options.onGetItems();
+      }
+
+      return result;
+    },
+
   };
 };
 

@@ -3,6 +3,12 @@ import TransazioneEnumsV1 from './enums/TransazioneEnumsV1';
 import {FieldTypes, ValidationHooksTypes} from '@shared/metadata';
 
 const TransazioneMetadataV1 = {
+  key: {
+    key: 'key',
+    label: 'Chiave',
+    type: FieldTypes.STRING,
+  },
+
   nome: {
     key: 'nome',
     label: 'Nome',

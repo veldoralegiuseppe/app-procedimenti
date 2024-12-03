@@ -1,26 +1,34 @@
 import * as React from 'react';
-import {FormContainer} from '@shared/components';
-import {ModelFactory} from '@shared/factories';
+import { ModelFactory } from '@shared/factories';
+import { FieldTypes } from '@shared/metadata';
+import { useMetadata } from '@shared/hooks';
+import { useStoreContext } from '@shared/context';
+import { FormPresenter } from '@shared/components';
 
-const IncontroFormContainer = ({ config = {}, procedimentoStore }) => {
-  const sezioneIncontro = ModelFactory.getMetadata('procedimento').enums.sezioni[FISSAZIONE_INCONTRO]
+const IncontroFormContainer = () => {
+  const { procedimentoStore } = useStoreContext();
 
-  const renderOverrides = {
-    campi: {
-      ...config?.renderOverrides?.campi,
+  const commonSx = { width: '29.2rem' };
+  const { metadata } = useMetadata({
+    type: FieldTypes.PROCEDIMENTO,
+    keysOrSection: ModelFactory.getMetadata(FieldTypes.PROCEDIMENTO).enums
+      .sezione.FISSAZIONE_INCONTRO,
+    overrides: {
+      modalitaSvolgimento: { sx: commonSx },
     },
-  };
+  });
 
-  const configOverride = {
-    ...config,
-    renderOverrides,
-  };
+  const inputPropsArray = Object.values(metadata).map((value) => ({
+    ...value,
+    store: procedimentoStore,
+  }));
+
+  //console.log('inputPropsArray', inputPropsArray)
 
   return (
-    <FormContainer
-      config={configOverride}
-      sezioni={[sezioneIncontro]}
-      store={procedimentoStore}
+    <FormPresenter
+      titolo="Fissazione incontro"
+      inputPropsArray={inputPropsArray}
     />
   );
 };

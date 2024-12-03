@@ -1,56 +1,39 @@
 import * as React from 'react';
-import {FormContainer} from '@shared/components';
-import {useDynamicOptions} from '@shared/hooks';
-import {ModelFactory} from '@shared/factories';
+import { useDynamicOptions, useMetadata } from '@shared/hooks';
+import { FieldTypes } from '@shared/metadata';
+import { useStoreContext } from '@shared/context';
+import { ModelFactory } from '@shared/factories';
+import {FormPresenter} from '@shared/components';
 
-const IstanzaFormContainer = ({ config = {}, procedimentoStore }) => {
+const IstanzaFormContainer = () => {
+  const sedeDepositoCallbacks = useDynamicOptions([]);
+  const sedeSvolgimentoCallbacks = useDynamicOptions([]);
+  const commonSx = { width: '29.2rem' };
+  const { procedimentoStore } = useStoreContext();
 
-  const {
-    options: sediDeposito,
-    addOption: addSedeDeposito,
-    removeOption: removeSedeDeposito,
-  } = useDynamicOptions([]);
+  const { metadata } = useMetadata({
+    type: FieldTypes.PROCEDIMENTO,
+    keysOrSection: ModelFactory.getMetadata(FieldTypes.PROCEDIMENTO).enums.sezione.ISTANZA_MEDIAZIONE,
+    overrides: {
+      sedeDeposito: {...sedeDepositoCallbacks, sx: commonSx},
+      sedeSvolgimento: {...sedeSvolgimentoCallbacks, sx: commonSx},
+      oggettoControversia: { sx: commonSx },
+      esitoMediazione: { sx: commonSx },
+      causaleDemandata: { sx: commonSx },
+    },
+  });
 
-  const {
-    options: sediSvolgimento,
-    addOption: addSedeSvolgimento,
-    removeOption: removeSedeSvolgimento,
-  } = useDynamicOptions([]);
+  const inputPropsArray = Object.values(metadata).map((value) => ({
+    ...value,
+    store: procedimentoStore,
+  }));
 
-  const configOverride = React.useMemo(() => {
-    const overriddenRenderOverrides = {
-      campi: {
-        ...config?.renderOverrides?.campi,
-        sedeDeposito: {
-          ...config?.renderOverrides?.campi?.sedeDeposito,
-          options: sediDeposito,
-          onSubmit: addSedeDeposito,
-          onDelete: removeSedeDeposito,
-          validations: ['required'],
-        },
-        sedeSvolgimento: {
-          ...config?.renderOverrides?.campi?.sedeSvolgimento,
-          options: sediSvolgimento,
-          onSubmit: addSedeSvolgimento,
-          onDelete: removeSedeSvolgimento,
-          validations: ['required'],
-        },
-      },
-    };
-  
-    return {
-      ...config,
-      renderOverrides: overriddenRenderOverrides,
-    };
-  }, [config, sediDeposito, addSedeDeposito, removeSedeDeposito]);
+  //console.log('inputPropsArray', inputPropsArray)
 
-  const memorizedSezioni = React.useMemo(() => [ModelFactory.getMetadata('procedimento').enums.sezioni[ISTANZA_MEDIAZIONE]], []);
-  
   return (
-    <FormContainer
-      config={configOverride}
-      sezioni={memorizedSezioni}
-      store={procedimentoStore}
+    <FormPresenter
+      titolo="Istanza di mediazione"
+      inputPropsArray={inputPropsArray}
     />
   );
 };

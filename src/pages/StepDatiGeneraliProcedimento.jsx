@@ -35,6 +35,7 @@ import { CssTextField, ClearButton, labelColor } from '@shared/theme';
 import { TabellaSpese } from '@features/procedimento';
 import { ProcedimentoContext } from '@shared/context';
 import { SelectQualificaPersona } from '@features/persona';
+import { ModelFactory } from '@shared/factories';
 
 // Constants
 const inputHeight = 36;

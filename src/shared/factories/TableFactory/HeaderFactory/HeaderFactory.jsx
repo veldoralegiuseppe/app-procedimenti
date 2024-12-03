@@ -71,9 +71,9 @@ const HeaderFactoryComponent = ({
 
 const HeaderFactory = React.memo(HeaderFactoryComponent, (prevProps, nextProps) => {
   return (
-    _.isEqual(prevProps.columns, nextProps.columns) &&
-    _.isEqual(prevProps.collapsibleConfig, nextProps.collapsibleConfig) &&
-    _.isEqual(prevProps.selectableConfig, nextProps.selectableConfig) &&
+    _.isEqual(prevProps.order, nextProps.order) &&
+    _.isEqual(prevProps.orderBy, nextProps.orderBy) &&
+    _.isEqual(prevProps.onSort, nextProps.onSort) &&
     _.isEqual(prevProps.sx, nextProps.sx)
   );
 });

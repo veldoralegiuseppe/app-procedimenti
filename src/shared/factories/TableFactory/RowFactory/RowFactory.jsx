@@ -4,6 +4,7 @@ import BaseRow from './BaseRow';
 import CollapsibleDecorator from './decorators/CollapsibleDecorator';
 import SelectableDecorator from './decorators/SelectableDecorator';
 import PropTypes from 'prop-types';
+import _ from 'lodash';
 
 const RowFactory = React.memo(
   ({
@@ -13,6 +14,7 @@ const RowFactory = React.memo(
     collapsibleConfig,
     selectableConfig,
     totalColumns,
+    store,
     components = {},
     sx,
   }) => {
@@ -56,8 +58,9 @@ const RowFactory = React.memo(
             ...sx,
           }}
           key={index}
-          row={row}
+          id={row.id}
           columns={columns}
+          store={store}
           onRowClick={onRowClick}
           collapsibleConfig={collapsibleConfig}
           selectableConfig={selectableConfig}

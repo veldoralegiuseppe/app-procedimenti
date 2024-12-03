@@ -26,9 +26,45 @@ import _ from 'lodash';
 
 dayjs.locale('it');
 
-const InputFactoryComponent = ({ fieldKey, inputType, ...props }) => {
+/**
+ * Componente InputFactory
+ *
+ * Questo componente è una fabbrica di input che renderizza diversi componenti in base al tipo di input specificato.
+ * Utilizza il hook `useInputFactory` per ottenere le proprietà comuni da passare agli input.
+ *
+ * ## Prestazioni
+ * Il componente è stato ottimizzato per evitare re-render inutili, in particolare:
+ * - Le props comuni vengono calcolate solo una volta grazie a useMemo pertanto sono considerate statiche.
+ * - Il componente è memorizzato con React.memo e ammette re-render basati solo sullo style (sx).
+ * - Lo switch per il rendering condizionale è basato sul tipo di input, pertanto è considerato statico.
+ *
+ * @component
+ * @param {string} props.fieldKey - La chiave del campo.
+ * @param {string} props.inputType - Il tipo di input da renderizzare.
+ * @param {Object} props.store - Lo store Zustand da cui gli input leggono i dati.
+ * @param {Object} props - Ulteriori proprietà statiche passate al componente.
+ *
+ * @returns {React.Element|null} - Ritorna l'elemento React corrispondente al tipo di input specificato, oppure null se il tipo di input non è riconosciuto.
+ *
+ * @example
+ * <InputFactory
+ *   fieldKey="data"
+ *   inputType={InputTypes.DATE}
+ *   store={store}
+ *   {...{
+ *     onChange: handleChange,
+ *     onBlur: handleBlur,
+ *     error: false,
+ *   }
+ *   }
+ * />
+ */
+const InputFactoryComponent = ({ fieldKey, inputType, store, ...props }) => {
+  
+
   const { commonProps } = useInputFactory({
     fieldKey,
+    store,
     ...props,
   });
 
@@ -65,7 +101,7 @@ const InputFactoryComponent = ({ fieldKey, inputType, ...props }) => {
                 commonProps.onBlur?.(formatted);
               },
             }}
-            value={value ? dayjs(value) : null}
+            value={commonProps.value ? dayjs(commonProps.value) : null}
           />
         </LocalizationProvider>
       );
@@ -158,7 +194,9 @@ const InputFactoryComponent = ({ fieldKey, inputType, ...props }) => {
   }
 };
 
-const InputFactory = React.memo(InputFactoryComponent,(prevProps, nextProps) => {
+const InputFactory = React.memo(
+  InputFactoryComponent,
+  (prevProps, nextProps) => {
     // Considero dinamici i campi: sx
     return _.isEqual(prevProps.sx, nextProps.sx);
   }

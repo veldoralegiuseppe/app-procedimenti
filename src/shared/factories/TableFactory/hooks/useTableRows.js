@@ -1,4 +1,5 @@
-import { useMemo } from 'react';
+import React, { useMemo, useEffect } from 'react';
+import { useCreateStore, useModelArray } from '@shared/hooks';
 
 /**
  * Hook per inizializzare le righe della tabella con un campo `id`.
@@ -9,10 +10,10 @@ import { useMemo } from 'react';
  * @throws {Error} Se vengono rilevati ID duplicati.
  */
 const useTableRows = (columns, data) => {
+  
   const rows = useMemo(() => {
     const idSet = new Set();
     const processedRows = data.map((row, index) => {
-    
       const id = row.hasOwnProperty('id') ? row.id : index;
       if (idSet.has(id)) {
         throw new Error(`Duplicate ID found: ${id}`);
@@ -27,9 +28,12 @@ const useTableRows = (columns, data) => {
     });
 
     return processedRows;
-  }, [columns, data]);
+  }, [data, columns]);
 
-  return { rows };
+  const tableStore = useCreateStore({ storeInterface: useModelArray, initialItems: rows });
+  console.log('tableStore', tableStore.getState());
+
+  return { tableStore };
 };
 
 export default useTableRows;

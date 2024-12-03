@@ -1,17 +1,18 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useProcedimentoStore } from '@features/procedimento';
 import { ModelFactory } from '@shared/factories';
 import { useStoreContext } from '@shared/context';
+import isEqual from 'lodash/isEqual';
 
 const useTransazioniProcedimento = () => {
   // Store
   const { procedimentoStore } = useStoreContext();
   const { getTransazioni } = useProcedimentoStore(procedimentoStore);
 
-  // State
-  const [transazioni, setTransazioni] = useState(() => {
+  // Initializzazione delle transazioni
+  const initialTransazioni = useMemo(() => {
     const incassoParti = ModelFactory.create({
-      initialValue: {
+      initialValues: {
         nome: 'Incasso parti',
         tipo: 'ENTRATA',
       },
@@ -19,7 +20,7 @@ const useTransazioniProcedimento = () => {
     });
 
     const incassoControparti = ModelFactory.create({
-      initialValue: {
+      initialValues: {
         nome: 'Incasso controparti',
         tipo: 'ENTRATA',
       },
@@ -27,12 +28,16 @@ const useTransazioniProcedimento = () => {
     });
 
     const restTransazioni = getTransazioni();
+    console.log('restTransazioni', restTransazioni);
 
     return [incassoParti, incassoControparti, ...restTransazioni];
-  });
-  const [totali, setTotali] = useState([]);
+  }, [getTransazioni]);
 
-  useEffect(() => {
+  // Stato
+  const [transazioni, setTransazioni] = useState(initialTransazioni);
+  
+  // Calcolo dei totali memorizzato con `useMemo`
+  const totali = useMemo(() => {
     const totaleDovutoSedeSecondaria = {
       label: 'Totale spese sede secondaria',
       value:
@@ -48,7 +53,7 @@ const useTransazioniProcedimento = () => {
       value: transazioni.reduce(
         (acc, transazione) =>
           transazione.tipo.toLowerCase() === 'uscita'
-            ? acc + transazione.importoDovuto
+            ? acc + (transazione.importoDovuto || 0)
             : acc,
         0
       ),
@@ -59,14 +64,22 @@ const useTransazioniProcedimento = () => {
       value: transazioni.reduce(
         (acc, transazione) =>
           transazione.tipo.toLowerCase() === 'entrata'
-            ? acc + transazione.importoDovuto
+            ? acc + (transazione.importoDovuto || 0)
             : acc,
         0
       ),
     };
 
-    setTotali([totaleDovutoSedeSecondaria, totaleUscita, totaleEntrata]);
+    return [totaleDovutoSedeSecondaria, totaleUscita, totaleEntrata];
   }, [transazioni]);
+
+  // Sincronizzazione delle transazioni solo se necessaria
+  useEffect(() => {
+    const currentTransazioni = [...initialTransazioni];
+    if (!isEqual(transazioni, currentTransazioni)) {
+      setTransazioni(currentTransazioni);
+    }
+  }, [initialTransazioni, transazioni]);
 
   return { transazioni, totali };
 };

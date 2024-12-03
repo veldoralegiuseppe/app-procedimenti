@@ -9,40 +9,38 @@ import useFormDatiGenerali from './hooks/useFormDatiGenerali';
 import { useProcedimentoStore } from '@features/procedimento';
 import {ModelFactory} from '@shared/factories';
 import {useStoreContext} from '@shared/context';
+import {FieldTypes} from '@shared/metadata';
 
 
 const FormDatiGeneraliContainer = () => {
-  const { config } = useFormDatiGenerali();
+  //const { config } = useFormDatiGenerali();
 
   // Queto deve spostarsi nel componente adibito alla creazione del procedimento
   const {procedimentoStore} = useStoreContext();
   const {resetModel} = useProcedimentoStore(procedimentoStore);
  
   React.useEffect(() => {
-    const procedimento = ModelFactory.create({ type: 'procedimento' });
+    const procedimento = ModelFactory.create({ type: FieldTypes.PROCEDIMENTO });
     resetModel(procedimento);
   }, [resetModel]);
 
   return (
     <Grid container sx={{ rowGap: '3rem' }}>
-      {/* <Grid size={{ xs: 12 }}>
-        <IstanzaFormContainer
-          config={config}
-          procedimentoStore={useProcedimento}
-        />
+      <Grid size={{ xs: 12 }}>
+        <IstanzaFormContainer/>
       </Grid>
 
       <Grid size={{ xs: 12 }}>
-        <IncontroFormContainer config={config} procedimentoStore={useProcedimento} />
+        <IncontroFormContainer/>
       </Grid>
 
       <Grid size={{ xs: 12 }}>
-        <MediatoreFormContainer config={config} procedimentoStore={useProcedimento} />
-      </Grid> */}
+        <MediatoreFormContainer/>
+      </Grid>
 
-      {/* <Grid size={{ xs: 12 }}>
-        <RiepilogoTransazioniFormContainer config={config} procedimentoStore={useProcedimento} />
-      </Grid> */}
+      <Grid size={{ xs: 12 }}>
+        <RiepilogoTransazioniFormContainer />
+      </Grid>
 
       {/* <Grid size={{ xs: 12 }}>
         <ClearButton

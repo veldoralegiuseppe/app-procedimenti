@@ -11,6 +11,7 @@ import { SelectableProvider } from './RowFactory/decorators/hooks/useSelectableR
 import PropTypes from 'prop-types';
 import { useSortableRows, useTableRows } from './hooks';
 import _ from 'lodash';
+import { useModelArrayStore } from '@shared/hooks';
 
 /**
  * Componente TableFactory
@@ -36,22 +37,33 @@ import _ from 'lodash';
  */
 const TableFactoryComponent = ({
   columns,
-  data,
-  headerConfig,
-  rowConfig,
-  footerConfig,
+  data = [],
+  headerConfig: hConfig,
+  rowConfig: rConfig,
+  footerConfig: fConfig,
   size = 'small',
   sx,
 }) => {
+  // State 
+  //console.log('data', data);
+  const [columnsMeta] = React.useState(columns);
+  const [headerConfig] = React.useState(hConfig);
+  const [rowConfig] = React.useState(rConfig);
+  const [footerConfig] = React.useState(fConfig);
 
-  const { rows: tableRows } = useTableRows(columns, data);
-  const { rows, handleSort, order, orderBy } = useSortableRows(tableRows || []);
+  const { tableStore } = useTableRows(columnsMeta, data);
+  //console.log('tableStore', tableStore);
+  const { getItems } = useModelArrayStore(tableStore);
+  const { rows, handleSort, order, orderBy } = useSortableRows(
+    getItems() || []
+  );
 
-  const totalColumns = React.useMemo(() => 
-    columns.length +
-    (rowConfig?.collapsibleConfig ? 1 : 0) +
-    (rowConfig?.selectableConfig ? 1 : 0), 
-    [columns, rowConfig]
+  const totalColumns = React.useMemo(
+    () =>
+      columnsMeta.length +
+      (rowConfig?.collapsibleConfig ? 1 : 0) +
+      (rowConfig?.selectableConfig ? 1 : 0),
+    [columnsMeta, rowConfig]
   );
 
   return (
@@ -61,20 +73,21 @@ const TableFactoryComponent = ({
           {/* Header */}
           <HeaderFactory
             {...headerConfig}
-            collapsibleConfig={{...rowConfig?.collapsibleConfig}}
-            selectableConfig={{...rowConfig?.selectableConfig}}
+            collapsibleConfig={{ ...rowConfig?.collapsibleConfig }}
+            selectableConfig={{ ...rowConfig?.selectableConfig }}
             totalColumns={totalColumns}
             onSort={handleSort}
             order={order}
             orderBy={orderBy}
-            columns={columns}
+            columns={columnsMeta}
           />
 
           {/* Rows */}
           <RowFactory
             {...rowConfig}
-            columns={columns}
+            columns={columnsMeta}
             data={rows}
+            store={tableStore}
             totalColumns={totalColumns}
           />
 
@@ -83,7 +96,7 @@ const TableFactoryComponent = ({
             <FooterFactory
               {...footerConfig}
               colSpan={totalColumns}
-              data={rows}
+              dataLength={rows.length}
             />
           )}
         </Table>
@@ -92,16 +105,15 @@ const TableFactoryComponent = ({
   );
 };
 
-const TableFactory = React.memo(TableFactoryComponent, (prevProps, nextProps) => {
-  return (
-    _.isEqual(prevProps.columns, nextProps.columns) &&
-    _.isEqual(prevProps.data, nextProps.data) &&
-    _.isEqual(prevProps.headerConfig, nextProps.headerConfig) &&
-    _.isEqual(prevProps.rowConfig, nextProps.rowConfig) &&
-    _.isEqual(prevProps.footerConfig, nextProps.footerConfig) &&
-    _.isEqual(prevProps.sx, nextProps.sx)
-  );
-});
+const TableFactory = React.memo(
+  TableFactoryComponent,
+  (prevProps, nextProps) => {
+    return (
+      _.isEqual(prevProps.sx, nextProps.sx) &&
+      _.isEqual(prevProps.data, nextProps.data) 
+    );
+  }
+);
 
 TableFactory.whyDidYouRender = true;
 
