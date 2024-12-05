@@ -1,22 +1,28 @@
 import { validators } from '@utils';
 import TransazioneEnumsV1 from './enums/TransazioneEnumsV1';
-import {FieldTypes, ValidationHooksTypes} from '@shared/metadata';
+import { FieldTypes, ValidationHooksTypes } from '@shared/metadata';
 
 const TransazioneMetadataV1 = {
-  key: {
-    key: 'key',
-    label: 'Chiave',
-    type: FieldTypes.STRING,
-  },
-
   nome: {
+    id: true,
     key: 'nome',
     label: 'Nome',
     type: FieldTypes.STRING,
     validations: {
-      [ValidationHooksTypes.ON_CONSTRUCTION]: [validators.required, validators.onlyAlphanumeric],
-      [ValidationHooksTypes.ON_PERSISTENCE]: [validators.required, validators.onlyAlphanumeric],
+      [ValidationHooksTypes.ON_CONSTRUCTION]: [
+        validators.required,
+        validators.onlyAlphanumeric,
+      ],
+      [ValidationHooksTypes.ON_PERSISTENCE]: [
+        validators.required,
+        validators.onlyAlphanumeric,
+      ],
     },
+  },
+
+  fk: {
+    key: 'fk',
+    id: true,
   },
 
   stato: {
@@ -52,6 +58,7 @@ const TransazioneMetadataV1 = {
   importoDovuto: {
     key: 'importoDovuto',
     label: 'Importo dovuto',
+    dependsOn: ['tipo'],
     type: FieldTypes.NUMBER,
     default: 0,
     validations: {
@@ -63,6 +70,7 @@ const TransazioneMetadataV1 = {
   importoCorrisposto: {
     key: 'importoCorrisposto',
     label: 'Importo corrisposto',
+    dependsOn: ['tipo'],
     type: FieldTypes.NUMBER,
     default: 0,
     validations: {

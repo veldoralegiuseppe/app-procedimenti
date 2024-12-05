@@ -20,6 +20,7 @@ const mapToRow = ({
   statoEnums,
   statoChipFlagMap,
   getId,
+  index,
 }) => {
   
   const isParzialmenteSaldato = transazione.stato === statoEnums.PARZIALMENTE_SALDATO;
@@ -33,22 +34,21 @@ const mapToRow = ({
       component: disabled ? ImportoReadOnly : ImportoInput,
       value: transazione.importoDovuto,
       sx: { width: '12rem' },
+      //selectorMeta: {methodName: 'getItemPropertyAndDependencies', params: {index, key: 'importoDovuto.value', dependencies: ['stato.value']}},
       backgroundColor: !disabled ? 'transparent' : '#cacaca29',
-      onBlur: disabled ? () => {} : (value) => onChange('importoDovuto', value),
+      onBlur: disabled ? () => {} : (value) =>  onChange({importoDovuto: value})
     },
 
     importoCorrisposto: {
-      component: disabled
-        ? ImportoReadOnly
-        : isParzialmenteSaldato
-        ? ImportoInput
-        : ImportoReadOnly,
+      component: ImportoInput,
+      disabled,
+      //selectorMeta: {methodName: 'getItemPropertyAndDependencies', params: {index, key: 'importoCorrisposto.value', dependencies: ['stato.value']}},
       value: transazione.importoCorrisposto,
       sx: { width: '12rem' },
       backgroundColor: isParzialmenteSaldato ? 'transparent' : '#cacaca29',
       onBlur: disabled
         ? () => {}
-        : (value) => onChange('importoCorrisposto', value),
+        : (value) =>  onChange({importoCorrisposto: value})
     },
 
     stato: {
@@ -57,10 +57,7 @@ const mapToRow = ({
       tooltipMessage: "prova",
       sx: { minWidth: '92.3px' },
       nextStateFn: getNextStatus,
-      onClick: (id, change) => {
-        console.log('id', id, 'change', change);
-        onChange(id, {stato: flagColorToStatoMap[change?.stato]});
-      },
+      onClick: (change) => onChange({stato: flagColorToStatoMap[change?.stato]})
     },
   };
 };
@@ -86,7 +83,7 @@ const useTransazioneTableRow = ({
     ({ transazione, index }) =>
       mapToRow({
         transazione,
-        onChange: (id, changes) => handleChange({ id, changes, index }),
+        onChange: (changes) => handleChange({changes, index }),
         disabled: disabled?.includes((nome) => nome?.toUpperCase() === transazione.nome?.toUpperCase()),
         errors,
         getNextStatus: (label) => getNextStatus(transazione, label),
@@ -94,6 +91,7 @@ const useTransazioneTableRow = ({
         statoEnums,
         statoChipFlagMap,
         getId,
+        index,
       }),
     [disabled, errors, getNextStatus]
   );
@@ -105,8 +103,8 @@ const useTransazioneTableRow = ({
   );
 
   // Gestione delle modifiche
-  const handleChange = React.useCallback(({ id, changes, index }) => {
-    console.log('handleChange', id, changes, index);
+  const handleChange = React.useCallback(({ changes, index }) => {
+    console.log('handleChange', changes, index);
     onChange?.(index, changes);
   }, [onChange]);
 

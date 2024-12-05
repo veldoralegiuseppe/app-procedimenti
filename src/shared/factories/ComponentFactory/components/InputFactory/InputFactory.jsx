@@ -68,6 +68,8 @@ const InputFactoryComponent = ({ fieldKey, inputType, store, ...props }) => {
     ...props,
   });
 
+  console.log('commonProps', commonProps)
+
   // Switch per il rendering condizionale
   switch (inputType) {
     case InputTypes.PROTOCOLLO:
@@ -112,11 +114,6 @@ const InputFactoryComponent = ({ fieldKey, inputType, store, ...props }) => {
           {...{
             ...commonProps,
             value: !commonProps.value ? 0 : commonProps.value,
-            onChange: undefined,
-            onBlur: (change) => {
-              commonProps.onBlur(change);
-              commonProps.onChange(change);
-            },
           }}
         />
       );

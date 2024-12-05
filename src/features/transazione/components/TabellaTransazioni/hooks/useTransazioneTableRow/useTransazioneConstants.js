@@ -3,7 +3,8 @@ import { FieldTypes } from '@shared/metadata';
 import _ from 'lodash';
 
 const useTransazioneConstants = () => {
-    const { enums } = ModelFactory.getMetadata(FieldTypes.TRANSAZIONE);
+
+    const { metadati, enums } = ModelFactory.getMetadata(FieldTypes.TRANSAZIONE);
     const statoEnums = enums.stato;
 
     const statoChipFlagMap = {
@@ -15,6 +16,7 @@ const useTransazioneConstants = () => {
     const flagColorToStatoMap = _.invert(statoChipFlagMap);
 
     return {
+        metadati,
         flagColorToStatoMap,
         statoChipFlagMap,
         statoEnums,

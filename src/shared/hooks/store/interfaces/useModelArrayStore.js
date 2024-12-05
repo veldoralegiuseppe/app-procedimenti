@@ -33,9 +33,10 @@ const useModelArrayStore = (arrayStore) => {
     const item = findItem(filterFn);
     return item ? item[property] : undefined;
   }, [arrayStore]);
+  const getItemPropertyAndDependencies = useCallback((index, property, dependencies) => arrayStore.getState().getItemPropertyAndDependencies(index, property, dependencies), [arrayStore]);
   
 
-  return { addItem, updateItem, removeItem, filterItems, findItem, getItemProperty, getItem, getItems, findItemProperty, updateItemById };
+  return { addItem, updateItem, removeItem, filterItems, findItem, getItemProperty, getItem, getItems, findItemProperty, updateItemById, getItemPropertyAndDependencies };
 };
 
 export default useModelArrayStore;

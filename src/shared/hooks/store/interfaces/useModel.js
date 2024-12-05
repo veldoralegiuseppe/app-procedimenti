@@ -91,6 +91,24 @@ const useModel = ({ set, get, initialModel = {}, options = {} }) => {
     getModel: () => {
       return _.cloneDeep(_.get(get(), rootPath));
     },
+
+    // Ottiene una proprietà e le sue dipendenze
+    getPropertyAndDependencies: (key, dependencies) => {
+      const path = `${rootPath}.${key}`;
+      const value = _.get(get(), path);
+
+      const dependenciesMap = Object.entries(dependencies).reduce((acc, [key, namespace]) => {
+        const fieldPath = namespace ? `${namespace}.${key}` : key;
+        const path = `${rootPath}.${fieldPath}`;
+        acc[key] = _.get(get(), path);
+        return acc;
+      }, {});
+
+      return {
+        value,
+        dependenciesMap,
+      };
+    },
   };
 };
 

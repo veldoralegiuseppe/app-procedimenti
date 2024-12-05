@@ -8,12 +8,13 @@ const FormComponentVanilla = ({index, propsArrayStore}) => {
   //console.log('index', index, 'propsArrayStore', propsArrayStore);
   const { getItem } = useModelArrayStore(propsArrayStore);
   
-  const {size, component, value, ...props} = getItem(index);
+  const {size, component, value, type, ...props} = getItem(index);
+  console.log('FormComponent', type, {...props, fieldKey: props?.key})
 
   const CustomComponent = component;
   const FieldComponent = CustomComponent
-    ? React.createElement(CustomComponent, props)
-    : React.createElement(ComponentFactory.InputFactory, props);
+    ? React.createElement(CustomComponent, {...props, fieldKey: props?.key})
+    : React.createElement(ComponentFactory.InputFactory, {...props, fieldKey: props?.key});
 
   return (
     <Grid

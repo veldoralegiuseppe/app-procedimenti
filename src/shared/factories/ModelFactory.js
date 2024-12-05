@@ -37,7 +37,11 @@ export default class ModelFactory {
 
     // Costruisce l'oggetto in base alla versione
     Object.entries(metadata).forEach(([key, value]) => {
-      if (value.type === FieldTypes.TRANSAZIONE || value.type === FieldTypes.PROCEDIMENTO){
+
+      if(key === 'type'){
+        model[key] = value;
+      }
+      else if (typeof value.type === 'object' && value.type === FieldTypes.TRANSAZIONE || value.type === FieldTypes.PROCEDIMENTO){
         model[key] = ModelFactory.create({
           initialValues: initialValues[key] || value.default || {},
           type: value.type,

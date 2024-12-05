@@ -15,8 +15,9 @@ const useModelStore = (store) => {
   const setProperty = useCallback((key, value) => store.getState().setProperty(key, value), [store]);
   const resetModel = useCallback((newModel) => store.getState().resetModel(newModel), [store]);
   const getProperty = useCallback((key) => store.getState().getProperty(key), [store]);
+  const getPropertyAndDependencies = useCallback((key, dependencies) => store.getState().getPropertyAndDependencies(key, dependencies), [store]);
   
-  return { touchedFields: undefined, setProperty, resetModel, setTouchedFields: undefined , getProperty};
+  return { touchedFields: undefined, setProperty, resetModel, setTouchedFields: undefined , getProperty, getPropertyAndDependencies };
 };
 
 export default useModelStore;

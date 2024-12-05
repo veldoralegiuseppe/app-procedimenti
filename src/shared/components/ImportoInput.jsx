@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import InputAdornment from '@mui/material/InputAdornment';
 import EuroSymbolIcon from '@mui/icons-material/EuroSymbol';
 import { CssTextField } from '@shared/theme';
+import _ from 'lodash';
 
 // Utility
 const formatValueFromNumber = (number) => {
@@ -23,20 +24,21 @@ const ImportoInput = ({
   label = '',
   sx,
   id,
-  value = 0,
   error = false,
   helperText = '',
   disabled = false,
+  value = 0,
 }) => {
+ 
   // State
-  const [importo, setImporto] = useState(formatValueFromNumber(value));
+  const [importo, setImporto] = useState(() => {
+    return formatValueFromNumber(value)
+});
 
   // Effect
   React.useEffect(() => {
-    if (value !== undefined && value !== null) {
-      const formattedValue = formatValueFromNumber(value);
-      setImporto(formattedValue);
-    }
+    const formattedValue = formatValueFromNumber(value);
+    if(!_.isEqual(importo, value)) setImporto(formattedValue);
   }, [value]);
 
   // Handle

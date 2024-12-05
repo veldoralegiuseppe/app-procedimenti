@@ -43,7 +43,7 @@ import _ from 'lodash';
  * @param {string} property - La proprietà da ottenere.
  * @returns {any} Il valore della proprietà specificata.
  */
-const useModelArray = ({set, get, initialItems=[], options = {}}) => {
+const useModelArray = ({ set, get, initialItems = [], options = {} }) => {
   const getNamespace = (key) => {
     return options?.namespace ? `${options.namespace}.${key}` : key;
   };
@@ -151,6 +151,23 @@ const useModelArray = ({set, get, initialItems=[], options = {}}) => {
       return result;
     },
 
+    // Ottiene una proprietà specifica di un elemento dell'array e le sue dipendenze
+    getItemPropertyAndDependencies: (index, property, dependencies) => {
+      const key = getNamespace(`items[${index}].${property}`);
+      const result = _.get(get(), key);
+
+      const deps = dependencies.map((dep) => {
+        const depKey = getNamespace(`items[${index}].${dep}`);
+        return _.get(get(), depKey);
+      });
+
+      if (options?.onGetItemPropertyAndDependencies) {
+        options.onGetItemPropertyAndDependencies(index, property, dependencies);
+      }
+
+      return { property: result, dependencies: deps };
+    },
+
     // Ottiene tutti gli elementi dell'array
     getItems: () => {
       const key = getNamespace('items');
@@ -162,7 +179,6 @@ const useModelArray = ({set, get, initialItems=[], options = {}}) => {
 
       return result;
     },
-
   };
 };
 

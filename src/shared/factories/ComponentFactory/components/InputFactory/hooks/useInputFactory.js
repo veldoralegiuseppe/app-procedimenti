@@ -1,7 +1,7 @@
 import { useMemo, useCallback } from 'react';
 import { useTheme } from '@mui/material/styles';
 
-const useInputFactory = ({ fieldKey, store, ...props }) => {
+const useInputFactory = ({ fieldKey, ...props }) => {
   const theme = useTheme();
  
   // Memorizzazione degli styles
@@ -34,19 +34,21 @@ const useInputFactory = ({ fieldKey, store, ...props }) => {
   // Memorizzazione dei common props
   const commonProps = useMemo(
     () => ({
+      ...props,
       label: props?.label || '',
       error: props?.error,
       helperText: props?.helperText || '',
-      onChange: (change) => handleChanges({ [fieldKey]: change }),
+      onChange: (change) => {handleChanges({ [fieldKey]: change })},
       sx: { ...inputStyles, ...props?.sx },
-      onBlur: (change) => handleBlur({ [fieldKey]: change }),
+      onBlur: (change) => {
+        handleBlur({ [fieldKey]: change })
+      },
       options: props?.options,
       size: 'small',
-      store,
-      key: fieldKey,
-      ...props,
+      
+      key: fieldKey+'-input',
     }),
-    [props, store, inputStyles, handleChanges, handleBlur]
+    [props, inputStyles, handleChanges, handleBlur]
   );
 
   return {

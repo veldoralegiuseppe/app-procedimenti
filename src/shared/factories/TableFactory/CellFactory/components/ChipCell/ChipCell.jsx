@@ -24,7 +24,7 @@ const ChipCell = ({
   const handleClick = () => {
     const {status} = handleNextState();
     updateItemById(rowId, { [columnField]: status });
-    onClick?.(rowId, { [columnField]: status });
+    onClick?.({ [columnField]: status });
   };
 
   return (

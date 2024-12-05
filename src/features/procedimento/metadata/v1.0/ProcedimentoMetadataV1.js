@@ -8,6 +8,7 @@ dayjs.locale('it');
 
 const ProcedimentoMetadataV1 = {
   numProtocollo: {
+    id: true,
     key: 'numProtocollo',
     label: 'Numero protocollo',
     type: FieldTypes.STRING,
@@ -17,6 +18,11 @@ const ProcedimentoMetadataV1 = {
       [ValidationHooksTypes.ON_PERSISTENCE]: [validators.required, validators.isProtocollo],
     },
   },
+
+  type: FieldTypes.PROCEDIMENTO,
+
+  version: '1.0',
+
   dataDeposito: {
     key: 'dataDeposito',
     label: 'Data deposito',
@@ -126,7 +132,7 @@ const ProcedimentoMetadataV1 = {
     label: 'Spese mediatore',
     type: FieldTypes.TRANSAZIONE,
     default: {
-      key: 'compensoMediatore',
+      fk: null,
       nome: 'Spese mediatore',
       tipo: 'USCITA',
     },
@@ -140,7 +146,7 @@ const ProcedimentoMetadataV1 = {
     label: 'Spese avvio sede secondaria',
     type: FieldTypes.TRANSAZIONE,
     default: {
-      key: 'speseAvvioSedeSecondaria',
+      fk: null,
       nome: 'Spese avvio sede secondaria',
       tipo: 'USCITA',
     },
@@ -154,7 +160,7 @@ const ProcedimentoMetadataV1 = {
     label: 'Spese indennità sede secondaria',
     type: FieldTypes.TRANSAZIONE,
     default: {
-      key: 'speseIndennitaSedeSecondaria',
+      fk: null,
       nome: 'Spese indennità sede secondaria',
       tipo: 'USCITA',
     },
