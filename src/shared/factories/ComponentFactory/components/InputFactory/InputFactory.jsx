@@ -195,7 +195,7 @@ const InputFactory = React.memo(
   InputFactoryComponent,
   (prevProps, nextProps) => {
     // Considero dinamici i campi: sx
-    return _.isEqual(prevProps.sx, nextProps.sx);
+    return _.isEqual(prevProps.sx, nextProps.sx) && _.isEqual(prevProps.disabled, nextProps.disabled);
   }
 );
 

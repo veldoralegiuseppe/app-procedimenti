@@ -8,7 +8,7 @@ const BaseRow = ({ id, columns, onRowClick, children, sx, components={}, store }
 
   const {findItem} = useModelArrayStore(store);
   const row = findItem(row => _.isEqual(row.id, id));
-
+  
   // Trova il SelectableDecorator basato su data-type
   const selectableChild = React.Children.toArray(children).find(
     (child) => child.props?.['data-type'] === 'selectable'

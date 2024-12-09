@@ -4,7 +4,6 @@ import useTransazioneConstants from './useTransazioneConstants';
 import useTransazioneUtils from './useTransazioneUtils';
 import _ from 'lodash';
 
-
 /**
  * Mappa una transazione in una riga della tabella.
  * @param {Object} params - Parametri per mappare una riga.
@@ -22,8 +21,10 @@ const mapToRow = ({
   getId,
   index,
 }) => {
-  
-  const isParzialmenteSaldato = transazione.stato === statoEnums.PARZIALMENTE_SALDATO;
+  console.log('transazione disabled', disabled);
+
+  const isParzialmenteSaldato =
+    transazione.stato === statoEnums.PARZIALMENTE_SALDATO;
 
   return {
     id: getId(transazione),
@@ -31,33 +32,72 @@ const mapToRow = ({
     tipo: transazione.tipo,
 
     importoDovuto: {
-      component: disabled ? ImportoReadOnly : ImportoInput,
+      component: ImportoInput,
+      disabled,
       value: transazione.importoDovuto,
+      fieldKey: `${transazione.key}.importoDovuto`,
+      owner: transazione.owner,
       sx: { width: '12rem' },
-      //selectorMeta: {methodName: 'getItemPropertyAndDependencies', params: {index, key: 'importoDovuto.value', dependencies: ['stato.value']}},
       backgroundColor: !disabled ? 'transparent' : '#cacaca29',
-      onBlur: disabled ? () => {} : (value) =>  onChange({importoDovuto: value})
+      onBlur: disabled
+        ? () => {}
+        : (value) => onChange({ importoDovuto: value }),
     },
 
     importoCorrisposto: {
       component: ImportoInput,
       disabled,
-      //selectorMeta: {methodName: 'getItemPropertyAndDependencies', params: {index, key: 'importoCorrisposto.value', dependencies: ['stato.value']}},
+      owner: transazione.owner,
+      fieldKey: `${transazione.key}.importoCorrisposto`,
+      dependencies: {
+        stato: {
+          namespace: `${transazione.key}`,
+          callback: (key, oldValue, newValue, props, store) => {
+            const model = store.getState().model[transazione.key];
+
+            if (newValue === statoEnums.SALDATO)
+              return { disabled: true, value: model.importoDovuto };
+            else return { disabled: false, value: 0 };
+          },
+        },
+      },
       value: transazione.importoCorrisposto,
       sx: { width: '12rem' },
       backgroundColor: isParzialmenteSaldato ? 'transparent' : '#cacaca29',
       onBlur: disabled
         ? () => {}
-        : (value) =>  onChange({importoCorrisposto: value})
+        : (value) => onChange({ importoCorrisposto: value }),
     },
 
     stato: {
       value: transazione.stato,
       status: statoChipFlagMap[transazione.stato],
-      tooltipMessage: "prova",
+      owner: transazione.owner,
       sx: { minWidth: '92.3px' },
+      fieldKey: `${transazione.key}.stato`,
+      dependencies: {
+        // importoCorrisposto: {
+        //   namespace: `${transazione.key}`,
+        //   callback: (key, oldValue, newValue, props, store) => {
+        //     const model = store.getState().model[transazione.key];
+        //     console.log('importoCorrisposto', newValue);
+        //     return `Rimanente: € ${model.importoDovuto - newValue}`;
+        //   },
+        // },
+        importoDovuto: {
+          namespace: `${transazione.key}`,
+          callback: (key, oldValue, newValue, props, store) => {
+            const model = store.getState().model[transazione.key];
+            console.log('importoDovuto', newValue);
+            return `Rimanente: € ${newValue - model.importoCorrisposto}`;
+          },
+        },
+      },
       nextStateFn: getNextStatus,
-      onClick: (change) => onChange({stato: flagColorToStatoMap[change?.stato]})
+      disabled,
+      onClick: disabled
+        ? () => {}
+        : (change) => onChange({ stato: flagColorToStatoMap[change?.stato] }),
     },
   };
 };
@@ -74,17 +114,24 @@ const useTransazioneTableRow = ({
   onBlur,
   errors,
 }) => {
- 
-  const { statoChipFlagMap, flagColorToStatoMap, statoEnums } = useTransazioneConstants();
-  const { getNextStatus, getId } = useTransazioneUtils({statoChipFlagMap, disabled, statoEnums});
-  
+  console.log('disabled', disabled, transazioni);
+  const { statoChipFlagMap, flagColorToStatoMap, statoEnums } =
+    useTransazioneConstants();
+  const { getNextStatus, getId } = useTransazioneUtils({
+    statoChipFlagMap,
+    disabled,
+    statoEnums,
+  });
+
   // Funzione per mappare una transazione a una riga
   const mapRow = React.useCallback(
     ({ transazione, index }) =>
       mapToRow({
         transazione,
-        onChange: (changes) => handleChange({changes, index }),
-        disabled: disabled?.includes((nome) => nome?.toUpperCase() === transazione.nome?.toUpperCase()),
+        onChange: (changes) => handleChange({ changes, index }),
+        disabled: disabled?.some(
+          (nome) => nome?.toUpperCase() === transazione.nome?.toUpperCase()
+        ),
         errors,
         getNextStatus: (label) => getNextStatus(transazione, label),
         flagColorToStatoMap,
@@ -98,15 +145,19 @@ const useTransazioneTableRow = ({
 
   // Genera i dati per la tabella
   const data = React.useMemo(
-    () => transazioni.map((transazione, index) => mapRow({ transazione, index })),
+    () =>
+      transazioni.map((transazione, index) => mapRow({ transazione, index })),
     [transazioni, mapRow]
   );
 
   // Gestione delle modifiche
-  const handleChange = React.useCallback(({ changes, index }) => {
-    console.log('handleChange', changes, index);
-    onChange?.(index, changes);
-  }, [onChange]);
+  const handleChange = React.useCallback(
+    ({ changes, index }) => {
+      console.log('handleChange', changes, index);
+      onChange?.(index, changes);
+    },
+    [onChange]
+  );
 
   return { data, handleChange };
 };

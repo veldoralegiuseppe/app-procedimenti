@@ -2,12 +2,14 @@ import { useState, useCallback } from 'react';
 import _ from 'lodash';
 
 function useDynamicOptions(initialOptions = []) {
-  const [options, setOptions] = useState(initialOptions);
 
+  const [options, setOptions] = useState(initialOptions);
+  
   const addOption = useCallback((newValue) => {
     console.log('newValue', newValue);
     setOptions((prevOptions) => {
       if (!_.some(prevOptions, newValue)) {
+        console.log('opzioni', [...prevOptions, newValue])
         return [...prevOptions, newValue];
       }
       return prevOptions;

@@ -12,6 +12,7 @@ import {
 } from '@shared/theme';
 import { ArrowDropDown as ArrowDropDownIcon, Close as CloseIcon } from '@mui/icons-material';
 import { useTheme } from '@mui/material/styles';
+import _ from 'lodash';
 
 function Select({
   label,
@@ -55,13 +56,24 @@ function Select({
       },
   };
 
+  // State
+  const [selected, setSelected] = React.useState(value || '');
+
+  // Effects
+  React.useEffect(() => {
+    if(_.isEqual(selected, value)) return;
+    setSelected(value || '');
+  }, [value]);
+
   // Handlers
   const handleClear = () => {
-    onChange?.({ target: { value: '' } });
+    setSelected('');
+    onChange?.(undefined);
     onBlur?.(undefined);
   };
   const handleChange = (event) => {
     //console.log('Select.jsx handleChange event:', event);
+    setSelected(event.target.value);
     if (onChange) onChange(event);
   };
 
@@ -82,20 +94,20 @@ function Select({
 
       <CssSelect
         labelId={`${label}-input-label`}
-        value={value}
+        value={selected}
         label={label}
         onBlur={(e) => {
-          console.log('Select.jsx onBlur e:', e.target.value);
-          //onBlur(e?.target?.value ? e.target.value?.toUpperCase() : undefined)
+          //console.log('Select.jsx onBlur e:', e, 'selected', selected);
+          onBlur(selected || undefined)
         }}
         size="small"
         renderValue={(selected) =>
           (selected && String(selected).replaceAll('_', ' ')) || ''
         }
         onChange={handleChange}
-        IconComponent={value ? () => null : ArrowDropDownIcon}
+        IconComponent={selected ? () => null : ArrowDropDownIcon}
         endAdornment={
-          value && (
+          selected && (
             <CloseIcon onClick={handleClear} style={{ cursor: 'pointer' }} />
           )
         }

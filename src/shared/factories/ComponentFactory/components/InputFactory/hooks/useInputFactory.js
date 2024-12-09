@@ -38,10 +38,10 @@ const useInputFactory = ({ fieldKey, ...props }) => {
       label: props?.label || '',
       error: props?.error,
       helperText: props?.helperText || '',
-      onChange: (change) => {handleChanges({ [fieldKey]: change })},
+      onChange: (change) => {handleChanges({ [fieldKey]: change?.target?.value ?? change })},
       sx: { ...inputStyles, ...props?.sx },
       onBlur: (change) => {
-        handleBlur({ [fieldKey]: change })
+        handleBlur({ [fieldKey]: change?.target?.value ?? change })
       },
       options: props?.options,
       size: 'small',

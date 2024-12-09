@@ -15,6 +15,7 @@ import _, { initial } from 'lodash';
 const useProcedimento = ({
   set,
   get,
+  subscribe,
   initialProcedimento,
   options = {},
 }) => {
@@ -23,6 +24,7 @@ const useProcedimento = ({
   const modelInterface = useModel({
     set,
     get,
+    subscribe,
     options: {
       ...options,
       onSetProperty: (key, value) => {
@@ -36,18 +38,16 @@ const useProcedimento = ({
   });
 
   return {
-
     // Interfaccia funzionale del model store
     ...modelInterface,
 
     // Metodi specifici
     getTransazioni: () => {
-      const metadata = ModelFactory.getMetadata(FieldTypes.PROCEDIMENTO).metadata;
-      const transazioni = Object.values(metadata)
-        .filter((m) => m.type === FieldTypes.TRANSAZIONE)
-        .map((m) => ModelFactory.create({ type: FieldTypes.TRANSAZIONE, version: m.version, initialValues: m.default }));
-  
-      return transazioni;
+      const rootPath = options?.namespace ? `${options.namespace}.model` : 'model';
+      const model = _.get(get(), rootPath)
+      console.log('getTransazioni', model);
+      
+      return _.filter(model, (value) => value?.type === FieldTypes.TRANSAZIONE);
     },
   };
 };

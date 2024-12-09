@@ -27,18 +27,18 @@ const ImportoInput = ({
   error = false,
   helperText = '',
   disabled = false,
-  value = 0,
+  value = 0
 }) => {
- 
+  
   // State
   const [importo, setImporto] = useState(() => {
-    return formatValueFromNumber(value)
-});
+    return formatValueFromNumber(value);
+  });
 
   // Effect
   React.useEffect(() => {
     const formattedValue = formatValueFromNumber(value);
-    if(!_.isEqual(importo, value)) setImporto(formattedValue);
+    if (!_.isEqual(importo, value)) setImporto(formattedValue);
   }, [value]);
 
   // Handle

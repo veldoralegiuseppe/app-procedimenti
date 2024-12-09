@@ -6,6 +6,7 @@ import AutocompleteWrapper from './components/AutocompleteWrapper';
 import DialogForm from './components/DialogForm';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
+import {useDynamicOptions} from '@shared/hooks';
 
 /**
  * Componente OptionsAutocomplete
@@ -35,7 +36,7 @@ const OptionsAutocomplete = ({
   onBlur,
   onSubmit,
   onDelete,
-  options: items,
+  options: initialOptions,
   sx,
   value: initialValue = null,
   error = false,
@@ -50,6 +51,8 @@ const OptionsAutocomplete = ({
 }) => {
   
   // Hooks
+  const {options: items, addOption, removeOption} = useDynamicOptions(initialOptions);
+
   const { open, dialogValue, openDialog, closeDialog, setDialogValue } =
     useDialog();
 
@@ -63,7 +66,7 @@ const OptionsAutocomplete = ({
       groupBy,
     });
 
-  const { isFormValid, errorMessage, validateInput } = useValidation();
+  const { isFormValid, errorMessage, validateInput } = useValidation(optionModel);
 
   // Handlers
   const onCreationSubmit = (newOption, fristTruthyKey) => {
@@ -71,6 +74,7 @@ const OptionsAutocomplete = ({
     const newValue = fristTruthyKey ? newOption[fristTruthyKey] : newOption;
    
     onSubmit?.(newOption);
+    addOption(newOption);
     handleChange(null, null, newValue);
     setValue(newValue);
     closeDialog();
@@ -111,6 +115,7 @@ const OptionsAutocomplete = ({
   const onOptionDelete = (option) => {
     //console.log('onOptionDelete', option);
     onDelete?.(option.value);
+    removeOption(option.value);
 
     const isSameValue = typeof option.value === 'string' && _.isEqual(option.value, value);
     const isSameObject = _.isEqual(option.value, value) || _.some(option.value, (val, key) => _.isEqual(val, value));

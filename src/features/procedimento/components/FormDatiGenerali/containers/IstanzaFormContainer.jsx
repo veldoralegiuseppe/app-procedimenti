@@ -1,23 +1,24 @@
 import * as React from 'react';
-import { useDynamicOptions, useMetadata } from '@shared/hooks';
+import { useMetadata } from '@shared/hooks';
 import { FieldTypes } from '@shared/metadata';
-import { useStoreContext } from '@shared/context';
 import { ModelFactory } from '@shared/factories';
 import { FormPresenter } from '@shared/components';
 
 const IstanzaFormContainer = () => {
-  const sedeDepositoCallbacks = useDynamicOptions([]);
-  const sedeSvolgimentoCallbacks = useDynamicOptions([]);
+  
   const commonSx = { width: '29.2rem' };
-  //const { procedimentoStore } = useStoreContext();
 
   const { metadata } = useMetadata({
     type: FieldTypes.PROCEDIMENTO,
     keysOrSection: ModelFactory.getMetadata(FieldTypes.PROCEDIMENTO).enums
       .sezione.ISTANZA_MEDIAZIONE,
     overrides: {
-      sedeDeposito: { ...sedeDepositoCallbacks, sx: commonSx },
-      sedeSvolgimento: { ...sedeSvolgimentoCallbacks, sx: commonSx },
+      sedeDeposito: {
+        sx: commonSx,
+      },
+      sedeSvolgimento: {
+        sx: commonSx,
+      },
       oggettoControversia: { sx: commonSx },
       esitoMediazione: { sx: commonSx },
       causaleDemandata: { sx: commonSx },

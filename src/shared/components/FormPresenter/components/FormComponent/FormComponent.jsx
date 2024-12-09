@@ -1,20 +1,25 @@
 import * as React from 'react';
-import { useModelArrayStore } from '@shared/hooks';
+import { useModelArrayStore, useModelStore } from '@shared/hooks';
 import Grid from '@mui/material/Grid2';
 import { ComponentFactory } from '@shared/factories';
 import _ from 'lodash';
+import {useStoreContext} from '@shared/context';
 
 const FormComponentVanilla = ({index, propsArrayStore}) => {
   //console.log('index', index, 'propsArrayStore', propsArrayStore);
   const { getItem } = useModelArrayStore(propsArrayStore);
-  
-  const {size, component, value, type, ...props} = getItem(index);
-  console.log('FormComponent', type, {...props, fieldKey: props?.key})
+  const {size, component, owner, ...props} = getItem(index);
 
+  const store = useStoreContext(owner);
+  console.log('store', store?.getState(), 'fieldKey', props?.key, 'owner', owner);
+  const {getPropertyAndDependencies} = useModelStore(store);
+  const {value, dependencies} = getPropertyAndDependencies(props?.key, props?.dependencies);
+  console.log('value', value, 'dependencies', dependencies);
+  
   const CustomComponent = component;
   const FieldComponent = CustomComponent
-    ? React.createElement(CustomComponent, {...props, fieldKey: props?.key})
-    : React.createElement(ComponentFactory.InputFactory, {...props, fieldKey: props?.key});
+    ? React.createElement(CustomComponent, {...props, fieldKey: props?.key, value})
+    : React.createElement(ComponentFactory.InputFactory, {...props, fieldKey: props?.key, value});
 
   return (
     <Grid

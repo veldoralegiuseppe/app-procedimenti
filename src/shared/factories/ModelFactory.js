@@ -41,7 +41,7 @@ export default class ModelFactory {
       if(key === 'type'){
         model[key] = value;
       }
-      else if (typeof value.type === 'object' && value.type === FieldTypes.TRANSAZIONE || value.type === FieldTypes.PROCEDIMENTO){
+      else if (value.type === FieldTypes.TRANSAZIONE || value.type === FieldTypes.PROCEDIMENTO){
         model[key] = ModelFactory.create({
           initialValues: initialValues[key] || value.default || {},
           type: value.type,

@@ -20,7 +20,7 @@ import { produce } from 'immer';
  * @returns {Function} getProperties - Ottiene più proprietà dal modello.
  * @returns {Function} getModel - Ottiene l'intero modello o un sottoinsieme se namespace è definito.
  */
-const useModel = ({ set, get, initialModel = {}, options = {} }) => {
+const useModel = ({ set, get, subscribe, initialModel = {}, options = {} }) => {
   const rootPath = options?.namespace ? `${options.namespace}.model` : 'model';
 
   return {
@@ -31,18 +31,27 @@ const useModel = ({ set, get, initialModel = {}, options = {} }) => {
       const path = `${rootPath}.${key}`;
       set(
         produce((state) => {
+          // Recupera l'oggetto target attuale dal percorso
+          const target = _.get(state, path, {});
+
           if (_.isObject(value)) {
-            const target = _.get(state, path, {});
-            _.set(state, path, _.merge({}, target, value));
+            // Aggiorna l'oggetto unendo il valore esistente con quello nuovo
+            const updatedValue = _.merge({}, target, value);
+            // Imposta una nuova reference per il target
+            _.set(state, path, updatedValue);
           } else {
+            // Per valori non oggetto, aggiorna direttamente
             _.set(state, path, value);
           }
         })
       );
 
+      // Chiama la callback opzionale se definita
       if (options?.onSetProperty) {
         options.onSetProperty(key, value);
       }
+
+      console.log('model', get());
     },
 
     // Rimuove una proprietà dal modello
@@ -97,16 +106,52 @@ const useModel = ({ set, get, initialModel = {}, options = {} }) => {
       const path = `${rootPath}.${key}`;
       const value = _.get(get(), path);
 
-      const dependenciesMap = Object.entries(dependencies).reduce((acc, [key, namespace]) => {
-        const fieldPath = namespace ? `${namespace}.${key}` : key;
-        const path = `${rootPath}.${fieldPath}`;
-        acc[key] = _.get(get(), path);
-        return acc;
-      }, {});
+      // Calcola le dipendenze
+      const dependenciesMap = dependencies
+        ? Object.entries(dependencies).reduce((acc, [depKey, namespace]) => {
+            const fieldPath = namespace ? `${namespace}.${depKey}` : depKey;
+            const depPath = `${rootPath}.${fieldPath}`;
+            acc[depKey] = _.get(get(), depPath);
+            return acc;
+          }, {})
+        : {};
 
+      // Gestisce la reattività
+      const unsubscribeCallbacks = [];
+
+      if (dependencies) {
+        Object.entries(dependencies).forEach(([depKey, value]) => {
+          const { namespace, callback } = value;
+          //console.log('depKey', depKey, 'namespace', namespace, 'callback', callback);
+          const fieldPath = namespace ? `${namespace}.${depKey}` : depKey;
+          const depPath = `${rootPath}.${fieldPath}`;
+
+          const unsubscribe = subscribe(
+            (state) => {
+              //console.log('Selettore per ' + depKey + ' resituisce', _.get(state, depPath));
+              return _.get(state, depPath);
+            },
+
+            (newValue, oldValue) => {
+              //console.log(`Callback per ${depKey}:`, { newValue, oldValue });
+              if (!_.isEqual(newValue, oldValue)) {
+                //console.log(`Callback attivata per ${depKey}`);
+                callback?.(depKey, oldValue, newValue);
+              } else {
+                //console.log(`Nessun cambiamento rilevato per ${depKey}`);
+              }
+            }
+          );
+          unsubscribeCallbacks.push(unsubscribe);
+        });
+      }
+
+      // Restituisce il valore e la possibilità di disiscriversi
       return {
         value,
-        dependenciesMap,
+        dependencies: dependenciesMap,
+        unsubscribe: () =>
+          unsubscribeCallbacks.forEach((unsubscribe) => unsubscribe()),
       };
     },
   };

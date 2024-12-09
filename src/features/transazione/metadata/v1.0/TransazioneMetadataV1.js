@@ -20,8 +20,8 @@ const TransazioneMetadataV1 = {
     },
   },
 
-  fk: {
-    key: 'fk',
+  key: {
+    key: 'key',
     id: true,
   },
 
@@ -78,6 +78,8 @@ const TransazioneMetadataV1 = {
       [ValidationHooksTypes.ON_PERSISTENCE]: [validators.onlyNumber],
     },
   },
+
+  type: FieldTypes.TRANSAZIONE,
 };
 
 export default TransazioneMetadataV1;

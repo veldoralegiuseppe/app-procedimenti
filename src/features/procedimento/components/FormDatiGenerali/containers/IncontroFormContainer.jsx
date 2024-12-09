@@ -6,8 +6,6 @@ import { useStoreContext } from '@shared/context';
 import { FormPresenter } from '@shared/components';
 
 const IncontroFormContainer = () => {
-  const { procedimentoStore } = useStoreContext();
-
   const commonSx = { width: '29.2rem' };
   const { metadata } = useMetadata({
     type: FieldTypes.PROCEDIMENTO,
@@ -18,9 +16,14 @@ const IncontroFormContainer = () => {
     },
   });
 
-  const inputPropsArray = Object.values(metadata).map((value) => ({
+  const inputPropsArray = Object.entries(metadata)
+  .filter(([key, value]) => typeof value === 'object')
+  .map(([key, value]) => ({
     ...value,
-    store: procedimentoStore,
+    //store: procedimentoStore, viene individuato mediante mapping nel contesto centrale
+    //onChange: (changes) => console.log(changes)
+    onBlur: (changes) => console.log(changes),
+    owner: metadata.type,
   }));
 
   //console.log('inputPropsArray', inputPropsArray)

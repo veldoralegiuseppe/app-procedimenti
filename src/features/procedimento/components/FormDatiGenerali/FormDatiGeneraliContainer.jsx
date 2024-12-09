@@ -16,17 +16,16 @@ const FormDatiGeneraliContainer = () => {
   //const { config } = useFormDatiGenerali();
 
   // Queto deve spostarsi nel componente adibito alla creazione del procedimento
-  const {procedimentoStore} = useStoreContext();
+  const procedimentoStore = useStoreContext(FieldTypes.PROCEDIMENTO);
   const {resetModel} = useProcedimentoStore(procedimentoStore);
+  const procedimento = ModelFactory.create({ type: FieldTypes.PROCEDIMENTO });
+  resetModel(procedimento);
+  console.log('procedimentoStore', procedimentoStore.getState(), 'procedimento', procedimento);
  
-  React.useEffect(() => {
-    const procedimento = ModelFactory.create({ type: FieldTypes.PROCEDIMENTO });
-    resetModel(procedimento);
-  }, [resetModel]);
-
+ 
   return (
     <Grid container sx={{ rowGap: '3rem' }}>
-      <Grid size={{ xs: 12 }}>
+      {/* <Grid size={{ xs: 12 }}>
         <IstanzaFormContainer/>
       </Grid>
 
@@ -36,7 +35,7 @@ const FormDatiGeneraliContainer = () => {
 
       <Grid size={{ xs: 12 }}>
         <MediatoreFormContainer/>
-      </Grid>
+      </Grid> */}
 
       <Grid size={{ xs: 12 }}>
         <RiepilogoTransazioniFormContainer />

@@ -6,7 +6,7 @@ const useFormPresenter = (inputPropsArray) => {
   
   // Creazione dello store 
   const propsArrayStore = useCreateStore({storeInterface: useModelArray, initialItems: inputPropsArray});
-  console.log('propsArrayStore', propsArrayStore.getState());
+  //console.log('propsArrayStore', propsArrayStore.getState());
 
   // Calcolo dei componenti 
   const renderFields = useMemo(() => {

@@ -36,7 +36,7 @@ const useChipState = ({ value, status: initialStatus, nextStateFn }) => {
     return { label: newLabel, status: newStatus, message: newMessage };
   }, [label, nextStateFn]);
 
-  return { label, status, message, chipStyles, handleNextState };
+  return { label, status, message, chipStyles, handleNextState, setMessage };
 };
 
 export default useChipState;

@@ -5,9 +5,9 @@ import Grid from '@mui/material/Grid2';
 import {TableFactory} from '@shared/factories';
 import TransazioneCellRender from './components/TransazioneCellRender';
 import useTransazioneTableRow  from './hooks/useTransazioneTableRow/useTransazioneTableRow';
-import Totali from './components/Totali';
+import _ from 'lodash';
 
-const TabellaTransazioniComponent = ({ transazioni, disabled, onChange, onBlur, errors, totali }) => {
+const TabellaTransazioniComponent = ({ transazioni, disabled, onChange, onBlur, errors }) => {
   const { data } = useTransazioneTableRow({transazioni, disabled, onChange, onBlur, errors});
 
   const columns = React.useMemo(() => [
@@ -62,6 +62,8 @@ const TabellaTransazioniComponent = ({ transazioni, disabled, onChange, onBlur, 
     },
   }), []);
 
+  
+
   return (
     <Grid container size={{ xs: 12 }} sx={{rowGap: '1.5rem'}}>
       {/* Tabella transazioni */}
@@ -79,14 +81,14 @@ const TabellaTransazioniComponent = ({ transazioni, disabled, onChange, onBlur, 
           },
         }}
       />
-
-      {/* Riepilogo totali opzionale */}
-      {totali && <Totali totali={totali} />}
     </Grid>
   );
 };
 
-const TabellaTransazioni = React.memo(TabellaTransazioniComponent);
+const TabellaTransazioni = React.memo(TabellaTransazioniComponent, (prevProps, nextProps) => {
+  // Considero dinamiche le props: disabled
+  return _.isEqual(prevProps.disabled, nextProps.disabled);
+});
 TabellaTransazioni.whyDidYouRender = true;
 
 export default TabellaTransazioni;

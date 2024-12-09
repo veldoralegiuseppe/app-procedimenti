@@ -132,7 +132,7 @@ const ProcedimentoMetadataV1 = {
     label: 'Spese mediatore',
     type: FieldTypes.TRANSAZIONE,
     default: {
-      fk: null,
+      key: 'compensoMediatore',
       nome: 'Spese mediatore',
       tipo: 'USCITA',
     },
@@ -146,7 +146,7 @@ const ProcedimentoMetadataV1 = {
     label: 'Spese avvio sede secondaria',
     type: FieldTypes.TRANSAZIONE,
     default: {
-      fk: null,
+      key: 'speseAvvioSedeSecondaria',
       nome: 'Spese avvio sede secondaria',
       tipo: 'USCITA',
     },
@@ -160,7 +160,7 @@ const ProcedimentoMetadataV1 = {
     label: 'Spese indennità sede secondaria',
     type: FieldTypes.TRANSAZIONE,
     default: {
-      fk: null,
+      key: 'speseIndennitaSedeSecondaria',
       nome: 'Spese indennità sede secondaria',
       tipo: 'USCITA',
     },

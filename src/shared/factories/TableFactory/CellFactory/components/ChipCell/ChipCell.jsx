@@ -3,7 +3,8 @@ import PropTypes from 'prop-types';
 import { Chip, Box, Tooltip } from '@mui/material';
 import useChipState from './hooks/useChipState';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
-import { useModelArrayStore } from '@shared/hooks';
+import { useModelArrayStore, useModelStore } from '@shared/hooks';
+import { useStoreContext } from '@shared/context';
 
 const ChipCell = ({
   columnField,
@@ -12,16 +13,43 @@ const ChipCell = ({
   onClick,
   nextStateFn,
   sx,
+  disabled,
+  owner,
+  fieldKey,
+  dependencies,
   ...props
 }) => {
   const { updateItemById } = useModelArrayStore(store);
-  const { label, chipStyles, status, message, handleNextState } = useChipState({
+  const { label, chipStyles, status, message, handleNextState, setMessage } = useChipState({
     value: props.value,
     status: props.status,
     nextStateFn,
   });
 
+  console.log('owner', owner);
+  const modelStore = useStoreContext(owner);
+  const { getPropertyAndDependencies } = useModelStore(modelStore);
+  const wrappedDep = React.useMemo(() => {
+    if (!dependencies) return {};
+
+    return Object.entries(dependencies).reduce((acc, [key, value]) => {
+      acc[key] = {
+        namespace: value.namespace,
+        callback: (key, oldValue, newValue) => {
+          const message = value.callback(key, oldValue, newValue, props, modelStore);
+          console.log('callback')
+          setMessage(message);
+        },
+      };
+      return acc;
+    }, {});
+  }, [dependencies, props]);
+
+  console.log('fieldKey', fieldKey, 'wrappedDep', wrappedDep);
+  getPropertyAndDependencies(fieldKey, wrappedDep);
+
   const handleClick = () => {
+    if (disabled) return;
     const {status} = handleNextState();
     updateItemById(rowId, { [columnField]: status });
     onClick?.({ [columnField]: status });

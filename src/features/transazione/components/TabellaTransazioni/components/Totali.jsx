@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import _ from 'lodash';
 
 /**
  * Componente Totali
@@ -19,7 +20,7 @@ import PropTypes from 'prop-types';
  *
  * <Totali totali={totali} />
  */
-function Totali({ totali }) {
+function Totali({ totali: tot }) {
   const tableStyle = {
     width: '100%',
     borderSpacing: '0 18px',
@@ -29,6 +30,13 @@ function Totali({ totali }) {
     fontWeight: 'bold',
     color: '#467bae',
   };
+
+  const [totali, setTotali] = React.useState(tot);
+
+  React.useEffect(() => {
+    if(_.isEqual(tot, totali)) return;
+    setTotali(tot);
+  }, [tot]);
 
   return (
     <table style={tableStyle}>

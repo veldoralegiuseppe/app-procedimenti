@@ -55,6 +55,7 @@ export const useOptionsAutocomplete = ({
   };
 
   function getOptions() {
+    console.log('getOptions', items);
     if (groupBy) {
       const groupedItems = _.groupBy(items, (item) => groupBy(item));
       const sortedItems = [];

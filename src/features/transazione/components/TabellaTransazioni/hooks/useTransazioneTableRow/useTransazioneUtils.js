@@ -1,9 +1,16 @@
 import React from 'react';
+import { useStoreContext } from '@shared/context';
 
 const useTransazioneUtils = ({ statoChipFlagMap, statoEnums, disabled }) => {
+
+  const storeMap = useStoreContext()
   
   const getNextStatus = React.useCallback(
     (transazione, currentLabel) => {
+      const model = storeMap[transazione?.owner]?.getState()?.model
+      const updatedTransazione = model[transazione?.key]
+      console.log('getNextStatus', transazione, updatedTransazione);
+
       const nextLabelMap = {
         [statoEnums.SALDATO]: statoEnums.DA_SALDARE,
         [statoEnums.PARZIALMENTE_SALDATO]: statoEnums.SALDATO,
@@ -23,7 +30,7 @@ const useTransazioneUtils = ({ statoChipFlagMap, statoEnums, disabled }) => {
         nextMessage = 'Calcolato automaticamente';
       } else if (isParzialmenteSadato) {
         nextMessage = `Rimanente: € ${
-          transazione.importoDovuto - transazione.importoCorrisposto
+          updatedTransazione.importoDovuto - updatedTransazione.importoCorrisposto
         }`;
       }
 
