@@ -61,6 +61,7 @@ const OptionsAutocomplete = ({
       initialValue,
       items,
       onChange,
+      onBlur,
       openDialog,
       setDialogValue,
       groupBy,
@@ -70,7 +71,7 @@ const OptionsAutocomplete = ({
 
   // Handlers
   const onCreationSubmit = (newOption, fristTruthyKey) => {
-    console.log('aggiunta nuova opzione', newOption, fristTruthyKey);
+    //console.log('aggiunta nuova opzione', newOption, fristTruthyKey);
     const newValue = fristTruthyKey ? newOption[fristTruthyKey] : newOption;
    
     onSubmit?.(newOption);
@@ -81,6 +82,7 @@ const OptionsAutocomplete = ({
   };
 
   const onCreationAbort = () => {
+    //console.log('abort creazione nuova opzione ');
     closeDialog();
     setValue(null);
     setDialogValue({ value: null });
@@ -88,6 +90,7 @@ const OptionsAutocomplete = ({
   };
 
   const onOptionSelected = (option, newValue) => {
+    //console.log('onOptionSelected', option, newValue);
     if (option?.key === 'add') {
       const newOption = {};
 

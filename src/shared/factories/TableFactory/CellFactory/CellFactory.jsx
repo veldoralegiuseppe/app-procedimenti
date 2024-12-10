@@ -8,18 +8,14 @@ const CellFactory = ({ column, row, sx, store }) => {
   
   const cellParams = row[column.field] ? {id:row.id, ...row[column.field]} : {id: row.id};
   const cellType = column.type || 'text';
-  const selector = () => {
-    const { methodName, params } = cellParams?.selectorMeta || {};
-    return store?.getState()?.[methodName]?.(...Object.values(params));
-  };
   
   // Rendering condizionale basato sul tipo di cella
   const renderCellContent = () => {
     switch (cellType) {
       case 'chip':
-        return <ChipCell {...cellParams} columnField={column.field} store={store} />;
+        return <ChipCell {...cellParams} columnField={column.field} store={store}/>;
       case 'input':
-        return <InputCell {...cellParams} selector={selector} columnField={column.field} store={store}/>;
+        return <InputCell {...cellParams} columnField={column.field}/>;
       case 'custom':
         return column.render ? column.render({...cellParams, rowId: cellParams.id, store, column}) : cellParams; 
       case 'text':

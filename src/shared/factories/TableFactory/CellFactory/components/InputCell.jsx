@@ -22,8 +22,9 @@ const InputCell = (props) => {
     dependencies,
     ...restProps
   } = props;
+
   const [properties, setProperties] = React.useState(restProps);
-  useStoreDependencies({
+  const {value} = useStoreDependencies({
     fieldKey,
     storeType: owner,
     dependencies,
@@ -39,10 +40,12 @@ const InputCell = (props) => {
     ? React.createElement(CustomComponent, {
         fieldKey,
         ...properties,
+        value,
       })
     : React.createElement(ComponentFactory.InputFactory, {
         fieldKey,
         ...properties,
+        value,
       });
 
   return FieldComponent;

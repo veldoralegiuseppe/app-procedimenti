@@ -4,7 +4,7 @@ import { FieldTypes } from '@shared/metadata';
 import { ModelFactory } from '@shared/factories';
 import { FormPresenter } from '@shared/components';
 
-const IstanzaFormContainer = () => {
+const IstanzaFormContainer = ({onChange, store}) => {
   
   const commonSx = { width: '29.2rem' };
 
@@ -31,7 +31,7 @@ const IstanzaFormContainer = () => {
       ...value,
       //store: procedimentoStore, viene individuato mediante mapping nel contesto centrale
       //onChange: (changes) => console.log(changes)
-      onBlur: (changes) => console.log(changes),
+      onBlur: (changes) => onChange?.({ changes }),
       owner: metadata.type,
     }));
 

@@ -1,27 +1,35 @@
-import { useMemo, useContext } from 'react';
-import { ProcedimentoContext } from '@shared/context';
+import { useState, useEffect, useMemo } from 'react';
+import { useStoreContext } from '@shared/context';
+import { ModelFactory } from '@shared/factories';
 import _ from 'lodash';
 
-// Funzione per il confronto di valori
-const isEqualWithCustomLogic = (fieldValue, modelValue) => {
-  if (fieldValue?.equals && typeof fieldValue.equals === 'function') {
-    return fieldValue.equals(modelValue);
-  }
-
-  return _.isEqual(fieldValue, modelValue);
-};
-
 // Hook per calcolare se il modello è stato modificato
-export const useModelChanged = (touchedFields, model) => {
-  const { initialModels } = useContext(ProcedimentoContext);
-  const initialModel = initialModels[model.constructor.name];
+export const useModelChanged = ({ modelType, version }) => {
+  const [initModel] = useState(() =>
+    ModelFactory.create({ type: modelType, version })
+  );
+  const [modified, setModified] = useState({});
 
-  const isModified = useMemo(() => {
-    return Object.entries(touchedFields).some(([key, value]) => {
-      const originalValue = initialModel[key];
-      return !isEqualWithCustomLogic(originalValue, value);
-    });
-  }, [touchedFields, model]);
+  const store = useStoreContext(modelType);
+  const lastUpdate = store((state) => state.lastUpdate);
 
-  return isModified;
+  useEffect(() => {
+    if (lastUpdate === null) {
+      setModified({});
+      return;
+    }
+    
+    console.log('lastUpdate', lastUpdate);
+
+    const [key, value] = Object.entries(lastUpdate)[0];
+    const initValue = initModel[key];
+
+    const isModified = typeof initValue === 'object'
+      ? !_.isEqual(initValue[Object.keys(value)[0]], Object.values(value)[0])
+      : !_.isEqual(initValue, value);
+    
+    setModified((prev) => isModified ? { ...prev, [key]: value } : _.omit(prev, key));
+  }, [lastUpdate, initModel]);
+
+  return _.isEmpty(modified);
 };

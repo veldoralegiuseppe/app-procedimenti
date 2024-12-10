@@ -21,7 +21,6 @@ const mapToRow = ({
   getId,
   index,
 }) => {
-  console.log('transazione disabled', disabled);
 
   const isParzialmenteSaldato =
     transazione.stato === statoEnums.PARZIALMENTE_SALDATO;
@@ -73,6 +72,7 @@ const mapToRow = ({
       value: transazione.stato,
       status: statoChipFlagMap[transazione.stato],
       owner: transazione.owner,
+      statusLabelMap: statoChipFlagMap,
       sx: { minWidth: '92.3px' },
       fieldKey: `${transazione.key}.stato`,
       dependencies: {
@@ -123,7 +123,7 @@ const useTransazioneTableRow = ({
   onBlur,
   errors,
 }) => {
-  console.log('disabled', disabled, transazioni);
+ 
   const { statoChipFlagMap, flagColorToStatoMap, statoEnums } =
     useTransazioneConstants();
   const { getNextStatus, getId } = useTransazioneUtils({
@@ -162,7 +162,9 @@ const useTransazioneTableRow = ({
   // Gestione delle modifiche
   const handleChange = React.useCallback(
     ({ changes, index }) => {
-      console.log('handleChange', changes, index);
+      const updatedTransazione = transazioni[index];
+      console.log('handleChange', changes, index, updatedTransazione);
+      //console.log('onChange', updatedTransazione.key, changes);
       onChange?.(index, changes);
     },
     [onChange]

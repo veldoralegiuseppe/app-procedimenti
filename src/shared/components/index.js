@@ -15,3 +15,5 @@ export {default as ProtocolloInput} from './ProtocolloInput';
 export {default as ProvinciaSelect} from './ProvinciaSelect';
 export {default as Select} from './Select';
 export {default as Stepper} from './Stepper';
+export {default as Totali} from './Totali/Totali';
+export {default as TextField} from './TextField/TextField';

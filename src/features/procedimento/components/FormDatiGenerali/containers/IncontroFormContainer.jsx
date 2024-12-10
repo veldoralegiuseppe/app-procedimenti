@@ -5,7 +5,7 @@ import { useMetadata } from '@shared/hooks';
 import { useStoreContext } from '@shared/context';
 import { FormPresenter } from '@shared/components';
 
-const IncontroFormContainer = () => {
+const IncontroFormContainer = ({onChange}) => {
   const commonSx = { width: '29.2rem' };
   const { metadata } = useMetadata({
     type: FieldTypes.PROCEDIMENTO,
@@ -22,7 +22,7 @@ const IncontroFormContainer = () => {
     ...value,
     //store: procedimentoStore, viene individuato mediante mapping nel contesto centrale
     //onChange: (changes) => console.log(changes)
-    onBlur: (changes) => console.log(changes),
+    onBlur: (changes) => onChange({changes}),
     owner: metadata.type,
   }));
 

@@ -45,7 +45,6 @@ const useInputFactory = ({ fieldKey, ...props }) => {
       },
       options: props?.options,
       size: 'small',
-      
       key: fieldKey+'-input',
     }),
     [props, inputStyles, handleChanges, handleBlur]

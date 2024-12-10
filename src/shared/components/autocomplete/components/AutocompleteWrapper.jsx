@@ -83,7 +83,7 @@ const AutocompleteWrapper = ({
       onChange={(event, value, reason) => handleChange(event, null, value, reason)}
       filterOptions={filterOptions}
       groupBy={groupBy}
-      onBlur={(e) => onBlur(value ? value.toUpperCase() : undefined)}
+      //onBlur={(e) => onBlur(value ? value.toUpperCase() : undefined)}
       selectOnFocus
       clearOnBlur
       disableClearable={!value}
@@ -113,6 +113,13 @@ const AutocompleteWrapper = ({
           {...params}
           value={value?.value || ''}
           error={error}
+          onKeyDown={(event) => {
+            console.log('onKeyDown', event);
+            if(event.key === 'Enter') {
+              event.preventDefault();
+              event.stopPropagation();
+            }
+          }}
           helperText={error ? helperText || '' : ''}
           sx={{
             '& .MuiInput-underline:before': {

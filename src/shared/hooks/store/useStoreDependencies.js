@@ -10,7 +10,8 @@ const useStoreDependencies = ({
   callback,
 }) => {
   const store = useStoreContext(storeType);
-  const { getPropertyAndDependencies } = useModelStore(store);
+  const { getPropertyAndDependencies, getProperty } = useModelStore(store);
+  const value = getProperty(fieldKey);
 
   const wrappedDep = React.useMemo(() => {
     if (!dependencies) return {};
@@ -34,9 +35,7 @@ const useStoreDependencies = ({
   }, [dependencies, args]);
 
   const {
-    unsubscribe,
-    value,
-    dependencies: dependenciesValue,
+    unsubscribe
   } = getPropertyAndDependencies(fieldKey, wrappedDep);
 
   React.useEffect(() => {
@@ -45,9 +44,15 @@ const useStoreDependencies = ({
     };
   }, []);
 
+  const notifyAll = (key, oldValue, newValue) => {
+    Object.values(wrappedDep || {}).forEach((dep) => {
+      dep.callback(key, oldValue, newValue);
+    });
+  };
+
   return {
     value,
-    dependenciesValue,
+    notifyAll,
   };
 };
 

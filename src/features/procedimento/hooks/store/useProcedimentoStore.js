@@ -3,10 +3,7 @@ import { useModelStore } from '@shared/hooks';
 
 const useProcedimentoStore = (store) => {
   const modelStoreInterface = useModelStore(store);
-  const getTransazioni = useCallback(
-    () => store.getState().getTransazioni(),
-    [store]
-  );
+  const getTransazioni = useCallback(() => store.getState().getTransazioni(),[store]);
 
   return { ...modelStoreInterface, getTransazioni };
 };

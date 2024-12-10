@@ -1,14 +1,14 @@
-import React from 'react';
+
+import React, { memo } from 'react';
 import { ClearButton } from '@shared/theme';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useTheme } from '@mui/material/styles';
 import { useModelChanged } from './hooks/useModelChanged';
 
-function ClearBtn({ onClick, touchedFields, model }) {
+const ClearBtn = memo(function ClearBtn({ onClick, modelType, version }) {
   const theme = useTheme();
-  const isModified = useModelChanged(touchedFields, model);
-
-
+  const isModified = useModelChanged({ modelType, version });
+  
   return (
     <ClearButton
       variant="outlined"
@@ -16,7 +16,7 @@ function ClearBtn({ onClick, touchedFields, model }) {
       startIcon={
         <DeleteIcon
           sx={{
-            color: !isModified
+            color: isModified
               ? 'rgb(105 105 105 / 60%)'
               : theme.palette.primary.main,
           }}
@@ -26,11 +26,11 @@ function ClearBtn({ onClick, touchedFields, model }) {
         fontSize: '.9rem',
         '&.Mui-disabled': { color: theme.palette.text.disabled },
       }}
-      disabled={!isModified}
+      disabled={isModified}
     >
       Pulisci campi
     </ClearButton>
   );
-}
+});
 
 export default ClearBtn;

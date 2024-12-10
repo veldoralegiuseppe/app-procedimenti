@@ -25,6 +25,7 @@ const useModel = ({ set, get, subscribe, initialModel = {}, options = {} }) => {
 
   return {
     model: initialModel,
+    lastUpdate: null,
 
     // Imposta una proprietà del modello
     setProperty: (key, value) => {
@@ -46,12 +47,16 @@ const useModel = ({ set, get, subscribe, initialModel = {}, options = {} }) => {
         })
       );
 
+      set(
+        produce((state) => {
+          state.lastUpdate = { [key]: value };
+        })
+      );
+
       // Chiama la callback opzionale se definita
       if (options?.onSetProperty) {
         options.onSetProperty(key, value);
       }
-
-      console.log('model', get());
     },
 
     // Rimuove una proprietà dal modello
@@ -76,9 +81,17 @@ const useModel = ({ set, get, subscribe, initialModel = {}, options = {} }) => {
         })
       );
 
+      set(
+        produce((state) => {
+          state.lastUpdate = null;
+        })
+      );
+
       if (options?.onResetModel) {
         options.onResetModel(newModel);
       }
+
+      console.log('lastUpdate', get().lastUpdate);
     },
 
     // Ottiene una proprietà dal modello
@@ -98,7 +111,7 @@ const useModel = ({ set, get, subscribe, initialModel = {}, options = {} }) => {
 
     // Ottiene l'intero modello o un sottoinsieme se namespace è definito
     getModel: () => {
-      return _.cloneDeep(_.get(get(), rootPath));
+      return _.get(get(), rootPath);
     },
 
     // Ottiene una proprietà e le sue dipendenze
@@ -149,7 +162,7 @@ const useModel = ({ set, get, subscribe, initialModel = {}, options = {} }) => {
       // Restituisce il valore e la possibilità di disiscriversi
       return {
         value,
-        dependencies: dependenciesMap,
+        //dependencies: dependenciesMap,
         unsubscribe: () =>
           unsubscribeCallbacks.forEach((unsubscribe) => unsubscribe()),
       };

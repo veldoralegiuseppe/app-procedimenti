@@ -14,11 +14,12 @@ import { useCallback } from 'react';
 const useModelStore = (store) => {
   const setProperty = useCallback((key, value) => store.getState().setProperty(key, value), [store]);
   const resetModel = useCallback((newModel) => store.getState().resetModel(newModel), [store]);
-  const getProperty = useCallback((key) => store.getState().getProperty(key), [store]);
-  const getProperties = useCallback((keys) => store.getState().getProperties(keys), [store]);
+  const getModel = useCallback(() => store.getState().getModel(), [store]);
+  const getProperty = useCallback((key) => store(state => state.getProperty(key)), [store]);
+  const getProperties = useCallback((keys) => store(state => state.getProperties(keys)), [store]);
   const getPropertyAndDependencies = useCallback((key, dependencies) => store.getState().getPropertyAndDependencies(key, dependencies), [store]);
   
-  return { touchedFields: undefined, setProperty, resetModel, setTouchedFields: undefined , getProperty, getProperties, getPropertyAndDependencies };
+  return { touchedFields: undefined, getModel, setProperty, resetModel, setTouchedFields: undefined , getProperty, getProperties, getPropertyAndDependencies };
 };
 
 export default useModelStore;

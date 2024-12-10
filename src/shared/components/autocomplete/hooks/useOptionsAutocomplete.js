@@ -5,6 +5,7 @@ export const useOptionsAutocomplete = ({
   initialValue,
   items,
   onChange,
+  onBlur,
   openDialog,
   setDialogValue,
   groupBy,
@@ -25,6 +26,7 @@ export const useOptionsAutocomplete = ({
     } else {
       //console.log('onChange', !newValue ? undefined : newValue);
       onChange?.(!newValue ? undefined : newValue);
+      onBlur?.(!newValue ? undefined : newValue);
       if(reason === 'clear') setValue(null);
     }
 

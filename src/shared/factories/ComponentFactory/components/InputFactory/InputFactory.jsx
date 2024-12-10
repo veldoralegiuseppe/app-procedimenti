@@ -17,6 +17,7 @@ import {
   ImportoInput,
   Select,
   OptionsAutocomplete,
+  TextField
 } from '@shared/components';
 import { CssTextField, labelColor } from '@shared/theme';
 import { TitoliAutocomplete } from '@features/persona';
@@ -120,7 +121,7 @@ const InputFactoryComponent = ({ fieldKey, inputType, store, ...props }) => {
 
     case InputTypes.TEXT:
       return (
-        <CssTextField
+        <TextField
           {...{
             ...commonProps,
             onBlur: (e) => {
@@ -194,8 +195,8 @@ const InputFactoryComponent = ({ fieldKey, inputType, store, ...props }) => {
 const InputFactory = React.memo(
   InputFactoryComponent,
   (prevProps, nextProps) => {
-    // Considero dinamici i campi: sx
-    return _.isEqual(prevProps.sx, nextProps.sx) && _.isEqual(prevProps.disabled, nextProps.disabled);
+    // Considero dinamici i campi: sx, disabled, value
+    return _.isEqual(prevProps.value, nextProps.value) &&  _.isEqual(prevProps.disabled, nextProps.disabled) && _.isEqual(prevProps.sx, nextProps.sx);
   }
 );
 

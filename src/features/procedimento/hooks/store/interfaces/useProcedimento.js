@@ -32,6 +32,7 @@ const useProcedimento = ({
         if (result?.error) {
           console.error(`Errore nella pipeline per ${key}:`, result.error);
         }
+        options?.onSetProperty?.(key, value);
       },
     },
     initialModel: initialProcedimento,
@@ -45,8 +46,7 @@ const useProcedimento = ({
     getTransazioni: () => {
       const rootPath = options?.namespace ? `${options.namespace}.model` : 'model';
       const model = _.get(get(), rootPath)
-      console.log('getTransazioni', model);
-      
+          
       return _.filter(model, (value) => value?.type === FieldTypes.TRANSAZIONE);
     },
   };

@@ -46,6 +46,7 @@ const DialogForm = ({
     if(!inputsValue) return;
 
     if (typeof inputsValue === 'string') {
+      //console.log('inputsValue', inputsValue, 'validations', validations);
       const inputValidations = !Array.isArray(validations)
         ? (validations ? Array.of(validations) : undefined)
         : validations;
@@ -57,6 +58,7 @@ const DialogForm = ({
         ).errorMessage,
       });
     } else {
+      //console.log('inputsValue', inputsValue, 'validations', validations);
       const newInputsValidity = Object.entries(inputsValue).reduce(
         (acc, [key, value]) => {
           const inputValidations = validations?.[key];

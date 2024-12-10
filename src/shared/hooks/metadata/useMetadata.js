@@ -2,8 +2,8 @@ import _ from 'lodash';
 import { ModelFactory } from '@shared/factories';
 
 const useMetadata = ({ type, version, keysOrSection, overrides }) => {
-  let metadataEnums = ModelFactory.getMetadata(type, version);
-  let metadata = metadataEnums.metadata;
+  let metadataEntry = ModelFactory.getMetadata(type, version);
+  let metadata = metadataEntry.metadata;
   
   if (Array.isArray(keysOrSection)) {
     metadata = keysOrSection.reduce((acc, key) => {
@@ -12,9 +12,8 @@ const useMetadata = ({ type, version, keysOrSection, overrides }) => {
     metadata.type = type
   }
 
-  console.log('useMetadata', metadata)
   return {
-    enums: metadataEnums.enums,
+    enums: metadataEntry.enums,
     metadata: _.merge(metadata, overrides),
   };
 };

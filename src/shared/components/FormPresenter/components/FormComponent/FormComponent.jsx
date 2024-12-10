@@ -12,9 +12,8 @@ const FormComponentVanilla = ({index, propsArrayStore}) => {
 
   const store = useStoreContext(owner);
   console.log('store', store?.getState(), 'fieldKey', props?.key, 'owner', owner);
-  const {getPropertyAndDependencies} = useModelStore(store);
-  const {value, dependencies} = getPropertyAndDependencies(props?.key, props?.dependencies);
-  console.log('value', value, 'dependencies', dependencies);
+  const {getProperty} = useModelStore(store);
+  const value = getProperty(props?.key);
   
   const CustomComponent = component;
   const FieldComponent = CustomComponent
