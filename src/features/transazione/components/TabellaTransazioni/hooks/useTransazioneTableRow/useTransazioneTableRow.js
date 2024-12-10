@@ -52,7 +52,7 @@ const mapToRow = ({
       dependencies: {
         stato: {
           namespace: `${transazione.key}`,
-          callback: (key, oldValue, newValue, props, store) => {
+          callback: ({key, oldValue, newValue, props, store}) => {
             const model = store.getState().model[transazione.key];
 
             if (newValue === statoEnums.SALDATO)
@@ -76,17 +76,22 @@ const mapToRow = ({
       sx: { minWidth: '92.3px' },
       fieldKey: `${transazione.key}.stato`,
       dependencies: {
-        // importoCorrisposto: {
-        //   namespace: `${transazione.key}`,
-        //   callback: (key, oldValue, newValue, props, store) => {
-        //     const model = store.getState().model[transazione.key];
-        //     console.log('importoCorrisposto', newValue);
-        //     return `Rimanente: € ${model.importoDovuto - newValue}`;
-        //   },
-        // },
+        importoCorrisposto: {
+          namespace: `${transazione.key}`,
+          callback: ({key, oldValue, newValue, props, store}) => {
+            console.log('importoCorrisposto', key, oldValue, newValue, props);
+            const model = store.getState().model[transazione.key];
+            const stato = model.stato;
+
+            if(stato === statoEnums.PARZIALMENTE_SALDATO) 
+              return `Rimanente: € ${model.importoDovuto - newValue }`;
+            else 
+              return '';
+          },
+        },
         importoDovuto: {
           namespace: `${transazione.key}`,
-          callback: (key, oldValue, newValue, props, store) => {
+          callback: ({key, oldValue, newValue, props, store}) => {
             const model = store.getState().model[transazione.key];
             const stato = model.stato;
 

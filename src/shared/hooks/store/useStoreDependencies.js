@@ -1,5 +1,6 @@
 import * as React from 'react';
 import { useStoreContext } from '@shared/context';
+import { useModelStore } from '@shared/hooks';
 
 const useStoreDependencies = ({
   fieldKey,
@@ -30,7 +31,7 @@ const useStoreDependencies = ({
       };
       return acc;
     }, {});
-  }, [dependencies, properties]);
+  }, [dependencies, args]);
 
   const {
     unsubscribe,

@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { ComponentFactory } from '@shared/factories';
-import { useModelStore, useStoreDependencies } from '@shared/hooks';
-import { useStoreContext } from '@shared/context';
+import { useStoreDependencies } from '@shared/hooks';
 import PropTypes from 'prop-types';
 
 /**
