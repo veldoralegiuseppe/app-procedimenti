@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ComponentFactory } from '@shared/factories';
-import { useModelStore } from '@shared/hooks';
+import { useModelStore, useStoreDependencies } from '@shared/hooks';
 import { useStoreContext } from '@shared/context';
 import PropTypes from 'prop-types';
 
@@ -24,27 +24,17 @@ const InputCell = (props) => {
     ...restProps
   } = props;
   const [properties, setProperties] = React.useState(restProps);
-
-  const store = useStoreContext(owner);
-  const { getPropertyAndDependencies } = useModelStore(store);
-  const wrappedDep = React.useMemo(() => {
-    if (!dependencies) return {};
-
-    return Object.entries(dependencies).reduce((acc, [key, value]) => {
-      acc[key] = {
-        namespace: value.namespace,
-        callback: (key, oldValue, newValue) => {
-          const changes = value.callback(key, oldValue, newValue, properties, store);
-          if (Object.entries(changes).some(([k, v]) => properties[k] !== v)) {
-            setProperties((prev) => ({ ...prev, ...changes }));
-          }
-        },
-      };
-      return acc;
-    }, {});
-  }, [dependencies, properties]);
-
-  getPropertyAndDependencies(fieldKey, wrappedDep);
+  useStoreDependencies({
+    fieldKey,
+    storeType: owner,
+    dependencies,
+    args: { properties },
+    callback: ({changes}) => {
+      if (Object.entries(changes).some(([k, v]) => properties[k] !== v)) {
+        setProperties((prev) => ({ ...prev, ...changes }));
+      }
+    },
+  });
 
   const FieldComponent = CustomComponent
     ? React.createElement(CustomComponent, {

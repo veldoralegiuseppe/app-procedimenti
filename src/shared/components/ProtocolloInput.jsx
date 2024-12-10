@@ -53,7 +53,8 @@ export default function ProtocolloInput({
   }, [numProtocollo]);
 
   const handleChange = (e) => {
-    if (!validators.onlyNumber(e.target.value) === true) {
+    if (typeof validators.onlyNumber(e.target.value) === 'string') {
+      console.log('input errato');
       e.preventDefault();
       e.target.value = e.target.value.slice(0, -1);
     }
@@ -61,6 +62,7 @@ export default function ProtocolloInput({
 
   const handleOnBlur = () => {
     const protocollo = fillProtocollo(numProtocolloRef.current.value);
+    if(protocollo) numProtocolloRef.current.value = protocollo;
     const anno = annoRef.current.value;
     const numProtocollo = `${protocollo}/${anno}`;
     onBlur?.(numProtocollo);

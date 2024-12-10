@@ -25,7 +25,7 @@ const FormDatiGeneraliContainer = () => {
  
   return (
     <Grid container sx={{ rowGap: '3rem' }}>
-      {/* <Grid size={{ xs: 12 }}>
+      <Grid size={{ xs: 12 }}>
         <IstanzaFormContainer/>
       </Grid>
 
@@ -35,17 +35,15 @@ const FormDatiGeneraliContainer = () => {
 
       <Grid size={{ xs: 12 }}>
         <MediatoreFormContainer/>
-      </Grid> */}
+      </Grid>
 
       <Grid size={{ xs: 12 }}>
         <RiepilogoTransazioniFormContainer />
       </Grid>
-
-      {/* <Grid size={{ xs: 12 }}>
+{/* 
+      <Grid size={{ xs: 12 }}>
         <ClearButton
-          touchedFields={touchedFields}
-          model={config.model}
-          onClick={onReset}
+          onClick={resetModel}
         />
       </Grid> */}
     </Grid>

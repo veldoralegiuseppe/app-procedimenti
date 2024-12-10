@@ -88,8 +88,12 @@ const mapToRow = ({
           namespace: `${transazione.key}`,
           callback: (key, oldValue, newValue, props, store) => {
             const model = store.getState().model[transazione.key];
-            console.log('importoDovuto', newValue);
-            return `Rimanente: € ${newValue - model.importoCorrisposto}`;
+            const stato = model.stato;
+
+            if(stato === statoEnums.PARZIALMENTE_SALDATO) 
+              return `Rimanente: € ${newValue - model.importoCorrisposto}`;
+            else 
+              return '';
           },
         },
       },
