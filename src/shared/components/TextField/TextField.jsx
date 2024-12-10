@@ -1,4 +1,5 @@
-import { CssTextField, labelColor } from '@shared/theme';
+import { CssTextField } from '@shared/theme';
+import { useErrorValidations } from '@shared/hooks';
 import React from 'react';
 import _ from 'lodash';
 
@@ -7,9 +8,11 @@ const TextField = ({
   value: initValue = '',
   onChange: callback,
   onBlur,
+  errorValidations = [],
   ...props
 }) => {
   const [value, setValue] = React.useState(initValue);
+  const { errors, validate } = useErrorValidations(errorValidations);
   const [label] = React.useState(lbl);
 
   React.useEffect(() => {
@@ -20,8 +23,10 @@ const TextField = ({
 
   const onChange = React.useCallback(
     (e) => {
+      const value = e.target.value;
       setValue(e.target.value);
-      callback(e);
+      validate(value);
+      callback(e, errors);
     },
     [callback]
   );
@@ -31,6 +36,8 @@ const TextField = ({
       {...props}
       label={label}
       value={value}
+      error={Object.keys(errors).length > 0}
+      helperText={Object.values(errors)[0] || ''}
       onChange={onChange}
       onBlur={onBlur}
     />

@@ -8,7 +8,10 @@ const TitoliAutocomplete = ({ label, sx, onBlur }) => {
   return (
     <OptionsAutocomplete
       label={label || 'Titolo'}
-      validations={{ maschile: ['required'] }}
+      validations={{
+        maschile: ['required', 'onlyAlphabetic'],
+        femminile: ['onlyAlphabetic'],
+      }}
       onFormPopulate={(inputValue) =>
         String(inputValue).endsWith('A')
           ? { maschile: '', femminile: inputValue }

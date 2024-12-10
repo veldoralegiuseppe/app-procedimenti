@@ -117,12 +117,14 @@ const ProcedimentoMetadataV1 = {
     validations: {
       [ValidationHooksTypes.ON_PERSISTENCE]: [validators.onlyAlphabetic],
     },
+    errorValidations: [validators.onlyAlphabetic],
   },
   cognomeMediatore: {
     key: 'cognomeMediatore',
     label: 'Cognome mediatore',
     type: FieldTypes.STRING,
     inputType: InputTypes.TEXT,
+    errorValidations: [validators.onlyAlphabetic],
     validations: {
       [ValidationHooksTypes.ON_PERSISTENCE]: [validators.onlyAlphabetic],
     },
