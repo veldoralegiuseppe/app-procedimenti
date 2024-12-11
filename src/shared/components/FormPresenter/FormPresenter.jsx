@@ -22,7 +22,7 @@ import _ from 'lodash';
  * In altre parole anche se FormComponent non ha un re-render questo non impedisce ai suoi children di aggiornarsi.
  *
  * @component
- * @param {Object[]} inputPropsArray - Array statico di oggetti che rappresentano le props di input per rispettivi campi.
+ * @param {Object[]} inputPropsArray - Array statico di oggetti che rappresentano le props dell'input per i rispettivi campi.
  * @param {string} inputPropsArray[].key - Chiave univoca per il campo nello store.
  * @param {string} inputPropsArray[].store - Store Zustand da cui gli input leggono i dati.
  * @param {string} inputPropsArray[].inputType - Tipo di input da renderizzare.

@@ -1,2 +1,3 @@
-export * from './usePersona';
-export * from './usePersone';
+export {default as usePersona} from './store/interfaces/usePersona';
+export {default as usePersone} from './store/interfaces/usePersone';
+export {default as usePersonaStore} from './store/usePersonaStore';

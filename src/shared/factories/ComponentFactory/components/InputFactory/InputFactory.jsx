@@ -17,7 +17,8 @@ import {
   ImportoInput,
   Select,
   OptionsAutocomplete,
-  TextField
+  TextField,
+  CodiceFiscaleInput,
 } from '@shared/components';
 import { CssTextField, labelColor } from '@shared/theme';
 import { TitoliAutocomplete } from '@features/persona';
@@ -61,8 +62,6 @@ dayjs.locale('it');
  * />
  */
 const InputFactoryComponent = ({ fieldKey, inputType, store, ...props }) => {
-  
-
   const { commonProps } = useInputFactory({
     fieldKey,
     store,
@@ -187,6 +186,9 @@ const InputFactoryComponent = ({ fieldKey, inputType, store, ...props }) => {
     case InputTypes.TITOLO_PERSONA:
       return <TitoliAutocomplete {...commonProps} />;
 
+    case InputTypes.CODICE_FISCALE:
+      return <CodiceFiscaleInput {...commonProps} />;
+
     default:
       return null;
   }
@@ -196,7 +198,11 @@ const InputFactory = React.memo(
   InputFactoryComponent,
   (prevProps, nextProps) => {
     // Considero dinamici i campi: sx, disabled, value
-    return _.isEqual(prevProps.value, nextProps.value) &&  _.isEqual(prevProps.disabled, nextProps.disabled) && _.isEqual(prevProps.sx, nextProps.sx);
+    return (
+      _.isEqual(prevProps.value, nextProps.value) &&
+      _.isEqual(prevProps.disabled, nextProps.disabled) &&
+      _.isEqual(prevProps.sx, nextProps.sx)
+    );
   }
 );
 

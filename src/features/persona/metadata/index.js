@@ -1,0 +1,1 @@
+export {default as PersonaFisicaMetadata} from './personaFisica/PersonaFisicaMetadata';

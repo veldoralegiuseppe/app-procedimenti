@@ -5,6 +5,7 @@ import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 
 import {CreaProcedimento, Dashboard} from '@pages';
 import {FormDatiGeneraliContainer} from '@features/procedimento';
+import {FormPersonaFisicaContainer} from '@features/persona';
 
 
 export const routes = [
@@ -28,20 +29,7 @@ export const routes = [
         icon: <SearchOutlinedIcon />,
         label: 'Ricerca procedimento',
         component: (
-          // <TabellaPartiControparti />
-          //<TabellaTransazioni data={data} rowConfig={rowConfig}/>
-          //<ProcedimentoFormContainer />
-          <FormDatiGeneraliContainer/>
-          //<ComponentFactory.InputFactory store={useProcedimento} fieldKey={"dataDeposito"}/>
-          // <FormPresenter
-          //   sezione="Istanza di mediazione"
-          //   store={useProcedimento}
-          //   errors={{}}
-          //   campi={Object.values(Procedimento.getMetadati()).filter(
-          //     (c) => c.sezione === 'Istanza di mediazione'
-          //   )}
-          // />
-          // <MyComponent />
+         <FormPersonaFisicaContainer />
         ),
       }, 
     ],

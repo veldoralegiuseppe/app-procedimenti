@@ -9,7 +9,7 @@ import { inputValidator, updateValidator } from '@utils/filters';
  * @param {Object} [options={}] - Opzioni aggiuntive per la configurazione del modello.
  * @returns {Object} - L'oggetto contenente il modello e le funzioni del modello.
  */
-export const usePersona = ({ set, get, initialPersona, options = {} }) => {
+const usePersona = ({ set, get, initialPersona, options = {} }) => {
   const updateModelPipeline = new Pipeline([]);
 
   return {
@@ -29,3 +29,5 @@ export const usePersona = ({ set, get, initialPersona, options = {} }) => {
     }),
   };
 };
+
+export default usePersona;

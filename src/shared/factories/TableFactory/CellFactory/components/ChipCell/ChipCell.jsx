@@ -8,7 +8,6 @@ import _ from 'lodash';
 const ChipCell = ({
   columnField,
   id: rowId,
-  store,
   onClick,
   nextStateFn,
   statusLabelMap,
@@ -19,7 +18,7 @@ const ChipCell = ({
   dependencies,
   ...props
 }) => {
-  const { updateItemById } = useModelArrayStore(store);
+  //const { updateItemById } = useModelArrayStore(store);
   const { label, chipStyles, status, message, handleNextState, setMessage, setLabel, setStatus } =
     useChipState({
       value: props.value,
@@ -49,7 +48,7 @@ const ChipCell = ({
   const handleClick = () => {
     if (disabled) return;
     const { status } = handleNextState();
-    updateItemById(rowId, { [columnField]: status });
+    //updateItemById(rowId, { [columnField]: status });
     onClick?.({ [columnField]: status });
   };
 

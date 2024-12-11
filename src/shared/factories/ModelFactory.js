@@ -1,6 +1,7 @@
 import { ProcedimentoMetadata } from '@features/procedimento';
 import { TransazioneMetadata } from '@features/transazione';
 import { FieldTypes, ValidationHooksTypes } from '@shared/metadata';
+import {PersonaFisicaMetadata} from '@features/persona';
 
 /**
  * Classe per la creazione di oggetti basati su versioni specifiche e metadati.
@@ -9,6 +10,7 @@ export default class ModelFactory {
   static #metadata = {
     [FieldTypes.PROCEDIMENTO]: ProcedimentoMetadata,
     [FieldTypes.TRANSAZIONE]: TransazioneMetadata,
+    [FieldTypes.PERSONA_FISICA]: PersonaFisicaMetadata,
   };
 
   /**

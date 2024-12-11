@@ -1,8 +1,9 @@
 import { validators } from '@utils';
+import PersonaFisicaEnumsV1 from './enums/PersonaFisicaEnumsV1';
 import {InputTypes, FieldTypes, ValidationHooksTypes} from '@shared/metadata';
 
 const PersonaFisicaMetadataV1 = {
-  type: FieldTypes.PEERSONA_FISICA,
+  type: FieldTypes.PERSONA_FISICA,
 
   version: '1.0',
 
@@ -10,8 +11,7 @@ const PersonaFisicaMetadataV1 = {
     key: 'codiceFiscale',
     label: 'Codice fiscale',
     type: FieldTypes.STRING,
-    inputType: InputTypes.TEXT,
-    inputValidations: [validators.required],
+    inputType: InputTypes.CODICE_FISCALE,
   },
 
   nome: {
@@ -32,28 +32,50 @@ const PersonaFisicaMetadataV1 = {
 
   dataNascita: {
     key: 'dataNascita',
-    label: 'Data di nasita',
+    label: 'Data di nascita',
     type: FieldTypes.DATE,
     inputType: InputTypes.DATE,
   },
 
-  luogoDiNascita: {
-    key: 'luogoDiNascita',
-    label: 'Luogo di nascita',
+  comuneNascita: {
+    key: 'comuneNascita',
+    label: 'Comune nascita',
+    type: FieldTypes.STRING,
+    inputType: InputTypes.TEXT,
+  },
+
+  provinciaNascita: {
+    key: 'provinciaNascita',
+    label: 'Provincia nascita',
+    type: FieldTypes.STRING,
+    inputType: InputTypes.TEXT,
+  },
+
+  capComuneNascita: {
+    key: 'capComuneNascita',
+    label: 'CAP',
     type: FieldTypes.STRING,
     inputType: InputTypes.TEXT,
   },
 
   sesso: {
     key: 'sesso',
-    label: 'Sesso',
+    label: 'Genere',
+    type: FieldTypes.STRING,  
+    options: PersonaFisicaEnumsV1.sesso,
+    inputType: InputTypes.SELECT,
+  },
+
+  comuneResidenza: {
+    key: 'comuneResidenza',
+    label: 'Comune residenza',
     type: FieldTypes.STRING,
     inputType: InputTypes.TEXT,
   },
 
-  residenza: {
-    key: 'residenza',
-    label: 'Residenza',
+  provinciaResidenza: {
+    key: 'provinciaResidenza',
+    label: 'Provincia residenza',
     type: FieldTypes.STRING,
     inputType: InputTypes.TEXT,
   },
@@ -61,6 +83,13 @@ const PersonaFisicaMetadataV1 = {
   indirizzoResidenza: {
     key: 'indirizzoResidenza',
     label: 'Indirizzo residenza',
+    type: FieldTypes.STRING,
+    inputType: InputTypes.TEXT,
+  },
+
+  capComuneResidenza: {
+    key: 'capComuneResidenza',
+    label: 'CAP',
     type: FieldTypes.STRING,
     inputType: InputTypes.TEXT,
   },
@@ -74,20 +103,27 @@ const PersonaFisicaMetadataV1 = {
 
   pecEmail: {
     key: 'pecEmail',
-    label: 'PEC email',
-    type: FieldTypes.STRING,
-    inputType: InputTypes.EMAIL,
-  },
-
-  rappresentanteLegale: {
-    key: 'rappresentanteLegale',
-    label: 'Rappresentante legale',
+    label: 'PEC/Email',
     type: FieldTypes.STRING,
     inputType: InputTypes.TEXT,
   },
 
-  rappresentanteLegalePecEmail: {
-    key: 'rappresentanteLegalePecEmail',
+  nomeRappresentanteLegale: {
+    key: 'nomeRappresentanteLegale',
+    label: 'Nome avvocato',
+    type: FieldTypes.STRING,
+    inputType: InputTypes.TEXT,
+  },
+
+  cognomeRappresentanteLegale: {
+    key: 'cognomeRappresentanteLegale',
+    label: 'Cognome avvocato',
+    type: FieldTypes.STRING,
+    inputType: InputTypes.TEXT,
+  },
+
+  pecEmailRappresentanteLegale: {
+    key: 'pecEmailRappresentanteLegale',
     label: 'PEC/Email',
     type: FieldTypes.STRING,
     inputType: InputTypes.TEXT,
@@ -98,7 +134,7 @@ const PersonaFisicaMetadataV1 = {
     label: 'Spese avvio',
     type: FieldTypes.NUMBER,
     default: 0,
-    inputType: InputTypes.NUMBER,
+    inputType: InputTypes.IMPORTO,
   },
 
   spesePostali: {
@@ -106,7 +142,7 @@ const PersonaFisicaMetadataV1 = {
     label: 'Spese postali',
     type: FieldTypes.NUMBER,
     default: 0,
-    inputType: InputTypes.NUMBER,
+    inputType: InputTypes.IMPORTO,
   },
 
   speseIndennita: {
@@ -114,7 +150,7 @@ const PersonaFisicaMetadataV1 = {
     label: 'Spese indennità',
     type: FieldTypes.NUMBER,
     default: 0,
-    inputType: InputTypes.NUMBER,
+    inputType: InputTypes.IMPORTO,
   },
 
   speseMancatoAccordo: {
@@ -122,7 +158,7 @@ const PersonaFisicaMetadataV1 = {
     label: 'Spese mancato accordo',
     type: FieldTypes.NUMBER,
     default: 0,
-    inputType: InputTypes.NUMBER,
+    inputType: InputTypes.IMPORTO,
   },
 
   spesePositivoPrimoIncontro: {
@@ -130,7 +166,7 @@ const PersonaFisicaMetadataV1 = {
     label: 'Spese positivo primo incontro',
     type: FieldTypes.NUMBER,
     default: 0,
-    inputType: InputTypes.NUMBER,
+    inputType: InputTypes.IMPORTO,
   },
 
   spesePositivoOltrePrimoIncontro: {
@@ -138,7 +174,7 @@ const PersonaFisicaMetadataV1 = {
     label: 'Spese positivo oltre primo incontro',
     type: FieldTypes.NUMBER,
     default: 0,
-    inputType: InputTypes.NUMBER,
+    inputType: InputTypes.IMPORTO,
   },
 
   note: {
@@ -154,3 +190,5 @@ const PersonaFisicaMetadataV1 = {
     type: FieldTypes.BOOLEAN,
   },
 };
+
+export default PersonaFisicaMetadataV1;
