@@ -96,3 +96,6 @@ setting.json
 
 #Env
 .env
+
+#icloud
+*.icloud
