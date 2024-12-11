@@ -35,7 +35,7 @@ const IstanzaFormContainer = ({onChange, store}) => {
       owner: metadata.type,
     }));
 
-  console.log('inputPropsArray', inputPropsArray);
+  //console.log('inputPropsArray', inputPropsArray);
 
   return (
     <FormPresenter

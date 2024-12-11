@@ -41,7 +41,6 @@ const useTransazioniProcedimento = () => {
       incassoControparti,
       ...restTransazioni,
     ].map((t) => ({ ...t, owner }));
-    console.log('initial transazioni', transazioni);
     return transazioni;
   }, []);
 

@@ -30,6 +30,10 @@ const useInputFactory = ({ fieldKey, ...props }) => {
     },
     [props?.onBlur]
   );
+  const handleErrors = useCallback((errors) => {
+    console.log('errors', {[fieldKey]: errors});
+    props?.onError?.({[fieldKey]: errors});
+  }, []);
 
   // Memorizzazione dei common props
   const commonProps = useMemo(
@@ -43,6 +47,7 @@ const useInputFactory = ({ fieldKey, ...props }) => {
       onBlur: (change) => {
         handleBlur({ [fieldKey]: change?.target?.value ?? change })
       },
+      onError: handleErrors,
       options: props?.options,
       size: 'small',
       key: fieldKey+'-input',

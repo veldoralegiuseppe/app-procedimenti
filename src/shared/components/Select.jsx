@@ -12,6 +12,7 @@ import {
 } from '@shared/theme';
 import { ArrowDropDown as ArrowDropDownIcon, Close as CloseIcon } from '@mui/icons-material';
 import { useTheme } from '@mui/material/styles';
+import { useErrorValidations } from '@shared/hooks';
 import _ from 'lodash';
 
 function Select({
@@ -19,10 +20,10 @@ function Select({
   value = '',
   onChange,
   onBlur,
+  onError,
   required = false,
   options = [],
-  error = false,
-  helperText = '',
+  inputValidations = [],
   labelColor = defaultLabelColor,
   renderOptions,
   sx,
@@ -58,6 +59,7 @@ function Select({
 
   // State
   const [selected, setSelected] = React.useState(value || '');
+  const { errors, validate } = useErrorValidations(onError);
 
   // Effects
   React.useEffect(() => {
@@ -73,7 +75,9 @@ function Select({
   };
   const handleChange = (event) => {
     //console.log('Select.jsx handleChange event:', event);
-    setSelected(event.target.value);
+    const value = event.target.value;
+    setSelected(value);
+    validate(value, inputValidations);
     if (onChange) onChange(event);
   };
 
@@ -82,11 +86,11 @@ function Select({
       required={required}
       size="small"
       sx={{ ...sxStyles, sx }}
-      error={error}
+      error={Object.keys(errors).length > 0}
     >
       <InputLabel
         id={`${label}-input-label`}
-        error={error}
+        error={Object.keys(errors).length > 0}
         sx={{ color: labelColor }}
       >
         {label}
@@ -148,7 +152,7 @@ function Select({
         ))}
       </CssSelect>
 
-      <FormHelperText error={error}>{helperText}</FormHelperText>
+      <FormHelperText error={Object.keys(errors).length > 0}>{Object.values(errors)[0] || ''}</FormHelperText>
     </FormControl>
   );
 }

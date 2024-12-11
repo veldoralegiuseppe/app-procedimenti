@@ -3,7 +3,6 @@ import { TableRow, TableCell } from '@mui/material';
 import BaseRow from './BaseRow';
 import CollapsibleDecorator from './decorators/CollapsibleDecorator';
 import SelectableDecorator from './decorators/SelectableDecorator';
-import PropTypes from 'prop-types';
 import _ from 'lodash';
 
 const RowFactory = React.memo(
@@ -88,26 +87,4 @@ const RowFactory = React.memo(
   }
 );
 
-export const rowFactoryPropTypes = {
-  data: PropTypes.array.isRequired,
-  columns: PropTypes.array.isRequired,
-  components: PropTypes.shape({
-    TableHead: PropTypes.elementType,
-    TableCell: PropTypes.elementType,
-    TableRow: PropTypes.elementType,
-  }),
-  sx: PropTypes.object,
-  collapsibleConfig: PropTypes.shape({
-    renderComponent: PropTypes.func,
-  }),
-  selectableConfig: PropTypes.shape({
-    isMultiSelect: PropTypes.bool,
-    initialSelected: PropTypes.arrayOf(PropTypes.number),
-    onSelected: PropTypes.func,
-  }),
-  onRowClick: PropTypes.func,
-  totalColumns: PropTypes.number,
-};
-
-RowFactory.propTypes = rowFactoryPropTypes;
 export default RowFactory;

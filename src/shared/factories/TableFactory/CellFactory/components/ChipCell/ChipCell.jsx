@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import { Chip, Box, Tooltip } from '@mui/material';
 import useChipState from './hooks/useChipState';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
@@ -76,17 +75,6 @@ const ChipCell = ({
       sx={{ ...chipStyles, ...sx }}
     />
   );
-};
-
-ChipCell.propTypes = {
-  value: PropTypes.oneOfType([PropTypes.string, PropTypes.node]).isRequired,
-  status: PropTypes.oneOf(['red', 'yellow', 'green']).isRequired,
-  onClick: PropTypes.func,
-  columnField: PropTypes.string.isRequired,
-  id: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
-  store: PropTypes.object.isRequired,
-  nextStateFn: PropTypes.func.isRequired,
-  sx: PropTypes.object,
 };
 
 export default React.memo(ChipCell);

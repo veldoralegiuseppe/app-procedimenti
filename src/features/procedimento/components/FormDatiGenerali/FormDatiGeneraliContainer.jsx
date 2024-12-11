@@ -23,7 +23,6 @@ const FormDatiGeneraliContainer = () => {
   }, []);
 
   const calculateTotali = React.useCallback(() => {
-    console.log('calculateTotali');
     const enums = TransazioneMetadata['1.0'].enums;
     const transazioni = getTransazioni();
 

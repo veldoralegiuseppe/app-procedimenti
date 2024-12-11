@@ -4,7 +4,6 @@ import { useOptionsAutocomplete } from './hooks/useOptionsAutocomplete';
 import { useValidation } from './hooks/useValidation';
 import AutocompleteWrapper from './components/AutocompleteWrapper';
 import DialogForm from './components/DialogForm';
-import PropTypes from 'prop-types';
 import _ from 'lodash';
 import {useDynamicOptions} from '@shared/hooks';
 
@@ -161,30 +160,6 @@ const OptionsAutocomplete = ({
       />
     </React.Fragment>
   );
-};
-
-OptionsAutocomplete.propTypes = {
-  label: PropTypes.string,
-  onChange: PropTypes.func,
-  onSubmit: PropTypes.func,
-  onDelete: PropTypes.func,
-  options: PropTypes.arrayOf(
-    PropTypes.oneOfType([
-      PropTypes.string,
-      PropTypes.object,
-    ])
-  ),
-  sx: PropTypes.object,
-  value: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
-  error: PropTypes.bool,
-  helperText: PropTypes.string,
-  dialogDescriptionText: PropTypes.string,
-  dialogTitle: PropTypes.string,
-  groupBy: PropTypes.func,
-  filterOptions: PropTypes.func,
-  dialogForm: PropTypes.element,
-  validations: PropTypes.oneOfType([PropTypes.array, PropTypes.objectOf(PropTypes.arrayOf(PropTypes.string))]),
-  onFormPopulate: PropTypes.func,
 };
 
 export default OptionsAutocomplete;

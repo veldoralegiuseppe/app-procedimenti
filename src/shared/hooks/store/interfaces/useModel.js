@@ -26,6 +26,7 @@ const useModel = ({ set, get, subscribe, initialModel = {}, options = {} }) => {
   return {
     model: initialModel,
     lastUpdate: null,
+    errors: {},
 
     // Imposta una proprietà del modello
     setProperty: (key, value) => {
@@ -91,7 +92,7 @@ const useModel = ({ set, get, subscribe, initialModel = {}, options = {} }) => {
         options.onResetModel(newModel);
       }
 
-      console.log('lastUpdate', get().lastUpdate);
+      //console.log('lastUpdate', get().lastUpdate);
     },
 
     // Ottiene una proprietà dal modello
@@ -167,6 +168,16 @@ const useModel = ({ set, get, subscribe, initialModel = {}, options = {} }) => {
           unsubscribeCallbacks.forEach((unsubscribe) => unsubscribe()),
       };
     },
+
+    // Imposta gli errori del model
+    setErrors: (key, errors) => {
+      set(
+        produce((state) => {
+          state.errors[key] = errors;
+        })
+      );
+    },
+    
   };
 };
 

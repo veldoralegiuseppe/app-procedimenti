@@ -1,6 +1,5 @@
 import React from 'react';
 import { TableRow, TableCell } from '@mui/material';
-import PropTypes from 'prop-types';
 import TooltipDecorator from './decorators/TooltipDecorator';
 import SortableDecorator from './decorators/SortableDecorator';
 import _ from 'lodash';
@@ -77,30 +76,5 @@ const HeaderFactory = React.memo(HeaderFactoryComponent, (prevProps, nextProps) 
     _.isEqual(prevProps.sx, nextProps.sx)
   );
 });
-
-export const headerFactoryPropTypes = {
-  columns: PropTypes.arrayOf(
-    PropTypes.shape({
-      field: PropTypes.string.isRequired,
-      headerName: PropTypes.string.isRequired,
-      sortable: PropTypes.bool,
-      align: PropTypes.oneOf(['left', 'right', 'center']),
-      tooltip: PropTypes.string,
-    })
-  ).isRequired,
-  components: PropTypes.shape({
-    TableHead: PropTypes.elementType,
-    TableCell: PropTypes.elementType,
-    TableRow: PropTypes.elementType,
-  }),
-  collapsibleConfig: PropTypes.object,
-  selectableConfig: PropTypes.object,
-  sx: PropTypes.object,
-  onSort: PropTypes.func,
-  order: PropTypes.oneOf(['asc', 'desc']),
-  orderBy: PropTypes.string,
-};
-
-HeaderFactory.propTypes = headerFactoryPropTypes;
 
 export default HeaderFactory;

@@ -13,7 +13,6 @@ root.render(<App />);
 
 
 function App() {
-  console.log('App rendered');
   const { currentPath } = React.useContext(RouteContext);
   const [path, setPath] = React.useState(currentPath);
 

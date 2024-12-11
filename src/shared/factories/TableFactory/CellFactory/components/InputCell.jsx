@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { ComponentFactory } from '@shared/factories';
 import { useStoreDependencies } from '@shared/hooks';
-import PropTypes from 'prop-types';
 
 /**
  * Componente InputCell
@@ -51,7 +50,4 @@ const InputCell = (props) => {
   return FieldComponent;
 };
 
-InputCell.propTypes = {
-  component: PropTypes.elementType,
-};
 export default InputCell;

@@ -8,11 +8,12 @@ const TextField = ({
   value: initValue = '',
   onChange: callback,
   onBlur,
-  errorValidations = [],
+  onError,
+  inputValidations = [],
   ...props
 }) => {
   const [value, setValue] = React.useState(initValue);
-  const { errors, validate } = useErrorValidations(errorValidations);
+  const { errors, validate } = useErrorValidations(onError);
   const [label] = React.useState(lbl);
 
   React.useEffect(() => {
@@ -25,7 +26,7 @@ const TextField = ({
     (e) => {
       const value = e.target.value;
       setValue(e.target.value);
-      validate(value);
+      validate(value, inputValidations);
       callback(e, errors);
     },
     [callback]

@@ -23,7 +23,6 @@ const ImportoInput = ({
   onBlur,
   label = '',
   sx,
-  id,
   error = false,
   helperText = '',
   disabled = false,
@@ -264,7 +263,6 @@ const ImportoInput = ({
       error={error}
       helperText={helperText}
       onChange={handleValueChange}
-      id={id}
       onBlur={() => {
         setImporto(importo);
         if (onBlur) onBlur(formatNumberFromValue(importo));

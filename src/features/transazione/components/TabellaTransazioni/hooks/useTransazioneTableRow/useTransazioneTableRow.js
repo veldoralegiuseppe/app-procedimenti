@@ -79,7 +79,7 @@ const mapToRow = ({
         importoCorrisposto: {
           namespace: `${transazione.key}`,
           callback: ({key, oldValue, newValue, props, store}) => {
-            console.log('importoCorrisposto', key, oldValue, newValue, props);
+            //console.log('importoCorrisposto', key, oldValue, newValue, props);
             const model = store.getState().model[transazione.key];
             const stato = model.stato;
 
@@ -163,7 +163,7 @@ const useTransazioneTableRow = ({
   const handleChange = React.useCallback(
     ({ changes, index }) => {
       const updatedTransazione = transazioni[index];
-      console.log('handleChange', changes, index, updatedTransazione);
+      //console.log('handleChange', changes, index, updatedTransazione);
       //console.log('onChange', updatedTransazione.key, changes);
       onChange?.(index, changes);
     },

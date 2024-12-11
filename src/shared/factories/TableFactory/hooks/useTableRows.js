@@ -31,7 +31,7 @@ const useTableRows = (columns, data) => {
   }, [data, columns]);
 
   const tableStore = useCreateStore({ storeInterface: useModelArray, initialItems: rows });
-  console.log('tableStore', tableStore.getState());
+  //console.log('tableStore', tableStore.getState());
 
   return { tableStore };
 };

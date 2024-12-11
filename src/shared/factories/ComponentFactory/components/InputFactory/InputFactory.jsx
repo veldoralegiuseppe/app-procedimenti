@@ -69,7 +69,7 @@ const InputFactoryComponent = ({ fieldKey, inputType, store, ...props }) => {
     ...props,
   });
 
-  console.log('commonProps', commonProps)
+  //console.log('commonProps', commonProps)
 
   // Switch per il rendering condizionale
   switch (inputType) {

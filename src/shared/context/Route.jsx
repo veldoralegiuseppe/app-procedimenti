@@ -4,27 +4,7 @@ import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 
 import {CreaProcedimento, Dashboard} from '@pages';
-import {FormDatiGeneraliContainer, useProcedimento} from '@features/procedimento';
-import {ComponentFactory} from '@shared/factories';
-import {FormPresenter, FormContainer} from '@shared/components';
-
-const MyComponent = () => {
-  // Memoizza la configurazione del modello
-  const config = React.useMemo(() => ({
-    model: { class: "procedimento" },
-  }), []);
-
-  // Memoizza le sezioni
-  const sezioni = React.useMemo(() => ['Istanza di mediazione'], []);
-
-  return (
-    <FormContainer
-      config={config} // Config stabilizzata
-      store={useProcedimento} // Store Zustand come funzione
-      sezioni={sezioni} // Sezioni stabilizzate
-    />
-  );
-};
+import {FormDatiGeneraliContainer} from '@features/procedimento';
 
 
 export const routes = [

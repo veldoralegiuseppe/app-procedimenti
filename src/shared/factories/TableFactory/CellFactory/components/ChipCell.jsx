@@ -1,5 +1,4 @@
 import * as React from 'react';
-import PropTypes from 'prop-types';
 import { Chip } from '@mui/material';
 
 /**
@@ -40,14 +39,6 @@ const ChipCell = ({ value: label, status, onClick, row, sx }) => {
       sx={chipStyles}
     />
   );
-};
-
-ChipCell.propTypes = {
-  value: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
-  status: PropTypes.oneOf(['red', 'yellow', 'green']).isRequired,
-  onClick: PropTypes.func,
-  row: PropTypes.object,
-  sx: PropTypes.object,
 };
 
 export default ChipCell;

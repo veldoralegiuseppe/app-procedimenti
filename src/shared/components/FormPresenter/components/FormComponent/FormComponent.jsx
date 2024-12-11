@@ -11,7 +11,7 @@ const FormComponentVanilla = ({index, propsArrayStore}) => {
   const {size, component, owner, ...props} = getItem(index);
 
   const store = useStoreContext(owner);
-  console.log('store', store?.getState(), 'fieldKey', props?.key, 'owner', owner);
+  //console.log('store', store?.getState(), 'fieldKey', props?.key, 'owner', owner);
   const {getProperty} = useModelStore(store);
   const value = getProperty(props?.key);
   

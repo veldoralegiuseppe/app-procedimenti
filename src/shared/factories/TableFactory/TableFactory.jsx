@@ -8,7 +8,6 @@ import FooterFactory, {
   footerFactoryPropTypes,
 } from './FooterFactory/FooterFactory';
 import { SelectableProvider } from './RowFactory/decorators/hooks/useSelectableRows';
-import PropTypes from 'prop-types';
 import { useSortableRows, useTableRows } from './hooks';
 import _ from 'lodash';
 import { useModelArrayStore } from '@shared/hooks';
@@ -116,24 +115,4 @@ const TableFactory = React.memo(
 );
 
 TableFactory.whyDidYouRender = true;
-
-TableFactory.propTypes = {
-  columns: PropTypes.arrayOf(
-    PropTypes.shape({
-      field: PropTypes.string.isRequired,
-      headerName: PropTypes.string.isRequired,
-      align: PropTypes.oneOf(['left', 'right', 'center']),
-      sortable: PropTypes.bool,
-      type: PropTypes.oneOf(['text', 'chip', 'input', 'custom', 'infoChip']),
-      render: PropTypes.func,
-    })
-  ).isRequired,
-  data: PropTypes.array.isRequired,
-  headerConfig: PropTypes.shape(headerFactoryPropTypes.isRequired),
-  rowConfig: PropTypes.shape(rowFactoryPropTypes.isRequired),
-  footerConfig: PropTypes.shape(footerFactoryPropTypes),
-  size: PropTypes.oneOf(['small', 'medium']),
-  sx: PropTypes.object,
-};
-
 export default TableFactory;

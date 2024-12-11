@@ -14,9 +14,7 @@ const ProcedimentoMetadataV1 = {
     type: FieldTypes.STRING,
     inputType: InputTypes.PROTOCOLLO,
     default: `/${new Date().getFullYear()}`,
-    validations: {
-      [ValidationHooksTypes.ON_PERSISTENCE]: [validators.required, validators.isProtocollo],
-    },
+    inputValidations: [validators.required, validators.isProtocollo],
   },
 
   type: FieldTypes.PROCEDIMENTO,
@@ -29,49 +27,41 @@ const ProcedimentoMetadataV1 = {
     type: FieldTypes.DATE,
     inputType: InputTypes.DATE,
     default: dayjs().format('YYYY-MM-DD'),
-    validations: {
-      [ValidationHooksTypes.ON_PERSISTENCE]: [validators.required, validators.isDate],
-    },
   },
+
   valoreControversia: {
     key: 'valoreControversia',
     label: 'Valore controversia',
     type: FieldTypes.NUMBER,
     inputType: InputTypes.IMPORTO,
     default: 0,
-    validations: {
-      [ValidationHooksTypes.ON_PERSISTENCE]: [
-        validators.required,
-        validators.onlyNumber,
-        validators.minValueNumber(80),
-      ],
-    },
+    inputValidations: [validators.required, validators.minValueNumber(80)],
   },
+
   oggettoControversia: {
     key: 'oggettoControversia',
     label: 'Oggetto controversia',
     type: FieldTypes.STRING,
     inputType: InputTypes.SELECT,
     options: ProcedimentoEnumsV1.oggettoControversia,
-    validations: {
-      [ValidationHooksTypes.ON_PERSISTENCE]: [validators.required],
-    },
+    inputValidations: [validators.required],
   },
+
   sedeDeposito: {
     key: 'sedeDeposito',
     label: 'Sede deposito',
     type: FieldTypes.STRING,
     inputType: InputTypes.AUTOCOMPLETE,
-    validations: {
-      [ValidationHooksTypes.ON_PERSISTENCE]: [validators.required],
-    },
+    inputValidations: [validators.required],
   },
+
   sedeSvolgimento: {
     key: 'sedeSvolgimento',
     label: 'Sede svolgimento',
     type: FieldTypes.STRING,
     inputType: InputTypes.AUTOCOMPLETE,
   },
+
   causaleDemandata: {
     key: 'causaleDemandata',
     label: 'Causale demandata',
@@ -79,6 +69,7 @@ const ProcedimentoMetadataV1 = {
     inputType: InputTypes.SELECT,
     options: ProcedimentoEnumsV1.causaleDemandata,
   },
+
   esitoMediazione: {
     key: 'esitoMediazione',
     label: 'Esito mediazione',
@@ -86,15 +77,14 @@ const ProcedimentoMetadataV1 = {
     inputType: InputTypes.SELECT,
     options: ProcedimentoEnumsV1.esitoMediazione,
   },
+
   dataOraIncontro: {
     key: 'dataOraIncontro',
     label: 'Data e ora incontro',
     type: FieldTypes.DATE_TIME,
     inputType: InputTypes.DATE_TIME,
-    validations: {
-      [ValidationHooksTypes.ON_PERSISTENCE]: [validators.isDateTime],
-    },
   },
+
   modalitaSvolgimento: {
     key: 'modalitaSvolgimento',
     label: 'Modalità svolgimento',
@@ -102,6 +92,7 @@ const ProcedimentoMetadataV1 = {
     inputType: InputTypes.SELECT,
     options: ProcedimentoEnumsV1.modalitaSvolgimento,
   },
+
   titoloMediatore: {
     key: 'titoloMediatore',
     label: 'Titolo mediatore',
@@ -109,26 +100,23 @@ const ProcedimentoMetadataV1 = {
     inputType: InputTypes.TITOLO_PERSONA,
     options: ProcedimentoEnumsV1.titoliMediatore,
   },
+
   nomeMediatore: {
     key: 'nomeMediatore',
     label: 'Nome mediatore',
     type: FieldTypes.STRING,
     inputType: InputTypes.TEXT,
-    validations: {
-      [ValidationHooksTypes.ON_PERSISTENCE]: [validators.onlyAlphabetic],
-    },
-    errorValidations: [validators.onlyAlphabetic],
+    inputValidations: [validators.onlyAlphabetic],
   },
+
   cognomeMediatore: {
     key: 'cognomeMediatore',
     label: 'Cognome mediatore',
     type: FieldTypes.STRING,
     inputType: InputTypes.TEXT,
-    errorValidations: [validators.onlyAlphabetic],
-    validations: {
-      [ValidationHooksTypes.ON_PERSISTENCE]: [validators.onlyAlphabetic],
-    },
+    inputValidations: [validators.onlyAlphabetic],
   },
+
   compensoMediatore: {
     key: 'compensoMediatore',
     label: 'Spese mediatore',
@@ -143,6 +131,7 @@ const ProcedimentoMetadataV1 = {
       [ValidationHooksTypes.ON_PERSISTENCE]: [validators.required],
     },
   },
+
   speseAvvioSedeSecondaria: {
     key: 'speseAvvioSedeSecondaria',
     label: 'Spese avvio sede secondaria',
@@ -157,6 +146,7 @@ const ProcedimentoMetadataV1 = {
       [ValidationHooksTypes.ON_PERSISTENCE]: [validators.required],
     },
   },
+  
   speseIndennitaSedeSecondaria: {
     key: 'speseIndennitaSedeSecondaria',
     label: 'Spese indennità sede secondaria',

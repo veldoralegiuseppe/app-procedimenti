@@ -1,7 +1,6 @@
 import React from 'react';
 import Grid from '@mui/material/Grid2';
 import { Typography } from '@mui/material';
-import PropTypes from 'prop-types';
 import useFormPresenter from './hooks/useFormPresenter';
 import _ from 'lodash';
 
@@ -67,22 +66,6 @@ const FormPresenter = ({ inputPropsArray: inputProps = [], titolo = '' }) => {
       {renderFields}
     </Grid>
   );
-};
-
-FormPresenter.propTypes = {
-  inputPropsArray: PropTypes.arrayOf(
-    PropTypes.shape({
-      key: PropTypes.string.isRequired,
-      label: PropTypes.string,
-      type: PropTypes.string.isRequired,
-      value: PropTypes.any,
-      onChange: PropTypes.func,
-      store: PropTypes.object.isRequired,
-      sx: PropTypes.object,
-      size: PropTypes.object,
-    })
-  ),
-  titolo: PropTypes.string,
 };
 
 export default FormPresenter;

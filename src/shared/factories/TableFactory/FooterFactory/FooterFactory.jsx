@@ -1,7 +1,6 @@
 import * as React from 'react';
 import { TableFooter, TableRow, TablePagination } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import PropTypes from 'prop-types';
 import _ from 'lodash';
 
 const FooterFactoryComponent = ({
@@ -54,20 +53,4 @@ const FooterFactory = React.memo(FooterFactoryComponent, (prevProps, nextProps) 
   );
 });
 
-
-export const footerFactoryPropTypes = {
-  pagination: PropTypes.bool,
-  page: PropTypes.number,
-  rowsPerPage: PropTypes.number,
-  sx: PropTypes.object,
-  onPageChange: PropTypes.func,
-  onRowPerPageChange: PropTypes.func,
-  components: PropTypes.shape({
-    TableFooter: PropTypes.elementType,
-    TableRow: PropTypes.elementType,
-    TablePagination: PropTypes.elementType,
-  }),
-};
-
-FooterFactory.propTypes = footerFactoryPropTypes;
 export default FooterFactory;

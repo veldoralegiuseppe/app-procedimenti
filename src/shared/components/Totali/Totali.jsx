@@ -1,5 +1,4 @@
 import React from 'react';
-import PropTypes from 'prop-types';
 import _ from 'lodash';
 
 /**
@@ -59,14 +58,5 @@ function Totali({ totali: tot }) {
     </table>
   );
 }
-
-Totali.propTypes = {
-  totali: PropTypes.arrayOf(
-    PropTypes.shape({
-      label: PropTypes.string.isRequired,
-      value: PropTypes.number.isRequired,
-    })
-  ).isRequired,
-};
 
 export default Totali;

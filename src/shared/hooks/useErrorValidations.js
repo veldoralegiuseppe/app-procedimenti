@@ -1,24 +1,38 @@
 import { useState, useCallback } from 'react';
 
-const useErrorValidations = (validations) => {
+const useErrorValidations = (onError = () => {}) => {
   const [errors, setErrors] = useState({});
 
-  const validate = useCallback(
-    (value) => {
-      const newErrors = validations.reduce((acc, validation) => {
-        const errorMessage = validation(value);
-        if (typeof errorMessage === 'string') {
-          acc[validation.name] = errorMessage;
-        }
-        return acc;
-      }, {});
+  const hasErrors = (value, validations) => {
+    const newErrors = validations.reduce((acc, validation) => {
+      const errorMessage = validation(value);
+      if (typeof errorMessage === 'string') {
+        acc[validation.name] = errorMessage;
+      }
+      return acc;
+    }, {});
 
-      setErrors(newErrors);
+    return newErrors;
+  };
+
+  const validate = useCallback(
+    (value, validations) => {
+      const newErrors = hasErrors(value, validations);
+      console.log('newErrors', newErrors, value, validations);
+      setErrors(() => {
+        onError?.(newErrors);
+        return newErrors;
+      });
     },
-    [validations]
+    [onError]
   );
 
-  return { errors, validate };
+  const hasErrorWithCallback = useCallback((value, validations) => {
+    const newErrors = hasErrors(value, validations);
+    return newErrors;
+  }, []);
+
+  return { errors, setErrors, validate, hasErrors: hasErrorWithCallback };
 };
 
 export default useErrorValidations;
