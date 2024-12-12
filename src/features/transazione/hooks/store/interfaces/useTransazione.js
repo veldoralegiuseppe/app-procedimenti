@@ -9,13 +9,14 @@ import { inputValidator, updateValidator } from '@utils/filters';
  * @param {Object} [options={}] - Opzioni aggiuntive per la configurazione del modello.
  * @returns {Object} - L'oggetto contenente il modello e le funzioni del modello.
  */
-const useProcedimento = ({ set, get, initialTransazione, options = {} }) => {
+const useProcedimento = ({ set, get, subscribe, initialTransazione, options = {} }) => {
   const updateModelPipeline = new Pipeline([]);
 
   return {
     ...useModel({
       set,
       get,
+      subscribe,
       options: {
         ...options,
         onSetProperty: (key, value) => {

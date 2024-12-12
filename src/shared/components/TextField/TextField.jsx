@@ -7,6 +7,7 @@ const TextField = ({
   label: lbl,
   value: initValue = '',
   onChange: callback,
+  helperText,
   onBlur,
   onError,
   inputValidations = [],
@@ -38,7 +39,7 @@ const TextField = ({
       label={label}
       value={value}
       error={Object.keys(errors).length > 0}
-      helperText={Object.values(errors)[0] || ''}
+      helperText={Object.values(errors)[0] || helperText}
       onChange={onChange}
       onBlur={onBlur}
     />

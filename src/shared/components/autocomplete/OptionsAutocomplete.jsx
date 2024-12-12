@@ -52,6 +52,7 @@ const OptionsAutocomplete = ({
   deletable = true,
   creatable = true,
   freeSolo,
+  disabled = false,
   loading: isLoading,
 }) => {
 
@@ -159,6 +160,7 @@ const OptionsAutocomplete = ({
         label={label}
         value={value}
         options={options}
+        disabled={disabled}
         onOpen={onOpen}
         handleChange={handleChange}
         onDelete={onOptionDelete}

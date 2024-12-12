@@ -38,7 +38,7 @@ export const useOptionsAutocomplete = ({
       } else {
         //console.log('onChange', !newValue ? undefined : newValue, option);
         onChange?.(!newValue ? undefined : newValue, option);
-        onBlur?.(!newValue ? undefined : newValue);
+        onBlur?.(!newValue ? undefined : newValue, option);
         if (reason === 'clear') setValue(null);
       }
     },

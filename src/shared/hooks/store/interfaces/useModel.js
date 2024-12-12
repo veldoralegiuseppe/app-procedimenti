@@ -58,6 +58,8 @@ const useModel = ({ set, get, subscribe, initialModel = {}, options = {} }) => {
       if (options?.onSetProperty) {
         options.onSetProperty(key, value);
       }
+
+      console.log('lastUpdate', get().lastUpdate);
     },
 
     // Rimuove una proprietà dal modello
@@ -117,18 +119,19 @@ const useModel = ({ set, get, subscribe, initialModel = {}, options = {} }) => {
 
     // Ottiene una proprietà e le sue dipendenze
     getPropertyAndDependencies: (key, dependencies) => {
+      //console.log('getPropertyAndDependencies', key, dependencies);
       const path = `${rootPath}.${key}`;
       const value = _.get(get(), path);
 
       // Calcola le dipendenze
-      const dependenciesMap = dependencies
-        ? Object.entries(dependencies).reduce((acc, [depKey, namespace]) => {
-            const fieldPath = namespace ? `${namespace}.${depKey}` : depKey;
-            const depPath = `${rootPath}.${fieldPath}`;
-            acc[depKey] = _.get(get(), depPath);
-            return acc;
-          }, {})
-        : {};
+      // const dependenciesMap = dependencies
+      //   ? Object.entries(dependencies).reduce((acc, [depKey, namespace]) => {
+      //       const fieldPath = namespace ? `${namespace}.${depKey}` : depKey;
+      //       const depPath = `${rootPath}.${fieldPath}`;
+      //       acc[depKey] = _.get(get(), depPath);
+      //       return acc;
+      //     }, {})
+      //   : {};
 
       // Gestisce la reattività
       const unsubscribeCallbacks = [];
@@ -136,7 +139,6 @@ const useModel = ({ set, get, subscribe, initialModel = {}, options = {} }) => {
       if (dependencies) {
         Object.entries(dependencies).forEach(([depKey, value]) => {
           const { namespace, callback } = value;
-          //console.log('depKey', depKey, 'namespace', namespace, 'callback', callback);
           const fieldPath = namespace ? `${namespace}.${depKey}` : depKey;
           const depPath = `${rootPath}.${fieldPath}`;
 

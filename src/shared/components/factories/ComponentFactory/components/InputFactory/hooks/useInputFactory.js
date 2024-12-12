@@ -1,5 +1,6 @@
 import { useMemo, useCallback } from 'react';
 import { useTheme } from '@mui/material/styles';
+import { rest } from 'lodash';
 
 const useInputFactory = ({ fieldKey, ...props }) => {
   const theme = useTheme();
@@ -19,14 +20,14 @@ const useInputFactory = ({ fieldKey, ...props }) => {
 
   // Memorizzazione degli handler
   const handleChanges = useCallback(
-    (changes) => {
-      props?.onChange?.(changes);
+    (changes, ...rest) => {
+      props?.onChange?.(changes, ...rest);
     },
     [props?.onChange]
   );
   const handleBlur = useCallback(
-    (changes) => {
-      props?.onBlur?.(changes);
+    (changes, ...rest) => {
+      props?.onBlur?.(changes, ...rest);
     },
     [props?.onBlur]
   );
@@ -42,10 +43,10 @@ const useInputFactory = ({ fieldKey, ...props }) => {
       label: props?.label || '',
       error: props?.error,
       helperText: props?.helperText || '',
-      onChange: (change) => {handleChanges({ [fieldKey]: change?.target?.value ?? change })},
+      onChange: (change, ...rest) => {handleChanges({ [fieldKey]: change?.target?.value ?? change }, ...rest)},
       sx: { ...inputStyles, ...props?.sx },
-      onBlur: (change) => {
-        handleBlur({ [fieldKey]: change?.target?.value ?? change })
+      onBlur: (change, ...rest) => {
+        handleBlur({ [fieldKey]: change?.target?.value ?? change }, ...rest)
       },
       onError: handleErrors,
       options: props?.options,

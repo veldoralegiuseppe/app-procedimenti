@@ -45,6 +45,7 @@ const AutocompleteWrapperComponent = ({
   sx,
   error,
   helperText,
+  disabled,
   groupBy,
   filterOptions,
   onOptionSelected,
@@ -94,6 +95,7 @@ const AutocompleteWrapperComponent = ({
         handleChange(event, null, value, reason)
       }
       filterOptions={filterOptions}
+      disabled={disabled}
       groupBy={groupBy}
       //onBlur={(e) => onBlur(value ? value.toUpperCase() : undefined)}
       selectOnFocus
@@ -136,6 +138,7 @@ const AutocompleteWrapperComponent = ({
           {...params}
           value={value?.value || ''}
           error={error}
+          disabled={disabled}
           onKeyDown={(event) => {
             //console.log('onKeyDown', event);
             if (event.key === 'Enter') {
@@ -143,7 +146,7 @@ const AutocompleteWrapperComponent = ({
               event.stopPropagation();
             }
           }}
-          helperText={error ? helperText || '' : ''}
+          helperText={helperText}
           sx={{
             '& .MuiInput-underline:before': {
               borderBottomColor: theme.palette.primary.main,
@@ -170,7 +173,8 @@ const AutocompleteWrapper = React.memo(
       _.isEqual(prevProps.value === nextProps.value) &&
       _.isEqual(prevProps.options === nextProps.options) && 
       _.isEqual(prevProps.loading === nextProps.loading) && 
-      _.isEqual(prevProps.helperText === nextProps.helperText) 
+      _.isEqual(prevProps.helperText === nextProps.helperText) && 
+      _.isEqual(prevProps.disabled === nextProps.disabled) 
     );
   }
 );

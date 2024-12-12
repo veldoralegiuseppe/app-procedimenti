@@ -20,6 +20,7 @@ const useStoreDependencies = ({
       acc[key] = {
         namespace: value.namespace,
         callback: (key, oldValue, newValue) => {
+          console.log('callback', key, oldValue, newValue);
           const changes = value.callback({
             key,
             oldValue,
