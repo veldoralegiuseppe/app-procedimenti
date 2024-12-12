@@ -20,7 +20,7 @@ import {
   ImportoReadOnly,
 } from '@shared/components';
 import * as CodiceFiscaleUtils from '@assets/js/convalidaCodiceFiscale';
-import { Comune, Provincia } from '@shared/factories';
+import { Comune, Provincia } from '@shared/components';
 import { PersonaFisica } from '@features/persona';
 import {
   CssTextField,

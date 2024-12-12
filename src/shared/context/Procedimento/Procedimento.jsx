@@ -6,7 +6,7 @@ import Backdrop from '@mui/material/Backdrop';
 import _ from 'lodash';
 
 import { PersonaFisica, PersonaGiuridica } from '@features/persona';
-import { Comune } from '@shared/factories';
+import { Comune } from '@shared/components';
 import {NotificationAlert} from '@shared/components';
 
 export const ProcedimentoContext = createContext();

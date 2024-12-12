@@ -4,7 +4,7 @@ import { styled, useTheme } from '@mui/system';
 import { CssTextField } from '@shared/theme';
 import { ProcedimentoContext } from '@shared/context';
 import { Target } from '@features/regola';
-import { ModelFactory } from '@shared/factories';
+import { ModelFactory } from '@shared/components';
 
 const StyledPopper = styled((props) => <Popper {...props} />)(({ theme }) => ({
   '& .MuiPaper-root': {

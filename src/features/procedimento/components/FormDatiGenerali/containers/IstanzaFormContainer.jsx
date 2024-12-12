@@ -1,8 +1,7 @@
 import * as React from 'react';
 import { useMetadata } from '@shared/hooks';
 import { FieldTypes } from '@shared/metadata';
-import { ModelFactory } from '@shared/factories';
-import { FormPresenter } from '@shared/components';
+import { FormPresenter, ModelFactory } from '@shared/components';
 
 const IstanzaFormContainer = ({onChange, store}) => {
   

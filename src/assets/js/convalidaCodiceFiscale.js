@@ -1,5 +1,5 @@
 import {COMUNI_ESTERI, findComuneByCodiceCatastale} from "./comuni.js"
-import { Comune } from "@shared/factories";
+import { Comune } from "@shared/components";
 import * as CodiceFiscaleUtils from '@marketto/codice-fiscale-utils';
 
 const MESI = { A: '01', B: '02', C: '03', D: '04', E: '05', H: '06', L: '07', M: '08', P: '09', R: '10', S: '11', T: '12' };

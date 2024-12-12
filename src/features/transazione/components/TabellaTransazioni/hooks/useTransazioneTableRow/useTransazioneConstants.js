@@ -1,4 +1,4 @@
-import { ModelFactory } from '@shared/factories';
+import { ModelFactory } from '@shared/components';
 import { FieldTypes } from '@shared/metadata';
 import _ from 'lodash';
 

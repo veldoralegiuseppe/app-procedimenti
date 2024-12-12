@@ -1,8 +1,7 @@
 import * as React from 'react';
-import { ModelFactory } from '@shared/factories';
 import { FieldTypes } from '@shared/metadata';
 import { useMetadata } from '@shared/hooks';
-import { FormPresenter } from '@shared/components';
+import { FormPresenter, ModelFactory } from '@shared/components';
 
 const MediatoreFormContainer = ({ onChange }) => {
   const commonSx = { width: '29.2rem' };

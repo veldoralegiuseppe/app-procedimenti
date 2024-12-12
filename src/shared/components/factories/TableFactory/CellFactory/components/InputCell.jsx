@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { ComponentFactory } from '@shared/factories';
+import { ComponentFactory } from '@shared/components';
 import { useStoreDependencies } from '@shared/hooks';
 
 /**

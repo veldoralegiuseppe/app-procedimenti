@@ -1,5 +1,5 @@
 import * as React from 'react';
-import {TableFactory} from '@shared/factories';
+import {TableFactory} from "@shared/components";
 import { styled } from '@mui/system';
 import { TableCell, TableHead } from '@mui/material';
 

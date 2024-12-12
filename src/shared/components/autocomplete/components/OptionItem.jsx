@@ -59,6 +59,7 @@ const OptionItemComponent = ({
           sx={{
             width: '100%',
             margin: '0 .5rem',
+            justifyContent: 'flex-start',
             '&:hover': {
               backgroundColor: theme.palette.dropdown.hover,
               color: theme.palette.primary.main,

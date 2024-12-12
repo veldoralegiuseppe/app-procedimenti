@@ -1,4 +1,4 @@
-import {Provincia} from '@shared/factories';
+import {Provincia} from '@shared/components';
 
 export class Comune {
     codice

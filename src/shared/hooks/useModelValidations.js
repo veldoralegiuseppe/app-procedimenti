@@ -1,4 +1,4 @@
-import { ModelFactory } from '@shared/factories';
+import { ModelFactory } from '@shared/components';
 import useErrorValidations from './useErrorValidations';
 
 // NON è TESTAT E NON SO SE FUNZIONA, SERVIREBBE SOLO PER CONVALIDARE LA LOGICA

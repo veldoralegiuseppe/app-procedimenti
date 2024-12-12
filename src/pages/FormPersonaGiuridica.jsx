@@ -11,7 +11,7 @@ import {
 } from '@shared/components';
 import { PersonaGiuridica } from '@features/persona';
 import { CssTextField } from '@shared/theme';
-import { Provincia, Comune } from '@shared/factories';
+import { Provincia, Comune } from '@shared/components';
 
 function FormPersonaGiuridica(props, ref) {
   // Costanti di layout

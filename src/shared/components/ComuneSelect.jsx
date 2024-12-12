@@ -3,7 +3,7 @@ import Autocomplete from '@mui/material/Autocomplete';
 import { useTheme } from '@mui/material/styles';
 import Paper from '@mui/material/Paper';
 import * as ComuniUtils from '@assets/js/comuni.js'; 
-import { Comune, Provincia } from '@shared/factories';
+import { Comune, Provincia } from '@shared/components';
 import { CssTextField, labelColor } from '@shared/theme';
 
 function ComuneSelect(props, ref) {

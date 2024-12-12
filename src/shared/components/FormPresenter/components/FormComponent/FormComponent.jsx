@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { useModelArrayStore, useModelStore } from '@shared/hooks';
 import Grid from '@mui/material/Grid2';
-import { ComponentFactory } from '@shared/factories';
+import { ComponentFactory } from '@shared/components';
 import _ from 'lodash';
 import {useStoreContext} from '@shared/context';
 

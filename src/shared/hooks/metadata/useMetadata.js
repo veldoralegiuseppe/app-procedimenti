@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { ModelFactory } from '@shared/factories';
+import { ModelFactory } from '@shared/components';
 
 const useMetadata = ({ type, version, keysOrSection, overrides }) => {
   let metadataEntry = ModelFactory.getMetadata(type, version);
