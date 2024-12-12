@@ -14,8 +14,42 @@ const FormPersonaFisicaContainer = () => {
     },
 
     codiceFiscale: {
-      size: { xs: 12},
+      size: { xs: 12 },
     },
+
+    comuneNascita: {
+      decorator: 'withDataFetch',
+      preload: false,
+      cachePolicy: 'firstRetrieve',
+      dataProp: 'fetchOptions',
+      fetchFnProp: 'onOpen',
+      onResult: (result) => {
+        //console.log(result);
+        return result?.map((comune) => ({value: comune.nome, payload: comune}));
+      },
+      url: 'https://axqvoqvbfjpaamphztgd.functions.supabase.co/comuni',
+      httpOptions: {
+        method: 'GET',
+        accept: 'application/json',
+      },
+    },
+
+    provinciaNascita: {
+      decorator: 'withDataFetch',
+      preload: false,
+      cachePolicy: 'firstRetrieve',
+      dataProp: 'fetchOptions',
+      fetchFnProp: 'onOpen',
+      onResult: (result) => {
+        //console.log(result);
+        return result?.map((provincia) => ({value: provincia.nome, payload: provincia}));
+      },
+      url: 'https://axqvoqvbfjpaamphztgd.functions.supabase.co/province',
+      httpOptions: {
+        method: 'GET',
+        accept: 'application/json',
+      },
+    }
   };
 
   const { getInputPropsArray } = useGenerateInputProps({

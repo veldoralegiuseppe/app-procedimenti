@@ -3,6 +3,7 @@ import { Autocomplete, Paper, Popper } from '@mui/material';
 import OptionItem from './OptionItem';
 import { CssTextField } from '@shared/theme';
 import { styled, useTheme } from '@mui/system';
+import _ from 'lodash';
 
 const StyledPopper = styled((props) => <Popper {...props} />)(({ theme }) => ({
   '& .MuiPaper-root': {
@@ -26,14 +27,20 @@ const StyledPopper = styled((props) => <Popper {...props} />)(({ theme }) => ({
       color: theme.palette.primary.main,
     },
   },
+  '& .MuiAutocomplete-noOptions': {
+    color: '#acaaaa',
+    fontSize: '0.875rem',
+  },
 }));
 
-const AutocompleteWrapper = ({
+const AutocompleteWrapperComponent = ({
   label,
   value,
   options,
   handleChange,
   onBlur,
+  onOpen,
+  loading,
   onDelete,
   sx,
   error,
@@ -41,12 +48,15 @@ const AutocompleteWrapper = ({
   groupBy,
   filterOptions,
   onOptionSelected,
+  deletable,
+  freeSolo,
 }) => {
   const theme = useTheme();
 
   const renderGroup = (params) => {
     const hasFilteredOptions = params.children[0].props.option.key !== 'add';
-  
+    console.log('renderGroup', params);
+
     return (
       <li key={params.key || 'default-group-key'}>
         {hasFilteredOptions && (
@@ -80,42 +90,55 @@ const AutocompleteWrapper = ({
   return (
     <Autocomplete
       value={value}
-      onChange={(event, value, reason) => handleChange(event, null, value, reason)}
+      onChange={(event, value, reason) =>
+        handleChange(event, null, value, reason)
+      }
       filterOptions={filterOptions}
       groupBy={groupBy}
       //onBlur={(e) => onBlur(value ? value.toUpperCase() : undefined)}
       selectOnFocus
+      loadingText="Caricamento..."
       clearOnBlur
+      onOpen={onOpen}
       disableClearable={!value}
+      loading={loading}
       id={`${label}-autocomplete`}
       options={options || []}
       getOptionLabel={getOptionLabel}
       renderGroup={renderGroup}
-      renderOption={(props, option, index) => (
+      noOptionsText={'Nessuna opzione disponibile'}
+      renderOption={(props, option) => (
         <OptionItem
           {...props}
           key={`${JSON.stringify(option.value) || 'defaultValue'}-${
             option.label || 'defaultLabel'
-          }-${index}`}
+          }-${option.id}`}
           option={option}
           onDelete={onDelete}
           onOptionSelected={onOptionSelected}
+          deletable={deletable}
         />
       )}
-      sx={{ width: 300, ...sx }}
+      sx={{
+        width: 300,
+        '& .MuiAutocomplete-endAdornment': freeSolo
+          ? { marginTop: '0.5px' }
+          : {},
+        ...sx,
+      }}
       PopperComponent={(props) => <StyledPopper {...props} />}
       PaperComponent={(props) => (
         <Paper {...props} sx={{ bgcolor: theme.palette.dropdown.primary }} />
       )}
-      freeSolo
+      freeSolo={freeSolo}
       renderInput={(params) => (
         <CssTextField
           {...params}
           value={value?.value || ''}
           error={error}
           onKeyDown={(event) => {
-            console.log('onKeyDown', event);
-            if(event.key === 'Enter') {
+            //console.log('onKeyDown', event);
+            if (event.key === 'Enter') {
               event.preventDefault();
               event.stopPropagation();
             }
@@ -140,4 +163,17 @@ const AutocompleteWrapper = ({
   );
 };
 
+const AutocompleteWrapper = React.memo(
+  AutocompleteWrapperComponent,
+  (prevProps, nextProps) => {
+    return (
+      _.isEqual(prevProps.value === nextProps.value) &&
+      _.isEqual(prevProps.options === nextProps.options) && 
+      _.isEqual(prevProps.loading === nextProps.loading) && 
+      _.isEqual(prevProps.helperText === nextProps.helperText) 
+    );
+  }
+);
+
+AutocompleteWrapper.whyDidYouRender = true;
 export default AutocompleteWrapper;

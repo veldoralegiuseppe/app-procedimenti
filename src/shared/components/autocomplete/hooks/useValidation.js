@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { validators } from '@utils';
 import { ValidationHooksTypes } from '@shared/metadata';
 
@@ -6,7 +6,7 @@ export const useValidation = () => {
   const [isFormValid, setIsFormValid] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
-  const validateInput = (input, validations) => {
+  const validateInput = useCallback((input, validations) => {
     const filteredValidations = validations?.filter(
       (validation) =>
         !Object.values(ValidationHooksTypes).includes(
@@ -16,7 +16,6 @@ export const useValidation = () => {
 
     const validationsResult =
       filteredValidations
-        //?.filter((modelKey) => optionModel?.includes(modelKey))
         ?.map((validation) => validators[validation]?.(input))
         .filter((result) => result !== true) || [];
 
@@ -31,7 +30,7 @@ export const useValidation = () => {
       isFormValid: updatedIsFormValid,
       errorMessage: updatedErrorMessage,
     };
-  };
+  }, []);
 
   return { isFormValid, errorMessage, validateInput };
 };

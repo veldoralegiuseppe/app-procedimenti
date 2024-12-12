@@ -11,7 +11,8 @@ const PersonaFisicaMetadataV1 = {
     key: 'codiceFiscale',
     label: 'Codice fiscale',
     type: FieldTypes.STRING,
-    inputType: InputTypes.CODICE_FISCALE,
+    inputType: InputTypes.TEXT,
+    inputValidations: [validators.isCodiceFiscale],
   },
 
   nome: {
@@ -41,14 +42,19 @@ const PersonaFisicaMetadataV1 = {
     key: 'comuneNascita',
     label: 'Comune nascita',
     type: FieldTypes.STRING,
-    inputType: InputTypes.TEXT,
+    inputType: InputTypes.AUTOCOMPLETE,
+    freeSolo: false,
+    deletable: false,
+    creatable: false,
   },
 
   provinciaNascita: {
     key: 'provinciaNascita',
     label: 'Provincia nascita',
     type: FieldTypes.STRING,
-    inputType: InputTypes.TEXT,
+    inputType: InputTypes.AUTOCOMPLETE,
+    deletable: false,
+    creatable: false,
   },
 
   capComuneNascita: {
@@ -69,15 +75,17 @@ const PersonaFisicaMetadataV1 = {
   comuneResidenza: {
     key: 'comuneResidenza',
     label: 'Comune residenza',
-    type: FieldTypes.STRING,
-    inputType: InputTypes.TEXT,
+    inputType: InputTypes.AUTOCOMPLETE,
+    deletable: false,
+    creatable: false,
   },
 
   provinciaResidenza: {
     key: 'provinciaResidenza',
     label: 'Provincia residenza',
-    type: FieldTypes.STRING,
-    inputType: InputTypes.TEXT,
+    inputType: InputTypes.AUTOCOMPLETE,
+    deletable: false,
+    creatable: false,
   },
 
   indirizzoResidenza: {

@@ -8,7 +8,6 @@ const InputTypes = {
     IMPORTO: 'importo',
     SELECT: 'select',
     AUTOCOMPLETE: 'autocomplete',
-    CODICE_FISCALE: 'codiceFiscale',
 }
 
 export default InputTypes;

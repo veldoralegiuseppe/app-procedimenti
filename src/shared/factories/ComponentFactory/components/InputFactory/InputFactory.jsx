@@ -18,7 +18,7 @@ import {
   Select,
   OptionsAutocomplete,
   TextField,
-  CodiceFiscaleInput,
+  withDataFetch,
 } from '@shared/components';
 import { CssTextField, labelColor } from '@shared/theme';
 import { TitoliAutocomplete } from '@features/persona';
@@ -61,7 +61,7 @@ dayjs.locale('it');
  *   }
  * />
  */
-const InputFactoryComponent = ({ fieldKey, inputType, store, ...props }) => {
+const InputFactoryComponent = ({ fieldKey, inputType, store, decorator, ...props }) => {
   const { commonProps } = useInputFactory({
     fieldKey,
     store,
@@ -71,18 +71,20 @@ const InputFactoryComponent = ({ fieldKey, inputType, store, ...props }) => {
   //console.log('commonProps', commonProps)
 
   // Switch per il rendering condizionale
+  let Component = null;
   switch (inputType) {
     case InputTypes.PROTOCOLLO:
-      return <ProtocolloInput {...commonProps} />;
+      Component = ProtocolloInput;
+      break;
 
     case InputTypes.DATE:
-      return (
+      Component = (props) => (
         <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="it">
           <MobileDatePicker
             slots={{ textField: CssTextField }}
             slotProps={{
               textField: {
-                error: commonProps.error,
+                error: props.error,
                 InputProps: {
                   endAdornment: (
                     <InputAdornment position="end">
@@ -94,22 +96,23 @@ const InputFactoryComponent = ({ fieldKey, inputType, store, ...props }) => {
               },
             }}
             {...{
-              ...commonProps,
+              ...props,
               onChange: (change) => {
                 const formatted = change
                   ? change.format('YYYY-MM-DD')
                   : undefined;
-                commonProps.onChange?.(formatted);
-                commonProps.onBlur?.(formatted);
+                props.onChange?.(formatted);
+                props.onBlur?.(formatted);
               },
             }}
-            value={commonProps.value ? dayjs(commonProps.value) : null}
+            value={props.value ? dayjs(props.value) : null}
           />
         </LocalizationProvider>
       );
+      break;
 
     case InputTypes.IMPORTO:
-      return (
+      Component = (commonProps) => (
         <ImportoInput
           {...{
             ...commonProps,
@@ -117,9 +120,10 @@ const InputFactoryComponent = ({ fieldKey, inputType, store, ...props }) => {
           }}
         />
       );
+      break;
 
     case InputTypes.TEXT:
-      return (
+      Component = (commonProps) => (
         <TextField
           {...{
             ...commonProps,
@@ -131,15 +135,18 @@ const InputFactoryComponent = ({ fieldKey, inputType, store, ...props }) => {
           }}
         />
       );
+      break;
 
     case InputTypes.AUTOCOMPLETE:
-      return <OptionsAutocomplete {...commonProps} />;
+      Component = OptionsAutocomplete;
+      break;
 
     case InputTypes.SELECT:
-      return <Select {...commonProps} />;
+      Component = Select;
+      break;
 
     case InputTypes.DATE_TIME:
-      return (
+      Component = (commonProps) => (
         <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale="it">
           <MobileDateTimePicker
             slots={{ textField: CssTextField }}
@@ -158,7 +165,7 @@ const InputFactoryComponent = ({ fieldKey, inputType, store, ...props }) => {
                           }}
                           sx={{
                             cursor: 'pointer',
-                            color: theme?.palette.error.main,
+                            //color: theme?.palette.error.main,
                           }}
                         />
                       ) : (
@@ -182,25 +189,35 @@ const InputFactoryComponent = ({ fieldKey, inputType, store, ...props }) => {
           />
         </LocalizationProvider>
       );
+      break;
 
     case InputTypes.TITOLO_PERSONA:
-      return <TitoliAutocomplete {...commonProps} />;
-
-    case InputTypes.CODICE_FISCALE:
-      return <CodiceFiscaleInput {...commonProps} />;
+      Component = TitoliAutocomplete;
+      break;
 
     default:
       return null;
   }
+  
+  let WrappedComponent = null;
+  switch (decorator) {
+    case 'withDataFetch':
+      WrappedComponent = withDataFetch(Component);
+      break;
+  }
+
+  const RenderComponent = WrappedComponent || Component;
+  return RenderComponent ? <RenderComponent {...commonProps} /> : null;
 };
 
 const InputFactory = React.memo(
   InputFactoryComponent,
   (prevProps, nextProps) => {
-    // Considero dinamici i campi: sx, disabled, value
+    // Considero dinamici i campi: sx, disabled, value, options
     return (
       _.isEqual(prevProps.value, nextProps.value) &&
       _.isEqual(prevProps.disabled, nextProps.disabled) &&
+      _.isEqual(prevProps.options, nextProps.options) &&
       _.isEqual(prevProps.sx, nextProps.sx)
     );
   }
