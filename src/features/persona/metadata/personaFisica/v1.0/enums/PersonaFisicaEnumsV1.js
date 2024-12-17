@@ -3,7 +3,7 @@ const PersonaFisicaEnumsV1 = {
 
     sezione: {
       ANAGRAFICA: ['codiceFiscale', 'nome', 'cognome', 'sesso', 'dataNascita', 'provinciaNascita', 'comuneNascita', 'capComuneNascita'],
-      DOMICILIO: ['provinciaResidenza', 'comuneResidenza', 'capComuneResidenza'],
+      DOMICILIO: ['provinciaResidenza', 'comuneResidenza', 'capComuneResidenza', 'indirizzoResidenza'],
       DITTA_INDIVIDUALE: ['partitaIVA'],
       RECAPITI: ['pecEmail'],
       RAPPRESENTANTE_LEGALE: ['nomeRappresentanteLegale', 'cognomeRappresentanteLegale', 'pecEmailRappresentanteLegale'],

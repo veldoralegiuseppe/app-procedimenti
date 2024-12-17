@@ -5,8 +5,8 @@ import { useStoreContext } from '@shared/context';
 import { FieldTypes } from '@shared/metadata';
 
 const RiepilogoTransazioniFormContainer = ({ onChange }) => {
-  const personaFisicaStore = useStoreContext(FieldTypes.PERSONA_FISICA);
-  const { getTransazioni } = usePersonaStore(personaFisicaStore);
+  const personaGiuridicaStore = useStoreContext(FieldTypes.PERSONA_GIURIDICA);
+  const { getTransazioni } = usePersonaStore(personaGiuridicaStore);
   const [transazioni] = React.useState(getTransazioni());
 
   return <TabellaTransazioni transazioni={transazioni} onChange={onChange} />;

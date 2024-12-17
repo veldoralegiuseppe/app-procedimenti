@@ -1,46 +1,24 @@
 import { validators } from '@utils';
-import PersonaFisicaEnumsV1 from './enums/PersonaFisicaEnumsV1';
+import PersonaGiuridicaEnumsV1 from './enums/PersonaGiuridicaEnumsV1';
 import {InputTypes, FieldTypes, ValidationHooksTypes} from '@shared/metadata';
 
-const PersonaFisicaMetadataV1 = {
+const PersonaGiuridicaMetadataV1 = {
   type: FieldTypes.PERSONA_FISICA,
 
   version: '1.0',
 
-  codiceFiscale: {
-    key: 'codiceFiscale',
-    label: 'Codice fiscale',
+  denominazione: {
+    key: 'denominazione',
+    label: 'Denominazione',
     type: FieldTypes.STRING,
     inputType: InputTypes.TEXT,
-    inputValidations: [validators.isCodiceFiscale],
+    inputValidations: [validators.required, validators.onlyAlphanumeric],
   },
 
-  nome: {
-    key: 'nome',
-    label: 'Nome',
-    type: FieldTypes.STRING,
-    inputType: InputTypes.TEXT,
-    inputValidations: [validators.required, validators.onlyAlphabetic],
-  },
 
-  cognome: {
-    key: 'cognome',
-    label: 'Cognome',
-    type: FieldTypes.STRING,
-    inputType: InputTypes.TEXT,
-    inputValidations: [validators.required, validators.onlyAlphabetic],
-  },
-
-  dataNascita: {
-    key: 'dataNascita',
-    label: 'Data di nascita',
-    type: FieldTypes.DATE,
-    inputType: InputTypes.DATE,
-  },
-
-  comuneNascita: {
-    key: 'comuneNascita',
-    label: 'Comune nascita',
+  comuneSedeLegale: {
+    key: 'comuneSedeLegale',
+    label: 'Comune',
     type: FieldTypes.STRING,
     inputType: InputTypes.AUTOCOMPLETE,
     freeSolo: false,
@@ -48,9 +26,9 @@ const PersonaFisicaMetadataV1 = {
     creatable: false,
   },
 
-  provinciaNascita: {
-    key: 'provinciaNascita',
-    label: 'Provincia nascita',
+  provinciaSedeLegale: {
+    key: 'provinciaSedeLegale',
+    label: 'Provincia',
     type: FieldTypes.STRING,
     inputType: InputTypes.AUTOCOMPLETE,
     freeSolo: false,
@@ -58,50 +36,17 @@ const PersonaFisicaMetadataV1 = {
     creatable: false,
   },
 
-  capComuneNascita: {
-    key: 'capComuneNascita',
+  capComuneSedeLegale: {
+    key: 'capComuneSedeLegale',
     label: 'CAP',
     type: FieldTypes.STRING,
     inputType: InputTypes.TEXT,
   },
 
-  sesso: {
-    key: 'sesso',
-    label: 'Genere',
+  indirizzoSedeLegale: {
+    key: 'indirizzoSedeLegale',
+    label: 'Indirizzo',
     type: FieldTypes.STRING,  
-    options: PersonaFisicaEnumsV1.sesso,
-    inputType: InputTypes.SELECT,
-  },
-
-  comuneResidenza: {
-    key: 'comuneResidenza',
-    label: 'Comune residenza',
-    inputType: InputTypes.AUTOCOMPLETE,
-    freeSolo: false,
-    deletable: false,
-    creatable: false,
-  },
-
-  provinciaResidenza: {
-    key: 'provinciaResidenza',
-    label: 'Provincia residenza',
-    inputType: InputTypes.AUTOCOMPLETE,
-    freeSolo: false,
-    deletable: false,
-    creatable: false,
-  },
-
-  indirizzoResidenza: {
-    key: 'indirizzoResidenza',
-    label: 'Indirizzo residenza',
-    type: FieldTypes.STRING,
-    inputType: InputTypes.TEXT,
-  },
-
-  capComuneResidenza: {
-    key: 'capComuneResidenza',
-    label: 'CAP',
-    type: FieldTypes.STRING,
     inputType: InputTypes.TEXT,
   },
 
@@ -244,4 +189,4 @@ const PersonaFisicaMetadataV1 = {
   },
 };
 
-export default PersonaFisicaMetadataV1;
+export default PersonaGiuridicaMetadataV1;

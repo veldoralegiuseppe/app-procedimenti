@@ -16,6 +16,7 @@ const useGenerateInputProps = ({
 
       return {
         ...value,
+        required: value.inputValidations?.some(v => v.name === 'required'),
         ...overrides?.common,
         ...overrides?.[key],
         owner: metadata.type,

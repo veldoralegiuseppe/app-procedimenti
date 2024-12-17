@@ -5,7 +5,7 @@ import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 
 import {CreaProcedimento, Dashboard} from '@pages';
 import {FormDatiGeneraliContainer} from '@features/procedimento';
-import {FormPersonaFisicaContainer} from '@features/persona';
+import {FormPersonaFisicaContainer, FormPersonaGiuridicaContainer} from '@features/persona';
 
 
 export const routes = [
@@ -29,7 +29,7 @@ export const routes = [
         icon: <SearchOutlinedIcon />,
         label: 'Ricerca procedimento',
         component: (
-         <FormPersonaFisicaContainer />
+         <FormPersonaGiuridicaContainer />
         ),
       }, 
     ],

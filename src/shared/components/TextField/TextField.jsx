@@ -14,6 +14,7 @@ const TextField = ({
   sx,
   inputSize= 'small',
   multiline = false,
+  required = false,
   rows,
 }) => {
 
@@ -46,6 +47,7 @@ const TextField = ({
       error={error}
       multiline={multiline}
       rows={rows}
+      required={required}
       sx={sx}
       size={inputSize}
       helperText={helperText}

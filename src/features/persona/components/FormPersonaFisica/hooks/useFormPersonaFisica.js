@@ -306,6 +306,10 @@ const useFormPersonaFisica = () => {
       ...capProps,
     },
 
+    indirizzoResidenza: {
+      sx: { width: '29.2rem' },
+    },
+
     pecEmailRappresentanteLegale: {
       sx: { width: '29.2rem' },
     },

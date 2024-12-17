@@ -12,7 +12,7 @@ const StoreProvider = ({ children }) => {
   const procedimentoStore = useCreateStore({storeInterface: useProcedimento, initialModel: ModelFactory.create({type: FieldTypes.PROCEDIMENTO})});
   const personeStore = useCreateStore({storeInterface: usePersone});
   const personaFisicaStore = useCreateStore({storeInterface: usePersona, initialModel: ModelFactory.create({type: FieldTypes.PERSONA_FISICA})});
-  const personaGiuridicaStore = useCreateStore({storeInterface: usePersona});
+  const personaGiuridicaStore = useCreateStore({storeInterface: usePersona, initialModel: ModelFactory.create({type: FieldTypes.PERSONA_GIURIDICA})});
 
   const storeMap = React.useMemo(() => ({
     [FieldTypes.PROCEDIMENTO]: procedimentoStore,
