@@ -17,18 +17,19 @@ const buttonStyles = {
   PRIMARY: {
     width: '90px',
     color: 'white',
-    backgroundColor: '#108d10',
-    '&:hover': { backgroundColor: '#119c11', color: 'white' },
+    backgroundColor: '#467bae',
+    '&:hover': { backgroundColor: '#5088bf', color: 'white' }, 
   },
 };
 
-const ButtonFactory = ({ type, onClick, text }) => {
+const ButtonFactory = ({ type, onClick, text, size }) => {
   const renderButton = () => {
     switch (type) {
       case ButtonTypes.OUTLINED:
         return (
           <Button
             variant="outlined"
+            size={size}
             onClick={onClick}
             sx={buttonStyles.OUTLINED}
             startIcon={<ArrowBackOutlinedIcon sx={{ color: '#467bae' }} />}
@@ -40,6 +41,7 @@ const ButtonFactory = ({ type, onClick, text }) => {
         return (
           <Button
             variant="contained"
+            size={size}
             onClick={onClick}
             sx={buttonStyles.PRIMARY}
             startIcon={<AddIcon sx={{ color: 'white' }} />}

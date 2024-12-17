@@ -17,12 +17,12 @@ const FooterFactoryComponent = ({
   const theme = useTheme();
 
   return (
-    <TableFooter sx={{ '& .MuiToolbar-root': { minHeight: '2rem' }, ...sx }}>
+    <TableFooter sx={{ '& .MuiToolbar-root': { minHeight: '2rem', ...sx },  }}>
       {pagination && (
         <TableRow>
           <TablePagination
             sx={{
-              backgroundColor: '#4a769b',
+              backgroundColor: '#467bae',
               color: theme.palette.background.default,
             }}
             rowsPerPageOptions={[5, 10, 25]}

@@ -1,5 +1,5 @@
 import React from 'react';
-import { TableRow, TableCell } from '@mui/material';
+import { TableRow, TableCell, TableHead } from '@mui/material';
 import TooltipDecorator from './decorators/TooltipDecorator';
 import SortableDecorator from './decorators/SortableDecorator';
 import _ from 'lodash';
@@ -15,7 +15,7 @@ const HeaderFactoryComponent = ({
   orderBy,
 }) => {
   // Recupera i componenti sovrascrivibili o utilizza quelli di default
-  const TableHeadComponent = React.useMemo(() => components.TableHead || 'thead', [components.TableHead]);
+  const TableHeadComponent = React.useMemo(() => components.TableHead || TableHead, [components.TableHead]);
   const TableRowComponent = React.useMemo(() => components.TableRow || TableRow, [components.TableRow]);
   const TableCellComponent = React.useMemo(() => components.TableCell || TableCell, [components.TableCell]);
 
