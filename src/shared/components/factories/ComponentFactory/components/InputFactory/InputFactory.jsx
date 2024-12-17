@@ -60,7 +60,13 @@ dayjs.locale('it');
  *   }
  * />
  */
-const InputFactoryComponent = ({ fieldKey, inputType, store, decorator, ...props }) => {
+const InputFactoryComponent = ({
+  fieldKey,
+  inputType,
+  store,
+  decorator,
+  ...props
+}) => {
   const { commonProps } = useInputFactory({
     fieldKey,
     store,
@@ -195,10 +201,14 @@ const InputFactoryComponent = ({ fieldKey, inputType, store, decorator, ...props
       Component = TitoliAutocomplete;
       break;
 
+    case InputTypes.RADIO_GROUP:
+      Component = RadioGroup;
+      break;
+
     default:
       return null;
   }
-  
+
   return Component ? <Component {...commonProps} /> : null;
 };
 

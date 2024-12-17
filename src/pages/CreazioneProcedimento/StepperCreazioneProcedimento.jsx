@@ -2,6 +2,7 @@ import React from 'react';
 import { useTheme } from '@mui/material/styles';
 import { Stepper, PageHeader } from '@shared/components';
 import StepDatiGeneraliProcedimento from './components/steps/StepDatiGeneraliProcedimento';
+import StepPartiControparti from './components/steps/StepPartiControparti/StepPartiControparti';
 
 const CreaProcedimento = () => {
   const theme = useTheme();
@@ -12,7 +13,7 @@ const CreaProcedimento = () => {
 
   const steps = [
     { label: 'Dati generali', component: <StepDatiGeneraliProcedimento /> },
-    // { label: 'Parti e controparti', component: <StepPartiControparti /> },
+    { label: 'Parti e controparti', component: <StepPartiControparti /> },
     // { label: 'Riepilogo', component: <StepRiepilogoProcedimento /> },
   ];
 

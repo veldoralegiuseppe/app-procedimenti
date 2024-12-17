@@ -8,6 +8,7 @@ const InputTypes = {
     IMPORTO: 'importo',
     SELECT: 'select',
     AUTOCOMPLETE: 'autocomplete',
+    RADIO_GROUP: 'radioGroup',
 }
 
 export default InputTypes;

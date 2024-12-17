@@ -1,6 +1,6 @@
 import React from 'react';
 import Grid from '@mui/material/Grid2';
-import { Typography } from '@mui/material';
+import {FormTitle} from '@shared/components';
 import useFormPresenter from './hooks/useFormPresenter';
 import _ from 'lodash';
 
@@ -13,7 +13,7 @@ import _ from 'lodash';
  * Il componente è ottimizzato in modo da causare un re-render di FormComponent solo al cambiamento
  * dello style, in tal caso il re-render sarà propagato ai children di FormComponent, o della size del container Grid, in tal caso il re-render è
  * limitato a FormComponent stesso.
- * Nonostante ciò, usare il componente FormPresenter per molti campi (inputPropsArray lungo) potrebbe portare ad un tempo di rendering 
+ * Nonostante ciò, usare il componente FormPresenter per molti campi (inputPropsArray lungo) potrebbe portare ad un tempo di rendering
  * superiore a 16ms, dunque è consigliabile scomporre la form in più componenti FormPresenter.
  *
  * Nota:
@@ -48,19 +48,7 @@ const FormPresenter = ({ inputPropsArray: inputProps = [], titolo = '' }) => {
       size={{ xs: 12 }}
     >
       {/* Titolo */}
-      {titoloForm && (
-        <Grid
-          size={{ xs: 12 }}
-          sx={{
-            height: '2rem',
-            borderBottom: `1px solid #467bae`,
-          }}
-        >
-          <Typography sx={{ fontSize: '1.2rem', color: '#467bae' }}>
-            {titolo}
-          </Typography>
-        </Grid>
-      )}
+      {titoloForm && <FormTitle title={titoloForm} />}
 
       {/* Componenti */}
       {renderFields}

@@ -237,10 +237,12 @@ const PersonaFisicaMetadataV1 = {
     rows: 4,
   },
 
-  isParteIstante: {
-    key: 'isParteIstante',
-    label: 'Parte istante',
-    type: FieldTypes.BOOLEAN,
+  ruolo: {
+    key: 'ruolo',
+    label: 'Ruolo',
+    type: FieldTypes.STRING,
+    inputType: InputTypes.RADIO_GROUP,
+    options: PersonaFisicaEnumsV1.ruolo,
   },
 };
 

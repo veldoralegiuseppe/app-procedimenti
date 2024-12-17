@@ -18,4 +18,7 @@ export {default as Stepper} from './Stepper';
 export {default as Totali} from './Totali/Totali';
 export {default as TextField} from './TextField/TextField';
 export {default as PageHeader} from './PageHeader/PageHeader';
+export {default as RadioGroup} from './RadioGroup/RadioGroup';
+export {default as Accordion} from './Accordion/Accordion';
+export {default as FormTitle} from './FormTitle/FormTitle';
 export * from './factories';
