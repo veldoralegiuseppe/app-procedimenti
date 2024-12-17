@@ -18,7 +18,6 @@ import {
   Select,
   OptionsAutocomplete,
   TextField,
-  withDataFetch,
 } from '@shared/components';
 import { CssTextField, labelColor } from '@shared/theme';
 import { TitoliAutocomplete } from '@features/persona';
@@ -72,6 +71,7 @@ const InputFactoryComponent = ({ fieldKey, inputType, store, decorator, ...props
 
   // Switch per il rendering condizionale
   let Component = null;
+
   switch (inputType) {
     case InputTypes.PROTOCOLLO:
       Component = ProtocolloInput;
@@ -199,15 +199,7 @@ const InputFactoryComponent = ({ fieldKey, inputType, store, decorator, ...props
       return null;
   }
   
-  let WrappedComponent = null;
-  switch (decorator) {
-    case 'withDataFetch':
-      WrappedComponent = withDataFetch(Component);
-      break;
-  }
-
-  const RenderComponent = WrappedComponent || Component;
-  return RenderComponent ? <RenderComponent {...commonProps} /> : null;
+  return Component ? <Component {...commonProps} /> : null;
 };
 
 const InputFactory = React.memo(

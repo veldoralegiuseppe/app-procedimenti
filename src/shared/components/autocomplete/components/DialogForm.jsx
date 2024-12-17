@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -11,7 +11,7 @@ import TextFieldWithValidation from './TextFieldWithValidation';
 import { useValidation } from '../hooks/useValidation';
 import _ from 'lodash';
 
-const DialogForm = ({
+const DialogFormComponent = ({
   open,
   dialogTitle,
   dialogDescriptionText,
@@ -22,70 +22,84 @@ const DialogForm = ({
   label,
   validations,
 }) => {
-  const [inputsValue, setInputsValue] = React.useState(null);
-  const [firstTruthyKey, setFristTruthyKey] = React.useState(null);
-  const [inputsValidity, setInputsValidity] = React.useState({});
-  const [isFormValid, setIsFormValid] = React.useState(false);
+  const [inputsValue, setInputsValue] = useState(null);
+  const [firstTruthyKey, setFirstTruthyKey] = useState(null);
+  const [inputsValidity, setInputsValidity] = useState({});
+  const [isFormValid, setIsFormValid] = useState(false);
   const { validateInput } = useValidation();
 
-  React.useEffect(() => {
-    if(!dialogValue.value) return;
+  // Inizializza `inputsValue` solo quando `dialogValue` cambia
+  useEffect(() => {
+    if (!dialogValue?.value) return;
 
     if (typeof dialogValue.value === 'string') {
       setInputsValue(dialogValue.value);
     } else {
-      const firstTruthyKey = Object.keys(dialogValue.value).find(
+      const firstKey = Object.keys(dialogValue.value).find(
         (key) => dialogValue.value[key]
       );
-      setFristTruthyKey(firstTruthyKey || null);
+      setFirstTruthyKey(firstKey || null);
       setInputsValue(dialogValue.value);
     }
   }, [dialogValue]);
 
-  React.useEffect(() => {
-    if(!inputsValue) return;
+  // Valida `inputsValue` solo quando cambia
+  useEffect(() => {
+    if (!inputsValue) return;
 
     if (typeof inputsValue === 'string') {
-      //console.log('inputsValue', inputsValue, 'validations', validations);
-      const inputValidations = !Array.isArray(validations)
-        ? (validations ? Array.of(validations) : undefined)
-        : validations;
+      const inputValidations = Array.isArray(validations)
+        ? validations
+        : validations
+        ? [validations]
+        : [];
+      const errorMessage = validateInput(
+        inputsValue,
+        inputValidations
+      ).errorMessage;
 
       setInputsValidity({
-        [label.toLowerCase()]: validateInput(
-          dialogValue.value,
-          inputValidations
-        ).errorMessage,
+        [label.toLowerCase()]: errorMessage,
       });
-    } else {
-      //console.log('inputsValue', inputsValue, 'validations', validations);
+    } else if (typeof inputsValue === 'object') {
       const newInputsValidity = Object.entries(inputsValue).reduce(
         (acc, [key, value]) => {
           const inputValidations = validations?.[key];
           acc[key] = validateInput(value, inputValidations).errorMessage;
           return acc;
-        }, {}
+        },
+        {}
       );
       setInputsValidity(newInputsValidity);
     }
-  }, [inputsValue]);
+  }, [inputsValue, validateInput, validations, label]);
 
-  React.useEffect(() => {
-    setIsFormValid(Object.values(inputsValidity).every((value) => value === ''));
-  }, [inputsValidity]);
+  // Calcola la validità del form
+  useEffect(() => {
+    setIsFormValid(Object.values(inputsValidity).every((value) => !value));
+  }, [inputsValidity])
+  
+  // Funzione per gestire i cambiamenti negli input
+  const handleChanges = useCallback((key, value) => {
+    setInputsValue((prev) => {
+      const newInputsValue = key
+        ? {
+            ...prev,
+            [key]: value,
+          }
+        : value;
+      return _.isEqual(prev, newInputsValue) ? prev : newInputsValue;
+    });
+  }, []);
 
-  const handleChanges = (key, value) => {
-    const newInputsValue = key ? { ...inputsValue, [key]: value } : value;
-    
-    if (!_.isEqual(newInputsValue, inputsValue)) setInputsValue(newInputsValue);
-  };
-
-  const handleSubmit = () => {
+  // Funzione per inviare il form
+  const handleSubmit = useCallback(() => {
     onSubmit(inputsValue, firstTruthyKey);
     onClose();
-  };
+  }, [onSubmit, inputsValue, firstTruthyKey, onClose]);
 
-  const renderForm = () => {
+  // Memorizza il contenuto del form
+  const renderForm = useMemo(() => {
     if (typeof inputsValue === 'string') {
       return (
         <TextFieldWithValidation
@@ -98,7 +112,9 @@ const DialogForm = ({
           onValueChange={(value) => handleChanges(null, value)}
         />
       );
-    } else if (inputsValue && typeof inputsValue === 'object') {
+    }
+
+    if (inputsValue && typeof inputsValue === 'object') {
       return (
         <div
           style={{
@@ -118,27 +134,38 @@ const DialogForm = ({
               required={validations?.[key]?.includes('required')}
               onValueChange={(value) => handleChanges(key, value)}
             />
-          ))}
+          ))}{' '}
         </div>
       );
-    } else return null;
-  };
+    }
+
+    return null;
+  }, [inputsValue, inputsValidity, label, validations, handleChanges]);
 
   return (
     <Dialog open={open} onClose={onClose}>
-      <DialogTitle>{dialogTitle}</DialogTitle>
+      <DialogTitle> {dialogTitle} </DialogTitle>{' '}
       <DialogContent>
-        <DialogContentText>{dialogDescriptionText}</DialogContentText>
-        {renderForm()}
-      </DialogContent>
+        <DialogContentText> {dialogDescriptionText} </DialogContentText>{' '}
+        {renderForm}{' '}
+      </DialogContent>{' '}
       <DialogActions>
-        <Button onClick={onAbort}>Annulla</Button>
+        <Button onClick={onAbort}> Annulla </Button>{' '}
         <Button onClick={handleSubmit} disabled={!isFormValid}>
-          Aggiungi
-        </Button>
-      </DialogActions>
+          Aggiungi{' '}
+        </Button>{' '}
+      </DialogActions>{' '}
     </Dialog>
   );
 };
+
+const DialogForm = React.memo(DialogFormComponent, (prevProps, nextProps) => {
+  return (
+    prevProps.open === nextProps.open &&
+    _.isEqual(prevProps.dialogValue, nextProps.dialogValue)
+  );
+});
+
+//DialogForm.whyDidYouRender = true;
 
 export default DialogForm;

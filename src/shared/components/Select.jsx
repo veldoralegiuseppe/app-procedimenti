@@ -12,7 +12,6 @@ import {
 } from '@shared/theme';
 import { ArrowDropDown as ArrowDropDownIcon, Close as CloseIcon } from '@mui/icons-material';
 import { useTheme } from '@mui/material/styles';
-import { useErrorValidations } from '@shared/hooks';
 import _ from 'lodash';
 
 function Select({
@@ -20,13 +19,14 @@ function Select({
   value = '',
   onChange,
   onBlur,
-  onError,
   required = false,
   options = [],
-  inputValidations = [],
   labelColor = defaultLabelColor,
   renderOptions,
+  disabled = false,
   sx,
+  error,
+  helperText,
 }) {
   // Style
   const theme = useTheme();
@@ -59,7 +59,6 @@ function Select({
 
   // State
   const [selected, setSelected] = React.useState(value || '');
-  const { errors, validate } = useErrorValidations(onError);
 
   // Effects
   React.useEffect(() => {
@@ -77,7 +76,6 @@ function Select({
     //console.log('Select.jsx handleChange event:', event);
     const value = event.target.value;
     setSelected(value);
-    validate(value, inputValidations);
     if (onChange) onChange(event);
   };
 
@@ -85,12 +83,13 @@ function Select({
     <FormControl
       required={required}
       size="small"
+      disabled={disabled}
       sx={{ ...sxStyles, sx }}
-      error={Object.keys(errors).length > 0}
+      error={error}
     >
       <InputLabel
         id={`${label}-input-label`}
-        error={Object.keys(errors).length > 0}
+        error={error}
         sx={{ color: labelColor }}
       >
         {label}
@@ -100,6 +99,7 @@ function Select({
         labelId={`${label}-input-label`}
         value={selected}
         label={label}
+        disabled={disabled}
         onBlur={(e) => {
           //console.log('Select.jsx onBlur e:', e, 'selected', selected);
           onBlur(selected || undefined)
@@ -111,7 +111,7 @@ function Select({
         onChange={handleChange}
         IconComponent={selected ? () => null : ArrowDropDownIcon}
         endAdornment={
-          selected && (
+          !disabled && selected && (
             <CloseIcon onClick={handleClear} style={{ cursor: 'pointer' }} />
           )
         }
@@ -152,7 +152,7 @@ function Select({
         ))}
       </CssSelect>
 
-      <FormHelperText error={Object.keys(errors).length > 0}>{Object.values(errors)[0] || ''}</FormHelperText>
+      <FormHelperText error={error}>{helperText}</FormHelperText>
     </FormControl>
   );
 }

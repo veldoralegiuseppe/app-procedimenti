@@ -38,25 +38,23 @@ const AutocompleteWrapperComponent = ({
   value,
   options,
   handleChange,
-  onBlur,
   onOpen,
   loading,
   onDelete,
+  isOptionEqualToValue,
   sx,
-  error,
   helperText,
-  disabled,
   groupBy,
   filterOptions,
   onOptionSelected,
+  disabled,
   deletable,
   freeSolo,
 }) => {
   const theme = useTheme();
-
+  
   const renderGroup = (params) => {
     const hasFilteredOptions = params.children[0].props.option.key !== 'add';
-    console.log('renderGroup', params);
 
     return (
       <li key={params.key || 'default-group-key'}>
@@ -95,17 +93,18 @@ const AutocompleteWrapperComponent = ({
         handleChange(event, null, value, reason)
       }
       filterOptions={filterOptions}
-      disabled={disabled}
       groupBy={groupBy}
       //onBlur={(e) => onBlur(value ? value.toUpperCase() : undefined)}
       selectOnFocus
       loadingText="Caricamento..."
       clearOnBlur
+      disabled={disabled}
       onOpen={onOpen}
-      disableClearable={!value}
+      isOptionEqualToValue={isOptionEqualToValue}
+      disableClearable={!value || disabled}
       loading={loading}
       id={`${label}-autocomplete`}
-      options={options || []}
+      options={options}
       getOptionLabel={getOptionLabel}
       renderGroup={renderGroup}
       noOptionsText={'Nessuna opzione disponibile'}
@@ -137,7 +136,6 @@ const AutocompleteWrapperComponent = ({
         <CssTextField
           {...params}
           value={value?.value || ''}
-          error={error}
           disabled={disabled}
           onKeyDown={(event) => {
             //console.log('onKeyDown', event);
@@ -169,15 +167,16 @@ const AutocompleteWrapperComponent = ({
 const AutocompleteWrapper = React.memo(
   AutocompleteWrapperComponent,
   (prevProps, nextProps) => {
+
     return (
-      _.isEqual(prevProps.value === nextProps.value) &&
-      _.isEqual(prevProps.options === nextProps.options) && 
-      _.isEqual(prevProps.loading === nextProps.loading) && 
-      _.isEqual(prevProps.helperText === nextProps.helperText) && 
-      _.isEqual(prevProps.disabled === nextProps.disabled) 
+      _.isEqual(prevProps.value, nextProps.value) &&
+      _.isEqual(prevProps.options, nextProps.options) &&
+      prevProps.loading === nextProps.loading &&
+      _.isEqual(prevProps.helperText, nextProps.helperText) &&
+      _.isEqual(prevProps.disabled === nextProps.disabled)
     );
   }
 );
 
-AutocompleteWrapper.whyDidYouRender = true;
+//AutocompleteWrapper.whyDidYouRender = true;
 export default AutocompleteWrapper;

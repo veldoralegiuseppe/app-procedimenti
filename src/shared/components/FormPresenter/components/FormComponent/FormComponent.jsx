@@ -14,19 +14,20 @@ const FormComponentVanilla = ({index, propsArrayStore}) => {
     fieldKey,
     storeType: owner,
     dependencies,
-    args: { properties },
+    args: { props: properties },
     callback: ({changes}) => {
-      //console.log('changes', changes);
-      if (Object.entries(changes).some(([k, v]) => properties[k] !== v)) {
+      if (changes && Object.entries(changes).some(([k, v]) => properties[k] !== v)) {
         setProperties((prev) => ({ ...prev, ...changes }));
       }
     },
   });
   
   const CustomComponent = component;
-  const FieldComponent = CustomComponent
-    ? React.createElement(CustomComponent, {...properties, fieldKey, value})
-    : React.createElement(ComponentFactory.InputFactory, {...properties, fieldKey, value});
+  const FieldComponent = React.useMemo(() => {
+    return CustomComponent
+      ? React.createElement(CustomComponent, {value, ...properties, fieldKey, owner})
+      : React.createElement(ComponentFactory.InputFactory, {value, ...properties, fieldKey, owner});
+  }, [CustomComponent, value, properties, fieldKey, owner]);
 
   return (
     <Grid

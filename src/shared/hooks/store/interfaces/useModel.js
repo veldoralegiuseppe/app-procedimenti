@@ -26,40 +26,120 @@ const useModel = ({ set, get, subscribe, initialModel = {}, options = {} }) => {
   return {
     model: initialModel,
     lastUpdate: null,
-    errors: {},
+    errors: null,
 
     // Imposta una proprietà del modello
-    setProperty: (key, value) => {
+    setProperty: (key, value, validations) => {
       const path = `${rootPath}.${key}`;
+
+      // Aggiorna il model
       set(
         produce((state) => {
-          // Recupera l'oggetto target attuale dal percorso
-          const target = _.get(state, path, {});
+          const target = _.get(state, path);
 
           if (_.isObject(value)) {
-            // Aggiorna l'oggetto unendo il valore esistente con quello nuovo
             const updatedValue = _.merge({}, target, value);
-            // Imposta una nuova reference per il target
-            _.set(state, path, updatedValue);
+            if (!_.isEqual(target, updatedValue)) {
+              console.log('updatedValue', target, updatedValue);
+              _.set(state, path, updatedValue); // Imposta una nuova reference solo se ci sono cambiamenti
+            }
           } else {
-            // Per valori non oggetto, aggiorna direttamente
-            _.set(state, path, value);
+            //console.log('isEqual', 'target', target, 'value', value, _.isEqual(target, value));
+            if (!_.isEqual(target, value)) {
+              console.log(
+                'updatedValue:',
+                'key',
+                key,
+                'path',
+                path,
+                'target',
+                target,
+                'value',
+                value
+              );
+              _.set(state, path, value); // Imposta solo se il valore è diverso
+            }
           }
         })
       );
 
+      // Aggiorna lastUpdate
       set(
         produce((state) => {
-          state.lastUpdate = { [key]: value };
+          let hasChanged;
+
+          if (_.isObject(value)) {
+            hasChanged = Object.entries(value).some(
+              ([subKey, subValue]) =>
+                !_.isEqual(_.get(initialModel, `${key}.${subKey}`), subValue)
+            );
+          } else {
+            hasChanged = !_.isEqual(_.get(initialModel, key), value);
+          }
+
+          if (hasChanged) {
+            if (!state.lastUpdate) {
+              state.lastUpdate = {};
+            }
+            _.merge(state.lastUpdate, { [key]: value });
+          } else {
+            if (_.isObject(value)) {
+              Object.entries(value).forEach(([subKey, subValue]) => {
+                _.unset(state.lastUpdate, `${key}.${subKey}`);
+              });
+              if (_.isEmpty(_.get(state.lastUpdate, key))) {
+                _.unset(state.lastUpdate, key);
+              }
+            } else {
+              _.unset(state.lastUpdate, key);
+            }
+
+            if (_.isEmpty(state.lastUpdate)) {
+              state.lastUpdate = null;
+            }
+          }
         })
       );
+
+      // Aggiorna gli errori
+      if (validations) {
+        const newErrors = validations.reduce((acc, validation) => {
+          const errorMessage = validation(value);
+          if (typeof errorMessage === 'string') {
+            acc[validation.name || validation.toString()] = errorMessage;
+          }
+          return acc;
+        }, {});
+
+        set(
+          produce((state) => {
+            if (_.isEmpty(newErrors)) {
+              console.log('nessun errore rilevato', newErrors);
+              _.unset(state.errors, key);
+            } else {
+              if (!state.errors) {
+                state.errors = {};
+              }
+                if (!_.isEqual(_.get(state.errors, key), newErrors)) {
+                _.merge(state.errors, { [key]: newErrors });
+                }
+            }
+
+            if (_.isEmpty(state.errors)) {
+              state.errors = null;
+            }
+          })
+        );
+      }
 
       // Chiama la callback opzionale se definita
       if (options?.onSetProperty) {
         options.onSetProperty(key, value);
       }
 
-      console.log('lastUpdate', get().lastUpdate);
+      //console.log('persona', get().model);
+      //console.log('lastUpdate', get().lastUpdate);
+      //console.log('errors', get().errors);
     },
 
     // Rimuove una proprietà dal modello
@@ -94,7 +174,7 @@ const useModel = ({ set, get, subscribe, initialModel = {}, options = {} }) => {
         options.onResetModel(newModel);
       }
 
-      //console.log('lastUpdate', get().lastUpdate);
+      console.log('modello resettato', get().model);
     },
 
     // Ottiene una proprietà dal modello
@@ -106,10 +186,13 @@ const useModel = ({ set, get, subscribe, initialModel = {}, options = {} }) => {
 
     // Ottiene più proprietà dal modello
     getProperties: (keys) => {
-      return keys.map((key) => {
+      const objResult = keys.reduce((acc, key) => {
         const path = `${rootPath}.${key}`;
-        return _.get(get(), path);
-      });
+        acc[key] = _.get(get(), path);
+        return acc;
+      }, {});
+
+      return objResult;
     },
 
     // Ottiene l'intero modello o un sottoinsieme se namespace è definito
@@ -119,19 +202,8 @@ const useModel = ({ set, get, subscribe, initialModel = {}, options = {} }) => {
 
     // Ottiene una proprietà e le sue dipendenze
     getPropertyAndDependencies: (key, dependencies) => {
-      //console.log('getPropertyAndDependencies', key, dependencies);
       const path = `${rootPath}.${key}`;
       const value = _.get(get(), path);
-
-      // Calcola le dipendenze
-      // const dependenciesMap = dependencies
-      //   ? Object.entries(dependencies).reduce((acc, [depKey, namespace]) => {
-      //       const fieldPath = namespace ? `${namespace}.${depKey}` : depKey;
-      //       const depPath = `${rootPath}.${fieldPath}`;
-      //       acc[depKey] = _.get(get(), depPath);
-      //       return acc;
-      //     }, {})
-      //   : {};
 
       // Gestisce la reattività
       const unsubscribeCallbacks = [];
@@ -171,7 +243,7 @@ const useModel = ({ set, get, subscribe, initialModel = {}, options = {} }) => {
       };
     },
 
-    // Imposta gli errori del model
+    // Imposta gli errori del model: DA RIFATTORIZZARE
     setErrors: (key, errors) => {
       set(
         produce((state) => {
@@ -179,7 +251,11 @@ const useModel = ({ set, get, subscribe, initialModel = {}, options = {} }) => {
         })
       );
     },
-    
+
+    // Ottiene gli errori del model
+    getFieldErrors: (key) => {
+      return get().errors?.[key];
+    },
   };
 };
 

@@ -12,14 +12,9 @@ import { FieldTypes } from '@shared/metadata';
 import { useTotali } from '@shared/hooks';
 
 const FormDatiGeneraliContainer = () => {
-  // Questo deve spostarsi nel componente adibito alla creazione del procedimento
+ 
   const procedimentoStore = useStoreContext(FieldTypes.PROCEDIMENTO);
-  const { resetModel, setProperty, getTransazioni } = useProcedimentoStore(procedimentoStore);
-  const procedimento = ModelFactory.create({ type: FieldTypes.PROCEDIMENTO });
-
-  React.useEffect(() => {
-    resetModel(procedimento);
-  }, []);
+  const { resetModel, getTransazioni } = useProcedimentoStore(procedimentoStore);
 
   const calculateTotali = React.useCallback(() => {
     const enums = TransazioneMetadata['1.0'].enums;
@@ -59,42 +54,24 @@ const FormDatiGeneraliContainer = () => {
   }, []);
 
   const { totali, updateTotali } = useTotali({ calculateTotali });
-
-  const onChange = React.useCallback(({ fieldKey, changes }) => {
-    const transazioni = getTransazioni();
-    const transazioniKeys = transazioni.map((t) => t.key);
-
-    if (!fieldKey) {
-      Object.entries(changes).forEach(([key, value]) => {
-        setProperty(key, value);
-        if (transazioniKeys.includes(key)) {
-          updateTotali();
-        }
-      });
-    } else {
-      setProperty(fieldKey, changes);
-      if (transazioniKeys.includes(fieldKey)) {
-        updateTotali();
-      }
-    }
-  }, []);
+  const onTransazioneChange = React.useCallback((index, key, changes) => updateTotali(), []);
 
   return (
     <Grid container sx={{ rowGap: '3rem' }}>
       <Grid size={{ xs: 12 }}>
-        <IstanzaFormContainer onChange={onChange} />
+        <IstanzaFormContainer />
       </Grid>
 
       <Grid size={{ xs: 12 }}>
-        <IncontroFormContainer onChange={onChange} />
+        <IncontroFormContainer />
       </Grid>
 
       <Grid size={{ xs: 12 }}>
-        <MediatoreFormContainer onChange={onChange} />
+        <MediatoreFormContainer />
       </Grid>
 
       <Grid container size={{ xs: 12 }} sx={{ rowGap: '1.5rem' }}>
-        <RiepilogoTransazioniFormContainer onChange={onChange} />
+        <RiepilogoTransazioniFormContainer onChange={onTransazioneChange} />
         <Totali totali={totali} />
       </Grid>
 
@@ -102,7 +79,12 @@ const FormDatiGeneraliContainer = () => {
         <ClearButton
           modelType={FieldTypes.PROCEDIMENTO}
           onClick={() => {
-            resetModel(procedimento);
+            resetModel(
+              ModelFactory.create({
+                type: FieldTypes.PROCEDIMENTO,
+                version: '1.0',
+              })
+            );
             updateTotali();
           }}
         />

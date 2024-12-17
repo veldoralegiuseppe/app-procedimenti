@@ -23,20 +23,21 @@ const useModelArrayStore = (arrayStore) => {
     const index = arrayStore.getState().getItems().indexOf(item);
     arrayStore.getState().updateItem(index, updates);
   }, [arrayStore]);
+  const addItems = useCallback((newItems) => arrayStore.getState().addItems(newItems), [arrayStore]);
   const removeItem = useCallback((index) => arrayStore.getState().removeItem(index), [arrayStore]);
   const filterItems = useCallback((filter) => arrayStore.getState().filterItems(filter), [arrayStore]);
   const findItem = useCallback((filter) => arrayStore.getState().findItem(filter), [arrayStore]);
   const getItemProperty = useCallback((index, property) => arrayStore.getState().getItemProperty(index, property), [arrayStore]);
   const getItem = useCallback((index) => arrayStore.getState().getItem(index), [arrayStore]);
-  const getItems = useCallback(() => arrayStore.getState().getItems(), [arrayStore]);
+  const getItems = useCallback(() => arrayStore(state => state.getItems()), [arrayStore]);
   const findItemProperty = useCallback((filterFn, property) => {
     const item = findItem(filterFn);
     return item ? item[property] : undefined;
   }, [arrayStore]);
-  const getItemPropertyAndDependencies = useCallback((index, property, dependencies) => arrayStore.getState().getItemPropertyAndDependencies(index, property, dependencies), [arrayStore]);
+  const removeItemByValue = useCallback((item) => arrayStore.getState().removeItemByValue(item), [arrayStore]); 
+  const resetItems = useCallback((items) => arrayStore.getState().resetItems(items), [arrayStore]);
   
-
-  return { addItem, updateItem, removeItem, filterItems, findItem, getItemProperty, getItem, getItems, findItemProperty, updateItemById, getItemPropertyAndDependencies };
+  return { addItem, addItems, updateItem, removeItem, filterItems, findItem, getItemProperty, getItem, getItems, findItemProperty, updateItemById, removeItemByValue, resetItems };
 };
 
 export default useModelArrayStore;

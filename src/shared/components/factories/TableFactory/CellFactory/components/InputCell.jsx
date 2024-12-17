@@ -29,8 +29,12 @@ const InputCell = (props) => {
     dependencies,
     args: { properties },
     callback: ({changes}) => {
-      if (Object.entries(changes).some(([k, v]) => properties[k] !== v)) {
-        setProperties((prev) => ({ ...prev, ...changes }));
+      console.log('changes', changes);
+      if (Object.entries(changes || {}).some(([k, v]) => properties[k] !== v)) {
+        setProperties((prev) => {
+          console.log('new properties', { ...prev, ...changes });
+          return { ...prev, ...changes }
+        });
       }
     },
   });
@@ -38,13 +42,13 @@ const InputCell = (props) => {
   const FieldComponent = CustomComponent
     ? React.createElement(CustomComponent, {
         fieldKey,
-        ...properties,
         value,
+        ...properties
       })
     : React.createElement(ComponentFactory.InputFactory, {
         fieldKey,
-        ...properties,
         value,
+        ...properties
       });
 
   return FieldComponent;

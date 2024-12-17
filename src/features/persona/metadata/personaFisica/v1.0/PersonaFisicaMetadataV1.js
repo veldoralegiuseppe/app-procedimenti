@@ -117,6 +117,7 @@ const PersonaFisicaMetadataV1 = {
     label: 'PEC/Email',
     type: FieldTypes.STRING,
     inputType: InputTypes.TEXT,
+    inputValidations: [validators.isEmail],
   },
 
   nomeRappresentanteLegale: {
@@ -124,6 +125,7 @@ const PersonaFisicaMetadataV1 = {
     label: 'Nome avvocato',
     type: FieldTypes.STRING,
     inputType: InputTypes.TEXT,
+    inputValidations: [validators.onlyAlphabetic],
   },
 
   cognomeRappresentanteLegale: {
@@ -131,6 +133,7 @@ const PersonaFisicaMetadataV1 = {
     label: 'Cognome avvocato',
     type: FieldTypes.STRING,
     inputType: InputTypes.TEXT,
+    inputValidations: [validators.onlyAlphabetic],
   },
 
   pecEmailRappresentanteLegale: {
@@ -138,54 +141,91 @@ const PersonaFisicaMetadataV1 = {
     label: 'PEC/Email',
     type: FieldTypes.STRING,
     inputType: InputTypes.TEXT,
+    inputValidations: [validators.isEmail],
   },
 
   speseAvvio: {
     key: 'speseAvvio',
     label: 'Spese avvio',
-    type: FieldTypes.NUMBER,
-    default: 0,
-    inputType: InputTypes.IMPORTO,
+    type: FieldTypes.TRANSAZIONE,
+    default: {
+      key: 'speseAvvio',
+      nome: 'Spese avvio',
+    },
+    version: '1.0',
+    validations: {
+      [ValidationHooksTypes.ON_PERSISTENCE]: [validators.required],
+    },
   },
 
   spesePostali: {
     key: 'spesePostali',
     label: 'Spese postali',
-    type: FieldTypes.NUMBER,
-    default: 0,
-    inputType: InputTypes.IMPORTO,
+    type: FieldTypes.TRANSAZIONE,
+    default: {
+      key: 'spesePostali',
+      nome: 'Spese postali',
+    },
+    version: '1.0',
+    validations: {
+      [ValidationHooksTypes.ON_PERSISTENCE]: [validators.required],
+    },
   },
 
   speseIndennita: {
     key: 'speseIndennita',
     label: 'Spese indennità',
-    type: FieldTypes.NUMBER,
-    default: 0,
-    inputType: InputTypes.IMPORTO,
+    type: FieldTypes.TRANSAZIONE,
+    default: {
+      key: 'speseIndennita',
+      nome: 'Spese indennità',
+    },
+    version: '1.0',
+    validations: {
+      [ValidationHooksTypes.ON_PERSISTENCE]: [validators.required],
+    },
   },
 
   speseMancatoAccordo: {
     key: 'speseMancatoAccordo',
     label: 'Spese mancato accordo',
-    type: FieldTypes.NUMBER,
-    default: 0,
-    inputType: InputTypes.IMPORTO,
+    type: FieldTypes.TRANSAZIONE,
+    default: {
+      key: 'speseMancatoAccordo',
+      nome: 'Spese mancato accordo',
+    },
+    version: '1.0',
+    validations: {
+      [ValidationHooksTypes.ON_PERSISTENCE]: [validators.required],
+    },
   },
 
   spesePositivoPrimoIncontro: {
     key: 'spesePositivoPrimoIncontro',
     label: 'Spese positivo primo incontro',
-    type: FieldTypes.NUMBER,
-    default: 0,
-    inputType: InputTypes.IMPORTO,
+    type: FieldTypes.TRANSAZIONE,
+    default: {
+      key: 'spesePositivoPrimoIncontro',
+      nome: 'Spese positivo primo incontro',
+    },
+    version: '1.0',
+    validations: {
+      [ValidationHooksTypes.ON_PERSISTENCE]: [validators.required],
+    },
   },
 
   spesePositivoOltrePrimoIncontro: {
     key: 'spesePositivoOltrePrimoIncontro',
     label: 'Spese positivo oltre primo incontro',
-    type: FieldTypes.NUMBER,
-    default: 0,
-    inputType: InputTypes.IMPORTO,
+    type: FieldTypes.TRANSAZIONE,
+    default: {
+      key: 'spesePositivoOltrePrimoIncontro',
+      nome: 'Spese positivo oltre primo incontro',
+    },
+    version: '1.0',
+    validations: {
+      [ValidationHooksTypes.ON_PERSISTENCE]: [validators.required],
+    },
   },
 
   note: {

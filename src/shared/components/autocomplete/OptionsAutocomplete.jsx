@@ -6,7 +6,6 @@ import AutocompleteWrapper from './components/AutocompleteWrapper';
 import DialogForm from './components/DialogForm';
 import _ from 'lodash';
 
-
 /**
  * Componente OptionsAutocomplete
  *
@@ -33,33 +32,30 @@ const OptionsAutocomplete = ({
   label,
   onChange,
   onBlur,
-  onSubmit,
-  onDelete,
   onOpen,
-  options: initOpts = [],
-  fetchOptions,
+  optionsStore,
+  isOptionEqualToValue = (option, value) => _.isEqual(option.value === value),
   sx,
   value: initialValue = '',
-  error = false,
   helperText = '',
+  filterFn, 
   dialogDescriptionText = '',
   dialogTitle = 'Crea',
   groupBy,
   dialogForm,
+  disabled = false,
   validations,
   onFormPopulate,
   optionModel,
   deletable = true,
   creatable = true,
   freeSolo,
-  disabled = false,
-  loading: isLoading,
 }) => {
-
 
   const {
     value,
     setValue,
+    openDialog,
     options,
     handleChange,
     filterOptions,
@@ -67,35 +63,37 @@ const OptionsAutocomplete = ({
     removeOption,
     open,
     dialogValue,
-    openDialog,
-    loading,
     closeDialog,
     setDialogValue,
+    loading,
   } = useOptionsAutocomplete({
     initialValue,
-    options: initOpts,
-    fetchOptions,
     onChange,
+    optionsStore,
     onBlur,
+    isOptionEqualToValue,
     groupBy,
     creatable,
-    isLoading,
+    filterFn,
   });
 
   const { isFormValid, errorMessage, validateInput } =
     useValidation(optionModel);
 
   // Handlers
-  const onCreationSubmit = React.useCallback((newOption, fristTruthyKey) => {
-    //console.log('aggiunta nuova opzione', newOption, fristTruthyKey);
-    const newValue = fristTruthyKey ? newOption[fristTruthyKey] : newOption;
+  const onCreationSubmit = React.useCallback(
+    (newOption, fristTruthyKey) => {
+      console.log('aggiunta nuova opzione', newOption, fristTruthyKey);
+      const newValue = fristTruthyKey ? newOption[fristTruthyKey] : newOption;
 
-    onSubmit?.(newOption);
-    addOption(newOption);
-    handleChange(null, null, newValue);
-    setValue(newValue);
-    closeDialog();
-  }, [onSubmit, addOption, handleChange, setValue, closeDialog]);
+      addOption(newOption, () => {
+        handleChange(null, null, newValue);
+        setValue(newValue);
+        closeDialog();
+      });
+    },
+    [addOption, handleChange, setValue, closeDialog]
+  );
 
   const onCreationAbort = React.useCallback(() => {
     //console.log('abort creazione nuova opzione ');
@@ -105,69 +103,77 @@ const OptionsAutocomplete = ({
     onBlur?.(undefined);
   }, [closeDialog, setValue, setDialogValue, onBlur]);
 
-  const onOptionSelected = React.useCallback((option, newValue) => {
-    //console.log('onOptionSelected', option, newValue);
-    if (option?.key === 'add') {
-      const newOption = {};
+  const onOptionSelected = React.useCallback(
+    (option, newValue) => {
+      //console.log('onOptionSelected', option, newValue);
+      if (option?.key === 'add') {
+        const newOption = {};
 
-      const isString =
-        !optionModel ||
-        (Array.isArray(optionModel) && optionModel.length === 1);
+        const isString =
+          !optionModel ||
+          (Array.isArray(optionModel) && optionModel.length === 1);
 
-      if (isString) {
-        newOption.value = newValue;
-      } else {
-        newOption.value = {};
+        if (isString) {
+          newOption.value = newValue;
+        } else {
+          newOption.value = {};
 
-        if (onFormPopulate) newOption.value = onFormPopulate(newValue);
-        else {
-          (optionModel || Object.keys(options[0].value)).forEach(
-            (key, index) => {
-              newOption.value[key] = index === 0 ? newValue : '';
-            }
-          );
+          if (onFormPopulate) newOption.value = onFormPopulate(newValue);
+          else {
+            (optionModel || Object.keys(options[0].value)).forEach(
+              (key, index) => {
+                newOption.value[key] = index === 0 ? newValue : '';
+              }
+            );
+          }
         }
+
+        option.value = newOption.value;
+        setDialogValue(option);
+        openDialog();
       }
+      else {
+        handleChange(null, option, newValue);
+        setValue(newValue);
+      }
+     
+    },
+    [optionModel, onFormPopulate, handleChange, setValue]
+  );
 
-      option.value = newOption.value;
-    }
-    handleChange(null, option, newValue);
-    setValue(newValue);
-  }, [optionModel, onFormPopulate, handleChange, setValue]);
+  const onOptionDelete = React.useCallback(
+    (option) => {
+      //console.log('onOptionDelete', option);
+      removeOption(option);
 
-  const onOptionDelete = React.useCallback((option) => {
-    //console.log('onOptionDelete', option);
-    onDelete?.(option.value);
-    removeOption(option);
+      const isSameValue =
+        typeof option.value === 'string' && _.isEqual(option.value, value);
+      const isSameObject =
+        _.isEqual(option.value, value) ||
+        _.some(option.value, (val, key) => _.isEqual(val, value));
 
-    const isSameValue =
-      typeof option.value === 'string' && _.isEqual(option.value, value);
-    const isSameObject =
-      _.isEqual(option.value, value) ||
-      _.some(option.value, (val, key) => _.isEqual(val, value));
+      if (isSameValue || isSameObject) handleChange(null, null, null, 'clear');
+    },
+    [removeOption, value, handleChange]
+  );
 
-    if (isSameValue || isSameObject) handleChange(null, null, null, 'clear');
-  }, [onDelete, removeOption, value, handleChange]);
-
-  // Memo
-  const memoSx = React.useMemo(() => sx, [sx]);
-
-  //console.log('OptionsAutocomplete', loading, options, value);
+  // Stabilizzazione 
+  const [equalToValue] = React.useState(() => isOptionEqualToValue);
 
   return (
     <React.Fragment>
       <AutocompleteWrapper
         label={label}
         value={value}
+        isOptionEqualToValue={equalToValue}
         options={options}
         disabled={disabled}
         onOpen={onOpen}
         handleChange={handleChange}
         onDelete={onOptionDelete}
         onBlur={onBlur}
-        sx={memoSx}
+        sx={sx}
         loading={loading}
-        error={error}
         helperText={helperText}
         groupBy={groupBy ? (option) => groupBy?.(option?.value) : null}
         filterOptions={filterOptions}

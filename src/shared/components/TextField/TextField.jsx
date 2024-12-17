@@ -1,47 +1,51 @@
 import { CssTextField } from '@shared/theme';
-import { useErrorValidations } from '@shared/hooks';
+
 import React from 'react';
 import _ from 'lodash';
 
 const TextField = ({
-  label: lbl,
-  value: initValue = '',
-  onChange: callback,
+  label,
+  value,
+  onChange,
   helperText,
+  error,
   onBlur,
-  onError,
-  inputValidations = [],
-  ...props
+  disabled,
+  sx,
+  size,
 }) => {
-  const [value, setValue] = React.useState(initValue);
-  const { errors, validate } = useErrorValidations(onError);
-  const [label] = React.useState(lbl);
+
+  const [localValue, setLocalValue] = React.useState(value || '');
 
   React.useEffect(() => {
-    if (!_.isEqual(initValue, value)) {
-      setValue(initValue);
-    }
-  }, [initValue]);
+    if(_.isEqual(value, localValue)) return;
+    setLocalValue(value || '');
+  }, [value]);
 
-  const onChange = React.useCallback(
-    (e) => {
-      const value = e.target.value;
-      setValue(e.target.value);
-      validate(value, inputValidations);
-      callback(e, errors);
-    },
-    [callback]
-  );
+  const handleChange = React.useMemo(() => (e) => {
+    setLocalValue(e.target.value || '');
+    onChange?.(e);
+  }, [onChange])
+
+  const handleBlur = React.useMemo(() => (e) => {
+    const debouncedOnBlur = _.debounce(() => onBlur(e), 80);
+    setLocalValue(() => {
+      debouncedOnBlur();
+      return e.target.value;
+    })
+  }, [onBlur])
 
   return (
     <CssTextField
-      {...props}
       label={label}
-      value={value}
-      error={Object.keys(errors).length > 0}
-      helperText={Object.values(errors)[0] || helperText}
-      onChange={onChange}
-      onBlur={onBlur}
+      value={localValue}
+      disabled={disabled}
+      error={error}
+      sx={sx}
+      size={size}
+      helperText={helperText}
+      onChange={handleChange}
+      onBlur={handleBlur}
     />
   );
 };

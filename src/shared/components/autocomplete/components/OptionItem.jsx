@@ -11,7 +11,7 @@ const OptionItemComponent = ({
   deletable = true,
 }) => {
   const theme = useTheme();
-  //console.log('OptionItemComponent', option, id);
+  //console.log('OptionItemComponent', option);
 
   const handleButtonClick = (option, value) => {
     if (onOptionSelected) {
@@ -23,6 +23,7 @@ const OptionItemComponent = ({
   const renderButtons = () => {
     //console.log('renderButtons', option);
     if (typeof option.value === 'object' && option.value !== null) {
+      //console.log('option', option);
       return React.Children.toArray(
         Object.entries(option.value).map(([subKey, subValue], subIndex) => {
           const buttonKey = `button-${option.id}-${subKey}-${JSON.stringify(

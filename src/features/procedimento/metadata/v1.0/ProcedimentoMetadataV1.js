@@ -3,8 +3,11 @@ import dayjs from 'dayjs';
 import 'dayjs/locale/it';
 import { validators } from '@utils';
 import {InputTypes, FieldTypes, ValidationHooksTypes} from '@shared/metadata';
+import { TransazioneMetadata } from '@features/transazione';
 
 dayjs.locale('it');
+
+const tipoTransazioneEnums = TransazioneMetadata['1.0'].enums.tipo;
 
 const ProcedimentoMetadataV1 = {
   numProtocollo: {
@@ -124,7 +127,7 @@ const ProcedimentoMetadataV1 = {
     default: {
       key: 'compensoMediatore',
       nome: 'Spese mediatore',
-      tipo: 'USCITA',
+      tipo: tipoTransazioneEnums.USCITA,
     },
     version: '1.0',
     validations: {
@@ -139,7 +142,7 @@ const ProcedimentoMetadataV1 = {
     default: {
       key: 'speseAvvioSedeSecondaria',
       nome: 'Spese avvio sede secondaria',
-      tipo: 'USCITA',
+      tipo: tipoTransazioneEnums.USCITA,
     },
     version: '1.0',
     validations: {
@@ -154,7 +157,7 @@ const ProcedimentoMetadataV1 = {
     default: {
       key: 'speseIndennitaSedeSecondaria',
       nome: 'Spese indennità sede secondaria',
-      tipo: 'USCITA',
+      tipo: tipoTransazioneEnums.USCITA,
     },
     version: '1.0',
     validations: {

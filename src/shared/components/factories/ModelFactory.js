@@ -49,6 +49,8 @@ export default class ModelFactory {
           type: value.type,
           version: value.version,
         });
+
+        model[key].owner = type;
       }
       else {
         model[key] = initialValues[key] || value.default;

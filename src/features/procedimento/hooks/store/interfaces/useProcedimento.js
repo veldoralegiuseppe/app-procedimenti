@@ -16,9 +16,10 @@ const useProcedimento = ({
   set,
   get,
   subscribe,
-  initialProcedimento,
+  initialModel,
   options = {},
 }) => {
+  
   const updateModelPipeline = new Pipeline([]);
 
   const modelInterface = useModel({
@@ -35,7 +36,7 @@ const useProcedimento = ({
         options?.onSetProperty?.(key, value);
       },
     },
-    initialModel: initialProcedimento,
+    initialModel,
   });
 
   return {

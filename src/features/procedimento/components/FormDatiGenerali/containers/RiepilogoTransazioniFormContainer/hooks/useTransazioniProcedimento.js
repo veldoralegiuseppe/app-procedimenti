@@ -1,23 +1,24 @@
 import { useMemo } from 'react';
 import { ModelFactory } from '@shared/components';
 import { FieldTypes } from '@shared/metadata';
+import { useStoreContext } from '@shared/context';
+import { useProcedimentoStore } from '@features/procedimento';
 
 const useTransazioniProcedimento = () => {
   // Store
   const owner = FieldTypes.PROCEDIMENTO;
-
+  const procedimentoStore = useStoreContext(owner);
+  const {getTransazioni} = useProcedimentoStore(procedimentoStore);
+  
   // Initializzazione delle transazioni
   const initialTransazioni = useMemo(() => {
 
     const getInitialTransazioni = () => {
-      const metadata = ModelFactory.getMetadata(FieldTypes.PROCEDIMENTO).metadata;
-      const transazioni = Object.values(metadata)
-        .filter((m) => m.type === FieldTypes.TRANSAZIONE)
-        .map((m) => ModelFactory.create({ type: FieldTypes.TRANSAZIONE, version: m.version, initialValues: m.default }));
-  
+      const transazioni = getTransazioni();
       return transazioni;
     }
 
+    // TODO: da calcolare in base allo store persone
     const incassoParti = ModelFactory.create({
       initialValues: {
         nome: 'Incasso parti',
@@ -26,6 +27,7 @@ const useTransazioniProcedimento = () => {
       type: FieldTypes.TRANSAZIONE,
     });
 
+    // TODO: da calcolare in base allo store persone
     const incassoControparti = ModelFactory.create({
       initialValues: {
         nome: 'Incasso controparti',

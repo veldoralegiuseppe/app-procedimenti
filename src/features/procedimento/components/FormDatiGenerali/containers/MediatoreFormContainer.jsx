@@ -3,8 +3,9 @@ import { FieldTypes } from '@shared/metadata';
 import { useMetadata } from '@shared/hooks';
 import { FormPresenter, ModelFactory } from '@shared/components';
 
-const MediatoreFormContainer = ({ onChange }) => {
+const MediatoreFormContainer = () => {
   const commonSx = { width: '29.2rem' };
+  
   const { metadata } = useMetadata({
     type: FieldTypes.PROCEDIMENTO,
     keysOrSection: ModelFactory.getMetadata(FieldTypes.PROCEDIMENTO).enums
@@ -21,7 +22,6 @@ const MediatoreFormContainer = ({ onChange }) => {
       ...value,
       //store: procedimentoStore, viene individuato mediante mapping nel contesto centrale
       //onChange: (changes) => console.log(changes)
-      onBlur: (changes) => onChange?.({ changes }),
       owner: metadata.type,
     }));
 

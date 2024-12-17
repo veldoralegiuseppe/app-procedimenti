@@ -44,15 +44,6 @@ const TransazioneMetadataV1 = {
     key: 'tipo',
     label: 'Tipo',
     type: FieldTypes.STRING,
-    default: TransazioneEnumsV1.tipo.USCITA,
-    validations: {
-      [ValidationHooksTypes.ON_CONSTRUCTION]: [
-        (value) => Object.values(TransazioneEnumsV1.tipo).includes(value),
-      ],
-      [ValidationHooksTypes.ON_PERSISTENCE]: [
-        (value) => Object.values(TransazioneEnumsV1.tipo).includes(value),
-      ],
-    },
   },
 
   importoDovuto: {

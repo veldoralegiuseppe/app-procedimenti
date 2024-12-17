@@ -3,16 +3,9 @@ import { TabellaTransazioni } from '@features/transazione';
 import { useTransazioniProcedimento } from './hooks/useTransazioniProcedimento';
 import _ from 'lodash';
 
-const RiepilogoTransazioniFormContainerComponent = ({onChange: onChangeCallback,}) => {
+const RiepilogoTransazioniFormContainerComponent = ({onChange}) => {
   const { transazioni } = useTransazioniProcedimento();
-  const onChange = React.useCallback(
-    (index, changes) => {
-      const fieldKey = transazioni[index].key;
-      onChangeCallback?.({ fieldKey, changes });
-    },
-    [transazioni]
-  );
-
+ 
   return (
     <TabellaTransazioni
       transazioni={transazioni}

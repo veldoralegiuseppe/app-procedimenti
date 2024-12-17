@@ -1,7 +1,9 @@
 import * as React from 'react';
-import { ImportoReadOnly, ImportoInput } from '@shared/components';
+import { ImportoInput } from '@shared/components';
 import useTransazioneConstants from './useTransazioneConstants';
 import useTransazioneUtils from './useTransazioneUtils';
+import { useStoreContext } from '@shared/context';
+import { useModelStore } from '@shared/hooks';
 import _ from 'lodash';
 
 /**
@@ -21,7 +23,6 @@ const mapToRow = ({
   getId,
   index,
 }) => {
-
   const isParzialmenteSaldato =
     transazione.stato === statoEnums.PARZIALMENTE_SALDATO;
 
@@ -41,6 +42,17 @@ const mapToRow = ({
       onBlur: disabled
         ? () => {}
         : (value) => onChange({ importoDovuto: value }),
+
+      dependencies: {
+        importoDovuto: {
+          namespace: `${transazione.key}`,
+          callback: ({ key, oldValue, newValue, props, store }) => {
+            return {
+              value: newValue,
+            };
+          },
+        },
+      },
     },
 
     importoCorrisposto: {
@@ -51,12 +63,20 @@ const mapToRow = ({
       dependencies: {
         stato: {
           namespace: `${transazione.key}`,
-          callback: ({key, oldValue, newValue, props, store}) => {
+          callback: ({ key, oldValue, newValue, props, store }) => {
             const model = store.getState().model[transazione.key];
 
             if (newValue === statoEnums.SALDATO)
               return { disabled: true, value: model.importoDovuto };
             else return { disabled: false, value: 0 };
+          },
+        },
+        importoCorrisposto: {
+          namespace: `${transazione.key}`,
+          callback: ({ key, oldValue, newValue, props, store }) => {
+            return {
+              value: newValue,
+            };
           },
         },
       },
@@ -78,27 +98,25 @@ const mapToRow = ({
       dependencies: {
         importoCorrisposto: {
           namespace: `${transazione.key}`,
-          callback: ({key, oldValue, newValue, props, store}) => {
+          callback: ({ key, oldValue, newValue, props, store }) => {
             //console.log('importoCorrisposto', key, oldValue, newValue, props);
             const model = store.getState().model[transazione.key];
             const stato = model.stato;
 
-            if(stato === statoEnums.PARZIALMENTE_SALDATO) 
-              return `Rimanente: € ${model.importoDovuto - newValue }`;
-            else 
-              return '';
+            if (stato === statoEnums.PARZIALMENTE_SALDATO)
+              return `Rimanente: € ${model.importoDovuto - newValue}`;
+            else return '';
           },
         },
         importoDovuto: {
           namespace: `${transazione.key}`,
-          callback: ({key, oldValue, newValue, props, store}) => {
+          callback: ({ key, oldValue, newValue, props, store }) => {
             const model = store.getState().model[transazione.key];
             const stato = model.stato;
 
-            if(stato === statoEnums.PARZIALMENTE_SALDATO) 
+            if (stato === statoEnums.PARZIALMENTE_SALDATO)
               return `Rimanente: € ${newValue - model.importoCorrisposto}`;
-            else 
-              return '';
+            else return '';
           },
         },
       },
@@ -123,9 +141,10 @@ const useTransazioneTableRow = ({
   onBlur,
   errors,
 }) => {
- 
-  const { statoChipFlagMap, flagColorToStatoMap, statoEnums } =
-    useTransazioneConstants();
+  const { statoChipFlagMap, flagColorToStatoMap, statoEnums } = useTransazioneConstants();
+  const ownerStore = useStoreContext(transazioni[0]?.owner);
+  const {setProperty} = useModelStore(ownerStore);
+
   const { getNextStatus, getId } = useTransazioneUtils({
     statoChipFlagMap,
     disabled,
@@ -165,7 +184,8 @@ const useTransazioneTableRow = ({
       const updatedTransazione = transazioni[index];
       //console.log('handleChange', changes, index, updatedTransazione);
       //console.log('onChange', updatedTransazione.key, changes);
-      onChange?.(index, changes);
+      setProperty?.(updatedTransazione.key, changes);
+      onChange?.(index, updatedTransazione.key, changes);
     },
     [onChange]
   );

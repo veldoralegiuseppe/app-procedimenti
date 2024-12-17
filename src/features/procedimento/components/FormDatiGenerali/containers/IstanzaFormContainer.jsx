@@ -2,10 +2,13 @@ import * as React from 'react';
 import { useMetadata } from '@shared/hooks';
 import { FieldTypes } from '@shared/metadata';
 import { FormPresenter, ModelFactory } from '@shared/components';
+import { useCreateStore, useModelArray } from '@shared/hooks';
 
-const IstanzaFormContainer = ({onChange, store}) => {
+const IstanzaFormContainer = () => {
   
   const commonSx = { width: '29.2rem' };
+  const sedeStore = useCreateStore({ storeInterface: useModelArray });
+ 
 
   const { metadata } = useMetadata({
     type: FieldTypes.PROCEDIMENTO,
@@ -14,9 +17,11 @@ const IstanzaFormContainer = ({onChange, store}) => {
     overrides: {
       sedeDeposito: {
         sx: commonSx,
+        optionsStore: sedeStore,
       },
       sedeSvolgimento: {
         sx: commonSx,
+        optionsStore: sedeStore,
       },
       oggettoControversia: { sx: commonSx },
       esitoMediazione: { sx: commonSx },
@@ -30,7 +35,6 @@ const IstanzaFormContainer = ({onChange, store}) => {
       ...value,
       //store: procedimentoStore, viene individuato mediante mapping nel contesto centrale
       //onChange: (changes) => console.log(changes)
-      onBlur: (changes) => onChange?.({ changes }),
       owner: metadata.type,
     }));
 

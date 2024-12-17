@@ -9,6 +9,7 @@ const useStoreDependencies = ({
   args,
   callback,
 }) => {
+  //console.log('useStoreDependencies', {fieldKey, storeType, dependencies, args, callback});
   const store = useStoreContext(storeType);
   const { getPropertyAndDependencies, getProperty } = useModelStore(store);
   const value = getProperty(fieldKey);
@@ -20,7 +21,6 @@ const useStoreDependencies = ({
       acc[key] = {
         namespace: value.namespace,
         callback: (key, oldValue, newValue) => {
-          console.log('callback', key, oldValue, newValue);
           const changes = value.callback({
             key,
             oldValue,

@@ -1,5 +1,5 @@
 const PersonaFisicaEnumsV1 = {
-    sesso: ['Uomo', 'Donna'],
+    sesso: ['UOMO', 'DONNA'],
 
     sezione: {
       ANAGRAFICA: ['codiceFiscale', 'nome', 'cognome', 'sesso', 'dataNascita', 'provinciaNascita', 'comuneNascita', 'capComuneNascita'],

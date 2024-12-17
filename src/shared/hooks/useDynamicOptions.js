@@ -1,9 +1,16 @@
-import { useState, useCallback, useEffect, useMemo } from 'react';
+import React, { useState, useCallback, useEffect, useMemo } from 'react';
 import _ from 'lodash';
 
 function useDynamicOptions(initialOptions) {
-  const [options, setOptions] = useState(initialOptions || []);
+  const [options, setOptions] = useState([]);
 
+  useEffect(() => {
+    console.log('useDynamicOptions', 'initialOptions', initialOptions);
+    if (!_.isEqual(options, initialOptions)) {
+      setOptions(initialOptions);
+    }
+  }, [initialOptions]);
+  
   const addOption = useCallback((newValue) => {
     //console.log('newValue', newValue);
     setOptions((prevOptions) => {
@@ -18,11 +25,14 @@ function useDynamicOptions(initialOptions) {
   const addOptions = useCallback((newValues) => {
     setOptions((prevOptions) => {
       const newOptions = _.filter(
-        newValues,
-        (newValue) => !_.some(prevOptions, newValue)
+      newValues,
+      (newValue) => !_.some(prevOptions, newValue)
       );
-      //console.log('addOptions', newValues, newOptions);
+      if (newOptions.length > 0) {
+      console.log('addOptions', 'newOptions', newOptions);
       return [...prevOptions, ...newOptions];
+      }
+      return prevOptions;
     });
   }
   , [setOptions]);

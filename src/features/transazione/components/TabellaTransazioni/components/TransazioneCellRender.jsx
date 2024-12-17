@@ -11,7 +11,7 @@ const TransazioneCellRender = ({rowId, store, ...props}) => {
   const {findItem} = useModelArrayStore(store);
   const row = findItem((row) => row.id === rowId);
 
-  switch (row.tipo.toLowerCase()) {
+  switch (row.tipo?.toLowerCase()) {
     case 'entrata':
       color = '#176938';
       icon = (

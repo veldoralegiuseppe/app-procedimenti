@@ -10,8 +10,8 @@ import { useModelArray } from '@shared/hooks';
  * @param {Object} [params.options={}] - Opzioni aggiuntive per il model array.
  * @returns {Object} - Un oggetto contenente gli elementi iniziali e le proprietà del model array.
  */
-const useTransazioni = ({ set, get, initialTransazioni = [], options = {} }) => ({
-  ...useModelArray({ set, get, options, initialTransazioni }),
+const useTransazioni = ({ set, get, initialItems = [], options = {} }) => ({
+  ...useModelArray({ set, get, options, initialItems }),
 });
 
 export default useTransazioni;

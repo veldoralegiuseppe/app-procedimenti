@@ -43,7 +43,13 @@ import _ from 'lodash';
  * @param {string} property - La proprietà da ottenere.
  * @returns {any} Il valore della proprietà specificata.
  */
-const useModelArray = ({ set, get, initialItems = [], options = {} }) => {
+const useModelArray = ({
+  set,
+  get,
+  subscribe,
+  initialItems = [],
+  options = {},
+}) => {
   const getNamespace = (key) => {
     return options?.namespace ? `${options.namespace}.${key}` : key;
   };
@@ -53,8 +59,8 @@ const useModelArray = ({ set, get, initialItems = [], options = {} }) => {
 
     // Aggiunge un elemento all'array
     addItem: (newItem) => {
-      set(
-        produce((state) => {
+      set((prevState) =>
+        produce(prevState, (state) => {
           const key = getNamespace('items');
           if (!Array.isArray(_.get(state, key))) {
             _.set(state, key, []); // Inizializza l'array se non esiste
@@ -66,6 +72,28 @@ const useModelArray = ({ set, get, initialItems = [], options = {} }) => {
       if (options?.onAddItem) {
         options.onAddItem(newItem);
       }
+
+      console.log('items', get().items);
+    },
+
+    // Aggiunge più elementi all'array
+    addItems: (newItems) => {
+      set(
+        produce((state) => {
+          const key = getNamespace('items');
+          if (!Array.isArray(_.get(state, key))) {
+            _.set(state, key, []); // Inizializza l'array se non esiste
+          }
+          const items = _.get(state, key);
+          _.set(state, key, [...items, ...newItems]); // Crea un nuovo riferimento con i nuovi elementi
+        })
+      );
+
+      if (options?.onAddItems) {
+        options.onAddItems(newItems);
+      }
+
+      console.log('items dopo aggiunta', get().items);
     },
 
     // Aggiorna un elemento dell'array in una posizione specifica
@@ -93,6 +121,22 @@ const useModelArray = ({ set, get, initialItems = [], options = {} }) => {
           if (Array.isArray(_.get(state, key))) {
             _.pullAt(_.get(state, key), index); // Usa lodash per rimuovere l'elemento
           }
+        })
+      );
+
+      if (options?.onRemoveItem) {
+        options.onRemoveItem(index);
+      }
+    },
+
+    // Rimuove un elemento dall'array trovandolo tramite una funzione
+    removeItemByValue: (item) => {
+      const key = getNamespace('items');
+      const index = _.findIndex(_.get(get(), key), (i) => _.isEqual(i, item));
+
+      set(
+        produce((state) => {
+          _.pullAt(_.get(state, key), index);
         })
       );
 
@@ -151,23 +195,6 @@ const useModelArray = ({ set, get, initialItems = [], options = {} }) => {
       return result;
     },
 
-    // Ottiene una proprietà specifica di un elemento dell'array e le sue dipendenze
-    getItemPropertyAndDependencies: (index, property, dependencies) => {
-      const key = getNamespace(`items[${index}].${property}`);
-      const result = _.get(get(), key);
-
-      const deps = dependencies.map((dep) => {
-        const depKey = getNamespace(`items[${index}].${dep}`);
-        return _.get(get(), depKey);
-      });
-
-      if (options?.onGetItemPropertyAndDependencies) {
-        options.onGetItemPropertyAndDependencies(index, property, dependencies);
-      }
-
-      return { property: result, dependencies: deps };
-    },
-
     // Ottiene tutti gli elementi dell'array
     getItems: () => {
       const key = getNamespace('items');
@@ -178,6 +205,17 @@ const useModelArray = ({ set, get, initialItems = [], options = {} }) => {
       }
 
       return result;
+    },
+
+    // Resetta tutti gli elementi dell'array
+    resetItems: (items) => {
+      set(() => ({
+        items: Array.isArray(items) ? [...items] : [],
+      }));
+
+      if (options?.onResetItems) {
+        options.onResetItems();
+      }
     },
   };
 };
