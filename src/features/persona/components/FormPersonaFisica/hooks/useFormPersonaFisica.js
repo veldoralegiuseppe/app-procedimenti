@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { FieldTypes, CacheFetchPolicies } from '@shared/metadata';
 import {
   useGenerateInputProps,
@@ -8,6 +8,7 @@ import {
   useCreateStore,
   useModelArrayStore,
 } from '@shared/hooks';
+import { ModelFactory } from '@shared/components';
 import { validators } from '@utils';
 import { usePersonaStore } from '@features/persona';
 import { useStoreContext } from '@shared/context';
@@ -25,7 +26,7 @@ const capProps = {
 
 const useFormPersonaFisica = () => {
   const personaFisicaStore = useStoreContext(FieldTypes.PERSONA_FISICA);
-  const { setProperty } = usePersonaStore(personaFisicaStore);
+  const { setProperty, resetModel } = usePersonaStore(personaFisicaStore);
   const provinciaStore = useCreateStore({ storeInterface: useModelArray });
   const comuneResidenzaStore = useCreateStore({
     storeInterface: useModelArray,
@@ -33,15 +34,18 @@ const useFormPersonaFisica = () => {
   const comuneNascitaStore = useCreateStore({ storeInterface: useModelArray });
 
   const { addItems: addProvince } = useModelArrayStore(provinciaStore);
-  const { resetItems: resetComuniNascita } = useModelArrayStore(comuneNascitaStore);
-  const { resetItems: resetComuniResidenza } = useModelArrayStore(comuneResidenzaStore);
+  const { resetItems: resetComuniNascita } =
+    useModelArrayStore(comuneNascitaStore);
+  const { resetItems: resetComuniResidenza } =
+    useModelArrayStore(comuneResidenzaStore);
   const { fetchData: fetchProvince } = useFetchData({
     cachePolicy: CacheFetchPolicies.CACHE_FIRST,
   });
   const { fetchData: fetchComuni } = useFetchData({
     cachePolicy: CacheFetchPolicies.CACHE_FIRST,
   });
-  const { decodeLuogoNascitaAsync, decodeDataNascita, decodeGenere } = useCodiceFiscale();
+  const { decodeLuogoNascitaAsync, decodeDataNascita, decodeGenere } =
+    useCodiceFiscale();
 
   // Fetch delle province e dei comuni al caricamento del componente
   useEffect(() => {
@@ -308,7 +312,7 @@ const useFormPersonaFisica = () => {
 
     note: {
       size: { xs: 12 },
-      sx: {minWidth: '100%'},
+      sx: { minWidth: '100%' },
       inputSize: 'medium',
     },
 
@@ -322,8 +326,20 @@ const useFormPersonaFisica = () => {
     overrides: propsOverrides,
   });
 
+  const resetPersonaFisica = useMemo(() => {
+    return () => {
+      resetModel(
+        ModelFactory.create({
+          type: FieldTypes.PERSONA_FISICA,
+          version: '1.0',
+        })
+      );
+    };
+  }, []);
+
   return {
     getInputPropsArray,
+    resetPersonaFisica,
   };
 };
 

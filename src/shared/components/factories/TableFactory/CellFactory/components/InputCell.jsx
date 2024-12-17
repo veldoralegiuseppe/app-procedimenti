@@ -29,10 +29,9 @@ const InputCell = (props) => {
     dependencies,
     args: { properties },
     callback: ({changes}) => {
-      console.log('changes', changes);
+      //console.log('changes', changes);
       if (Object.entries(changes || {}).some(([k, v]) => properties[k] !== v)) {
         setProperties((prev) => {
-          console.log('new properties', { ...prev, ...changes });
           return { ...prev, ...changes }
         });
       }
