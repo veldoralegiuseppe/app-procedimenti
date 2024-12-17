@@ -2,6 +2,7 @@ import { useMemo, useCallback } from 'react';
 import { useTheme } from '@mui/material/styles';
 import { useStoreContext } from '@shared/context';
 import { useModelStore } from '@shared/hooks';
+import { maxHeight } from '@mui/system';
 
 const useInputFactory = ({
   fieldKey,
@@ -17,17 +18,17 @@ const useInputFactory = ({
   const errorMessage = hasError ? Object.values(errors)[0] : '';
 
   // Memorizzazione degli styles
-  const inputStyles = useMemo(
-    () => ({
+  const inputStyles = useMemo(() => {
+    const helperTextHeight = 20;
+    const smallSizeHeight = 34.13
+
+    return {
       margin: '0',
       backgroundColor: theme?.palette.background.default,
       width: '168px',
-      maxWidth: '30rem',
-      minWidth: '133px',
-      height: '36px',
-    }),
-    []
-  );
+      minHeight: `${smallSizeHeight + helperTextHeight}px`,
+    };
+  }, []);
 
   // Memorizzazione degli handler
   const handleChanges = useCallback(

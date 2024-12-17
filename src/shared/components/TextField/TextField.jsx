@@ -12,9 +12,12 @@ const TextField = ({
   onBlur,
   disabled,
   sx,
-  size,
+  inputSize= 'small',
+  multiline = false,
+  rows,
 }) => {
 
+  console.log('TextField', label, multiline, rows)
   const [localValue, setLocalValue] = React.useState(value || '');
 
   React.useEffect(() => {
@@ -41,8 +44,10 @@ const TextField = ({
       value={localValue}
       disabled={disabled}
       error={error}
+      multiline={multiline}
+      rows={rows}
       sx={sx}
-      size={size}
+      size={inputSize}
       helperText={helperText}
       onChange={handleChange}
       onBlur={handleBlur}

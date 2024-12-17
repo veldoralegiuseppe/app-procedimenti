@@ -12,7 +12,7 @@ const FormPersonaFisicaContainer = () => {
   //console.log('getInputPropsArray', getInputPropsArray());
 
   return (
-    <Grid container sx={{ rowGap: '3rem' }}>
+    <Grid container sx={{ rowGap: '2.4rem' }}>
       {Object.entries(enums.sezione).map(([key, sezione]) => {
         const titolo =
           key.charAt(0).toUpperCase() +
@@ -28,7 +28,7 @@ const FormPersonaFisicaContainer = () => {
         );
       })}
 
-      <Grid>
+      <Grid sx={{marginTop: '2rem'}}>
         <RiepilogoTransazioniFormContainer />
       </Grid>
     </Grid>

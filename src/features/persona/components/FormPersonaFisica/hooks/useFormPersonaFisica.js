@@ -306,6 +306,12 @@ const useFormPersonaFisica = () => {
       sx: { width: '29.2rem' },
     },
 
+    note: {
+      size: { xs: 12 },
+      sx: {minWidth: '100%'},
+      inputSize: 'medium',
+    },
+
     pecEmail: {
       sx: { width: '29.2rem' },
     },

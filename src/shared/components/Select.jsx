@@ -10,7 +10,10 @@ import {
   formControlStyles,
   labelColor as defaultLabelColor,
 } from '@shared/theme';
-import { ArrowDropDown as ArrowDropDownIcon, Close as CloseIcon } from '@mui/icons-material';
+import {
+  ArrowDropDown as ArrowDropDownIcon,
+  Close as CloseIcon,
+} from '@mui/icons-material';
 import { useTheme } from '@mui/material/styles';
 import _ from 'lodash';
 
@@ -32,11 +35,12 @@ function Select({
   const theme = useTheme();
   const sxStyles = {
     ...formControlStyles(theme, labelColor),
-    width: sx?.width || '100%',
-    maxWidth: sx?.maxWidth || '30rem',
-    minWidth: sx?.minWidth || '16.8rem',
-    height: sx?.height || '34.13px',
-    margin: sx?.margin || 0,
+    width: sx?.width,
+    maxWidth: sx?.maxWidth,
+    minWidth: sx?.minWidth,
+    minHeight: sx?.minHeight,
+    height: sx?.height,
+    margin: sx?.margin,
     '&:hover .MuiInputLabel-root:not(.Mui-disabled), &:hover .MuiSvgIcon-root, &:hover .MuiOutlinedInput-root fieldset':
       {
         color: theme.palette.logo.secondary, // Sincronizza colore su hover
@@ -62,7 +66,7 @@ function Select({
 
   // Effects
   React.useEffect(() => {
-    if(_.isEqual(selected, value)) return;
+    if (_.isEqual(selected, value)) return;
     setSelected(value || '');
   }, [value]);
 
@@ -102,7 +106,7 @@ function Select({
         disabled={disabled}
         onBlur={(e) => {
           //console.log('Select.jsx onBlur e:', e, 'selected', selected);
-          onBlur(selected || undefined)
+          onBlur(selected || undefined);
         }}
         size="small"
         renderValue={(selected) =>
@@ -111,7 +115,8 @@ function Select({
         onChange={handleChange}
         IconComponent={selected ? () => null : ArrowDropDownIcon}
         endAdornment={
-          !disabled && selected && (
+          !disabled &&
+          selected && (
             <CloseIcon onClick={handleClear} style={{ cursor: 'pointer' }} />
           )
         }

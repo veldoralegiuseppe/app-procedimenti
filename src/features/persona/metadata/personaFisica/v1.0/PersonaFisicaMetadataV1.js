@@ -233,6 +233,8 @@ const PersonaFisicaMetadataV1 = {
     label: 'Note',
     type: FieldTypes.STRING,
     inputType: InputTypes.TEXT,
+    multiline: true,
+    rows: 4,
   },
 
   isParteIstante: {

@@ -44,7 +44,7 @@ const FormPresenter = ({ inputPropsArray: inputProps = [], titolo = '' }) => {
   return (
     <Grid
       container
-      sx={{ columnGap: '1rem', rowGap: '1.7rem' }}
+      sx={{ columnGap: '1.2rem', rowGap: '1.2rem' }}
       size={{ xs: 12 }}
     >
       {/* Titolo */}

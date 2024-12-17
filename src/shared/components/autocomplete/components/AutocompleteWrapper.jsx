@@ -92,6 +92,7 @@ const AutocompleteWrapperComponent = ({
       onChange={(event, value, reason) =>
         handleChange(event, null, value, reason)
       }
+      size='small'
       filterOptions={filterOptions}
       groupBy={groupBy}
       //onBlur={(e) => onBlur(value ? value.toUpperCase() : undefined)}
@@ -137,6 +138,7 @@ const AutocompleteWrapperComponent = ({
           {...params}
           value={value?.value || ''}
           disabled={disabled}
+          size="small"
           onKeyDown={(event) => {
             //console.log('onKeyDown', event);
             if (event.key === 'Enter') {
@@ -156,7 +158,6 @@ const AutocompleteWrapperComponent = ({
               borderBottomColor: theme.palette.primary.main,
             },
           }}
-          size="small"
           label={label}
         />
       )}
