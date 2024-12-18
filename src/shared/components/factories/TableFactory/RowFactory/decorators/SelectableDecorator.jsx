@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useMemo} from 'react';
 import { TableCell, Checkbox } from '@mui/material';
 import { useSelectableRows } from './hooks/useSelectableRows'; // Importa il hook
 

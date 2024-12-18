@@ -56,8 +56,9 @@ const RowFactory = React.memo(
             },
             ...sx,
           }}
-          key={index}
+          key={'row-'+index}
           id={row.id}
+          row={row}
           columns={columns}
           store={store}
           onRowClick={onRowClick}

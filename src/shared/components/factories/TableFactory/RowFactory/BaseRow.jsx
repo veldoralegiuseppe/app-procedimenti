@@ -1,13 +1,9 @@
 import React from 'react';
 import { TableRow } from '@mui/material';
 import CellFactory from '../CellFactory/CellFactory';
-import { useModelArrayStore } from '@shared/hooks';
 import _ from 'lodash';
 
-const BaseRow = ({ id, columns, onRowClick, children, sx, components={}, store }) => {
-
-  const {findItem} = useModelArrayStore(store);
-  const row = findItem(row => _.isEqual(row.id, id));
+const BaseRow = ({ id, row, columns, onRowClick, children, sx, components={}, store }) => {
   
   // Trova il SelectableDecorator basato su data-type
   const selectableChild = React.Children.toArray(children).find(
@@ -33,8 +29,8 @@ const BaseRow = ({ id, columns, onRowClick, children, sx, components={}, store }
       {selectableChild}
 
       {/* Renderizza le celle normali */}
-      {columns.map((column) => (
-        <CellFactory key={column.field} column={column} rowId={id} row={row} store={store} />
+      {columns.map((column, index) => (
+        <CellFactory key={`row-${id}-cell-${index}`} column={column} rowId={id} row={row} store={store} />
       ))}
 
       {/* Renderizza gli altri children */}

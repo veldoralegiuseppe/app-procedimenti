@@ -160,7 +160,7 @@ const useModel = ({ set, get, subscribe, initialModel = {}, options = {} }) => {
     resetModel: (newModel) => {
       set(
         produce((state) => {
-          _.set(state, rootPath, _.cloneDeep(newModel));
+          _.set(state, rootPath, _.cloneDeep(newModel || initialModel));
         })
       );
 

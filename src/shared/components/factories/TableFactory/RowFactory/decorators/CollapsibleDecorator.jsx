@@ -4,6 +4,7 @@ import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
 
 const CollapsibleDecorator = (WrappedRow) => ({ collapsibleConfig, row, columns, totalColumns, children, ...props }) => {
   const [open, setOpen] = useState(false);
+  console.log('CollapsibleDecorator', row);
 
   const handleToggle = (e) => {
     e.stopPropagation();

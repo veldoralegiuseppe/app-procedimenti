@@ -1,4 +1,4 @@
-import React, { useMemo, useEffect } from 'react';
+import { useMemo, useEffect } from 'react';
 import { useCreateStore, useModelArray } from '@shared/hooks';
 
 /**
@@ -10,7 +10,7 @@ import { useCreateStore, useModelArray } from '@shared/hooks';
  * @throws {Error} Se vengono rilevati ID duplicati.
  */
 const useTableRows = (columns, data) => {
-  
+ 
   const rows = useMemo(() => {
     const idSet = new Set();
     const processedRows = data.map((row, index) => {
@@ -31,9 +31,8 @@ const useTableRows = (columns, data) => {
   }, [data, columns]);
 
   const tableStore = useCreateStore({ storeInterface: useModelArray, initialItems: rows });
-  //console.log('tableStore', tableStore.getState());
 
-  return { tableStore };
+  return { tableStore, rows };
 };
 
 export default useTableRows;

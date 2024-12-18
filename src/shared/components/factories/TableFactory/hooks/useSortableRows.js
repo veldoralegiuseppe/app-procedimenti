@@ -1,11 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 
 /**
  * Hook per gestire l'ordinamento delle righe in base alla colonna.
- * @param {Array} initialRows - L'array iniziale delle righe.
+ * @param {Array} items - L'array iniziale delle righe.
  */
-const useSortableRows = (initialRows) => {
-  const [rows, setRows] = useState(() => initialRows || []);
+const useSortableRows = (items) => {
+
+  useEffect(() => {
+    setRows(items);
+    setOrderBy(null);
+    setOrder('asc');
+  }, [items]);
+
+  const [rows, setRows] = useState(() => items || []);
   const [order, setOrder] = useState('asc');
   const [orderBy, setOrderBy] = useState(null);
 

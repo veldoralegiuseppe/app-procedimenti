@@ -20,7 +20,7 @@ const CellFactory = ({ column, row, sx, store }) => {
         return column.render ? column.render({...cellParams, rowId: cellParams.id, store, column}) : cellParams; 
       case 'text':
       default:
-        return cellParams; // Contenuto testuale predefinito
+        return row[column.field]; // Contenuto testuale predefinito
     }
   };
 

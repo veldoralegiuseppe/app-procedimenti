@@ -7,13 +7,24 @@ import {
   FormTitle,
   ButtonFactory,
 } from '@shared/components';
+import { useStoreContext } from '@shared/context';
+import { usePersonaStore, usePersoneStore } from '@features/persona';
 import {
   FormPersonaFisicaContainer,
   FormPersonaGiuridicaContainer,
 } from '@features/persona';
-import { ButtonTypes } from '@shared/metadata';
+import { ButtonTypes, FieldTypes } from '@shared/metadata';
+
 
 const FormParteControparte = ({handleClose}) => {
+  const personaFisicaStore = useStoreContext(FieldTypes.PERSONA_FISICA);
+  const personaGiuridicaStore = useStoreContext(FieldTypes.PERSONA_GIURIDICA);
+  const personeStore = useStoreContext(FieldTypes.PERSONE);
+
+  const {resetModel: resetPersonaFisica} = usePersonaStore(personaFisicaStore);
+  const {resetModel: resetPersonaGiuridica} = usePersonaStore(personaGiuridicaStore);
+  const {addItem} = usePersoneStore(personeStore)
+
   const ruoloGroupOptions = [
     { value: 'PARTE_ISTANTE', label: 'PARTE ISTANTE' },
     { value: 'CONTROPARTE', label: 'CONTROPARTE' },
@@ -27,7 +38,14 @@ const FormParteControparte = ({handleClose}) => {
   const [tipoPersona, setTipoPersona] = useState('PERSONA_FISICA');
 
   const handleSubmit = useCallback(() => {
-    console.log('Submit');
+    const newPersonaStore = tipoPersona === 'PERSONA_FISICA' ? personaFisicaStore : personaGiuridicaStore;
+    newPersonaStore.getState().setProperty('ruolo', ruoloGroupOptions.find((option) => option.value === ruolo).label);
+    const newPersona = newPersonaStore.getState().getModel();
+    
+    addItem(newPersona);
+    resetPersonaFisica();
+    resetPersonaGiuridica();
+    handleClose();
   }, []);
 
   return (

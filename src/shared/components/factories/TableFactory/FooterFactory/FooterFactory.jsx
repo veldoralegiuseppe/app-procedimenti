@@ -16,6 +16,8 @@ const FooterFactoryComponent = ({
 }) => {
   const theme = useTheme();
 
+  console.log('FooterFactoryComponent', dataLength);
+
   return (
     <TableFooter sx={{ '& .MuiToolbar-root': { minHeight: '2rem', ...sx },  }}>
       {pagination && (
@@ -49,6 +51,7 @@ const FooterFactory = React.memo(FooterFactoryComponent, (prevProps, nextProps) 
   return (
     prevProps.page === nextProps.page &&
     prevProps.rowsPerPage === nextProps.rowsPerPage &&
+    prevProps.dataLength === nextProps.dataLength &&
     _.isEqual(prevProps.sx, nextProps.sx)
   );
 });

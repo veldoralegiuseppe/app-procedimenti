@@ -1,16 +1,11 @@
 import React from 'react';
 import { Table, TableContainer } from '@mui/material';
-import HeaderFactory, {
-  headerFactoryPropTypes,
-} from './HeaderFactory/HeaderFactory';
-import RowFactory, { rowFactoryPropTypes } from './RowFactory/RowFactory';
-import FooterFactory, {
-  footerFactoryPropTypes,
-} from './FooterFactory/FooterFactory';
+import HeaderFactory from './HeaderFactory/HeaderFactory';
+import RowFactory from './RowFactory/RowFactory';
+import FooterFactory from './FooterFactory/FooterFactory';
 import { SelectableProvider } from './RowFactory/decorators/hooks/useSelectableRows';
 import { useSortableRows, useTableRows } from './hooks';
 import _ from 'lodash';
-import { useModelArrayStore } from '@shared/hooks';
 
 /**
  * Componente TableFactory
@@ -44,18 +39,15 @@ const TableFactoryComponent = ({
   sx,
 }) => {
   // State 
-  //console.log('data', data);
-  const [columnsMeta] = React.useState(columns);
-  const [headerConfig] = React.useState(hConfig);
-  const [rowConfig] = React.useState(rConfig);
-  const [footerConfig] = React.useState(fConfig);
+  const columnsMeta = React.useMemo(() => columns, [columns]);
+  const headerConfig = React.useMemo(() => hConfig, [hConfig]);
+  const rowConfig = React.useMemo(() => rConfig, [rConfig]);
+  const footerConfig = React.useMemo(() => fConfig, [fConfig]);
 
-  const { tableStore } = useTableRows(columnsMeta, data);
-  //console.log('tableStore', tableStore);
-  const { getItems } = useModelArrayStore(tableStore);
-  const { rows, handleSort, order, orderBy } = useSortableRows(
-    getItems() || []
-  );
+  const { tableStore, rows: items } = useTableRows(columnsMeta, data);
+  //console.log('tableStore', tableStore.getState());
+  const { rows, handleSort, order, orderBy } = useSortableRows(items);
+
 
   const totalColumns = React.useMemo(
     () =>

@@ -1,20 +1,23 @@
 import * as React from 'react';
-import {TableFactory} from "@shared/components";
+import { TableFactory } from '@shared/components';
 import { styled } from '@mui/system';
 import { TableCell, TableHead } from '@mui/material';
+import { useStoreContext } from '@shared/context';
+import { FieldTypes } from '@shared/metadata';
+import usePersoneTableRow from './hooks/usePersoneTableRow';
 
 const columns = [
   {
     field: 'anagrafica',
     headerName: 'Anagrafica',
     sortable: true,
-    align: 'center',
+    align: 'left',
   },
   {
     field: 'ruolo',
     headerName: 'Ruolo',
     sortable: true,
-    align: 'center',
+    align: 'left',
   },
   {
     field: 'speseAvvio',
@@ -29,7 +32,7 @@ const columns = [
     align: 'center',
   },
   {
-    field: 'indennita',
+    field: 'speseIndennita',
     headerName: 'Indennità',
     sortable: true,
     align: 'center',
@@ -77,30 +80,34 @@ const headerConfig = {
       textAlign: 'center',
       backgroundColor: '#c8dcec',
       //borderBottom: '1px solid #3e678f4d',
-      '& .MuiButtonBase-root:hover': { 
+      '& .MuiButtonBase-root:hover': {
         color: '#4596de',
         '& svg': { opacity: '0.8' },
-
       },
       '& .MuiButtonBase-root.Mui-active': {
         color: theme.palette.logo.secondary,
         '& svg': { color: theme.palette.logo.secondary },
       },
-      padding: '4px 8px',
-     
+      padding: '4px',
     })),
   },
 };
 
 const rowConfig = {
   collapsibleConfig: {
-    renderComponent: (row) => (
-      <div>
-        <h4>Dettagli di {row.name}</h4>
-        <p>ID: {row.id}</p>
-        <p>Età: {row.age}</p>
-      </div>
-    ),
+    renderComponent: (row) => {
+      console.log('Dettagli di', row);
+      return (
+        <div>
+          <h4>Dettagli di</h4>
+          <p>ID:</p>
+        </div>
+      );
+    },
+  },
+  selectableConfig: {
+    isMultiSelect: false,
+    onRowClick: (event, row) => console.log('Riga cliccata:', row),
   },
   sx: { '& .MuiTableCell-root': { paddingLeft: '4px' } },
 };
@@ -109,13 +116,17 @@ const footerConfig = {
   pagination: true,
   page: 0,
   rowsPerPage: 5,
-  sx: {height: '1rem' },
+  sx: { height: '2rem' },
   onPageChange: (event, newPage) => console.log('Pagina cambiata:', newPage),
   onRowsPerPageChange: (event) =>
     console.log('Righe per pagina cambiate:', event.target.value),
 };
 
-const TabellaPartiControparti = ({ persone = [] }) => {
+const TabellaPartiControparti = () => {
+  const personeStore = useStoreContext(FieldTypes.PERSONE);
+  const persone = personeStore((state) => state.getItems());
+  const { data } = usePersoneTableRow({ persone });
+
   React.useEffect(() => {
     const validateData = (data) => {
       if (persone.length === 0) return true;
@@ -124,12 +135,12 @@ const TabellaPartiControparti = ({ persone = [] }) => {
       );
     };
 
-    if (!validateData(persone)) {
+    if (!validateData(data)) {
       console.error(
         'I dati forniti non rispettano il formato specificato dalle colonne.'
       );
     }
-  }, [persone]);
+  }, [data]);
 
   return (
     <TableFactory
@@ -142,7 +153,7 @@ const TabellaPartiControparti = ({ persone = [] }) => {
       }}
       footerConfig={footerConfig}
       columns={columns}
-      data={persone}
+      data={data}
     />
   );
 };
