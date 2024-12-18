@@ -58,7 +58,7 @@ const TableFactoryComponent = ({
   );
 
   return (
-    <SelectableProvider {...rowConfig?.selectableConfig}>
+    <SelectableProvider {...rowConfig?.selectableConfig} tableStore={tableStore}>
       <TableContainer sx={{ ...sx }}>
         <Table size={size}>
           {/* Header */}

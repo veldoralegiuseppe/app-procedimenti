@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useMemo } from 'react';
+import React, { createContext, useContext, useState, useMemo, useEffect } from 'react';
 
 // Crea il context
 const SelectableContext = createContext();
@@ -7,8 +7,18 @@ export const SelectableProvider = ({
   children,
   isMultiSelect = true,
   initialSelected = [],
+  tableStore,
   onSelected = () => {}, // Callback invocata al cambio di selezione
 }) => {
+  
+  const itemsLength = tableStore(state => state.items.length);
+
+  useEffect(() => {
+    if (itemsLength === 0) {
+      setSelectedRows([]);
+    }
+  }, [itemsLength]);
+
   // Inizializza le righe selezionate in base alla modalità
   const [selectedRows, setSelectedRows] = useState(() => {
     if (isMultiSelect) {
@@ -41,7 +51,7 @@ export const SelectableProvider = ({
 
   return (
     <SelectableContext.Provider
-      value={{ selectedRows, toggleRowSelection, isRowSelected }}
+      value={{ selectedRows, toggleRowSelection, isRowSelected, setSelectedRows }}
     >
       {children}
     </SelectableContext.Provider>

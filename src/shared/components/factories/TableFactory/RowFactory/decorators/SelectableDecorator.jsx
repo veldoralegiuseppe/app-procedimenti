@@ -1,8 +1,8 @@
-import React, {useMemo} from 'react';
+import React, {useMemo, useEffect} from 'react';
 import { TableCell, Checkbox } from '@mui/material';
 import { useSelectableRows } from './hooks/useSelectableRows'; // Importa il hook
 
-const SelectableDecorator = (WrappedRow) => ({ row, columns, children, ...props }) => {
+const SelectableDecorator = (WrappedRow) => ({ row, columns, children, store, ...props }) => {
   const { toggleRowSelection, isRowSelected } = useSelectableRows();
 
   const handleSelect = useMemo(() => (e) => {

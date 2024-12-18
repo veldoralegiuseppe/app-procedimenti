@@ -115,6 +115,7 @@ const useModelArray = ({
 
     // Rimuove un elemento dall'array in una posizione specifica
     removeItem: (index) => {
+      console.log('removeItem', index);
       set(
         produce((state) => {
           const key = getNamespace('items');

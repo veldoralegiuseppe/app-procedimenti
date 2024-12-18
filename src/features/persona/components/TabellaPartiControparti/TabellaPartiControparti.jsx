@@ -66,66 +66,71 @@ const columns = [
   },
 ];
 
-const headerConfig = {
-  components: {
-    TableHead: styled(TableHead)(({ theme }) => ({
-      backgroundColor: theme.palette.background.default,
-    })),
 
-    TableCell: styled(TableCell)(({ theme }) => ({
-      color: '#255a89',
-      fontSize: '1rem',
-      textTransform: 'uppercase',
-      fontWeight: '500',
-      textAlign: 'center',
-      backgroundColor: '#c8dcec',
-      //borderBottom: '1px solid #3e678f4d',
-      '& .MuiButtonBase-root:hover': {
-        color: '#4596de',
-        '& svg': { opacity: '0.8' },
-      },
-      '& .MuiButtonBase-root.Mui-active': {
-        color: theme.palette.logo.secondary,
-        '& svg': { color: theme.palette.logo.secondary },
-      },
-      padding: '4px',
-    })),
-  },
-};
 
-const rowConfig = {
-  collapsibleConfig: {
-    renderComponent: (row) => {
-      console.log('Dettagli di', row);
-      return (
-        <div>
-          <h4>Dettagli di</h4>
-          <p>ID:</p>
-        </div>
-      );
-    },
-  },
-  selectableConfig: {
-    isMultiSelect: false,
-    onRowClick: (event, row) => console.log('Riga cliccata:', row),
-  },
-  sx: { '& .MuiTableCell-root': { paddingLeft: '4px' } },
-};
-
-const footerConfig = {
-  pagination: true,
-  page: 0,
-  rowsPerPage: 5,
-  sx: { height: '2rem' },
-  onPageChange: (event, newPage) => console.log('Pagina cambiata:', newPage),
-  onRowsPerPageChange: (event) =>
-    console.log('Righe per pagina cambiate:', event.target.value),
-};
-
-const TabellaPartiControparti = () => {
+const TabellaPartiControparti = ({onRowSelected}) => {
   const personeStore = useStoreContext(FieldTypes.PERSONE);
   const persone = personeStore((state) => state.getItems());
   const { data } = usePersoneTableRow({ persone });
+
+  const headerConfig = {
+    components: {
+      TableHead: styled(TableHead)(({ theme }) => ({
+        backgroundColor: theme.palette.background.default,
+      })),
+  
+      TableCell: styled(TableCell)(({ theme }) => ({
+        color: '#255a89',
+        fontSize: '1rem',
+        textTransform: 'uppercase',
+        fontWeight: '500',
+        textAlign: 'center',
+        backgroundColor: '#c8dcec',
+        //borderBottom: '1px solid #3e678f4d',
+        '& .MuiButtonBase-root:hover': {
+          color: '#4596de',
+          '& svg': { opacity: '0.8' },
+        },
+        '& .MuiButtonBase-root.Mui-active': {
+          color: theme.palette.logo.secondary,
+          '& svg': { color: theme.palette.logo.secondary },
+        },
+        padding: '4px',
+      })),
+    },
+  };
+  
+  const rowConfig = {
+    collapsibleConfig: {
+      renderComponent: (row) => {
+        console.log('Dettagli di', row);
+        return (
+          <div>
+            <h4>Dettagli di</h4>
+            <p>ID:</p>
+          </div>
+        );
+      },
+    },
+    selectableConfig: {
+      isMultiSelect: false,
+      onSelected: (selezionati) => {
+        console.log('Selezionati:', selezionati)
+        onRowSelected?.(selezionati);
+      },
+    },
+    sx: { '& .MuiTableCell-root': { paddingLeft: '4px' } },
+  };
+  
+  const footerConfig = {
+    pagination: true,
+    page: 0,
+    rowsPerPage: 5,
+    sx: { height: '2rem' },
+    onPageChange: (event, newPage) => console.log('Pagina cambiata:', newPage),
+    onRowsPerPageChange: (event) =>
+      console.log('Righe per pagina cambiate:', event.target.value),
+  };
 
   React.useEffect(() => {
     const validateData = (data) => {

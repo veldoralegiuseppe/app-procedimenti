@@ -12,6 +12,7 @@ import { useCreateStore, useModelArray } from '@shared/hooks';
 const useTableRows = (columns, data) => {
  
   const rows = useMemo(() => {
+    console.log('newRows', data);
     const idSet = new Set();
     const processedRows = data.map((row, index) => {
       const id = row.hasOwnProperty('id') ? row.id : index;
@@ -31,6 +32,12 @@ const useTableRows = (columns, data) => {
   }, [data, columns]);
 
   const tableStore = useCreateStore({ storeInterface: useModelArray, initialItems: rows });
+
+  useEffect(() => {
+    console.log('allineo tablerows', rows);
+    tableStore.getState().resetItems(rows)
+    console.log('new store', tableStore.getState().getItems())
+  }, [rows, tableStore]);
 
   return { tableStore, rows };
 };
