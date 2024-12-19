@@ -100,10 +100,10 @@ const useModelArray = ({
     updateItem: (index, updates) => {
       set(
         produce((state) => {
-          const key = getNamespace(`items[${index}]`);
-          const item = _.get(state, key);
-          if (item) {
-            _.merge(item, updates); // Aggiorna solo le proprietà specificate
+          const key = getNamespace('items');
+          const items = _.get(state, key, []);
+          if (items[index]) {
+            items[index] = { ...items[index], ...updates };
           }
         })
       );
@@ -111,6 +111,8 @@ const useModelArray = ({
       if (options?.onUpdateItem) {
         options.onUpdateItem(index, updates);
       }
+    
+      console.log('updates', updates, 'items dopo aggiornamento', get().items);
     },
 
     // Rimuove un elemento dall'array in una posizione specifica
@@ -174,8 +176,8 @@ const useModelArray = ({
 
     // Ottiene un elemento specifico dell'array
     getItem: (index) => {
-      const key = getNamespace(`items[${index}]`);
-      const result = _.get(get(), key);
+      const key = getNamespace(`items`);
+      const result = _.get(get(), `${key}[${index}]`);
 
       if (options?.onGetItem) {
         options.onGetItem(index);

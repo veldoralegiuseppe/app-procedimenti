@@ -3,6 +3,7 @@ import Button from '@mui/material/Button';
 import ArrowBackOutlinedIcon from '@mui/icons-material/ArrowBackOutlined';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
+import ModifyIcon from '@mui/icons-material/Edit';
 import { ButtonTypes } from '@shared/metadata';
 
 const buttonStyles = {
@@ -65,6 +66,14 @@ const ButtonFactory = ({ type, onClick, text, size, disabled: initialDisabled = 
               <DeleteIcon sx={{ color: disabled ? '#b3b3b3' : 'white' }} />
             ),
           };
+          case ButtonTypes.MODIFY:
+            return {
+              variant: 'contained',
+              sx: buttonStyles.PRIMARY,
+              startIcon: (
+                <ModifyIcon sx={{ color: disabled ? '#b3b3b3' : 'white' }} />
+              ),
+            }
         default:
           return {};
       }

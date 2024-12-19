@@ -7,24 +7,14 @@ import {
   FormTitle,
   ButtonFactory,
 } from '@shared/components';
-import { useStoreContext } from '@shared/context';
-import { usePersonaStore, usePersoneStore } from '@features/persona';
 import {
   FormPersonaFisicaContainer,
   FormPersonaGiuridicaContainer,
 } from '@features/persona';
+import { useStoreContext } from '@shared/context';
 import { ButtonTypes, FieldTypes } from '@shared/metadata';
 
-
-const FormParteControparte = ({handleClose}) => {
-  const personaFisicaStore = useStoreContext(FieldTypes.PERSONA_FISICA);
-  const personaGiuridicaStore = useStoreContext(FieldTypes.PERSONA_GIURIDICA);
-  const personeStore = useStoreContext(FieldTypes.PERSONE);
-
-  const {resetModel: resetPersonaFisica} = usePersonaStore(personaFisicaStore);
-  const {resetModel: resetPersonaGiuridica} = usePersonaStore(personaGiuridicaStore);
-  const {addItem} = usePersoneStore(personeStore)
-
+const FormParteControparte = ({ handleClose, onSubmit }) => {
   const ruoloGroupOptions = [
     { value: 'PARTE_ISTANTE', label: 'PARTE ISTANTE' },
     { value: 'CONTROPARTE', label: 'CONTROPARTE' },
@@ -37,14 +27,19 @@ const FormParteControparte = ({handleClose}) => {
   const [ruolo, setRuolo] = useState('PARTE_ISTANTE');
   const [tipoPersona, setTipoPersona] = useState('PERSONA_FISICA');
 
+  const storePersonaFisica = useStoreContext(FieldTypes.PERSONA_FISICA);
+  const storePersonaGiuridica = useStoreContext(FieldTypes.PERSONA_GIURIDICA);
+
   const handleSubmit = useCallback(() => {
-    const newPersonaStore = tipoPersona === 'PERSONA_FISICA' ? personaFisicaStore : personaGiuridicaStore;
-    newPersonaStore.getState().setProperty('ruolo', ruoloGroupOptions.find((option) => option.value === ruolo).label);
-    const newPersona = newPersonaStore.getState().getModel();
-    
-    addItem(newPersona);
-    resetPersonaFisica();
-    resetPersonaGiuridica();
+    const newPersona =
+      tipoPersona === 'PERSONA_FISICA'
+        ? storePersonaFisica.getState().getModel()
+        : storePersonaGiuridica.getState().getModel();
+
+    onSubmit?.({
+      ...newPersona,
+      ruolo: ruoloGroupOptions.find((option) => option.value === ruolo).label,
+    });
     handleClose();
   }, []);
 
@@ -106,8 +101,16 @@ const FormParteControparte = ({handleClose}) => {
           borderTop: '1px solid #f1f1f1',
         }}
       >
-        <ButtonFactory type={ButtonTypes.OUTLINED} text="Indietro" onClick={handleClose}/>
-        <ButtonFactory type={ButtonTypes.CREATE} text="Crea" onClick={handleSubmit}/>
+        <ButtonFactory
+          type={ButtonTypes.OUTLINED}
+          text="Indietro"
+          onClick={handleClose}
+        />
+        <ButtonFactory
+          type={ButtonTypes.CREATE}
+          text="Salva"
+          onClick={handleSubmit}
+        />
       </Box>
     </Grid>
   );
