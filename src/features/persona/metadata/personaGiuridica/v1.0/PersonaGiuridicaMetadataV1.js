@@ -3,7 +3,7 @@ import PersonaGiuridicaEnumsV1 from './enums/PersonaGiuridicaEnumsV1';
 import {InputTypes, FieldTypes, ValidationHooksTypes} from '@shared/metadata';
 
 const PersonaGiuridicaMetadataV1 = {
-  type: FieldTypes.PERSONA_FISICA,
+  type: FieldTypes.PERSONA_GIURIDICA,
 
   version: '1.0',
 

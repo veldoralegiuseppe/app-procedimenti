@@ -2,7 +2,6 @@ import { useEffect, useMemo } from 'react';
 import { FieldTypes, CacheFetchPolicies } from '@shared/metadata';
 import {
   useGenerateInputProps,
-  useCodiceFiscale,
   useFetchData,
   useModelArray,
   useCreateStore,
@@ -49,7 +48,7 @@ const useFormPersonaGiuridica = () => {
       onResult: (result) => {
         //console.log('province', result);
         return result?.map((luogo) => ({
-          value: luogo.nome,
+          value: String(luogo.nome).toUpperCase(),
           payload: luogo,
         }));
       },
@@ -67,7 +66,7 @@ const useFormPersonaGiuridica = () => {
       onResult: (result) => {
         //console.log('comuni', result);
         return result?.map((luogo) => ({
-          value: luogo.nome,
+          value: String(luogo.nome).toUpperCase(),
           payload: luogo,
         }));
       },
@@ -115,8 +114,10 @@ const useFormPersonaGiuridica = () => {
 
             // Resetta i campo quando la provincia cambia
             if (!_.isEqual(oldProvincia, provincia)) {
+
+              console.log('reset comune e cap')
               // Comune
-              setProperty(key, undefined);
+              setProperty('comuneSedeLegale', undefined);
 
               // CAP
               setProperty('capComuneSedeLegale', undefined);
@@ -132,7 +133,8 @@ const useFormPersonaGiuridica = () => {
       },
       onBlur: (change, option) => {
         const cap = option?.payload?.cap;
-
+        console.log('capComuneSedeLegale', cap);
+        setProperty('comuneSedeLegale', option?.value);
         setProperty('capComuneSedeLegale', cap);
       },
     },

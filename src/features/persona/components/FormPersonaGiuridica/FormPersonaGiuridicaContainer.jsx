@@ -18,6 +18,8 @@ const FormPersonaGiuridicaContainer = () => {
           key.charAt(0).toUpperCase() +
           key.slice(1).toLowerCase().replaceAll('_', ' ');
 
+          console.log('getInputPropsArray', getInputPropsArray(sezione));
+
         return (
           <FormPresenter
             key={key}

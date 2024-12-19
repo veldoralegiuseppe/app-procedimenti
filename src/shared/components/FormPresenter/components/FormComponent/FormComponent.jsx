@@ -22,6 +22,7 @@ const FormComponentVanilla = ({index, propsArrayStore}) => {
     },
   });
   
+  //console.log('fiedlKey', fieldKey, 'value', value, 'properties', properties, 'owner', owner);
   const CustomComponent = component;
   const FieldComponent = React.useMemo(() => {
     return CustomComponent

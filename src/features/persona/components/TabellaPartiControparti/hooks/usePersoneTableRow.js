@@ -1,14 +1,17 @@
 import { useMemo } from "react";
 import {ImportoUtils} from '@shared/utils';
+import {FieldTypes} from '@shared/metadata';
 
 const usePersoneTableRow = ({ persone = [] }) => {
   const mapToRow = (persona) => {
+    const tipoPersona = persona.type;
+
     const formatCurrency = (amount) => {
       return ImportoUtils.formattaImporto(amount);
     };
 
     return {
-      anagrafica: `${persona.nome} ${persona.cognome}`,
+      anagrafica: tipoPersona === FieldTypes.PERSONA_FISICA ? `${persona.nome} ${persona.cognome}` : persona.denominazione,
       ruolo: persona.ruolo,
       speseAvvio: formatCurrency(persona.speseAvvio?.importoDovuto),
       spesePostali: formatCurrency(persona.spesePostali?.importoDovuto),

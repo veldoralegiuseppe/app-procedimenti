@@ -28,18 +28,23 @@ const usePartiControparti = () => {
     modeRef.current = ModeTypes.EDIT;
 
     const personaSelezionata = getItem(selectedRowIndices[0]);
+    console.log('personaSelezionata', personaSelezionata);
     const tipoPersona = personaSelezionata.type;
-    tipoPersona === FieldTypes.PERSONA_FISICA
-      ? resetPersonaFisica(personaSelezionata)
-      : resetPersonaGiuridica(personaSelezionata);
+    
+    if(tipoPersona === FieldTypes.PERSONA_FISICA){
+      resetPersonaFisica(personaSelezionata);
+      resetPersonaGiuridica();
+    } else {
+      resetPersonaGiuridica(personaSelezionata);
+      resetPersonaFisica();
+    }
+    
     setOpen(true);
   }, [selectedRowIndices, getItem, resetPersonaFisica, resetPersonaGiuridica]);
 
   const handleClose = useCallback(() => {
     setOpen(false);
-    resetPersonaFisica();
-    resetPersonaGiuridica();
-  }, [resetPersonaFisica, resetPersonaGiuridica]);
+  }, []);
 
   const handleRowSelected = useCallback((indices) => {
     selectedRowIndicesRef.current = indices;
@@ -58,6 +63,7 @@ const usePartiControparti = () => {
     (newPersona) => {
       switch (modeRef.current) {
         case ModeTypes.CREATE:
+          console.log('newPersona', newPersona);
           addItem(newPersona);
           break;
         case ModeTypes.EDIT:

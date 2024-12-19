@@ -19,6 +19,11 @@ import 'dayjs/locale/it';
 dayjs.locale('it');
 
 // CAP
+const comuneCommonProps = {
+  sx: { width: '29.2rem' },
+  disabled: true,
+  helperText: 'Seleziona una provincia',
+};
 const capProps = {
   disabled: true,
   helperText: 'Calcolato automaticamente',
@@ -59,7 +64,7 @@ const useFormPersonaFisica = () => {
       onResult: (result) => {
         //console.log('province', result);
         return result?.map((luogo) => ({
-          value: luogo.nome,
+          value: String(luogo.nome).toUpperCase(),
           payload: luogo,
         }));
       },
@@ -77,7 +82,7 @@ const useFormPersonaFisica = () => {
       onResult: (result) => {
         //console.log('comuni', result);
         return result?.map((luogo) => ({
-          value: luogo.nome,
+          value: String(luogo.nome).toUpperCase(),
           payload: luogo,
         }));
       },
@@ -86,110 +91,6 @@ const useFormPersonaFisica = () => {
       resetComuniResidenza(comuni);
     });
   }, []);
-
-  const getComuneProps = (key) => {
-    const isComuneNascita = key === 'comuneNascita';
-
-    const codiceFiscaleDependency = {
-      callback: ({ key, oldValue, newValue, props, store }) => {
-        // Controllo se il codice fiscale è valido
-        const isCodiceFiscaleValid =
-          newValue && validators.isCodiceFiscale(newValue) === true;
-
-        // Decodifico il comune di nascita ed il cap
-        decodeLuogoNascitaAsync(newValue).then((result) => {
-          console.log('getLuogoNascita', result);
-          const comune = comuneNascitaStore
-            .getState()
-            .items.find(
-              (com) =>
-                String(com.payload.nome).toLowerCase() ===
-                  String(result?.name).toLocaleLowerCase() &&
-                String(com.payload.provincia.sigla).toLowerCase() ===
-                  String(result?.province).toLowerCase()
-            );
-          setProperty('comuneNascita', comune?.value);
-          setProperty('capComuneNascita', comune?.payload?.cap);
-        });
-
-        console.log('disabled', isCodiceFiscaleValid);
-        // return {
-        //   disabled: isCodiceFiscaleValid,
-        // };
-      },
-    };
-
-    return {
-      sx: { width: '29.2rem' },
-      disabled: true,
-      helperText: 'Seleziona una provincia',
-      optionsStore: isComuneNascita ? comuneNascitaStore : comuneResidenzaStore,
-      dependencies: {
-        [isComuneNascita ? 'provinciaNascita' : 'provinciaResidenza']: {
-          callback: ({
-            key: provinciaKey,
-            oldValue: oldProvincia,
-            newValue: provincia,
-            props: comuneProps,
-            store,
-          }) => {
-            // Controllo se il codice fiscale è valido
-            const codiceFiscale = store.getState().getProperty('codiceFiscale');
-            const isCodiceFiscaleValid =
-              codiceFiscale &&
-              validators.isCodiceFiscale(codiceFiscale) === true;
-
-            // Popola i comuni quando la provincia è selezionata
-            const filterFn = provincia
-              ? (comuni) =>
-                  comuni.filter(
-                    (comune) =>
-                      String(
-                        comune.payload.provincia.nome
-                      ).toLocaleLowerCase() ===
-                      String(provincia).toLocaleLowerCase()
-                  )
-              : undefined;
-
-            // Resetta i campo quando la provincia cambia
-            if (!_.isEqual(oldProvincia, provincia)) {
-              // Comune
-              setProperty(key, undefined);
-
-              // CAP
-              setProperty(
-                isComuneNascita ? 'capComuneNascita' : 'capComuneResidenza',
-                undefined
-              );
-            }
-
-            console.log(
-              'props provincia',
-              comuneProps,
-              'isComuneDisabled',
-              !provincia || comuneProps?.disabled
-            );
-
-            return {
-              disabled: !provincia || isCodiceFiscaleValid,
-              helperText: !provincia ? 'Seleziona una provincia' : '',
-              filterFn,
-            };
-          },
-        },
-        ...(isComuneNascita ? { codiceFiscale: codiceFiscaleDependency } : {}),
-      },
-      onBlur: (change, option) => {
-        console.log('onBlur', change, option);
-        const cap = option?.payload?.cap;
-
-        setProperty(
-          isComuneNascita ? 'capComuneNascita' : 'capComuneResidenza',
-          cap
-        );
-      },
-    };
-  };
 
   const propsOverrides = {
     codiceFiscale: {
@@ -247,7 +148,7 @@ const useFormPersonaFisica = () => {
             if (isCodiceFiscaleValid)
               dataNascita = decodeDataNascita(codiceFiscale);
 
-            console.log('dataNascitaDisabled', isCodiceFiscaleValid);
+            setProperty('dataNascita', dataNascita.format('YYYY-MM-DD'));
 
             return {
               disabled: isCodiceFiscaleValid,
@@ -276,10 +177,12 @@ const useFormPersonaFisica = () => {
             // Decodifico il genere
             let genere;
             if (isCodiceFiscaleValid) genere = decodeGenere(codiceFiscale);
+            genere = genere ? (genere === 'M' ? 'UOMO' : 'DONNA') : undefined;
+            setProperty('sesso', genere);
 
             return {
               disabled: isCodiceFiscaleValid,
-              value: genere ? (genere === 'M' ? 'UOMO' : 'DONNA') : undefined,
+              value: genere,
             };
           },
         },
@@ -287,7 +190,81 @@ const useFormPersonaFisica = () => {
     },
 
     comuneNascita: {
-      ...getComuneProps('comuneNascita'),
+      ...comuneCommonProps,
+      optionsStore: comuneNascitaStore,
+      onBlur: (change, option) => {
+        const cap = option?.payload?.cap;
+        setProperty('comuneNascita', option?.value);
+        setProperty('capComuneNascita', cap);
+      },
+      dependencies: {
+        provinciaNascita: {
+          callback: ({
+            key: provinciaKey,
+            oldValue: oldProvincia,
+            newValue: provincia,
+            props: comuneProps,
+            store,
+          }) => {
+            // Controllo se il codice fiscale è valido
+            const codiceFiscale = store.getState().getProperty('codiceFiscale');
+            const isCodiceFiscaleValid =
+              codiceFiscale &&
+              validators.isCodiceFiscale(codiceFiscale) === true;
+
+            // Popola i comuni quando la provincia è selezionata
+            const filterFn = provincia
+              ? (comuni) =>
+                  comuni.filter(
+                    (comune) =>
+                      String(
+                        comune.payload.provincia.nome
+                      ).toLocaleLowerCase() ===
+                      String(provincia).toLocaleLowerCase()
+                  )
+              : undefined;
+
+            // Resetta i campo quando la provincia cambia
+            if (!isCodiceFiscaleValid && !_.isEqual(oldProvincia, provincia)) {
+              // Comune
+              setProperty('comuneNascita', undefined);
+
+              // CAP
+              setProperty('capComuneNascita', undefined);
+            }
+
+            return {
+              disabled: !provincia || isCodiceFiscaleValid,
+              helperText: !provincia ? 'Seleziona una provincia' : '',
+              filterFn,
+            };
+          },
+        },
+        codiceFiscale: {
+          callback: ({ key, oldValue, newValue, props, store }) => {
+            // Controllo se il codice fiscale è valido
+            const isCodiceFiscaleValid =
+              newValue && validators.isCodiceFiscale(newValue) === true;
+
+            // Decodifico il comune di nascita ed il cap
+            decodeLuogoNascitaAsync(newValue).then((result) => {
+
+              const comune = comuneNascitaStore
+                .getState()
+                .items.find(
+                  (com) =>
+                    String(com.payload.nome).toLowerCase() ===
+                      String(result?.name).toLocaleLowerCase() &&
+                    String(com.payload.provincia.sigla).toLowerCase() ===
+                      String(result?.province).toLowerCase()
+                );
+              
+              setProperty('comuneNascita', comune?.value);
+              setProperty('capComuneNascita', comune?.payload?.cap);
+            });
+          },
+        },
+      },
     },
 
     capComuneNascita: {
@@ -295,7 +272,52 @@ const useFormPersonaFisica = () => {
     },
 
     comuneResidenza: {
-      ...getComuneProps('comuneResidenza'),
+      ...comuneCommonProps,
+      optionsStore: comuneResidenzaStore,
+      onBlur: (change, option) => {
+        const cap = option?.payload?.cap;
+       
+        setProperty('comuneResidenza', option?.value);
+        setProperty('capComuneResidenza', cap);
+      },
+      dependencies: {
+        provinciaResidenza: {
+          callback: ({
+            key: provinciaKey,
+            oldValue: oldProvincia,
+            newValue: provincia,
+            props: comuneProps,
+            store,
+          }) => {
+            // Popola i comuni quando la provincia è selezionata
+            const filterFn = provincia
+              ? (comuni) =>
+                  comuni.filter(
+                    (comune) =>
+                      String(
+                        comune.payload.provincia.nome
+                      ).toLocaleLowerCase() ===
+                      String(provincia).toLocaleLowerCase()
+                  )
+              : undefined;
+
+            // Resetta i campo quando la provincia cambia
+            if (!_.isEqual(oldProvincia, provincia)) {
+              // Comune
+              setProperty('comuneResidenza', undefined);
+
+              // CAP
+              setProperty('capComuneResidenza', undefined);
+            }
+
+            return {
+              disabled: !provincia,
+              helperText: !provincia ? 'Seleziona una provincia' : '',
+              filterFn,
+            };
+          },
+        },
+      },
     },
 
     provinciaResidenza: {

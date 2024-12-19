@@ -1,3 +1,5 @@
+import PersonaEnumsV1 from "../../../v1.0/enums/PersonaEnumsV1";
+
 const PersonaGiuridicaEnumsV1 = {
   sezione: {
     PROFILO_SOCIETARIO: ['partitaIVA', 'denominazione'],
@@ -16,10 +18,7 @@ const PersonaGiuridicaEnumsV1 = {
     NOTE_AGGIUNTIVE: ['note'],
   },
 
-  ruolo: [
-    { value: 'PARTE_ISTANTE', label: 'PARTE ISTANTE' },
-    { value: 'CONTROPARTE', label: 'CONTROPARTE' },
-  ],
+  ruolo: Object.entries(PersonaEnumsV1.ruolo).map(([value, label]) => ({label, value})),
 };
 
 export default PersonaGiuridicaEnumsV1;

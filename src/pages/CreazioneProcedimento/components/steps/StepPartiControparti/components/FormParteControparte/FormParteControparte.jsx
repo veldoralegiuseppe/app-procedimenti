@@ -36,12 +36,14 @@ const FormParteControparte = ({ handleClose, onSubmit }) => {
         ? storePersonaFisica.getState().getModel()
         : storePersonaGiuridica.getState().getModel();
 
+        console.log('newPersona', newPersona, 'tipoPersona', tipoPersona, 'ruolo', ruolo);
+
     onSubmit?.({
       ...newPersona,
       ruolo: ruoloGroupOptions.find((option) => option.value === ruolo).label,
     });
     handleClose();
-  }, []);
+  }, [tipoPersona, ruolo]);
 
   return (
     <Grid container size={{ xs: 12 }} rowGap="3rem">

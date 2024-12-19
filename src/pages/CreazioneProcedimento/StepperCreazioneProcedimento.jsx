@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTheme } from '@mui/material/styles';
 import { Stepper, PageHeader } from '@shared/components';
-import StepDatiGeneraliProcedimento from './components/steps/StepDatiGeneraliProcedimento';
+import StepDatiGeneraliProcedimento from './components/steps/StepDatiGenerali/StepDatiGeneraliProcedimento';
 import StepPartiControparti from './components/steps/StepPartiControparti/StepPartiControparti';
 
 const CreaProcedimento = () => {

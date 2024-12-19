@@ -54,6 +54,8 @@ const useCodiceFiscale = () => {
     const month = codiceFiscaleUtils.current.parser.cfToBirthMonth(codiceFiscale)+1; 
     const year = codiceFiscaleUtils.current.parser.cfToBirthYear(codiceFiscale); 
 
+    console.log('day', day, 'month', month, 'year', year);
+
     return dayjs(`${year}-${month}-${day}`);
   }, []);
 

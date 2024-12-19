@@ -10,8 +10,8 @@ import { useModelArray } from '@shared/hooks';
  * @param {Object} [params.options={}] - Opzioni aggiuntive per l'hook.
  * @returns {Object} - Un oggetto contenente l'array di persone e le proprietà dell'hook useModelArray.
  */
-const usePersone = ({ set, get, initalItems = [], options = {} }) => ({
-  ...useModelArray({set, get, options, initalItems}),
+const usePersone = ({ set, get, initialItems = [], options = {} }) => ({
+  ...useModelArray({set, get, options, initialItems}),
 });
 
 export default usePersone;
