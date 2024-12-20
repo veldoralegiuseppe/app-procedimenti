@@ -13,7 +13,8 @@
           "@pages": "./src/renderer/pages",
           "@utils": "./src/renderer/shared/utils",
           "@ui-shared": "./src/renderer/shared",
-          "@features": "./src/renderer/features"
+          "@features": "./src/renderer/features",
+          "@shared": "./src/shared",
         }
       }
     ],

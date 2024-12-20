@@ -1,16 +1,8 @@
 import mongoose from 'mongoose';
-import { ProcedimentoMetadata } from '@features/procedimento';
-import { FieldTypes } from '@ui-shared/metadata';
+import { ProcedimentoEnumsV1 as enums, ModelTypes } from '@shared/metadata';
 
 const ProcedimentoSchema = (version = '1.0') => {
-  const metadata = ProcedimentoMetadata[version];
-
-  if (!metadata) {
-    throw new Error(`Metadata for version ${version} not found`);
-  }
-
-  const { enums } = metadata;
-
+  
   // Funzione per risolvere riferimenti dinamici
   const getSpesaRef = (version) => `TransazioneV${version.replace('.', '_')}`;
 
@@ -57,14 +49,14 @@ const ProcedimentoSchema = (version = '1.0') => {
           type: {
             type: String,
             required: true,
-            enum: [FieldTypes.PERSONA_FISICA, FieldTypes.PERSONA_GIURIDICA],
+            enum: [ModelTypes.PERSONA_FISICA, ModelTypes.PERSONA_GIURIDICA],
           },
           data: {
             type: mongoose.Schema.Types.Mixed,
             required: true,
             validate: {
               validator: function (value) {
-                if (this.type === FieldTypes.PERSONA_FISICA) {
+                if (this.type === ModelTypes.PERSONA_FISICA) {
                   const PersonaFisicaSchema = mongoose.model(
                     `PersonaFisicaV${version.replace('.', '_')}`
                   ).schema;
@@ -72,7 +64,7 @@ const ProcedimentoSchema = (version = '1.0') => {
                     PersonaFisicaSchema.validate(value).error === undefined
                   );
                 }
-                if (this.type === FieldTypes.PERSONA_GIURIDICA) {
+                if (this.type === ModelTypes.PERSONA_GIURIDICA) {
                   const PersonaGiuridicaSchema = mongoose.model(
                     `PersonaGiuridicaV${version.replace('.', '_')}`
                   ).schema;

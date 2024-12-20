@@ -34,6 +34,7 @@ module.exports = {
       '@utils': path.resolve(__dirname, 'src/renderer/shared/utils/'),
       '@ui-shared': path.resolve(__dirname, 'src/renderer/shared/'),
       '@features': path.resolve(__dirname, 'src/renderer/features/'),
+      '@shared': path.resolve(__dirname, 'src/shared/'),
     },
   },
   plugins: [

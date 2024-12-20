@@ -1,4 +1,4 @@
-import ProcedimentoEnumsV1 from './enums/ProcedimentoEnumsV1';
+import {ProcedimentoEnumsV1} from '@shared/metadata';
 import dayjs from 'dayjs';
 import 'dayjs/locale/it';
 import { validators } from '@utils';

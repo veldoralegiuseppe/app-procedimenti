@@ -1,11 +1,11 @@
 const { ipcMain } = require('electron');
-// const { FieldTypes } = require('@ui-shared/metadata');
-// const {
-//   Procedimento,
-//   PersonaFisica,
-//   PersonaGiuridica,
-//   Transazione,
-// } = require('@models');
+const { ModelTypes } = require('@shared/metadata');
+const {
+  Procedimento,
+  // PersonaFisica,
+  // PersonaGiuridica,
+  // Transazione,
+} = require('@models');
 
 // Funzione per ottenere il modello in base al tipo
 const getModel = (data) => {
