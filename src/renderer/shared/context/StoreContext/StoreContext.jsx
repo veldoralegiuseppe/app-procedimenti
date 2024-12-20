@@ -149,6 +149,13 @@ const StoreProvider = ({ children }) => {
     initialModel: ModelFactory.create({ type: FieldTypes.PERSONA_GIURIDICA }),
   });
 
+  const compose = React.useCallback(() => {
+    const procedimento = procedimentoStore.getState().getModel();
+    const persone = personeStore.getState().getItems();
+
+    return {...procedimento, persone};
+  }, [procedimentoStore, personeStore]);
+
   const storeMap = React.useMemo(
     () => ({
       [FieldTypes.PROCEDIMENTO]: procedimentoStore,
@@ -160,7 +167,7 @@ const StoreProvider = ({ children }) => {
   );
 
   return (
-    <StoreContext.Provider value={{ storeMap }}>
+    <StoreContext.Provider value={{ storeMap, compose }}>
       {children}
     </StoreContext.Provider>
   );

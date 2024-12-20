@@ -19,7 +19,7 @@ module.exports = {
   resolve: {
     extensions: ['.js', '.json'],
     alias: {
-      '@preload': path.resolve(__dirname, 'src/'),
+      '@models': path.resolve(__dirname, 'src/main/database/models/'),
     },
   },
 
