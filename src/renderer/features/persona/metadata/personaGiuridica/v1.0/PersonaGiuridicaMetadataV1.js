@@ -1,5 +1,5 @@
 import { validators } from '@utils';
-import PersonaGiuridicaEnumsV1 from './enums/PersonaGiuridicaEnumsV1';
+import {PersonaGiuridicaEnumsV1} from '@shared/metadata';
 import {InputTypes, FieldTypes, ValidationHooksTypes} from '@ui-shared/metadata';
 
 const PersonaGiuridicaMetadataV1 = {

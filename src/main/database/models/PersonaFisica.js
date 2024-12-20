@@ -1,16 +1,8 @@
 import mongoose from 'mongoose';
-import { PersonaFisicaMetadata, PersonaEnumsV1 } from '@features/persona';
-import { FieldTypes } from '@ui-shared/metadata';
+import { PersonaFisicaEnumsV1 as enums, PersonaEnumsV1, ModelTypes } from '@shared/metadata';
 
 const PersonaFisicaSchema = (version = '1.0') => {
-  const metadata = PersonaFisicaMetadata[version];
-
-  if (!metadata) {
-    throw new Error(`Metadata for version ${version} not found`);
-  }
-
-  const { enums } = metadata;
-
+ 
   return new mongoose.Schema(
     {
       capComuneNascita: { type: Number },
@@ -73,7 +65,7 @@ const PersonaFisicaSchema = (version = '1.0') => {
       type: {
         type: String,
         required: true,
-        default: FieldTypes.PERSONA_FISICA,
+        default: ModelTypes.PERSONA_FISICA,
       },
       version: { type: String, required: true },
     },

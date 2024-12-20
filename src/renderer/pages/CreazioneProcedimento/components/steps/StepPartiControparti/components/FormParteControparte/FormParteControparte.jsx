@@ -10,8 +10,8 @@ import {
 import {
   FormPersonaFisicaContainer,
   FormPersonaGiuridicaContainer,
-  PersonaEnumsV1,
 } from '@features/persona';
+import {PersonaEnumsV1} from '@shared/metadata';
 import { useStoreContext } from '@ui-shared/context';
 import { ButtonTypes, FieldTypes } from '@ui-shared/metadata';
 import {subscribeToLocalStorage } from '@ui-shared/utils';

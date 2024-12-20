@@ -4,7 +4,7 @@ import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import PersonaTable from './components/PersonaTable';
 import { FieldTypes } from '@ui-shared/metadata';
-import {PersonaEnumsV1} from '@features/persona';
+import {PersonaEnumsV1} from '@shared/metadata';
 
 const personaFisicaFields = [
   { label: "Persona Fisica", key: (p) => `${p.nome || ''} ${p.cognome || ''} (CF: ${p.codiceFiscale || ''})` },

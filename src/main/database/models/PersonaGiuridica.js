@@ -1,16 +1,10 @@
 import mongoose from 'mongoose';
-import { PersonaGiuridicaMetadataV1, PersonaEnumsV1 } from '@features/persona';
-import { FieldTypes } from '@ui-shared/metadata';
+import {
+  PersonaEnumsV1,
+  ModelTypes,
+} from '@shared/metadata';
 
 const PersonaGiuridicaSchema = (version = '1.0') => {
-  const metadata = PersonaGiuridicaMetadataV1;
-
-  if (!metadata || metadata.version !== version) {
-    throw new Error(`Metadata for version ${version} not found`);
-  }
-
-  const { enums } = metadata;
-
   return new mongoose.Schema(
     {
       denominazione: {
@@ -69,7 +63,7 @@ const PersonaGiuridicaSchema = (version = '1.0') => {
       type: {
         type: String,
         required: true,
-        default: FieldTypes.PERSONA_GIURIDICA,
+        default: ModelTypes.PERSONA_GIURIDICA,
       },
       version: { type: String, required: true, default: version },
     },

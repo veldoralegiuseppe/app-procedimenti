@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import { ModeTypes, FieldTypes } from '@ui-shared/metadata';
-import { PersonaEnumsV1 } from '@features/persona';
+import { PersonaEnumsV1 } from '@shared/metadata';
 import { useStoreContext } from '@ui-shared/context';
 import { usePersoneStore, usePersonaStore } from '@features/persona';
 import { getLocalStorage, setLocalStorage } from '@ui-shared/utils';

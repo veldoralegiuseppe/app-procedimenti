@@ -1,4 +1,4 @@
-import PersonaEnumsV1 from "../../../v1.0/enums/PersonaEnumsV1";
+import PersonaEnumsV1 from "./PersonaEnumsV1";
 
 const PersonaGiuridicaEnumsV1 = {
   sezione: {
