@@ -5,5 +5,6 @@ export {default as useTotali} from './useTotali';
 export {default as useGenerateInputProps} from './useGenerateInputProps';
 export {default as useCodiceFiscale} from './useCodiceFiscale';
 export {default as useFetchData} from './useFetchData';
+export {default as useDatabase} from './useDatabase';
 
 

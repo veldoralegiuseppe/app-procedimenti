@@ -1,5 +1,6 @@
 const { app, BrowserWindow } = require('electron');
 const installExtension = require('electron-devtools-installer').default;
+const setupDatabaseHandlers = require('./ipc/database');
 const connectDB = require('./database/connection');
 const { REACT_DEVELOPER_TOOLS } = require('electron-devtools-installer');
 
@@ -41,6 +42,7 @@ const installReactDevTools = async () => {
 // Evento ready di Electron
 app.whenReady().then(async () => {
   await installReactDevTools(); // Installa l'estensione se necessario
+  setupDatabaseHandlers();
   createWindow(); // Crea la finestra principale
 });
 

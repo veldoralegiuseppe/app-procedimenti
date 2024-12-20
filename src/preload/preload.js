@@ -1,6 +1,4 @@
-import { contextBridge, ipcRenderer } from 'electron';
+const { contextBridge } = require('electron');
+const databaseAPI = require('./api/database'); 
 
-contextBridge.exposeInMainWorld('AgenziaEntrateAPI', {
-    onCaptcha: (callback) => ipcRenderer.once('captcha', (_event, url) => callback(url)),
-    getCaptcha: () => ipcRenderer.send('get-captcha')
-})
+contextBridge.exposeInMainWorld('databaseAPI', databaseAPI);

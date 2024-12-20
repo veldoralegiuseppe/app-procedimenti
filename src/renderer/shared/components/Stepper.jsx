@@ -8,6 +8,7 @@ import {
   Box,
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
+import {useDatabase} from '@shared/hooks';
 import Grid from '@mui/material/Grid2';
 
 export default function Stepper({ steps }) {
@@ -16,6 +17,7 @@ export default function Stepper({ steps }) {
   const [disableNext, setDisableNext] = React.useState(true);
   const theme = useTheme();
   const stepRef = React.useRef(null);
+  const {create} = useDatabase();
 
   React.useEffect(() => {
     const currentStepComponent = steps[activeStep].component;
@@ -46,6 +48,7 @@ export default function Stepper({ steps }) {
 
   const handleFinish = () => {
     console.log('Finish');
+    create('Model', {})
   };
 
   const handleBack = () =>
