@@ -15,7 +15,6 @@ const setContextToLocalStorage = (newContext) => setLocalStorage(newContext, LOC
 
 const usePartiControparti = () => {
   
- 
   const [isModalOpen, setModalOpen] = useState(false);
   const [selectedRows, setSelectedRows] = useState(() => {
     const context = getContextFromLocalStorage();
@@ -97,7 +96,7 @@ const usePartiControparti = () => {
     const context = getContextFromLocalStorage();
     if (context?.mode === ModeTypes.CREATE) {
       addItem(newPersona);
-    } else if (context?.mode === ModeTypes.EDIT) {
+    } else if (context?.mode === ModeTypes.MODIFY) {
       const index = context.selectedRowIndices?.[0];
       if (index !== undefined) {
         updateItem(index, newPersona);

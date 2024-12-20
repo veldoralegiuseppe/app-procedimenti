@@ -71,6 +71,7 @@ const FormParteControparte = ({ handleClose, onSubmit, ruolo: role, tipo: type }
         <RadioGroup
           options={ruoloGroupOptions}
           value={ruolo}
+          onChange={(e) => setRuolo(e.target.value)}
         />
       </Grid>
 
