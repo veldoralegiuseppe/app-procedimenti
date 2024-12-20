@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { ImportoInput } from '@shared/components';
+import { ImportoInput } from '@ui-shared/components';
 import useTransazioneConstants from './useTransazioneConstants';
 import useTransazioneUtils from './useTransazioneUtils';
-import { useStoreContext } from '@shared/context';
-import { useModelStore } from '@shared/hooks';
+import { useStoreContext } from '@ui-shared/context';
+import { useModelStore } from '@ui-shared/hooks';
 import _ from 'lodash';
 
 /**

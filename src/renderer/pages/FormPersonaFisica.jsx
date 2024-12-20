@@ -18,9 +18,9 @@ import {
   ProvinciaSelect,
   ComuneSelect,
   ImportoReadOnly,
-} from '@shared/components';
+} from '@ui-shared/components';
 import * as CodiceFiscaleUtils from '@assets/js/convalidaCodiceFiscale';
-import { Comune, Provincia } from '@shared/components';
+import { Comune, Provincia } from '@ui-shared/components';
 import { PersonaFisica } from '@features/persona';
 import {
   CssTextField,
@@ -28,7 +28,7 @@ import {
   labelDisableColor,
   CssSelect,
   formControlStyles,
-} from '@shared/theme';
+} from '@ui-shared/theme';
 
 // Constants
 const inputHeight = 35;

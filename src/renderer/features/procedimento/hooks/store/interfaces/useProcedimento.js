@@ -1,8 +1,8 @@
-import { useModel } from '@shared/hooks';
+import { useModel } from '@ui-shared/hooks';
 import { Pipeline } from '@utils';
 import { inputValidator, updateValidator } from '@utils/filters';
-import { ModelFactory } from '@shared/components';
-import {FieldTypes } from '@shared/metadata';
+import { ModelFactory } from '@ui-shared/components';
+import {FieldTypes } from '@ui-shared/metadata';
 import _, { initial } from 'lodash';
 
 /**

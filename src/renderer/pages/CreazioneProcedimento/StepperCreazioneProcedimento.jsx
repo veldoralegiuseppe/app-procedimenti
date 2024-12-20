@@ -1,6 +1,6 @@
 import React from 'react';
 import { useTheme } from '@mui/material/styles';
-import { Stepper, PageHeader } from '@shared/components';
+import { Stepper, PageHeader } from '@ui-shared/components';
 import StepDatiGeneraliProcedimento from './components/steps/StepDatiGenerali/StepDatiGeneraliProcedimento';
 import StepPartiControparti from './components/steps/StepPartiControparti/StepPartiControparti';
 import StepRiepilogoProcedimento from './components/steps/StepRiepilogo/StepRiepilogoProcedimento';

@@ -1,8 +1,8 @@
 import * as React from 'react';
-import { useMetadata } from '@shared/hooks';
-import { FieldTypes } from '@shared/metadata';
-import { FormPresenter, ModelFactory } from '@shared/components';
-import { useCreateStore, useModelArray } from '@shared/hooks';
+import { useMetadata } from '@ui-shared/hooks';
+import { FieldTypes } from '@ui-shared/metadata';
+import { FormPresenter, ModelFactory } from '@ui-shared/components';
+import { useCreateStore, useModelArray } from '@ui-shared/hooks';
 
 const IstanzaFormContainer = () => {
   

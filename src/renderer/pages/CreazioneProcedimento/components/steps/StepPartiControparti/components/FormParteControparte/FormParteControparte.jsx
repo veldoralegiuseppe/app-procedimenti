@@ -6,15 +6,15 @@ import {
   Accordion,
   FormTitle,
   ButtonFactory,
-} from '@shared/components';
+} from '@ui-shared/components';
 import {
   FormPersonaFisicaContainer,
   FormPersonaGiuridicaContainer,
   PersonaEnumsV1,
 } from '@features/persona';
-import { useStoreContext } from '@shared/context';
-import { ButtonTypes, FieldTypes } from '@shared/metadata';
-import {subscribeToLocalStorage } from '@shared/utils';
+import { useStoreContext } from '@ui-shared/context';
+import { ButtonTypes, FieldTypes } from '@ui-shared/metadata';
+import {subscribeToLocalStorage } from '@ui-shared/utils';
 import { LOCAL_STORAGE_KEY } from '../../constants';
 import _ from 'lodash';
 

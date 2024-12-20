@@ -1,6 +1,6 @@
 
 import React, { memo } from 'react';
-import { ClearButton } from '@shared/theme';
+import { ClearButton } from '@ui-shared/theme';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useTheme } from '@mui/material/styles';
 import { useModelChanged } from './hooks/useModelChanged';

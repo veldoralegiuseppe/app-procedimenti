@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Box, List, ListItemIcon, ListItemText, Collapse } from '@mui/material';
 import { ExpandLess, ExpandMore } from '@mui/icons-material';
 import { useTheme } from '@mui/material/styles';
-import { CollapsableListItemButton } from '@shared/theme';
+import { CollapsableListItemButton } from '@ui-shared/theme';
 
 export default function CollapsableListButton({label, children, icon}){
     const theme = useTheme()

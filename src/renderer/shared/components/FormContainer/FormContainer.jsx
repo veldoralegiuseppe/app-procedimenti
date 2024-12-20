@@ -1,6 +1,6 @@
 import * as React from 'react';
 import Grid from '@mui/material/Grid2';
-import {FormPresenter, ClearButton} from '@shared/components';
+import {FormPresenter, ClearButton} from '@ui-shared/components';
 import useFormContainer from './hooks/useFormContainer';
 import PropTypes from 'prop-types';
 import _ from 'lodash';

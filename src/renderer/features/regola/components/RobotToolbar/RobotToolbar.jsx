@@ -12,10 +12,10 @@ import {
   ArrowBack as ArrowBackIcon,
 } from '@mui/icons-material';
 
-import { FormModal } from '@shared/components';
+import { FormModal } from '@ui-shared/components';
 import SvgCartoonRobot from '@assets/img/cartoon_robot.svg';
 import RuleTable from './components/RuleTable/RuleTable';
-import { ProcedimentoContext } from '@shared/context';
+import { ProcedimentoContext } from '@ui-shared/context';
 import { getEspressioneCondizione, getEspressione } from '@features/regola';
 import RuleBuilder from './components/RuleBuilders/RuleBuilder';
 

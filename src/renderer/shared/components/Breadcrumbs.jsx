@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Breadcrumbs, Link, Typography } from '@mui/material';
 import HomeIcon from '@mui/icons-material/Home';
-import { RouteContext, getRoute } from '@shared/context';
+import { RouteContext, getRoute } from '@ui-shared/context';
 import { useTheme } from '@mui/material/styles';
 
 export default function IconBreadcrumbs() {

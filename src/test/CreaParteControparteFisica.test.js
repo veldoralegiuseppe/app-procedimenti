@@ -10,10 +10,10 @@ import { ThemeProvider } from '@mui/material/styles';
 import '@testing-library/jest-dom';
 import userEvent from '@testing-library/user-event';
 
-import { themeOne } from '@shared/theme';
+import { themeOne } from '@ui-shared/theme';
 import {CreaParteControparte} from '@pages';
 import * as ComuniUtils from '@assets/js/comuni';
-import { ProcedimentoContext } from '@shared/context';
+import { ProcedimentoContext } from '@ui-shared/context';
 import { provinceCampania, comuniCampania } from './mock/mockProvinceComuni';
 
 // Mock delle chiamate

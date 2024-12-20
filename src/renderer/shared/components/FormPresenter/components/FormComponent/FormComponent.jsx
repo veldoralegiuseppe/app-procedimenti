@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { useModelArrayStore, useStoreDependencies } from '@shared/hooks';
+import { useModelArrayStore, useStoreDependencies } from '@ui-shared/hooks';
 import Grid from '@mui/material/Grid2';
-import { ComponentFactory } from '@shared/components';
+import { ComponentFactory } from '@ui-shared/components';
 import _ from 'lodash';
 
 const FormComponentVanilla = ({index, propsArrayStore}) => {

@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import {useCreateStore, useModelArray} from '@shared/hooks'
+import {useCreateStore, useModelArray} from '@ui-shared/hooks'
 import FormComponent from '../components/FormComponent/FormComponent';
 
 const useFormPresenter = (inputPropsArray) => {

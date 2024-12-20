@@ -2,7 +2,7 @@ import React from 'react';
 import { Chip, Box, Tooltip } from '@mui/material';
 import useChipState from './hooks/useChipState';
 import InfoOutlinedIcon from '@mui/icons-material/InfoOutlined';
-import { useModelArrayStore, useStoreDependencies } from '@shared/hooks';
+import { useModelArrayStore, useStoreDependencies } from '@ui-shared/hooks';
 import _ from 'lodash';
 
 const ChipCell = ({

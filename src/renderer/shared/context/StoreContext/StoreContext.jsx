@@ -1,9 +1,9 @@
 import React, { createContext } from 'react';
 import { useProcedimento } from '@features/procedimento';
 import { usePersone, usePersona } from '@features/persona';
-import { useCreateStore } from '@shared/hooks';
-import { FieldTypes } from '@shared/metadata';
-import { ModelFactory } from '@shared/components';
+import { useCreateStore } from '@ui-shared/hooks';
+import { FieldTypes } from '@ui-shared/metadata';
+import { ModelFactory } from '@ui-shared/components';
 
 export const StoreContext = createContext();
 

@@ -5,8 +5,8 @@ import AddIcon from '@mui/icons-material/Add';
 
 import {TabellaPartiContropartiOld as TabellaPartiControparti} from '@features/persona';
 import {CreaParteControparte} from '@pages';
-import {FormModal} from '@shared/components';
-import { ProcedimentoContext } from '@shared/context';
+import {FormModal} from '@ui-shared/components';
+import { ProcedimentoContext } from '@ui-shared/context';
 
 function AggiungiParteButton(props) {
   const [open, setOpen] = React.useState(false);

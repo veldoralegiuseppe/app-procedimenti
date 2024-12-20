@@ -1,6 +1,6 @@
 import { validators } from '@utils';
 import PersonaFisicaEnumsV1 from './enums/PersonaFisicaEnumsV1';
-import {InputTypes, FieldTypes, ValidationHooksTypes} from '@shared/metadata';
+import {InputTypes, FieldTypes, ValidationHooksTypes} from '@ui-shared/metadata';
 
 const PersonaFisicaMetadataV1 = {
   type: FieldTypes.PERSONA_FISICA,

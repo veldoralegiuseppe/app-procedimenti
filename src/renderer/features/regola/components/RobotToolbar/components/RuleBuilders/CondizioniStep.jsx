@@ -2,9 +2,9 @@ import React, { Component, useState, useRef } from 'react';
 import { Box, Typography, Autocomplete, Chip, Paper, Popper } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import styled from '@emotion/styled';
-import { CssTextField } from '@shared/theme';
-import {ImportoInput, Select} from '@shared/components';
-import { ProcedimentoContext } from '@shared/context';
+import { CssTextField } from '@ui-shared/theme';
+import {ImportoInput, Select} from '@ui-shared/components';
+import { ProcedimentoContext } from '@ui-shared/context';
 import { Target, operatoriMap, campiCondizione } from '@features/regola';
 import { Mode } from '@mui/icons-material';
 

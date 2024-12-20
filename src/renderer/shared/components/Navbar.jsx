@@ -12,14 +12,14 @@ import KeyboardArrowDownOutlinedIcon from '@mui/icons-material/KeyboardArrowDown
 
 import logo from '@assets/img/logo2.png';
 import repubblicaLogo from '@assets/img/logo-repubblica-blu.png';
-import { routes } from '@shared/context';
+import { routes } from '@ui-shared/context';
 import {
   StyledLi,
   StyledLink,
   LinkText,
   StyledButton,
   dropdownFadeIn,
-} from '@shared/theme';
+} from '@ui-shared/theme';
 
 function Navbar({ onButtonClick }) {
   // Layout

@@ -1,5 +1,5 @@
 import React from 'react';
-import { useStoreContext } from '@shared/context';
+import { useStoreContext } from '@ui-shared/context';
 
 const useTransazioneUtils = ({ statoChipFlagMap, statoEnums, disabled }) => {
 

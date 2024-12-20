@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
-import { useStoreContext } from '@shared/context';
-import { ModelFactory } from '@shared/components';
+import { useStoreContext } from '@ui-shared/context';
+import { ModelFactory } from '@ui-shared/components';
 import _ from 'lodash';
 
 // Hook per calcolare se il modello è stato modificato

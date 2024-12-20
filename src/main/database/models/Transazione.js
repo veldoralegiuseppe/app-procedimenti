@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import { TransazioneMetadata } from '@features/transazione';
-import { FieldTypes } from '@shared/metadata';
+import { FieldTypes } from '@ui-shared/metadata';
 
 const TransazioneSchema = (version = '1.0') => {
   const metadata = TransazioneMetadata[version];

@@ -1,6 +1,6 @@
 import React from 'react';
 import Grid from '@mui/material/Grid2';
-import {FormTitle} from '@shared/components';
+import {FormTitle} from '@ui-shared/components';
 import useFormPresenter from './hooks/useFormPresenter';
 import _ from 'lodash';
 

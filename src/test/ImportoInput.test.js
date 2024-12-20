@@ -7,8 +7,8 @@ import {
 import '@testing-library/jest-dom';
 
 import { ThemeProvider } from '@mui/material/styles';
-import { themeOne } from '@shared/theme';
-import {ImportoInput} from '@shared/components';
+import { themeOne } from '@ui-shared/theme';
+import {ImportoInput} from '@ui-shared/components';
 
 // Funzione di render astratta per includere il ThemeProvider
 const render = (ui, options = {}) => {

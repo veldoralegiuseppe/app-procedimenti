@@ -1,4 +1,4 @@
-import {Provincia} from '@shared/components';
+import {Provincia} from '@ui-shared/components';
 
 export class Comune {
     codice

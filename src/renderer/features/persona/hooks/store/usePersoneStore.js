@@ -1,4 +1,4 @@
-import { useModelArrayStore } from '@shared/hooks';
+import { useModelArrayStore } from '@ui-shared/hooks';
 
 const usePersoneStore = (store) => {
   const modelArrayStoreInterface = useModelArrayStore(store);

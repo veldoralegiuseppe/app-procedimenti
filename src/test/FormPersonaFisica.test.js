@@ -9,8 +9,8 @@ import {
 import { ThemeProvider } from '@mui/material/styles';
 import '@testing-library/jest-dom';
 
-import { ProcedimentoContext } from '@shared/context';
-import { themeOne } from '@shared/theme';
+import { ProcedimentoContext } from '@ui-shared/context';
+import { themeOne } from '@ui-shared/theme';
 import {FormPersonaFisica} from '@pages';
 import * as ComuniUtils from '@assets/js/comuni';
 import { provinceCampania, comuniCampania } from './mock/mockProvinceComuni';

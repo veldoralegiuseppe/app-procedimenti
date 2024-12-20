@@ -2,7 +2,7 @@ import * as React from 'react';
 import { useTheme } from '@mui/material/styles';
 import { InputAdornment, Tooltip } from '@mui/material';
 import { EuroSymbol, InfoOutlined } from '@mui/icons-material';
-import { StyledTextField, labelColor as iconColor } from '@shared/theme';
+import { StyledTextField, labelColor as iconColor } from '@ui-shared/theme';
 
 // Funzione per formattare l'importo in parte intera e decimale
 function formatCurrency(value) {

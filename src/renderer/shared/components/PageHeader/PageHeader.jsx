@@ -1,7 +1,7 @@
 import React from 'react';
 import { Box, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import { Breadcrumbs } from '@shared/components';
+import { Breadcrumbs } from '@ui-shared/components';
 
 const PageHeaderComponent = ({ title: titolo = '', helperText: helperTxt }) => {
   const theme = useTheme();

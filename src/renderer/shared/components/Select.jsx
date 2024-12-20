@@ -9,7 +9,7 @@ import {
   CssSelect,
   formControlStyles,
   labelColor as defaultLabelColor,
-} from '@shared/theme';
+} from '@ui-shared/theme';
 import {
   ArrowDropDown as ArrowDropDownIcon,
   Close as CloseIcon,

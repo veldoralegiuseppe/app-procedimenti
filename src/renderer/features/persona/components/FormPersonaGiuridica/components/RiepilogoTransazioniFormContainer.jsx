@@ -1,8 +1,8 @@
 import React from 'react';
 import { TabellaTransazioni } from '@features/transazione';
 import { usePersonaStore } from '@features/persona';
-import { useStoreContext } from '@shared/context';
-import { FieldTypes } from '@shared/metadata';
+import { useStoreContext } from '@ui-shared/context';
+import { FieldTypes } from '@ui-shared/metadata';
 
 const RiepilogoTransazioniFormContainer = ({ onChange }) => {
   const personaGiuridicaStore = useStoreContext(FieldTypes.PERSONA_GIURIDICA);

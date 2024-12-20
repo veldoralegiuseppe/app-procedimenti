@@ -1,6 +1,6 @@
 import React from 'react';
-import { ImportoUtils } from '@shared/utils';
-import { FieldTypes } from '@shared/metadata';
+import { ImportoUtils } from '@ui-shared/utils';
+import { FieldTypes } from '@ui-shared/metadata';
 
 const RiepilogoSpese = ({ persone }) => {
   const fontSize = '0.9em';

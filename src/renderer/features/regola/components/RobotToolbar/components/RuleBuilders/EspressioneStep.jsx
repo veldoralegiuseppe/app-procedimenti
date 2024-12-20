@@ -1,10 +1,10 @@
 import React, { Component, useState, useRef, useContext } from 'react';
 import { Box, Typography, Button, Chip, Paper, Popper, Autocomplete } from '@mui/material';
-import { CssTextField } from '@shared/theme';
+import { CssTextField } from '@ui-shared/theme';
 import { evaluate, parse } from 'mathjs';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { styled, useTheme } from '@mui/material/styles';
-import { ProcedimentoContext } from '@shared/context';
+import { ProcedimentoContext } from '@ui-shared/context';
 import { getVariabiliPredefinite } from '@features/regola';
 
 const StyledPopper = styled((props) => <Popper {...props} />)(({ theme }) => ({

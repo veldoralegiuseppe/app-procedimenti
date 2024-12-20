@@ -1,6 +1,6 @@
 import { useState, useCallback } from 'react';
 import { validators } from '@utils';
-import { ValidationHooksTypes } from '@shared/metadata';
+import { ValidationHooksTypes } from '@ui-shared/metadata';
 
 export const useValidation = () => {
   const [isFormValid, setIsFormValid] = useState(false);

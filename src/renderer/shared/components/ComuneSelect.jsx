@@ -3,8 +3,8 @@ import Autocomplete from '@mui/material/Autocomplete';
 import { useTheme } from '@mui/material/styles';
 import Paper from '@mui/material/Paper';
 import * as ComuniUtils from '@assets/js/comuni.js'; 
-import { Comune, Provincia } from '@shared/components';
-import { CssTextField, labelColor } from '@shared/theme';
+import { Comune, Provincia } from '@ui-shared/components';
+import { CssTextField, labelColor } from '@ui-shared/theme';
 
 function ComuneSelect(props, ref) {
   const [comuni, setComuni] = React.useState([]); // Lista di tutti i comuni

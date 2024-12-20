@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { OptionsAutocomplete } from '@shared/components';
-import { useCreateStore, useModelArray } from '@shared/hooks';
+import { OptionsAutocomplete } from '@ui-shared/components';
+import { useCreateStore, useModelArray } from '@ui-shared/hooks';
 
 const TitoliAutocompleteComponent = ({ label, sx, onBlur }) => {
   const titoliStore = useCreateStore({ storeInterface: useModelArray });

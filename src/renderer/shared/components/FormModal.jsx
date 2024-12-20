@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { Box, Modal, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import {NotificationAlert} from '@shared/components';
+import {NotificationAlert} from '@ui-shared/components';
 
 export default function FormModal({ open, handleClose, title = '', children }) {
   const theme = useTheme();

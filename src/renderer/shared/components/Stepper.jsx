@@ -8,7 +8,8 @@ import {
   Box,
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import {useDatabase} from '@shared/hooks';
+import {useDatabase} from '@ui-shared/hooks';
+import {useStoreContext} from '@ui-shared/context';
 import Grid from '@mui/material/Grid2';
 
 export default function Stepper({ steps }) {

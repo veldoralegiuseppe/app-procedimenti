@@ -1,7 +1,7 @@
 import * as React from 'react';
-import { FieldTypes } from '@shared/metadata';
-import { useMetadata } from '@shared/hooks';
-import { FormPresenter, ModelFactory } from '@shared/components';
+import { FieldTypes } from '@ui-shared/metadata';
+import { useMetadata } from '@ui-shared/hooks';
+import { FormPresenter, ModelFactory } from '@ui-shared/components';
 
 const IncontroFormContainer = () => {
   const commonSx = { width: '29.2rem' };

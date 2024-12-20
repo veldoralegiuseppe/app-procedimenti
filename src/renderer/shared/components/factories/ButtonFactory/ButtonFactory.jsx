@@ -4,7 +4,7 @@ import ArrowBackOutlinedIcon from '@mui/icons-material/ArrowBackOutlined';
 import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ModifyIcon from '@mui/icons-material/Edit';
-import { ButtonTypes } from '@shared/metadata';
+import { ButtonTypes } from '@ui-shared/metadata';
 
 const buttonStyles = {
   OUTLINED: {

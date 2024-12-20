@@ -1,10 +1,10 @@
 import React, { Component, useState } from 'react';
 import { Box, Typography, Autocomplete, Paper, Popper } from '@mui/material';
 import { styled, useTheme } from '@mui/system';
-import { CssTextField } from '@shared/theme';
-import { ProcedimentoContext } from '@shared/context';
+import { CssTextField } from '@ui-shared/theme';
+import { ProcedimentoContext } from '@ui-shared/context';
 import { Target } from '@features/regola';
-import { ModelFactory } from '@shared/components';
+import { ModelFactory } from '@ui-shared/components';
 
 const StyledPopper = styled((props) => <Popper {...props} />)(({ theme }) => ({
   '& .MuiPaper-root': {

@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { ComponentFactory } from '@shared/components';
-import { useStoreDependencies } from '@shared/hooks';
+import { ComponentFactory } from '@ui-shared/components';
+import { useStoreDependencies } from '@ui-shared/hooks';
 
 /**
  * Componente InputCell

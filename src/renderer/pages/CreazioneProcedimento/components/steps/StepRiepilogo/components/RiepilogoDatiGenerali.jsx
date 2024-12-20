@@ -1,6 +1,6 @@
 import React from 'react';
 import Grid from '@mui/material/Grid2';
-import {ImportoUtils} from '@shared/utils';
+import {ImportoUtils} from '@ui-shared/utils';
 
 const RiepilogoDatiGenerali = ({ procedimento }) => {
   return (

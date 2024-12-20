@@ -1,5 +1,5 @@
 import React from 'react';
-import { useModelStore } from '@shared/hooks';
+import { useModelStore } from '@ui-shared/hooks';
 
 const usePersonaStore = (store) => {
   const modelStoreInterface = useModelStore(store);

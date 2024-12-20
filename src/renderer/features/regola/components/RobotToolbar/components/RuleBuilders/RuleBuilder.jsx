@@ -10,7 +10,7 @@ import {
 import TargetStep from './TargetStep';
 import ContextStep from './CondizioniStep';
 import NumberRuleBuilder from './EspressioneStep';
-import { ProcedimentoContext } from '@shared/context';
+import { ProcedimentoContext } from '@ui-shared/context';
 
 // Steps
 const steps = ['Target', 'Condizioni', 'Formula'];

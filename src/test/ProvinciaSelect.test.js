@@ -3,8 +3,8 @@ import { render, screen, fireEvent, waitFor, act } from '@testing-library/react'
 import { ThemeProvider } from '@mui/material/styles';
 import '@testing-library/jest-dom';
 
-import { themeOne } from '@shared/theme';
-import ProvinciaSelect from '@shared/components';
+import { themeOne } from '@ui-shared/theme';
+import ProvinciaSelect from '@ui-shared/components';
 import * as ComuniUtils from '@assets/js/comuni';
 import { provinceCampania } from './mock/mockProvinceComuni';
 

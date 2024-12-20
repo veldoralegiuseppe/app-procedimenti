@@ -1,4 +1,4 @@
-import { useModelArray } from '@shared/hooks';
+import { useModelArray } from '@ui-shared/hooks';
 
 /**
  * Interfaccia di un model array di persone.

@@ -1,4 +1,4 @@
-import { Comune } from "@shared/components";
+import { Comune } from "@ui-shared/components";
 import dayjs from 'dayjs';
 import 'dayjs/locale/it';
 

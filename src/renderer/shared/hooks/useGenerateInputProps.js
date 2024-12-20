@@ -1,4 +1,4 @@
-import { useMetadata } from '@shared/hooks';
+import { useMetadata } from '@ui-shared/hooks';
 
 const useGenerateInputProps = ({
   modelType: type,

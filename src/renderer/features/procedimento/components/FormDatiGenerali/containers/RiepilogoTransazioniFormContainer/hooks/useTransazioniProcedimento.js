@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
-import { ModelFactory } from '@shared/components';
-import { FieldTypes } from '@shared/metadata';
-import { useStoreContext } from '@shared/context';
+import { ModelFactory } from '@ui-shared/components';
+import { FieldTypes } from '@ui-shared/metadata';
+import { useStoreContext } from '@ui-shared/context';
 import { useProcedimentoStore } from '@features/procedimento';
 
 const useTransazioniProcedimento = () => {

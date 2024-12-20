@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from 'react';
-import { FieldTypes, CacheFetchPolicies } from '@shared/metadata';
+import { FieldTypes, CacheFetchPolicies } from '@ui-shared/metadata';
 import {
   useGenerateInputProps,
   useCodiceFiscale,
@@ -7,11 +7,11 @@ import {
   useModelArray,
   useCreateStore,
   useModelArrayStore,
-} from '@shared/hooks';
-import { ModelFactory } from '@shared/components';
+} from '@ui-shared/hooks';
+import { ModelFactory } from '@ui-shared/components';
 import { validators } from '@utils';
 import { usePersonaStore } from '@features/persona';
-import { useStoreContext } from '@shared/context';
+import { useStoreContext } from '@ui-shared/context';
 import _ from 'lodash';
 import dayjs from 'dayjs';
 import 'dayjs/locale/it';

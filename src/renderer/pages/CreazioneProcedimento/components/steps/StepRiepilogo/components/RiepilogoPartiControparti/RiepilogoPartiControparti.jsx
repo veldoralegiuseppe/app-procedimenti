@@ -3,7 +3,7 @@ import Grid from '@mui/material/Grid2';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import PersonaTable from './components/PersonaTable';
-import { FieldTypes } from '@shared/metadata';
+import { FieldTypes } from '@ui-shared/metadata';
 import {PersonaEnumsV1} from '@features/persona';
 
 const personaFisicaFields = [

@@ -4,9 +4,9 @@ import { createRoot } from 'react-dom/client';
 import { ThemeProvider } from '@mui/material/styles';
 import { CssBaseline } from '@mui/material/';
 
-import { Navbar } from '@shared/components';
-import { themeOne, ContentGrid } from '@shared/theme';
-import { RouteContext, getRoute, ProcedimentoProvider, StoreProvider } from '@shared/context';
+import { Navbar } from '@ui-shared/components';
+import { themeOne, ContentGrid } from '@ui-shared/theme';
+import { RouteContext, getRoute, ProcedimentoProvider, StoreProvider } from '@ui-shared/context';
 
 const root = createRoot(document.getElementById('mainContainer'));
 root.render(<App />);

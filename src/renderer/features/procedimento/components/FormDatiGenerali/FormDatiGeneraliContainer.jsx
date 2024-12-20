@@ -4,12 +4,12 @@ import IstanzaFormContainer from './containers/IstanzaFormContainer';
 import IncontroFormContainer from './containers/IncontroFormContainer';
 import MediatoreFormContainer from './containers/MediatoreFormContainer';
 import RiepilogoTransazioniFormContainer from './containers/RiepilogoTransazioniFormContainer/RiepilogoTransazioniFormContainer';
-import { ClearButton, Totali, ModelFactory } from '@shared/components';
+import { ClearButton, Totali, ModelFactory } from '@ui-shared/components';
 import { useProcedimentoStore } from '@features/procedimento';
 import { TransazioneMetadata } from '@features/transazione';
-import { useStoreContext } from '@shared/context';
-import { FieldTypes } from '@shared/metadata';
-import { useTotali } from '@shared/hooks';
+import { useStoreContext } from '@ui-shared/context';
+import { FieldTypes } from '@ui-shared/metadata';
+import { useTotali } from '@ui-shared/hooks';
 
 const FormDatiGeneraliContainer = () => {
  

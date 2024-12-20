@@ -14,8 +14,8 @@ import { styled } from '@mui/system';
 import PropTypes from 'prop-types';
 import TrendingDownIcon from '@mui/icons-material/TrendingDown';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
-import { ImportoInput, ImportoReadOnly } from '@shared/components';
-import { CssTextField } from '@shared/theme';
+import { ImportoInput, ImportoReadOnly } from '@ui-shared/components';
+import { CssTextField } from '@ui-shared/theme';
 
 const StyledTableHead = styled(TableHead)(({ theme }) => ({
   backgroundColor: theme.palette.background.default,

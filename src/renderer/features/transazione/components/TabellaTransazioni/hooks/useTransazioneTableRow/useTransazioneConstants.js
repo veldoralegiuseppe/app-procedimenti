@@ -1,5 +1,5 @@
-import { ModelFactory } from '@shared/components';
-import { FieldTypes } from '@shared/metadata';
+import { ModelFactory } from '@ui-shared/components';
+import { FieldTypes } from '@ui-shared/metadata';
 import _ from 'lodash';
 
 const useTransazioneConstants = () => {

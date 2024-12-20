@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import _ from 'lodash';
 import { useDialog } from './useDialog';
-import { useModelArrayStore } from '@shared/hooks';
+import { useModelArrayStore } from '@ui-shared/hooks';
 
 export const useOptionsAutocomplete = ({
   initialValue,

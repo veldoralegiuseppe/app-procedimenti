@@ -25,7 +25,7 @@ import {
   KeyboardArrowUp as KeyboardArrowUpIcon,
 } from '@mui/icons-material';
 
-import { ProcedimentoContext } from '@shared/context';
+import { ProcedimentoContext } from '@ui-shared/context';
 import { PersonaFisica, PersonaGiuridica } from '@features/persona';
 
 

@@ -1,6 +1,6 @@
 import { styled } from '@mui/system';
 import TextField from '@mui/material/TextField';
-import { labelColor } from '@shared/theme';
+import { labelColor } from '@ui-shared/theme';
 
 export const CssTextField = styled(TextField)(({ theme }) => ({
   '& .MuiInputLabel-root:not(.Mui-error, .Mui-disabled, .Mui-focused)': {

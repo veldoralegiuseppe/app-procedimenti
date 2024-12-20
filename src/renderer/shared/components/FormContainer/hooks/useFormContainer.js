@@ -1,5 +1,5 @@
 import { useMemo, useCallback } from 'react';
-import { useModelStore } from '@shared/hooks';
+import { useModelStore } from '@ui-shared/hooks';
 import _ from 'lodash';
 
 /**

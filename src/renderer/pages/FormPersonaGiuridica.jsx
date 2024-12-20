@@ -8,10 +8,10 @@ import {
   ComuneSelect,
   ImportoInput,
   ImportoReadOnly,
-} from '@shared/components';
+} from '@ui-shared/components';
 import { PersonaGiuridica } from '@features/persona';
-import { CssTextField } from '@shared/theme';
-import { Provincia, Comune } from '@shared/components';
+import { CssTextField } from '@ui-shared/theme';
+import { Provincia, Comune } from '@ui-shared/components';
 
 function FormPersonaGiuridica(props, ref) {
   // Costanti di layout

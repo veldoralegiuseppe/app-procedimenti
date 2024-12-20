@@ -1,8 +1,8 @@
 import React from 'react';
 import Grid from '@mui/material/Grid2';
-import { FieldTypes } from '@shared/metadata';
-import { useMetadata } from '@shared/hooks';
-import { FormPresenter, ClearButton } from '@shared/components';
+import { FieldTypes } from '@ui-shared/metadata';
+import { useMetadata } from '@ui-shared/hooks';
+import { FormPresenter, ClearButton } from '@ui-shared/components';
 import useFormPersonaFisica from './hooks/useFormPersonaFisica';
 import RiepilogoTransazioniFormContainer from './components/RiepilogoTransazioni/RiepilogoTransazioniPersonaFisica';
 

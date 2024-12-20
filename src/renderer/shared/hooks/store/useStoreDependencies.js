@@ -1,6 +1,6 @@
 import * as React from 'react';
-import { useStoreContext } from '@shared/context';
-import { useModelStore } from '@shared/hooks';
+import { useStoreContext } from '@ui-shared/context';
+import { useModelStore } from '@ui-shared/hooks';
 
 const useStoreDependencies = ({
   fieldKey,

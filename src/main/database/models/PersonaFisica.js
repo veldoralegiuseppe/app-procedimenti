@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import { PersonaFisicaMetadata, PersonaEnumsV1 } from '@features/persona';
-import { FieldTypes } from '@shared/metadata';
+import { FieldTypes } from '@ui-shared/metadata';
 
 const PersonaFisicaSchema = (version = '1.0') => {
   const metadata = PersonaFisicaMetadata[version];

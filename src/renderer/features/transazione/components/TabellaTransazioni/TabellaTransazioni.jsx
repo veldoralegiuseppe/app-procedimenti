@@ -2,7 +2,7 @@ import * as React from 'react';
 import { styled } from '@mui/system';
 import { TableCell, TableHead } from '@mui/material';
 import Grid from '@mui/material/Grid2';
-import {TableFactory} from '@shared/components';
+import {TableFactory} from '@ui-shared/components';
 import TransazioneCellRender from './components/TransazioneCellRender';
 import useTransazioneTableRow  from './hooks/useTransazioneTableRow/useTransazioneTableRow';
 import _ from 'lodash';

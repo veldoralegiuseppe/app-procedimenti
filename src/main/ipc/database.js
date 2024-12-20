@@ -1,5 +1,5 @@
 const { ipcMain } = require('electron');
-// const { FieldTypes } = require('@shared/metadata');
+// const { FieldTypes } = require('@ui-shared/metadata');
 // const {
 //   Procedimento,
 //   PersonaFisica,

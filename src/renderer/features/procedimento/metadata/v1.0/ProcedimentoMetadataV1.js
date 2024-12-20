@@ -2,7 +2,7 @@ import ProcedimentoEnumsV1 from './enums/ProcedimentoEnumsV1';
 import dayjs from 'dayjs';
 import 'dayjs/locale/it';
 import { validators } from '@utils';
-import {InputTypes, FieldTypes, ValidationHooksTypes} from '@shared/metadata';
+import {InputTypes, FieldTypes, ValidationHooksTypes} from '@ui-shared/metadata';
 import { TransazioneMetadata } from '@features/transazione';
 
 dayjs.locale('it');

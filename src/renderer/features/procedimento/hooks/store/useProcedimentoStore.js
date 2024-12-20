@@ -1,5 +1,5 @@
 import { useCallback } from 'react';
-import { useModelStore } from '@shared/hooks';
+import { useModelStore } from '@ui-shared/hooks';
 
 const useProcedimentoStore = (store) => {
   const modelStoreInterface = useModelStore(store);

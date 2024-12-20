@@ -1,4 +1,4 @@
-import { CssTextField } from '@shared/theme';
+import { CssTextField } from '@ui-shared/theme';
 
 import React from 'react';
 import _ from 'lodash';

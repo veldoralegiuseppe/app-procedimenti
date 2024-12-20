@@ -32,7 +32,7 @@ module.exports = {
       '@pages': path.resolve(__dirname, 'src/renderer/pages/'),
       '@assets': path.resolve(__dirname, 'src/assets/'),
       '@utils': path.resolve(__dirname, 'src/renderer/shared/utils/'),
-      '@shared': path.resolve(__dirname, 'src/renderer/shared/'),
+      '@ui-shared': path.resolve(__dirname, 'src/renderer/shared/'),
       '@features': path.resolve(__dirname, 'src/renderer/features/'),
     },
   },

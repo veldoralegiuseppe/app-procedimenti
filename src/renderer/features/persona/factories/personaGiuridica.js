@@ -1,4 +1,4 @@
-import { Comune } from "@shared/components";
+import { Comune } from "@ui-shared/components";
 
 export class PersonaGiuridica {
   partitaIVA;

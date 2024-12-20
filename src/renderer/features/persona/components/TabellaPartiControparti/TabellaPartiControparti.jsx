@@ -1,9 +1,9 @@
 import * as React from 'react';
-import { TableFactory } from '@shared/components';
+import { TableFactory } from '@ui-shared/components';
 import { styled } from '@mui/system';
 import { TableCell, TableHead } from '@mui/material';
-import { useStoreContext } from '@shared/context';
-import { FieldTypes } from '@shared/metadata';
+import { useStoreContext } from '@ui-shared/context';
+import { FieldTypes } from '@ui-shared/metadata';
 import usePersoneTableRow from './hooks/usePersoneTableRow';
 
 const columns = [

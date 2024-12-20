@@ -1,6 +1,6 @@
 import { validators } from '@utils';
 import TransazioneEnumsV1 from './enums/TransazioneEnumsV1';
-import { FieldTypes, ValidationHooksTypes } from '@shared/metadata';
+import { FieldTypes, ValidationHooksTypes } from '@ui-shared/metadata';
 
 const TransazioneMetadataV1 = {
   nome: {

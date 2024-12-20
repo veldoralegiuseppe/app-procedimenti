@@ -1,5 +1,5 @@
 import { useMemo, useEffect } from 'react';
-import { useCreateStore, useModelArray } from '@shared/hooks';
+import { useCreateStore, useModelArray } from '@ui-shared/hooks';
 
 /**
  * Hook per inizializzare le righe della tabella con un campo `id`.

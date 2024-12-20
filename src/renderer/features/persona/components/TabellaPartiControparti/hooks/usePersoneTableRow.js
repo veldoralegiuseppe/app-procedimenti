@@ -1,6 +1,6 @@
 import { useMemo } from "react";
-import {ImportoUtils} from '@shared/utils';
-import {FieldTypes} from '@shared/metadata';
+import {ImportoUtils} from '@ui-shared/utils';
+import {FieldTypes} from '@ui-shared/metadata';
 
 const usePersoneTableRow = ({ persone = [] }) => {
   const mapToRow = (persona) => {

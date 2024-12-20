@@ -1,4 +1,4 @@
-import { useModel } from '@shared/hooks';
+import { useModel } from '@ui-shared/hooks';
 import { Pipeline } from '@utils';
 import { inputValidator, updateValidator } from '@utils/filters';
 

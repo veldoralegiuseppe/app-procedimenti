@@ -1,6 +1,6 @@
 import { ProcedimentoMetadata } from '@features/procedimento';
 import { TransazioneMetadata } from '@features/transazione';
-import { FieldTypes, ValidationHooksTypes } from '@shared/metadata';
+import { FieldTypes, ValidationHooksTypes } from '@ui-shared/metadata';
 import {PersonaFisicaMetadata, PersonaGiuridicaMetadata} from '@features/persona';
 
 /**

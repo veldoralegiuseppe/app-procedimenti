@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import InputAdornment from '@mui/material/InputAdornment';
 import EuroSymbolIcon from '@mui/icons-material/EuroSymbol';
-import { CssTextField } from '@shared/theme';
+import { CssTextField } from '@ui-shared/theme';
 import _ from 'lodash';
 
 // Utility

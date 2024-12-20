@@ -15,7 +15,7 @@ import {
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 import PropTypes from 'prop-types';
-import { CssTextField, labelColor } from '@shared/theme';
+import { CssTextField, labelColor } from '@ui-shared/theme';
 
 const StyledPopper = styled((props) => <Popper {...props} />)(({ theme }) => ({
   '& .MuiPaper-root': {

@@ -19,7 +19,7 @@ import {
 import { useTheme } from '@mui/material/styles';
 
 import {FormPersonaFisica, FormPersonaGiuridica} from '@pages';
-import { ProcedimentoContext } from '@shared/context';
+import { ProcedimentoContext } from '@ui-shared/context';
 import { PersonaFisica, PersonaGiuridica } from '@features/persona';
 
 const formLabelFontSize = '1rem';

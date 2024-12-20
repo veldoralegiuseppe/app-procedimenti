@@ -18,11 +18,11 @@ import {
   Select,
   OptionsAutocomplete,
   TextField,
-} from '@shared/components';
-import { CssTextField, labelColor } from '@shared/theme';
+} from '@ui-shared/components';
+import { CssTextField, labelColor } from '@ui-shared/theme';
 import { TitoliAutocomplete } from '@features/persona';
 import useInputFactory from './hooks/useInputFactory';
-import { InputTypes } from '@shared/metadata';
+import { InputTypes } from '@ui-shared/metadata';
 import _ from 'lodash';
 
 dayjs.locale('it');

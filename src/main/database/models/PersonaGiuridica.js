@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import { PersonaGiuridicaMetadataV1, PersonaEnumsV1 } from '@features/persona';
-import { FieldTypes } from '@shared/metadata';
+import { FieldTypes } from '@ui-shared/metadata';
 
 const PersonaGiuridicaSchema = (version = '1.0') => {
   const metadata = PersonaGiuridicaMetadataV1;

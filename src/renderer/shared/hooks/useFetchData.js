@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from 'react';
-import { CacheFetchPolicies } from '@shared/metadata';
+import { CacheFetchPolicies } from '@ui-shared/metadata';
 
 const useFetchData = ({ cachePolicy = CacheFetchPolicies.NO_CACHE } = {}) => {
   const [data, setData] = useState(undefined);

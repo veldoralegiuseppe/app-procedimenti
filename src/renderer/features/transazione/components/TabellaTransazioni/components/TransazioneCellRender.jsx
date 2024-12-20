@@ -1,7 +1,7 @@
 import * as React from 'react';
 import TrendingDownIcon from '@mui/icons-material/TrendingDown';
 import TrendingUpIcon from '@mui/icons-material/TrendingUp';
-import { useModelArrayStore } from '@shared/hooks';
+import { useModelArrayStore } from '@ui-shared/hooks';
 
 const TransazioneCellRender = ({rowId, store, ...props}) => {
  

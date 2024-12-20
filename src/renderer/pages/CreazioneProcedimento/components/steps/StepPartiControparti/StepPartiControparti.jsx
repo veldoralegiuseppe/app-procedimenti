@@ -2,8 +2,8 @@ import * as React from 'react';
 import Grid from '@mui/material/Grid2';
 import { Box } from '@mui/material';
 import { TabellaPartiControparti } from '@features/persona';
-import { FormModal, ButtonFactory, FormTitle } from '@shared/components';
-import { ButtonTypes, ModeTypes } from '@shared/metadata';
+import { FormModal, ButtonFactory, FormTitle } from '@ui-shared/components';
+import { ButtonTypes, ModeTypes } from '@ui-shared/metadata';
 import usePartiControparti from './hooks/usePartiControparti';
 import FormParteControparte from './components/FormParteControparte/FormParteControparte';
 

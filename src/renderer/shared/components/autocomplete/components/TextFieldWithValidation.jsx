@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { CssTextField } from '@shared/theme';
+import { CssTextField } from '@ui-shared/theme';
 
 const TextFieldWithValidation = ({
   label,

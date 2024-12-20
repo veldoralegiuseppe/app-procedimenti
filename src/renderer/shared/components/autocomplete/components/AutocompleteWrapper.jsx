@@ -1,7 +1,7 @@
 import React from 'react';
 import { Autocomplete, Paper, Popper } from '@mui/material';
 import OptionItem from './OptionItem';
-import { CssTextField } from '@shared/theme';
+import { CssTextField } from '@ui-shared/theme';
 import { styled, useTheme } from '@mui/system';
 import _ from 'lodash';
 

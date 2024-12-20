@@ -1,6 +1,6 @@
 import mongoose from 'mongoose';
 import { ProcedimentoMetadata } from '@features/procedimento';
-import { FieldTypes } from '@shared/metadata';
+import { FieldTypes } from '@ui-shared/metadata';
 
 const ProcedimentoSchema = (version = '1.0') => {
   const metadata = ProcedimentoMetadata[version];
