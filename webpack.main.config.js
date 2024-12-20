@@ -1,10 +1,10 @@
 const path = require('path');
+const webpack = require('webpack');
 
 module.exports = {
-  // Entry point per il processo main
-  entry: './src/main.js',
-  devtool: 'cheap-module-source-map', // O 'inline-source-map' se preferisci
+  entry: './src/main/main.js',
 
+  devtool: 'cheap-module-source-map',
 
   output: {
     // Genera il bundle nella cartella attesa da Electron Forge
@@ -24,4 +24,17 @@ module.exports = {
   },
 
   target: 'electron-main',
+
+  plugins: [
+    new webpack.DefinePlugin({
+       // Percorso del Preload
+       MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: JSON.stringify(
+        path.resolve(__dirname, '.webpack/preload/preload.bundle.js')
+      ),
+      // Percorso del Renderer (HTML)
+      MAIN_WINDOW_WEBPACK_ENTRY: JSON.stringify(
+        `file://${path.resolve(__dirname, '.webpack/renderer/renderer.js')}`
+      ),
+    }),
+  ],
 };

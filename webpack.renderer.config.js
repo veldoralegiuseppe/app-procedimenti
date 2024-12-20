@@ -21,6 +21,7 @@ module.exports = {
   module: {
     rules,
   },
+  entry: './src/renderer/renderer.js',
   resolve: {
     extensions: ['.js', '.jsx', '.json', '.wasm', '.svg'],
     fallback: {
@@ -28,16 +29,16 @@ module.exports = {
       path: require.resolve('path-browserify'),
     },
     alias: {
-      '@pages': path.resolve(__dirname, 'src/pages/'),
+      '@pages': path.resolve(__dirname, 'src/renderer/pages/'),
       '@assets': path.resolve(__dirname, 'src/assets/'),
-      '@utils': path.resolve(__dirname, 'src/shared/utils/'),
-      '@shared': path.resolve(__dirname, 'src/shared/'),
-      '@features': path.resolve(__dirname, 'src/features/'),
+      '@utils': path.resolve(__dirname, 'src/renderer/shared/utils/'),
+      '@shared': path.resolve(__dirname, 'src/renderer/shared/'),
+      '@features': path.resolve(__dirname, 'src/renderer/features/'),
     },
   },
   plugins: [
     new HtmlWebpackPlugin({
-      template: 'src/index.html', // Usa il template HTML per la finestra principale
+      template: 'src/renderer/index.html', // Usa il template HTML per la finestra principale
     }),
   ],
   output: {
