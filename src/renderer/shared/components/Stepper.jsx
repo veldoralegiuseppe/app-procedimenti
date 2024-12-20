@@ -44,6 +44,10 @@ export default function Stepper({ steps }) {
     setSkipped(newSkipped);
   };
 
+  const handleFinish = () => {
+    console.log('Finish');
+  };
+
   const handleBack = () =>
     setActiveStep((prevActiveStep) => prevActiveStep - 1);
 
@@ -207,7 +211,7 @@ export default function Stepper({ steps }) {
           </Button>
           <Box sx={{ flex: '1 1 auto' }} />
           <Button
-            onClick={handleNext}
+            onClick={() => activeStep === steps.length - 1 ? handleFinish() : handleNext()}
             disabled={disableNext}
             sx={{
               '&.Mui-disabled': {
