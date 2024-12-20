@@ -129,7 +129,7 @@ const RiepilogoSpese = ({ persone }) => {
                 >
                   <b>
                     {ImportoUtils.formattaImporto(
-                      Object.values(persona).filter(field => colonneSpese.map(col => col.campo).includes(field.key)).reduce((acc, curr) => acc + curr.importoDovuto, 0)
+                      Object.values(persona).filter(field => colonneSpese.map(col => col.campo).includes(field?.key)).reduce((acc, curr) => acc + curr.importoDovuto, 0)
                     )}
                   </b>
                 </td>

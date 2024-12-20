@@ -3,19 +3,18 @@ import Grid from '@mui/material/Grid2';
 import { Box } from '@mui/material';
 import { TabellaPartiControparti } from '@features/persona';
 import { FormModal, ButtonFactory, FormTitle } from '@shared/components';
-import { ButtonTypes } from '@shared/metadata';
+import { ButtonTypes, ModeTypes } from '@shared/metadata';
 import usePartiControparti from './hooks/usePartiControparti';
 import FormParteControparte from './components/FormParteControparte/FormParteControparte';
 
 function StepPartiControparti(props, ref) {
   const {
-    open,
-    selectedRowIndices,
-    handleOpenCreation,
-    handleOpenModify,
-    handleClose,
-    handleRowSelected,
-    handleDelete,
+    isModalOpen,
+    selectedRows,
+    openModal,
+    closeModal,
+    handleRowSelection,
+    deleteSelectedRows,
     handleChanges,
   } = usePartiControparti();
 
@@ -24,13 +23,13 @@ function StepPartiControparti(props, ref) {
       {/* Tabella persone */}
       <Grid size={{ xs: 12 }}>
         <FormTitle title="Lista delle parti" />
-        <TabellaPartiControparti onRowSelected={handleRowSelected} />
+        <TabellaPartiControparti onRowSelected={handleRowSelection} />
       </Grid>
 
       {/* Azioni */}
       <Box style={{ display: 'inline-flex', columnGap: '2rem' }}>
         <ButtonFactory
-          onClick={handleOpenCreation}
+          onClick={() => openModal(ModeTypes.CREATE)}
           text="Aggiungi"
           size="small"
           type={ButtonTypes.CREATE}
@@ -40,24 +39,24 @@ function StepPartiControparti(props, ref) {
           type={ButtonTypes.MODIFY}
           text="Modifica"
           size="small"
-          disabled={!selectedRowIndices.length > 0}
-          onClick={handleOpenModify}
+          disabled={!selectedRows.length > 0}
+          onClick={() => openModal(ModeTypes.MODIFY)}
         />
 
         <ButtonFactory
           type={ButtonTypes.DELETE}
           text="Elimina"
           size="small"
-          disabled={!selectedRowIndices.length > 0}
-          onClick={handleDelete}
+          disabled={!selectedRows.length > 0}
+          onClick={deleteSelectedRows}
         />
       </Box>
 
       {/* Modale */}
       <FormModal
         title="Aggiungi parte/controparte"
-        open={open}
-        handleClose={handleClose}
+        open={isModalOpen}
+        handleClose={closeModal}
       >
         <FormParteControparte onSubmit={handleChanges} />
       </FormModal>

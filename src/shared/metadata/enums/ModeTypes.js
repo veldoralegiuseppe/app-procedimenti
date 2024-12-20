@@ -1,6 +1,6 @@
 const ModeTypes = {
     CREATE: 'create',
-    EDIT: 'edit',
+    MODIFY: 'modify',
     DETAIL: 'detail',
 }
 

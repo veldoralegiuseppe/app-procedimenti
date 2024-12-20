@@ -148,7 +148,7 @@ const useFormPersonaFisica = () => {
             if (isCodiceFiscaleValid)
               dataNascita = decodeDataNascita(codiceFiscale);
 
-            setProperty('dataNascita', dataNascita.format('YYYY-MM-DD'));
+            setProperty('dataNascita', dataNascita?.format('YYYY-MM-DD'));
 
             return {
               disabled: isCodiceFiscaleValid,

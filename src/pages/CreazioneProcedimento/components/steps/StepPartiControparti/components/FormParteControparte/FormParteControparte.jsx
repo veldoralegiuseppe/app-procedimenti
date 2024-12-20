@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import Grid from '@mui/material/Grid2';
 import Box from '@mui/material/Box';
 import {
@@ -10,40 +10,57 @@ import {
 import {
   FormPersonaFisicaContainer,
   FormPersonaGiuridicaContainer,
+  PersonaEnumsV1,
 } from '@features/persona';
 import { useStoreContext } from '@shared/context';
 import { ButtonTypes, FieldTypes } from '@shared/metadata';
+import {subscribeToLocalStorage } from '@shared/utils';
+import { LOCAL_STORAGE_KEY } from '../../constants';
+import _ from 'lodash';
 
-const FormParteControparte = ({ handleClose, onSubmit }) => {
-  const ruoloGroupOptions = [
-    { value: 'PARTE_ISTANTE', label: 'PARTE ISTANTE' },
-    { value: 'CONTROPARTE', label: 'CONTROPARTE' },
-  ];
+
+const FormParteControparte = ({ handleClose, onSubmit, ruolo: role, tipo: type }) => {
+  
+  const ruoloGroupOptions = Object.entries(PersonaEnumsV1.ruolo).map(([key, value]) => ({value, label: value}));
+
   const tipoPersonaGroupOptions = [
-    { value: 'PERSONA_FISICA', label: 'PERSONA FISICA' },
-    { value: 'PERSONA_GIURIDICA', label: 'PERSONA GIURIDICA' },
+    { value: FieldTypes.PERSONA_FISICA, label: 'PERSONA FISICA' },
+    { value:  FieldTypes.PERSONA_GIURIDICA, label: 'PERSONA GIURIDICA' },
   ];
 
-  const [ruolo, setRuolo] = useState('PARTE_ISTANTE');
-  const [tipoPersona, setTipoPersona] = useState('PERSONA_FISICA');
+  const [ruolo, setRuolo] = useState(() => role || PersonaEnumsV1.ruolo.PARTE_ISTANTE);
+  const [tipoPersona, setTipoPersona] = useState(() => type || FieldTypes.PERSONA_FISICA);
 
   const storePersonaFisica = useStoreContext(FieldTypes.PERSONA_FISICA);
   const storePersonaGiuridica = useStoreContext(FieldTypes.PERSONA_GIURIDICA);
 
   const handleSubmit = useCallback(() => {
     const newPersona =
-      tipoPersona === 'PERSONA_FISICA'
+      tipoPersona === FieldTypes.PERSONA_FISICA
         ? storePersonaFisica.getState().getModel()
         : storePersonaGiuridica.getState().getModel();
 
-        console.log('newPersona', newPersona, 'tipoPersona', tipoPersona, 'ruolo', ruolo);
-
+        
     onSubmit?.({
       ...newPersona,
-      ruolo: ruoloGroupOptions.find((option) => option.value === ruolo).label,
+      ruolo,
     });
     handleClose();
   }, [tipoPersona, ruolo]);
+
+  useEffect(() => {
+    const unsubscribe = subscribeToLocalStorage(LOCAL_STORAGE_KEY, (newContext) => {
+      if (newContext) {
+        console.log('subscribeToLocalStorage newContext:', newContext);
+        setRuolo(newContext.ruoloPersona);
+        setTipoPersona(newContext.tipoPersona);
+      }
+    });
+
+    return () => {
+      unsubscribe();
+    }
+  }, []);
 
   return (
     <Grid container size={{ xs: 12 }} rowGap="3rem">
@@ -54,7 +71,6 @@ const FormParteControparte = ({ handleClose, onSubmit }) => {
         <RadioGroup
           options={ruoloGroupOptions}
           value={ruolo}
-          onChange={(e) => setRuolo(e.target.value)}
         />
       </Grid>
 
@@ -74,8 +90,8 @@ const FormParteControparte = ({ handleClose, onSubmit }) => {
         <Grid size={{ xs: 12 }}>
           <Accordion
             title={'Persona fisica'}
-            isDisabled={tipoPersona !== 'PERSONA_FISICA'}
-            isExpanded={tipoPersona === 'PERSONA_FISICA'}
+            isDisabled={tipoPersona !== FieldTypes.PERSONA_FISICA}
+            isExpanded={tipoPersona === FieldTypes.PERSONA_FISICA}
           >
             <FormPersonaFisicaContainer />
           </Accordion>
@@ -84,8 +100,8 @@ const FormParteControparte = ({ handleClose, onSubmit }) => {
         <Grid size={{ xs: 12 }}>
           <Accordion
             title={'Persona giuridica'}
-            isDisabled={tipoPersona !== 'PERSONA_GIURIDICA'}
-            isExpanded={tipoPersona === 'PERSONA_GIURIDICA'}
+            isDisabled={tipoPersona !== FieldTypes.PERSONA_GIURIDICA}
+            isExpanded={tipoPersona === FieldTypes.PERSONA_GIURIDICA}
           >
             <FormPersonaGiuridicaContainer />
           </Accordion>
