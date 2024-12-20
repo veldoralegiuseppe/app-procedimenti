@@ -1,5 +1,6 @@
 const { app, BrowserWindow } = require('electron');
 const installExtension = require('electron-devtools-installer').default;
+const connectDB = require('./database/connection');
 const { REACT_DEVELOPER_TOOLS } = require('electron-devtools-installer');
 
 let mainWindow;
@@ -19,6 +20,9 @@ const createWindow = () => {
   if (process.env.NODE_ENV === 'development') {
     mainWindow.webContents.openDevTools();
   }
+
+  // Connessione al database
+  connectDB(); 
 };
 
 // Installa React Developer Tools solo in ambiente di sviluppo

@@ -71,6 +71,8 @@ const TransazioneMetadataV1 = {
   },
 
   type: FieldTypes.TRANSAZIONE,
+
+  version: '1.0',
 };
 
 export default TransazioneMetadataV1;
