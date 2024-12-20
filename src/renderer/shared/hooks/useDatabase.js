@@ -10,6 +10,7 @@ const useDatabase = () => {
     setError(null);
     try {
       const result = await operation(...args);
+      console.log('result', result);
       if (!result.success) throw new Error(result.error);
       return result.data;
     } catch (err) {
@@ -22,8 +23,8 @@ const useDatabase = () => {
   }, []);
 
   const create = useCallback(
-    (collection, data) =>
-      performOperation(window.databaseAPI.create, collection, data),
+    (data) =>
+      performOperation(window.databaseAPI.create, data),
     [performOperation]
   );
 

@@ -22,4 +22,4 @@ const Transazione = (version = '1.0') => {
   return mongoose.model(`TransazioneV${version.replace('.', '_')}`, schema);
 };
 
-export default Transazione;
+export { TransazioneSchema as getTransazioneSchema, Transazione as getTransazioneModel };

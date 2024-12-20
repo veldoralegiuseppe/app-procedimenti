@@ -2,8 +2,7 @@ const ModelTypes = {
     TRANSAZIONE: 'transazione',
     PERSONA_FISICA: 'personaFisica',
     PERSONA_GIURIDICA: 'personaGiuridica',
-    PROCEDIMENTO: 'procedimento',
-    PERSONE: 'persone',
+    PROCEDIMENTO: 'procedimento'
 };
 
 export default ModelTypes;

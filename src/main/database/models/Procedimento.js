@@ -1,14 +1,21 @@
 import mongoose from 'mongoose';
 import { ProcedimentoEnumsV1 as enums, ModelTypes } from '@shared/metadata';
+import { getTransazioneSchema } from './Transazione';
 
 const ProcedimentoSchema = (version = '1.0') => {
-  
   // Funzione per risolvere riferimenti dinamici
-  const getSpesaRef = (version) => `TransazioneV${version.replace('.', '_')}`;
+  const TransazioneSchema = getTransazioneSchema(version);
 
   return new mongoose.Schema(
     {
-      numProtocollo: { type: String, required: true },
+      _id: {
+        type: String, // Usa `numProtocollo` come `_id`
+      },
+      numProtocollo: {
+        type: String,
+        required: true,
+        unique: true, // Deve essere unico
+      },
       dataDeposito: { type: Date, required: true },
       valoreControversia: { type: Number, required: true, min: 0 },
       oggettoControversia: {
@@ -20,7 +27,7 @@ const ProcedimentoSchema = (version = '1.0') => {
       sedeSvolgimento: { type: String },
       causaleDemandata: { type: String },
       esitoMediazione: { type: String, enum: enums.esitoMediazione },
-      dataOraIncontro: { type: Date, default: null },
+      dataOraIncontro: { type: Date,},
       modalitaSvolgimento: { type: String, enum: enums.modalitaSvolgimento },
       titoloMediatore: { type: String },
       nomeMediatore: { type: String },
@@ -28,18 +35,15 @@ const ProcedimentoSchema = (version = '1.0') => {
 
       // Riferimenti dinamici alle spese
       compensoMediatore: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: getSpesaRef(version),
+        type: TransazioneSchema,
         required: true,
       },
       speseAvvioSedeSecondaria: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: getSpesaRef(version),
+        type: TransazioneSchema,
         required: true,
       },
       speseIndennitaSedeSecondaria: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: getSpesaRef(version),
+        type: TransazioneSchema,
         required: true,
       },
 
@@ -82,10 +86,10 @@ const ProcedimentoSchema = (version = '1.0') => {
       ],
 
       // Metadata
-      type: { type: String, required: true, default: 'procedimento' },
+      type: { type: String, required: true, default: ModelTypes.PROCEDIMENTO },
       version: { type: String, required: true, default: version },
     },
-    { timestamps: true }
+    { timestamps: true, id: false }
   );
 };
 

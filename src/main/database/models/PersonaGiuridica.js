@@ -1,10 +1,10 @@
 import mongoose from 'mongoose';
-import {
-  PersonaEnumsV1,
-  ModelTypes,
-} from '@shared/metadata';
+import { PersonaEnumsV1, ModelTypes } from '@shared/metadata';
+import { getTransazioneSchema } from './Transazione';
 
 const PersonaGiuridicaSchema = (version = '1.0') => {
+  const TransazioneSchema = getTransazioneSchema(version);
+
   return new mongoose.Schema(
     {
       denominazione: {
@@ -29,33 +29,27 @@ const PersonaGiuridicaSchema = (version = '1.0') => {
 
       // Riferimenti alle spese
       speseAvvio: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'TransazioneV1',
+        type: TransazioneSchema,
         required: true,
       },
       spesePostali: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'TransazioneV1',
+        type: TransazioneSchema,
         required: true,
       },
       speseIndennita: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'TransazioneV1',
+        type: TransazioneSchema,
         required: true,
       },
       speseMancatoAccordo: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'TransazioneV1',
+        type: TransazioneSchema,
         required: true,
       },
       spesePositivoPrimoIncontro: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'TransazioneV1',
+        type: TransazioneSchema,
         required: true,
       },
       spesePositivoOltrePrimoIncontro: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'TransazioneV1',
+        type: TransazioneSchema,
         required: true,
       },
 

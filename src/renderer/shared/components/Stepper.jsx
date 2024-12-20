@@ -9,6 +9,7 @@ import {
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import {useDatabase} from '@ui-shared/hooks';
+import {FieldTypes} from '@ui-shared/metadata';
 import {useStoreContext} from '@ui-shared/context';
 import Grid from '@mui/material/Grid2';
 
@@ -19,7 +20,7 @@ export default function Stepper({ steps }) {
   const theme = useTheme();
   const stepRef = React.useRef(null);
   const {create} = useDatabase();
-  const {compose} = useStoreContext();
+  const stores = useStoreContext();
 
   React.useEffect(() => {
     const currentStepComponent = steps[activeStep].component;
@@ -49,7 +50,13 @@ export default function Stepper({ steps }) {
   };
 
   const handleFinish = () => {
-    const data = compose();
+    const procedimentoStore = stores[FieldTypes.PROCEDIMENTO];
+    const personeStore = stores[FieldTypes.PERSONE];
+
+    const procedimento = procedimentoStore.getState().getModel();
+    const persone = personeStore.getState().getItems();
+
+    const data = {...procedimento, persone}
     console.log('Finish', data);
     create(data)
   };

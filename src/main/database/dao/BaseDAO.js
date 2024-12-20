@@ -4,6 +4,7 @@ class BaseDAO {
   }
 
   async create(data) {
+    console.log('BaseDAO create', data);
     return await this.model.create(data);
   }
 

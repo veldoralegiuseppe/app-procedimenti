@@ -1,7 +1,7 @@
 const { ipcRenderer } = require('electron');
 
 const databaseAPI = {
-    create: async (Model, data) => {
+    create: async (data) => {
         return await ipcRenderer.invoke('database-create', data);
     }
 }

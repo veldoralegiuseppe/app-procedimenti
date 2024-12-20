@@ -1,8 +1,14 @@
 import mongoose from 'mongoose';
-import { PersonaFisicaEnumsV1 as enums, PersonaEnumsV1, ModelTypes } from '@shared/metadata';
+import {
+  PersonaFisicaEnumsV1 as enums,
+  PersonaEnumsV1,
+  ModelTypes,
+} from '@shared/metadata';
+import { getTransazioneSchema } from './Transazione';
 
 const PersonaFisicaSchema = (version = '1.0') => {
- 
+  const TransazioneSchema = getTransazioneSchema(version);
+
   return new mongoose.Schema(
     {
       capComuneNascita: { type: Number },
@@ -23,7 +29,7 @@ const PersonaFisicaSchema = (version = '1.0') => {
       },
       sesso: { type: String, enum: enums.sesso },
       partitaIVA: { type: String },
-      pecEmail: { type: String, match: /.+@.+\..+/ }, 
+      pecEmail: { type: String, match: /.+@.+\..+/ },
       cognomeRappresentanteLegale: { type: String },
       nomeRappresentanteLegale: { type: String },
       pecEmailRappresentanteLegale: { type: String, match: /.+@.+\..+/ },
@@ -31,33 +37,27 @@ const PersonaFisicaSchema = (version = '1.0') => {
 
       // Riferimenti alle spese
       speseAvvio: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'TransazioneV1',
+        type: TransazioneSchema,
         required: true,
       },
       speseIndennita: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'TransazioneV1',
+        type: TransazioneSchema,
         required: true,
       },
       speseMancatoAccordo: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'TransazioneV1',
+        type: TransazioneSchema,
         required: true,
       },
       spesePositivoOltrePrimoIncontro: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'TransazioneV1',
+        type: TransazioneSchema,
         required: true,
       },
       spesePositivoPrimoIncontro: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'TransazioneV1',
+        type: TransazioneSchema,
         required: true,
       },
       spesePostali: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'TransazioneV1',
+        type: TransazioneSchema,
         required: true,
       },
 

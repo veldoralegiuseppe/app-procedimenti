@@ -6,7 +6,8 @@ const FieldTypes = {
     DATE: 'date',
     DATE_TIME: 'dateTime',
     BOOLEAN: 'boolean',
-    ...ModelTypes
+    ...ModelTypes,
+    PERSONE: 'persone',
 }
 
 export default FieldTypes;

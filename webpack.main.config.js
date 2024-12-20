@@ -19,7 +19,7 @@ module.exports = {
   resolve: {
     extensions: ['.js', '.json'],
     alias: {
-      '@models': path.resolve(__dirname, 'src/main/database/models/'),
+      '@database': path.resolve(__dirname, 'src/main/database/'),
     },
   },
 
