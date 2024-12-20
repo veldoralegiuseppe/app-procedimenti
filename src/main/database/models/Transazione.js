@@ -1,16 +1,9 @@
 import mongoose from 'mongoose';
-import { TransazioneMetadata } from '@features/transazione';
-import { FieldTypes } from '@ui-shared/metadata';
+import { TransazioneEnumsV1 as enums } from '@shared/metadata';
+import { ModelTypes } from '@shared/metadata';
 
 const TransazioneSchema = (version = '1.0') => {
-  const metadata = TransazioneMetadata[version];
-
-  if (!metadata) {
-    throw new Error(`Metadata for version ${version} not found`);
-  }
-
-  const { enums } = metadata;
-
+ 
   return new mongoose.Schema({
     nome: { type: String, required: true },
     key: { type: String, required: true },
@@ -18,7 +11,7 @@ const TransazioneSchema = (version = '1.0') => {
     tipo: { type: String, enum: Object.values(enums.tipo) },
     importoDovuto: { type: Number, required: true, default: 0 },
     importoCorrisposto: { type: Number, required: true, default: 0 },
-    type: { type: String, required: true, default: FieldTypes.TRANSAZIONE },
+    type: { type: String, required: true, default: ModelTypes.TRANSAZIONE },
     version: { type: String, required: true, default: version },
   });
 };

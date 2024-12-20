@@ -1,4 +1,4 @@
-import TransazioneEnumsV1 from "./v1.0/enums/TransazioneEnumsV1";
+import {TransazioneEnumsV1} from "@shared/metadata";
 import TransazioneMetadataV1 from "./v1.0/TransazioneMetadataV1";
 
 const TransazioneMetadata = {
