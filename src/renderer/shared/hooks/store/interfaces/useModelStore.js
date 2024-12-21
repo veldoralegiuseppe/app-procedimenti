@@ -12,13 +12,19 @@ import { useCallback } from 'react';
  * @returns {Function} getProperty - Funzione per ottenere una proprietà dallo store.
  */
 const useModelStore = (store) => {
-  const setProperty = useCallback((key, value, validations) => store.getState().setProperty(key, value, validations), [store]);
-  const resetModel = useCallback((newModel) => store.getState().resetModel(newModel), [store]);
-  const getModel = useCallback(() => store.getState().getModel(), [store]);
-  const getProperty = useCallback((key) => store(state => state.getProperty(key)), [store]);
-  const getProperties = useCallback((keys) => store.getState().getProperties(keys), [store]);
-  const getPropertyAndDependencies = useCallback((key, dependencies) => store.getState().getPropertyAndDependencies(key, dependencies), [store]);
-  const getFieldErrors = useCallback((key) => store(state => state.getFieldErrors(key)), [store]);
+  const setProperty = useCallback((key, value, validations) => store?.getState()?.setProperty(key, value, validations), [store]);
+  const resetModel = useCallback((newModel) => store?.getState()?.resetModel(newModel), [store]);
+  const getModel = useCallback(() => store?.getState()?.getModel(), [store]);
+  const getProperty = useCallback((key) => {
+    if(!store || typeof store !== 'function') return;
+    return store(state => state.getProperty(key))
+  }, [store]);
+  const getProperties = useCallback((keys) => store?.getState()?.getProperties(keys), [store]);
+  const getPropertyAndDependencies = useCallback((key, dependencies) => store?.getState()?.getPropertyAndDependencies(key, dependencies), [store]);
+  const getFieldErrors = useCallback((key) => {
+    if(!store || typeof store !== 'function') return;
+    return store(state => state.getFieldErrors(key))
+  }, [store]);
 
   return { 
     touchedFields: undefined, 

@@ -28,13 +28,13 @@ const useChipState = ({ value, status: initialStatus, nextStateFn }) => {
   );
 
   const handleNextState = useCallback(() => {
-    const { label: newLabel, status: newStatus, message: newMessage } = nextStateFn(label);
+    const { label: newLabel = label, status: newStatus = status, message: newMessage = message } = nextStateFn?.(label) || {};
     setLabel(newLabel);
     setStatus(newStatus);
     setMessage(newMessage);
 
     return { label: newLabel, status: newStatus, message: newMessage };
-  }, [label, nextStateFn]);
+  }, [label, status, message, nextStateFn]);
 
   return { label, status, message, chipStyles, handleNextState, setMessage, setLabel, setStatus };
 };

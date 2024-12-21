@@ -47,7 +47,7 @@ const ChipCell = ({
 
   const handleClick = () => {
     if (disabled) return;
-    const { status } = handleNextState();
+    const { status = props.status } = handleNextState();
     //updateItemById(rowId, { [columnField]: status });
     onClick?.({ [columnField]: status });
   };

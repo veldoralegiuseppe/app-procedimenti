@@ -2,74 +2,52 @@ import * as React from 'react';
 import { TableFactory } from '@ui-shared/components';
 import { styled } from '@mui/system';
 import { TableCell, TableHead } from '@mui/material';
-import { useStoreContext } from '@ui-shared/context';
-import { FieldTypes } from '@ui-shared/metadata';
-import usePersoneTableRow from './hooks/usePersoneTableRow';
+import useProcedimentoTableRow from './hooks/useProcedimentoTableRow';
 
 const columns = [
   {
-    field: 'anagrafica',
-    headerName: 'Anagrafica',
-    sortable: true,
-    align: 'left',
-  },
-  {
-    field: 'ruolo',
-    headerName: 'Ruolo',
-    sortable: true,
-    align: 'left',
-  },
-  {
-    field: 'speseAvvio',
-    headerName: 'Spese avvio',
+    field: 'numProtocollo',
+    headerName: 'Protocollo',
     sortable: true,
     align: 'center',
   },
   {
-    field: 'spesePostali',
-    headerName: 'Spese postali',
+    field: 'dataDeposito',
+    headerName: 'Data deposito',
     sortable: true,
     align: 'center',
   },
   {
-    field: 'speseIndennita',
-    headerName: 'Indennità',
+    field: 'oggettoControversia',
+    headerName: 'Oggetto',
     sortable: true,
     align: 'center',
   },
   {
-    field: 'spesePositivoPrimoIncontro',
-    headerName: 'Pos. 1°',
-    tooltip: 'Positivo 1° incontro',
+    field: 'valoreControversia',
+    headerName: 'Valore controversia',
     sortable: true,
     align: 'center',
   },
   {
-    field: 'spesePositivoOltrePrimoIncontro',
-    headerName: 'Pos. oltre 1°',
-    tooltip: 'Positivo oltre 1° incontro',
+    field: 'esitoMediazione',
+    headerName: 'Esito',
     sortable: true,
     align: 'center',
   },
+
   {
-    field: 'speseMancatoAccordo',
-    headerName: 'Manc. accordo',
-    tooltip: 'Mancato accordo',
-    sortable: true,
-    align: 'center',
-  },
-  {
-    field: 'totale',
-    headerName: 'Totale',
+    field: 'statoPagamenti',
+    headerName: 'Stato',
+    type: 'chip',
     sortable: true,
     align: 'center',
   },
 ];
 
-const TabellaPartiControparti = ({ onRowSelected }) => {
-  const personeStore = useStoreContext(FieldTypes.PERSONE);
-  const persone = personeStore((state) => state.getItems());
-  const { data } = usePersoneTableRow({ persone });
+const TabellaProcedimenti = ({onRowSelected, procedimenti=[]}) => {
+
+  const { data } = useProcedimentoTableRow({ procedimenti });
 
   const headerConfig = {
     components: {
@@ -113,7 +91,6 @@ const TabellaPartiControparti = ({ onRowSelected }) => {
     selectableConfig: {
       isMultiSelect: false,
       onSelected: (selezionati) => {
-        console.log('Selezionati:', selezionati);
         onRowSelected?.(selezionati);
       },
     },
@@ -127,25 +104,9 @@ const TabellaPartiControparti = ({ onRowSelected }) => {
     sx: { height: '2rem' },
     onPageChange: (event, newPage) => console.log('Pagina cambiata:', newPage),
     onRowsPerPageChange: (event) => {
-      //console.log('Righe per pagina cambiate:', event.target.value);
+      console.log('Righe per pagina cambiate:', event.target.value);
     },
   };
-
-  // DEBUG
-  // React.useEffect(() => {
-  //   const validateData = (data) => {
-  //     if (persone.length === 0) return true;
-  //     return data.every((item) =>
-  //       columns.every((column) => column.field in item)
-  //     );
-  //   };
-
-  //   if (!validateData(data)) {
-  //     console.error(
-  //       'I dati forniti non rispettano il formato specificato dalle colonne.'
-  //     );
-  //   }
-  // }, [data]);
 
   return (
     <TableFactory
@@ -163,4 +124,4 @@ const TabellaPartiControparti = ({ onRowSelected }) => {
   );
 };
 
-export default TabellaPartiControparti;
+export default TabellaProcedimenti;

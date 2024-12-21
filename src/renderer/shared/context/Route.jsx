@@ -3,9 +3,7 @@ import { createContext } from 'react';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
 
-import {CreaProcedimento, Dashboard} from '@pages';
-import { StepRiepilogoProcedimento } from '../../pages/CreazioneProcedimento';
-
+import {CreazioneProcedimentoPage, Dashboard, RicercaProcedimentoPage} from '@pages';
 
 export const routes = [
   {
@@ -21,14 +19,14 @@ export const routes = [
         path: '/crea',
         label: 'Nuovo procedimento',
         icon: <AddOutlinedIcon />,
-        component: <CreaProcedimento />,
+        component: <CreazioneProcedimentoPage />,
       },
       {
         path: '/cerca',
         icon: <SearchOutlinedIcon />,
         label: 'Ricerca procedimento',
         component: (
-         <StepRiepilogoProcedimento />
+         <RicercaProcedimentoPage />
         ),
       }, 
     ],
