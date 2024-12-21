@@ -1,0 +1,1 @@
+export {default as FormRicerca} from './FormRicerca/FormRicerca';

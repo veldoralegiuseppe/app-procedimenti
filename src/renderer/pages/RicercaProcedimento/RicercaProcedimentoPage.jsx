@@ -2,6 +2,8 @@ import React from 'react';
 import { useTheme } from '@mui/material/styles';
 import { PageHeader } from '@ui-shared/components';
 import { TabellaProcedimenti } from '@features/procedimento';
+import { FormRicerca } from './components';
+import { LinearProgress } from '@mui/material';
 
 const RicercaProcedimentoPage = () => {
   const theme = useTheme();
@@ -31,7 +33,13 @@ const RicercaProcedimentoPage = () => {
           }}
         >
           <PageHeader title="Ricerca procedimento" helperText={helperText} />
-          <TabellaProcedimenti />
+
+          <div style={{margin: '1.5rem 0'}}>
+            <FormRicerca />
+          </div>
+
+          {/* <LinearProgress /> */}
+          {/* <TabellaProcedimenti /> */}
         </div>
       </div>
     </React.Fragment>
