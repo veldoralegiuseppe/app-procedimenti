@@ -6,6 +6,7 @@ export default function NotificationAlert({
   message,
   severity = 'info',
   onClose,
+  sx,
 }) {
   const handleClose = () => {
     if (onClose) onClose();
@@ -20,6 +21,7 @@ export default function NotificationAlert({
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
+        ...sx,
       }}
       spacing={2}
     >

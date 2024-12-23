@@ -74,8 +74,16 @@ const PersonaFisicaSchema = (version = '1.0') => {
 };
 
 const PersonaFisica = (version = '1.0') => {
+  const modelName = `PersonaFisicaV${version.replace('.', '_')}`;
+  
+  if (mongoose.models[modelName]) {
+    // Se il modello esiste già, lo restituisce
+    return mongoose.models[modelName];
+  }
+
+  // Altrimenti, crea e registra un nuovo modello
   const schema = PersonaFisicaSchema(version);
-  return mongoose.model(`PersonaFisicaV${version.replace('.', '_')}`, schema);
+  return mongoose.model(modelName, schema);
 };
 
-export default PersonaFisica;
+export { PersonaFisicaSchema as getPersonaFisicaSchema, PersonaFisica as getPersonaFisicaModel };

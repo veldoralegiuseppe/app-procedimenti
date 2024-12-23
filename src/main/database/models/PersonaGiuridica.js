@@ -67,11 +67,17 @@ const PersonaGiuridicaSchema = (version = '1.0') => {
 
 // Funzione per creare un modello specifico per la versione
 const PersonaGiuridica = (version = '1.0') => {
+  const modelName = `PersonaGiuridicaV${version.replace('.', '_')}`;
+  
+  if (mongoose.models[modelName]) {
+    // Se il modello esiste già, lo restituisce
+    return mongoose.models[modelName];
+  }
+
+  // Altrimenti, crea e registra un nuovo modello
   const schema = PersonaGiuridicaSchema(version);
-  return mongoose.model(
-    `PersonaGiuridicaV${version.replace('.', '_')}`,
-    schema
-  );
+  return mongoose.model(modelName, schema);
 };
 
-export default PersonaGiuridica;
+
+export {PersonaGiuridicaSchema as getPersonaGiuridicaSchema, PersonaGiuridica as getPersonaGiuridicaModel};

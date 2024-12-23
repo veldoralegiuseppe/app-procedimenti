@@ -13,14 +13,12 @@ import {FieldTypes} from '@ui-shared/metadata';
 import {useStoreContext} from '@ui-shared/context';
 import Grid from '@mui/material/Grid2';
 
-export default function Stepper({ steps }) {
+export default function Stepper({ steps, onSubmit }) {
   const [activeStep, setActiveStep] = React.useState(0);
   const [skipped, setSkipped] = React.useState(new Set());
   const [disableNext, setDisableNext] = React.useState(true);
   const theme = useTheme();
   const stepRef = React.useRef(null);
-  const {create} = useDatabase();
-  const stores = useStoreContext();
 
   React.useEffect(() => {
     const currentStepComponent = steps[activeStep].component;
@@ -47,18 +45,6 @@ export default function Stepper({ steps }) {
     }
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
     setSkipped(newSkipped);
-  };
-
-  const handleFinish = () => {
-    const procedimentoStore = stores[FieldTypes.PROCEDIMENTO];
-    const personeStore = stores[FieldTypes.PERSONE];
-
-    const procedimento = procedimentoStore.getState().getModel();
-    const persone = personeStore.getState().getItems();
-
-    const data = {...procedimento, persone}
-    console.log('Finish', data);
-    create(data)
   };
 
   const handleBack = () =>
@@ -224,7 +210,7 @@ export default function Stepper({ steps }) {
           </Button>
           <Box sx={{ flex: '1 1 auto' }} />
           <Button
-            onClick={() => activeStep === steps.length - 1 ? handleFinish() : handleNext()}
+            onClick={() => activeStep === steps.length - 1 ? onSubmit() : handleNext()}
             disabled={disableNext}
             sx={{
               '&.Mui-disabled': {

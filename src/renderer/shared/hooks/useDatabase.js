@@ -5,26 +5,26 @@ const useDatabase = () => {
   const [error, setError] = useState(null);
 
   const performOperation = useCallback(async (operation, ...args) => {
-    console.log('performOperation', operation, args);
     setLoading(true);
     setError(null);
+   
     try {
       const result = await operation(...args);
       console.log('result', result);
-      if (!result.success) throw new Error(result.error);
-      return result.data;
+      //if (!result || typeof result !== 'object' || !result.success) throw new Error(result?.error || 'Unknown error');
+      return result;
     } catch (err) {
       setError(err.message);
       console.error('Database operation error:', err.message);
-      return null;
+      return { success: false, error: err.message };
     } finally {
       setLoading(false);
     }
   }, []);
 
   const create = useCallback(
-    (data) =>
-      performOperation(window.databaseAPI.create, data),
+    async (data) =>
+      await performOperation(window.databaseAPI.create, data),
     [performOperation]
   );
 

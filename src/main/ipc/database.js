@@ -1,6 +1,6 @@
 const { ipcMain } = require('electron');
 const { ModelTypes } = require('@shared/metadata');
-const {DAOFactory} = require('@database/dao');
+const { DAOFactory } = require('@database/dao');
 const {
   Procedimento,
   PersonaFisica,
@@ -8,10 +8,10 @@ const {
   Transazione,
 } = require('@database/models');
 const mongoose = require('mongoose');
+const { mapErrorToMessage } = require('@database/errorHandler');
 
 // Funzione per ottenere il modello in base al tipo
 const getModel = (version, type) => {
- 
   // Mappa dei nomi dei modelli in base al tipo
   const modelNameMap = {
     [ModelTypes.PERSONA_FISICA]: `PersonaFisicaV${version.replace('.', '_')}`,
@@ -54,9 +54,9 @@ const getModel = (version, type) => {
 // Configura gli handler IPC
 const setupDatabaseHandlers = () => {
   ipcMain.handle('database-create', async (event, data) => {
+    const { version, type } = data;
     try {
       // Ottieni il modello in base ai dati forniti
-      const {version, type} = data;
       const Model = getModel(version, type);
 
       // Ottieni il DAO in base al tipo
@@ -67,7 +67,9 @@ const setupDatabaseHandlers = () => {
       return { success: true, data: result.toJSON() };
     } catch (error) {
       console.error('Errore in database-create:', error);
-      return { success: false, error: error.message };
+      let errorMessage = mapErrorToMessage(error, type);
+
+      return { success: false, error: errorMessage };
     }
   });
 };

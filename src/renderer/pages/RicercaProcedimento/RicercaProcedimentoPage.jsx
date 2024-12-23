@@ -39,7 +39,7 @@ const RicercaProcedimentoPage = () => {
           </div>
 
           {/* <LinearProgress /> */}
-          {/* <TabellaProcedimenti /> */}
+          <TabellaProcedimenti />
         </div>
       </div>
     </React.Fragment>

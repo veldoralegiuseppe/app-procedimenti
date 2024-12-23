@@ -27,7 +27,7 @@ const ProcedimentoSchema = (version = '1.0') => {
       sedeSvolgimento: { type: String },
       causaleDemandata: { type: String },
       esitoMediazione: { type: String, enum: enums.esitoMediazione },
-      dataOraIncontro: { type: Date,},
+      dataOraIncontro: { type: Date },
       modalitaSvolgimento: { type: String, enum: enums.modalitaSvolgimento },
       titoloMediatore: { type: String },
       nomeMediatore: { type: String },
@@ -50,41 +50,11 @@ const ProcedimentoSchema = (version = '1.0') => {
       // Persone (dinamiche)
       persone: [
         {
-          type: {
-            type: String,
-            required: true,
-            enum: [ModelTypes.PERSONA_FISICA, ModelTypes.PERSONA_GIURIDICA],
-          },
-          data: {
-            type: mongoose.Schema.Types.Mixed,
-            required: true,
-            validate: {
-              validator: function (value) {
-                if (this.type === ModelTypes.PERSONA_FISICA) {
-                  const PersonaFisicaSchema = mongoose.model(
-                    `PersonaFisicaV${version.replace('.', '_')}`
-                  ).schema;
-                  return (
-                    PersonaFisicaSchema.validate(value).error === undefined
-                  );
-                }
-                if (this.type === ModelTypes.PERSONA_GIURIDICA) {
-                  const PersonaGiuridicaSchema = mongoose.model(
-                    `PersonaGiuridicaV${version.replace('.', '_')}`
-                  ).schema;
-                  return (
-                    PersonaGiuridicaSchema.validate(value).error === undefined
-                  );
-                }
-                return false;
-              },
-              message: (props) =>
-                `Persona non valida per il tipo ${props.value.type}`,
-            },
-          },
+          type: Object, 
+          required: true,
         },
       ],
-
+      
       // Metadata
       type: { type: String, required: true, default: ModelTypes.PROCEDIMENTO },
       version: { type: String, required: true, default: version },
