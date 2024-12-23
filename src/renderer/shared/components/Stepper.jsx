@@ -8,17 +8,23 @@ import {
   Box,
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import {useDatabase} from '@ui-shared/hooks';
-import {FieldTypes} from '@ui-shared/metadata';
-import {useStoreContext} from '@ui-shared/context';
 import Grid from '@mui/material/Grid2';
 
-export default function Stepper({ steps, onSubmit }) {
+export default function Stepper({ steps, onSubmit, reset, onReset }) {
   const [activeStep, setActiveStep] = React.useState(0);
   const [skipped, setSkipped] = React.useState(new Set());
   const [disableNext, setDisableNext] = React.useState(true);
   const theme = useTheme();
   const stepRef = React.useRef(null);
+
+  React.useEffect(() => {
+    if (reset) {
+      setActiveStep(0);
+      setSkipped(new Set());
+      onReset?.()
+    }
+  }, [reset]);
+
 
   React.useEffect(() => {
     const currentStepComponent = steps[activeStep].component;

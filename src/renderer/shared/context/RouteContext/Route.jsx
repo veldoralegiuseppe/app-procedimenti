@@ -2,10 +2,15 @@ import * as React from 'react';
 import { createContext } from 'react';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import SearchOutlinedIcon from '@mui/icons-material/SearchOutlined';
+import {
+  CreazioneProcedimentoPage,
+  Dashboard,
+  RicercaProcedimentoPage,
+} from '@pages';
 
-import {CreazioneProcedimentoPage, Dashboard, RicercaProcedimentoPage} from '@pages';
+const INITIAL_PATH = '/dashboard';
 
-export const routes = [
+const routes = [
   {
     path: '/dashboard',
     label: 'Dashboard',
@@ -25,10 +30,8 @@ export const routes = [
         path: '/cerca',
         icon: <SearchOutlinedIcon />,
         label: 'Ricerca procedimento',
-        component: (
-         <RicercaProcedimentoPage />
-        ),
-      }, 
+        component: <RicercaProcedimentoPage />,
+      },
     ],
   },
   {
@@ -50,17 +53,12 @@ export const routes = [
   },
 ];
 
-export const RouteContext = createContext({
-  currentPath: '/dashboard',
-  setCurrentPath: undefined,
-});
-
 /**
  * Ritorna la Route richiesta o undefined
  * @param {string} path Path per il quale si desidera l'oggetto Route associato
  * @returns Route
  */
-export function getRoute(path) {
+function getRoute(path) {
   var regex = /\/[a-zA-Z]+/g;
   var subPath = path.match(regex);
 
@@ -80,3 +78,42 @@ export function getRoute(path) {
     return routeArray ? routeArray[0] : undefined;
   }
 }
+
+export const RouteContext = createContext({
+  currentPath: INITIAL_PATH,
+  setCurrentPath: undefined,
+  routes,
+  getRoute,
+});
+
+export const RouteProvider = ({ children }) => {
+  const [path, setPath] = React.useState(INITIAL_PATH);
+
+  const handleChangePath = React.useCallback(
+    (newPath) => {
+      console.log('handleChangePath', newPath);
+      setPath(newPath);
+    },
+    [setPath]
+  );
+
+  const handleGetRoutes = React.useCallback(
+    (path) => getRoute(path),
+    [getRoute]
+  );
+
+  const routesMemo = React.useMemo(() => routes, [routes]);
+
+  return (
+    <RouteContext.Provider
+      value={{
+        currentPath: path,
+        setCurrentPath: handleChangePath,
+        getRoute: handleGetRoutes,
+        routes: routesMemo,
+      }}
+    >
+      {children}
+    </RouteContext.Provider>
+  );
+};

@@ -6,15 +6,20 @@ import { CssBaseline } from '@mui/material/';
 
 import { Navbar } from '@ui-shared/components';
 import { themeOne, ContentGrid } from '@ui-shared/theme';
-import { RouteContext, getRoute, ProcedimentoProvider, StoreProvider } from '@ui-shared/context';
+import { ProcedimentoProvider, StoreProvider, RouteProvider, useRouteContext } from '@ui-shared/context';
 
 const root = createRoot(document.getElementById('mainContainer'));
 root.render(<App />);
 
 
 function App() {
-  const { currentPath } = React.useContext(RouteContext);
-  const [path, setPath] = React.useState(currentPath);
+  
+  const {getRoute, currentPath} = useRouteContext()
+  const [path, setPath] = React.useState(() => currentPath);
+
+  const onButtonClick = (newPath) => {
+    setPath(newPath);
+  };
 
   // Memoize route component
   const routeComponent = React.useMemo(() => getRoute(path).component, [path]);
@@ -40,27 +45,20 @@ function App() {
     []
   );
 
-  // Memoize the button click handler
-  const handleButtonClick = React.useCallback(
-    (newPath) => setPath(newPath),
-    [setPath]
-  );
 
   return (
     <StoreProvider>
-      <RouteContext.Provider
-        value={{ currentPath: path, setCurrentPath: setPath }}
-      >
+      <RouteProvider>
         <ThemeProvider theme={themeOne}>
           <CssBaseline />
-          <Navbar onButtonClick={handleButtonClick} sx={navbarStyles} />
+          <Navbar onButtonClick={onButtonClick} sx={navbarStyles} />
           <ProcedimentoProvider>
             <ContentGrid container spacing={0} sx={contentGridStyles}>
               {routeComponent}
             </ContentGrid>
           </ProcedimentoProvider>
         </ThemeProvider>
-      </RouteContext.Provider>
+      </RouteProvider>
     </StoreProvider>
   );
 }

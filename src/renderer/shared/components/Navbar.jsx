@@ -12,7 +12,7 @@ import KeyboardArrowDownOutlinedIcon from '@mui/icons-material/KeyboardArrowDown
 
 import logo from '@assets/img/logo2.png';
 import repubblicaLogo from '@assets/img/logo-repubblica-blu.png';
-import { routes } from '@ui-shared/context';
+import { useRouteContext } from '@ui-shared/context';
 import {
   StyledLi,
   StyledLink,
@@ -22,6 +22,8 @@ import {
 } from '@ui-shared/theme';
 
 function Navbar({ onButtonClick }) {
+
+  const {routes, setCurrentPath} = useRouteContext();
   // Layout
   const menuBackgroundColor = '#cfe6f6';
 
@@ -32,17 +34,23 @@ function Navbar({ onButtonClick }) {
   const menuRefs = useRef({});
 
   // Handle
+  const handleButtonClick = (newPath) => {
+    console.log('handleButtonClick', newPath);
+    onButtonClick?.(newPath);
+    setCurrentPath(newPath);
+  };
+
   const handleMenuClick = (label, hasChildren) => {
     if (!hasChildren) {
       setOpenMenu(null);
-      onButtonClick(label);
+      handleButtonClick(label);
     } else {
       setOpenMenu(openMenu === label ? null : label);
     }
   };
   const handleMenuItemClick = (route) => {
     setOpenMenu(null);
-    onButtonClick(route);
+    handleButtonClick(route);
   };
   const handleClickOutside = (event) => {
     const clickedInsideMenu = Object.values(menuRefs.current).some(
@@ -212,9 +220,5 @@ function Navbar({ onButtonClick }) {
     </Box>
   );
 }
-
-Navbar.propTypes = {
-  onButtonClick: PropTypes.func,
-};
 
 export default Navbar;

@@ -1,9 +1,12 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useTheme } from '@mui/material/styles';
 import { Stepper, PageHeader } from '@ui-shared/components';
 import { useDatabase } from '@ui-shared/hooks';
 import { FieldTypes } from '@ui-shared/metadata';
-import { useStoreContext, useUtilsContext } from '@ui-shared/context';
+import {
+  useStoreContext,
+  useUtilsContext,
+} from '@ui-shared/context';
 import StepDatiGeneraliProcedimento from './components/steps/StepDatiGenerali/StepDatiGeneraliProcedimento';
 import StepPartiControparti from './components/steps/StepPartiControparti/StepPartiControparti';
 import StepRiepilogoProcedimento from './components/steps/StepRiepilogo/StepRiepilogoProcedimento';
@@ -24,6 +27,8 @@ const CreaProcedimento = () => {
   const stores = useStoreContext();
   const { notify } = useUtilsContext();
 
+  const [reset, setReset] = React.useState(false);
+
   const onSubmit = () => {
     const procedimentoStore = stores[FieldTypes.PROCEDIMENTO];
     const personeStore = stores[FieldTypes.PERSONE];
@@ -42,10 +47,26 @@ const CreaProcedimento = () => {
 
   const handleSuccess = () => {
     notify('Procedimento creato con successo', 'success');
+    setReset(true);
   };
 
+  const handleStepReset = () => {
+    const procedimentoStore = stores[FieldTypes.PROCEDIMENTO];
+    const personeStore = stores[FieldTypes.PERSONE];
+
+    procedimentoStore.getState().resetModel();
+    personeStore.getState().resetItems([]);
+
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth',
+    });
+
+    setReset(false);
+  }
+
   const handleError = (message) => {
-    notify(message,'error');
+    notify(message, 'error');
   };
 
   return (
@@ -70,7 +91,7 @@ const CreaProcedimento = () => {
           }}
         >
           <PageHeader title="Crea procedimento" helperText={helperText} />
-          <Stepper steps={steps} onSubmit={onSubmit} />
+          <Stepper steps={steps} onSubmit={onSubmit} reset={reset} onReset={handleStepReset} />
         </div>
       </div>
     </React.Fragment>

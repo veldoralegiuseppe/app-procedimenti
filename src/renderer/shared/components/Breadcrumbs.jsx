@@ -1,11 +1,11 @@
 import * as React from 'react';
 import { Breadcrumbs, Link, Typography } from '@mui/material';
 import HomeIcon from '@mui/icons-material/Home';
-import { RouteContext, getRoute } from '@ui-shared/context';
+import { useRouteContext } from '@ui-shared/context';
 import { useTheme } from '@mui/material/styles';
 
 export default function IconBreadcrumbs() {
-  var { currentPath, setCurrentPath } = React.useContext(RouteContext);
+  let { currentPath, setCurrentPath, getRoute } = useRouteContext();
   const theme = useTheme();
 
   function handleClick(requestPath) {
