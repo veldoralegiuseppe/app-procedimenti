@@ -16,12 +16,13 @@ class ProcedimentoDAO extends BaseDAO {
     // Imposta `_id` come `numProtocollo`
     procedimento['_id'] = procedimento.numProtocollo;
 
-    // Salva l'istanza utilizzando il metodo `create` della classe base
     return await super.create(procedimento);
   }
 
   validate(procedimento) {
-    if (!procedimento.numProtocollo) {
+    const regexProtocollo = /^[0-9]{6}\/[0-9]{4}$/;
+
+    if (!procedimento.numProtocollo || !regexProtocollo.test(procedimento.numProtocollo)) {
       throw new Error('Il numero di protocollo è obbligatorio');
     }
 

@@ -72,6 +72,26 @@ const setupDatabaseHandlers = () => {
       return { success: false, error: errorMessage };
     }
   });
+
+  ipcMain.handle('database-find-all', async (event, query, page, limit) => {
+    const { version, type } = query;
+    try {
+      // Ottieni il modello in base ai dati forniti
+      const Model = getModel(version, type);
+
+      // Ottieni il DAO in base al tipo
+      const Dao = DAOFactory.getDAO(type);
+      const result = await new Dao(Model).findAll(query, page, limit);
+
+      // Restituisce il risultato della ricerca
+      return { success: true, data: result };
+    } catch (error) {
+      console.error('Errore in database-find-all:', error);
+      let errorMessage = mapErrorToMessage(error, type);
+
+      return { success: false, error: errorMessage };
+    }
+  });
 };
 
 module.exports = setupDatabaseHandlers;
