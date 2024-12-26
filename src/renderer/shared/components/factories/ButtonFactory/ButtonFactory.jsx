@@ -30,11 +30,17 @@ const buttonStyles = {
   },
 };
 
-const ButtonFactory = ({ type, onClick, text, size, disabled: initialDisabled = false }) => {
+const ButtonFactory = ({
+  type,
+  onClick,
+  text,
+  size,
+  disabled: initialDisabled = false,
+}) => {
   const [disabled, setDisabled] = useState(initialDisabled);
 
   useEffect(() => {
-    if(disabled !== initialDisabled) setDisabled(initialDisabled);
+    if (disabled !== initialDisabled) setDisabled(initialDisabled);
   }, [initialDisabled]);
 
   const renderButton = () => {
@@ -66,14 +72,19 @@ const ButtonFactory = ({ type, onClick, text, size, disabled: initialDisabled = 
               <DeleteIcon sx={{ color: disabled ? '#b3b3b3' : 'white' }} />
             ),
           };
-          case ButtonTypes.MODIFY:
-            return {
-              variant: 'contained',
-              sx: buttonStyles.PRIMARY,
-              startIcon: (
-                <ModifyIcon sx={{ color: disabled ? '#b3b3b3' : 'white' }} />
-              ),
-            }
+        case ButtonTypes.MODIFY:
+          return {
+            variant: 'contained',
+            sx: buttonStyles.PRIMARY,
+            startIcon: (
+              <ModifyIcon sx={{ color: disabled ? '#b3b3b3' : 'white' }} />
+            ),
+          };
+        case ButtonTypes.PRIMARY:
+          return {
+            variant: 'contained',
+            sx: buttonStyles.PRIMARY,
+          };
         default:
           return {};
       }
@@ -83,7 +94,7 @@ const ButtonFactory = ({ type, onClick, text, size, disabled: initialDisabled = 
 
     return (
       <Button
-      {...buttonProps}
+        {...buttonProps}
         size={size}
         onClick={onClick}
         disabled={disabled}

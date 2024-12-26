@@ -1,8 +1,9 @@
 import React from 'react';
 import { useTheme } from '@mui/material/styles';
-import { PageHeader } from '@ui-shared/components';
+import { PageHeader, ButtonFactory } from '@ui-shared/components';
 import { TabellaProcedimenti } from '@features/procedimento';
 import { FormRicerca } from './components';
+import { ButtonTypes } from '@ui-shared/metadata';
 import { LinearProgress } from '@mui/material';
 
 const RicercaProcedimentoPage = () => {
@@ -34,8 +35,23 @@ const RicercaProcedimentoPage = () => {
         >
           <PageHeader title="Ricerca procedimento" helperText={helperText} />
 
-          <div style={{margin: '1.5rem 0'}}>
+          <div
+            style={{
+              display: 'flex',
+              flexDirection: 'column',
+              margin: '1.5rem 0',
+              rowGap: '2rem',
+            }}
+          >
             <FormRicerca />
+            <div style={{ textAlign: 'end' }}>
+              <ButtonFactory
+                onClick={() => {}}
+                text="Cerca"
+                size="small"
+                type={ButtonTypes.PRIMARY}
+              />
+            </div>
           </div>
 
           {/* <LinearProgress /> */}

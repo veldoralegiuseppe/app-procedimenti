@@ -10,6 +10,7 @@ const PersonaFisicaEnumsV1 = {
       RECAPITI: ['pecEmail'],
       RAPPRESENTANTE_LEGALE: ['nomeRappresentanteLegale', 'cognomeRappresentanteLegale', 'pecEmailRappresentanteLegale'],
       NOTE_AGGIUNTIVE: ['note'],
+      RICERCA_AVANZATA: ['codiceFiscale', 'nome', 'cognome', 'partitaIVA', 'nomeRappresentanteLegale', 'cognomeRappresentanteLegale', 'pecEmailRappresentanteLegale'],
     },
 
     ruolo: Object.entries(PersonaEnumsV1.ruolo).map(([value, label]) => ({label, value})),

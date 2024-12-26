@@ -13,12 +13,10 @@ const FormPersonaGiuridicaContainer = () => {
 
   return (
     <Grid container sx={{ rowGap: '2.4rem' }}>
-      {Object.entries(enums.sezione).map(([key, sezione]) => {
+      {Object.entries(enums.sezione).filter(([key, _]) => key !== enums.sezione.RICERCA_AVANZATA).map(([key, sezione]) => {
         const titolo =
           key.charAt(0).toUpperCase() +
           key.slice(1).toLowerCase().replaceAll('_', ' ');
-
-          console.log('getInputPropsArray', getInputPropsArray(sezione));
 
         return (
           <FormPresenter

@@ -2,7 +2,9 @@ import React from 'react';
 import { Box, Paper } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import { Accordion } from '@ui-shared/components';
+import FormRicercaSemplice from './components/FormRicercaSemplice/FormRicercaSemplice';
 import _ from 'lodash';
+import FormRicercaAvanzata from './components/FormRicercaAvanzata/FormRicercaAvanzata';
 
 const RICERCA_SEMPLICE = 'ricercaSemplice';
 const RICERCA_AVANZATA = 'ricercaAvanzata';
@@ -62,7 +64,7 @@ const FormRicerca = () => {
               isSelected={formSelected === RICERCA_SEMPLICE}
               onClick={() => handleAccordionClick(RICERCA_SEMPLICE)}
             >
-              Ricerca per numero di protocollo
+             <FormRicercaSemplice />
             </FormAccordion>
           </Grid>
 
@@ -72,7 +74,7 @@ const FormRicerca = () => {
               isSelected={formSelected === RICERCA_AVANZATA}
               onClick={() => handleAccordionClick(RICERCA_AVANZATA)}
             >
-              Ricerca avanzata
+              <FormRicercaAvanzata />
             </FormAccordion>
           </Grid>
         </Grid>

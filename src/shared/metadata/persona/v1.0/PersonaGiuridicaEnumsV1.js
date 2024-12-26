@@ -16,6 +16,13 @@ const PersonaGiuridicaEnumsV1 = {
       'pecEmailRappresentanteLegale',
     ],
     NOTE_AGGIUNTIVE: ['note'],
+    RICERCA_AVANZATA: [
+      'partitaIVA',
+      'denominazione',
+      'nomeRappresentanteLegale',
+      'cognomeRappresentanteLegale',
+      'pecEmailRappresentanteLegale',
+    ],
   },
 
   ruolo: Object.entries(PersonaEnumsV1.ruolo).map(([value, label]) => ({label, value})),
