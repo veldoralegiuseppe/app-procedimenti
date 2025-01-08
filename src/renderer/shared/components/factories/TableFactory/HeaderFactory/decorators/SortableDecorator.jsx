@@ -16,7 +16,7 @@ const SortableDecorator =
         sx={{
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'left',
+          justifyContent: props?.align || 'left',
           '& .MuiTableSortLabel-icon': {
             marginLeft: '4px', // Margine tra il testo e l'icona
             fontSize: '1rem', // Dimensione dell'icona

@@ -54,6 +54,7 @@ const HeaderFactoryComponent = ({
                 active={orderBy === column.field}
                 direction={orderBy === column.field ? order : 'asc'}
                 onSort={() => handleSort(column)}
+                align={column.align || 'left'}
                 sx={{ fontSize: '.9rem' }}
               >
                 {column.headerName}

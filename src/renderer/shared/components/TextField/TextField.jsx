@@ -18,7 +18,6 @@ const TextField = ({
   rows,
 }) => {
 
-  console.log('TextField', label, multiline, rows)
   const [localValue, setLocalValue] = React.useState(value || '');
 
   React.useEffect(() => {

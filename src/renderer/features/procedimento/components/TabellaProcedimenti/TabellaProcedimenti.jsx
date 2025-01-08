@@ -9,13 +9,13 @@ const columns = [
     field: 'numProtocollo',
     headerName: 'Protocollo',
     sortable: true,
-    align: 'center',
+    align: 'left',
   },
   {
     field: 'dataDeposito',
     headerName: 'Data deposito',
     sortable: true,
-    align: 'center',
+    align: 'left',
   },
   {
     field: 'oggettoControversia',
@@ -48,6 +48,7 @@ const columns = [
 const TabellaProcedimenti = ({onRowSelected, procedimenti=[]}) => {
 
   const { data } = useProcedimentoTableRow({ procedimenti });
+  console.log('data', data)
 
   const headerConfig = {
     components: {

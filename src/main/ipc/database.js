@@ -11,7 +11,7 @@ const mongoose = require('mongoose');
 const { mapErrorToMessage } = require('@database/errorHandler');
 
 // Funzione per ottenere il modello in base al tipo
-const getModel = (version, type) => {
+const getModel = (version = '1.0', type) => {
   // Mappa dei nomi dei modelli in base al tipo
   const modelNameMap = {
     [ModelTypes.PERSONA_FISICA]: `PersonaFisicaV${version.replace('.', '_')}`,
@@ -58,7 +58,7 @@ const setupDatabaseHandlers = () => {
     try {
       // Ottieni il modello in base ai dati forniti
       const Model = getModel(version, type);
-
+  
       // Ottieni il DAO in base al tipo
       const Dao = DAOFactory.getDAO(type);
       const result = await new Dao(Model).create(data);
@@ -78,10 +78,12 @@ const setupDatabaseHandlers = () => {
     try {
       // Ottieni il modello in base ai dati forniti
       const Model = getModel(version, type);
+      console.log('Model:', Model);
 
       // Ottieni il DAO in base al tipo
       const Dao = DAOFactory.getDAO(type);
       const result = await new Dao(Model).findAll(query, page, limit);
+      console.log('Result:', result);
 
       // Restituisce il risultato della ricerca
       return { success: true, data: result };

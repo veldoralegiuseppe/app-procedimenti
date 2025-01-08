@@ -28,8 +28,15 @@ const useDatabase = () => {
     [performOperation]
   );
 
+  const retrieve = useCallback(
+    async (query, page, limit) =>
+      await performOperation(window.databaseAPI.findAll, query, page, limit),
+    [performOperation]
+  );
+
   return {
     create,
+    retrieve,
     loading,
     error,
   };
