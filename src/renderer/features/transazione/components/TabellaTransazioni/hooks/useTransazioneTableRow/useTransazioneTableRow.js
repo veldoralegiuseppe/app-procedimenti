@@ -4,6 +4,8 @@ import useTransazioneConstants from './useTransazioneConstants';
 import useTransazioneUtils from './useTransazioneUtils';
 import { useStoreContext } from '@ui-shared/context';
 import { useModelStore } from '@ui-shared/hooks';
+import { ModeTypes } from '@ui-shared/metadata';
+import { ImportoUtils } from '@ui-shared/utils';
 import _ from 'lodash';
 
 /**
@@ -22,6 +24,7 @@ const mapToRow = ({
   statoChipFlagMap,
   getId,
   index,
+  mode,
 }) => {
   const isParzialmenteSaldato =
     transazione.stato === statoEnums.PARZIALMENTE_SALDATO;
@@ -31,62 +34,70 @@ const mapToRow = ({
 
     tipo: transazione.tipo,
 
-    importoDovuto: {
-      component: ImportoInput,
-      disabled,
-      value: transazione.importoDovuto,
-      fieldKey: `${transazione.key}.importoDovuto`,
-      owner: transazione.owner,
-      sx: { width: '12rem' },
-      backgroundColor: !disabled ? 'transparent' : '#cacaca29',
-      onBlur: disabled
-        ? () => {}
-        : (value) => onChange({ importoDovuto: value }),
+    importoDovuto:
+      mode === ModeTypes.DETAIL
+        ? ImportoUtils.formattaImporto(transazione.importoDovuto)
+        : {
+            component: ImportoInput,
+            disabled,
+            value: transazione.importoDovuto,
+            fieldKey: `${transazione.key}.importoDovuto`,
+            owner: transazione.owner,
+            sx: { width: '12rem' },
+            backgroundColor: !disabled ? 'transparent' : '#cacaca29',
+            onBlur: disabled
+              ? () => {}
+              : (value) => onChange({ importoDovuto: value }),
 
-      dependencies: {
-        importoDovuto: {
-          namespace: `${transazione.key}`,
-          callback: ({ key, oldValue, newValue, props, store }) => {
-            return {
-              value: newValue,
-            };
+            dependencies: {
+              importoDovuto: {
+                namespace: `${transazione.key}`,
+                callback: ({ key, oldValue, newValue, props, store }) => {
+                  return {
+                    value: newValue,
+                  };
+                },
+              },
+            },
           },
-        },
-      },
-    },
 
-    importoCorrisposto: {
-      component: ImportoInput,
-      disabled,
-      owner: transazione.owner,
-      fieldKey: `${transazione.key}.importoCorrisposto`,
-      dependencies: {
-        stato: {
-          namespace: `${transazione.key}`,
-          callback: ({ key, oldValue, newValue, props, store }) => {
-            const model = store.getState().model[transazione.key];
+    importoCorrisposto:
+      mode === ModeTypes.DETAIL
+        ? ImportoUtils.formattaImporto(transazione.importoCorrisposto)
+        : {
+            component: ImportoInput,
+            disabled,
+            owner: transazione.owner,
+            fieldKey: `${transazione.key}.importoCorrisposto`,
+            dependencies: {
+              stato: {
+                namespace: `${transazione.key}`,
+                callback: ({ key, oldValue, newValue, props, store }) => {
+                  const model = store.getState().model[transazione.key];
 
-            if (newValue === statoEnums.SALDATO)
-              return { disabled: true, value: model.importoDovuto };
-            else return { disabled: false, value: 0 };
+                  if (newValue === statoEnums.SALDATO)
+                    return { disabled: true, value: model.importoDovuto };
+                  else return { disabled: false, value: 0 };
+                },
+              },
+              importoCorrisposto: {
+                namespace: `${transazione.key}`,
+                callback: ({ key, oldValue, newValue, props, store }) => {
+                  return {
+                    value: newValue,
+                  };
+                },
+              },
+            },
+            value: transazione.importoCorrisposto,
+            sx: { width: '12rem' },
+            backgroundColor: isParzialmenteSaldato
+              ? 'transparent'
+              : '#cacaca29',
+            onBlur: disabled
+              ? () => {}
+              : (value) => onChange({ importoCorrisposto: value }),
           },
-        },
-        importoCorrisposto: {
-          namespace: `${transazione.key}`,
-          callback: ({ key, oldValue, newValue, props, store }) => {
-            return {
-              value: newValue,
-            };
-          },
-        },
-      },
-      value: transazione.importoCorrisposto,
-      sx: { width: '12rem' },
-      backgroundColor: isParzialmenteSaldato ? 'transparent' : '#cacaca29',
-      onBlur: disabled
-        ? () => {}
-        : (value) => onChange({ importoCorrisposto: value }),
-    },
 
     stato: {
       value: transazione.stato,
@@ -140,10 +151,12 @@ const useTransazioneTableRow = ({
   onChange,
   onBlur,
   errors,
+  mode,
 }) => {
-  const { statoChipFlagMap, flagColorToStatoMap, statoEnums } = useTransazioneConstants();
+  const { statoChipFlagMap, flagColorToStatoMap, statoEnums } =
+    useTransazioneConstants();
   const ownerStore = useStoreContext(transazioni[0]?.owner);
-  const {setProperty} = useModelStore(ownerStore);
+  const { setProperty } = useModelStore(ownerStore);
 
   const { getNextStatus, getId } = useTransazioneUtils({
     statoChipFlagMap,
@@ -167,6 +180,7 @@ const useTransazioneTableRow = ({
         statoChipFlagMap,
         getId,
         index,
+        mode,
       }),
     [disabled, errors, getNextStatus]
   );

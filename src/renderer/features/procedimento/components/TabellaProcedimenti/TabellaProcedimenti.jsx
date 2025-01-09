@@ -9,13 +9,13 @@ const columns = [
     field: 'numProtocollo',
     headerName: 'Protocollo',
     sortable: true,
-    align: 'left',
+    align: 'center',
   },
   {
     field: 'dataDeposito',
     headerName: 'Data deposito',
     sortable: true,
-    align: 'left',
+    align: 'center',
   },
   {
     field: 'oggettoControversia',

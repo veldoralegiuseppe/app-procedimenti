@@ -3,12 +3,13 @@ import { styled } from '@mui/system';
 import { TableCell, TableHead } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import {TableFactory} from '@ui-shared/components';
+import { ModeTypes } from '@ui-shared/metadata';
 import TransazioneCellRender from './components/TransazioneCellRender';
 import useTransazioneTableRow  from './hooks/useTransazioneTableRow/useTransazioneTableRow';
 import _ from 'lodash';
 
-const TabellaTransazioniComponent = ({ transazioni, disabled, onChange, onBlur, errors }) => {
-  const { data } = useTransazioneTableRow({transazioni, disabled, onChange, onBlur, errors});
+const TabellaTransazioniComponent = ({ transazioni, disabled, onChange, onBlur, errors, mode=ModeTypes.CREATE}) => {
+  const { data } = useTransazioneTableRow({transazioni, disabled, onChange, onBlur, errors, mode});
 
   const columns = React.useMemo(() => [
     {
@@ -16,17 +17,20 @@ const TabellaTransazioniComponent = ({ transazioni, disabled, onChange, onBlur, 
       type: 'custom',
       render: TransazioneCellRender,
       headerName: 'Transazione',
+      align: mode === ModeTypes.DETAIL ? 'center' : 'left',
     },
     {
       field: 'importoDovuto',
       headerName: 'Importo dovuto',
-      type: 'input',
+      type: mode === ModeTypes.DETAIL ? 'text' : 'input',
+      align: mode === ModeTypes.DETAIL ? 'center' : 'left',
       sx: { width: '27%' },
     },
     {
       field: 'importoCorrisposto',
       headerName: 'Importo corrisposto',
-      type: 'input',
+      type: mode === ModeTypes.DETAIL ? 'text' : 'input',
+      align: mode === ModeTypes.DETAIL ? 'center' : 'left',
       sx: { width: '27%' },
     },
     {

@@ -42,7 +42,7 @@ const TransazioneCellRender = ({rowId, store, ...props}) => {
       }}
     >
       {icon}
-      <span>{rowId?.nome || row?.nome || ''}</span>
+      <span style={{textAlign: 'left'}}>{rowId?.nome || row?.nome || ''}</span>
     </div>
   );
 };

@@ -36,7 +36,7 @@ const FooterFactoryComponent = ({
 
   return (
     <TableFooter
-      sx={{ '& .MuiToolbar-root': { minHeight: '2rem', ...sx, bottom: 0 } }}
+      sx={{ '& .MuiToolbar-root': { minHeight: '2rem', overflow: 'hidden', ...sx, bottom: 0 } }}
     >
       {pagination && (
         <TableRow>
