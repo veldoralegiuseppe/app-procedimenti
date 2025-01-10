@@ -34,9 +34,16 @@ const useDatabase = () => {
     [performOperation]
   );
 
+  const calculateStatistics = useCallback(
+    async (query) =>
+      await performOperation(window.databaseAPI.calculateStatistics, query),
+    [performOperation]
+  );
+
   return {
     create,
     retrieve,
+    calculateStatistics,
     loading,
     error,
   };

@@ -10,7 +10,7 @@ import { LinearProgress } from '@mui/material';
 
 const RicercaProcedimentoPage = () => {
   const theme = useTheme();
-  const { retrieve } = useDatabase();
+  const { retrieve, calculateStatistics } = useDatabase();
   const [procedimenti, setProcedimenti] = useState([]);
   const [isModalOpen, setModalOpen] = useState(false);
   const helperText = `Puoi effettuare la ricerca dei procedimenti utilizzando la ricerca semplice o la ricerca avanzata. 
@@ -21,6 +21,12 @@ const RicercaProcedimentoPage = () => {
     const res = await retrieve({ type: ModelTypes.PROCEDIMENTO });
     setProcedimenti(res?.success ? res.data?.results : []);
   }, [retrieve]);
+
+  const handleOpenStatistics = useCallback(async () => {
+    setModalOpen(true);
+    const statistics = await calculateStatistics({ type: ModelTypes.PROCEDIMENTO });
+    console.log('statistics', statistics);
+  }, [calculateStatistics]);
 
   return (
     <React.Fragment>
@@ -74,7 +80,7 @@ const RicercaProcedimentoPage = () => {
           {/* Buttons */}
           <div style={{ textAlign: 'center' }}>
               <ButtonFactory
-                onClick={() => setModalOpen(true)}
+                onClick={handleOpenStatistics}
                 text="Statistiche"
                 size="small"
                 type={ButtonTypes.PRIMARY}

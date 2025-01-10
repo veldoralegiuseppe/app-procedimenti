@@ -53,47 +53,38 @@ const getModel = (version = '1.0', type) => {
 
 // Configura gli handler IPC
 const setupDatabaseHandlers = () => {
-  ipcMain.handle('database-create', async (event, data) => {
+ 
+  const handleDatabaseRequest = async (event, handler, data) => {
     const { version, type } = data;
     try {
       // Ottieni il modello in base ai dati forniti
       const Model = getModel(version, type);
-  
-      // Ottieni il DAO in base al tipo
-      const Dao = DAOFactory.getDAO(type);
-      const result = await new Dao(Model).create(data);
-
-      // Restituisce il risultato della creazione
-      return { success: true, data: result.toJSON() };
-    } catch (error) {
-      console.error('Errore in database-create:', error);
-      let errorMessage = mapErrorToMessage(error, type);
-
-      return { success: false, error: errorMessage };
-    }
-  });
-
-  ipcMain.handle('database-find-all', async (event, query, page, limit) => {
-    const { version, type } = query;
-    try {
-      // Ottieni il modello in base ai dati forniti
-      const Model = getModel(version, type);
-      console.log('Model:', Model);
 
       // Ottieni il DAO in base al tipo
       const Dao = DAOFactory.getDAO(type);
-      const result = await new Dao(Model).findAll(query, page, limit);
-      console.log('Result:', result);
+      const result = await handler(new Dao(Model), data);
 
-      // Restituisce il risultato della ricerca
+      // Restituisce il risultato dell'operazione
       return { success: true, data: result };
     } catch (error) {
-      console.error('Errore in database-find-all:', error);
+      console.error(`Errore in ${handler.name}:`, error);
       let errorMessage = mapErrorToMessage(error, type);
 
       return { success: false, error: errorMessage };
     }
-  });
+  };
+
+  ipcMain.handle('database-create', (event, data) => 
+    handleDatabaseRequest(event, (dao, data) => dao.create(data), data)
+  );
+
+  ipcMain.handle('database-find-all', (event, query, page, limit, ...rest) => 
+    handleDatabaseRequest(event, (dao) => dao.findAll(query, page, limit, ...rest), query)
+  );
+
+  ipcMain.handle('database-calculate-statistics', (event, query) => 
+    handleDatabaseRequest(event, (dao) => dao.calculateStatistics(query), query)
+  );
 };
 
 module.exports = setupDatabaseHandlers;

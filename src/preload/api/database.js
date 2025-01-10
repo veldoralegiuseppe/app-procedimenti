@@ -5,8 +5,12 @@ const databaseAPI = {
         return await ipcRenderer.invoke('database-create', data);
     },
 
-    findAll: async (query, page, limit) => {
-        return await ipcRenderer.invoke('database-find-all', query, page, limit);
+    findAll: async (query, page, limit, ...rest) => {
+        return await ipcRenderer.invoke('database-find-all', query, page, limit, ...rest);
+    },
+
+    calculateStatistics: async (query) => {
+        return await ipcRenderer.invoke('database-calculate-statistics', query);
     }
 }
 
