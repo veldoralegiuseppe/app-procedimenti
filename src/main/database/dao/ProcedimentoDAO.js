@@ -123,18 +123,195 @@ class ProcedimentoDAO extends BaseDAO {
       },
     ];
 
+    const pipelineMediatore = [
+      // Filtra solo i documenti con mediatori definiti
+      // {
+      //   $match: {
+      //     nomeMediatore: { $exists: true, $ne: null },
+      //     cognomeMediatore: { $exists: true, $ne: null },
+      //   },
+      // },
+      // Raggruppa per nome e cognome del mediatore
+      {
+        $group: {
+          _id: {
+            nomeMediatore: '$nomeMediatore',
+            cognomeMediatore: '$cognomeMediatore',
+          },
+          count: { $sum: 1 }, // Conta il numero di procedimenti per ogni mediatore
+        },
+      },
+      // Proietta il risultato finale
+      {
+        $project: {
+          _id: 0,
+          nomeMediatore: '$_id.nomeMediatore',
+          cognomeMediatore: '$_id.cognomeMediatore',
+          count: 1,
+        },
+      },
+    ];
+
+    const pipelineFasceValoreControversia = [
+      {
+        $match: {
+          valoreControversia: { $type: 'number' }, // Considera solo valori numerici
+        },
+      },
+      {
+        $addFields: {
+          fascia: {
+            $switch: {
+              branches: [
+                {
+                  case: { $lte: ['$valoreControversia', 1000] },
+                  then: 'Fino a €1.000',
+                },
+                {
+                  case: {
+                    $and: [
+                      { $gt: ['$valoreControversia', 1000] },
+                      { $lte: ['$valoreControversia', 5000] },
+                    ],
+                  },
+                  then: 'Da €1.001 a €5.000',
+                },
+                {
+                  case: {
+                    $and: [
+                      { $gt: ['$valoreControversia', 5000] },
+                      { $lte: ['$valoreControversia', 10000] },
+                    ],
+                  },
+                  then: 'Da €5.001 a €10.000',
+                },
+                {
+                  case: {
+                    $and: [
+                      { $gt: ['$valoreControversia', 10000] },
+                      { $lte: ['$valoreControversia', 25000] },
+                    ],
+                  },
+                  then: 'Da €10.001 a €25.000',
+                },
+                {
+                  case: {
+                    $and: [
+                      { $gt: ['$valoreControversia', 25000] },
+                      { $lte: ['$valoreControversia', 50000] },
+                    ],
+                  },
+                  then: 'Da €25.001 a €50.000',
+                },
+                {
+                  case: {
+                    $and: [
+                      { $gt: ['$valoreControversia', 50000] },
+                      { $lte: ['$valoreControversia', 150000] },
+                    ],
+                  },
+                  then: 'Da €50.001 a €150.000',
+                },
+                {
+                  case: {
+                    $and: [
+                      { $gt: ['$valoreControversia', 150000] },
+                      { $lte: ['$valoreControversia', 250000] },
+                    ],
+                  },
+                  then: 'Da €150.001 a €250.000',
+                },
+                {
+                  case: {
+                    $and: [
+                      { $gt: ['$valoreControversia', 250000] },
+                      { $lte: ['$valoreControversia', 500000] },
+                    ],
+                  },
+                  then: 'Da €250.001 a €500.000',
+                },
+                {
+                  case: {
+                    $and: [
+                      { $gt: ['$valoreControversia', 500000] },
+                      { $lte: ['$valoreControversia', 1500000] },
+                    ],
+                  },
+                  then: 'Da €500.001 a €1.500.000',
+                },
+                {
+                  case: {
+                    $and: [
+                      { $gt: ['$valoreControversia', 1500000] },
+                      { $lte: ['$valoreControversia', 2500000] },
+                    ],
+                  },
+                  then: 'Da €1.500.001 a €2.500.000',
+                },
+                {
+                  case: {
+                    $and: [
+                      { $gt: ['$valoreControversia', 2500000] },
+                      { $lte: ['$valoreControversia', 5000000] },
+                    ],
+                  },
+                  then: 'Da €2.500.001 a €5.000.000',
+                },
+              ],
+              default: 'Oltre €5.000.000',
+            },
+          },
+        },
+      },
+      {
+        $group: {
+          _id: '$fascia', // Raggruppa per fascia calcolata
+          count: { $sum: 1 }, // Conta i documenti per fascia
+        },
+      },
+      {
+        $project: {
+          fascia: '$_id',
+          count: 1,
+          _id: 0,
+        },
+      },
+    ];
+
+    const pipelineEsito = [
+      {
+        $group: {
+          _id: '$esitoMediazione',
+          count: { $sum: 1 },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          esito: '$_id',
+          count: 1,
+        },
+      },
+    ];
+
     const pipeline = [
       { $match: query },
       {
         $facet: {
           transazioniGlobali: pipelineTransazioniGlobali,
           transazioniPersone: pipelineTransazioniPersone,
+          mediatori: pipelineMediatore,
+          esiti: pipelineEsito,
+          valoriControversie: pipelineFasceValoreControversia,
         },
       },
       {
         $project: {
           transazioniGlobali: 1,
           transazioniPersone: 1,
+          mediatori: 1,
+          esiti: 1,
+          valoriControversie: 1,
         },
       },
     ];
