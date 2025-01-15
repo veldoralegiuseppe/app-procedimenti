@@ -40,14 +40,16 @@ const useProcedimentoTableRow = ({ procedimenti: entities = [] }) => {
       dataDeposito: dayjs(procedimento.dataDeposito).format('DD/MM/YYYY'),
       oggettoControversia: procedimento.oggettoControversia,
       valoreControversia: formatCurrency(procedimento.valoreControversia),
-      esitoMediazione: procedimento.esitoMediazione,
-      statoPagamenti: {
-        ...getStatus(procedimento),
-        owner: FieldTypes.PROCEDIMENTO,
-        statusLabelMap: statoChipFlagMap,
-        sx: { minWidth: '92.3px' },
-        disabled: true,
-      },
+      mediatore: procedimento.nomeMediatore && procedimento.cognomeMediatore ? `${procedimento.nomeMediatore} ${procedimento.cognomeMediatore}` : '-',
+      esitoMediazione: procedimento.esitoMediazione || '-',
+      azioni: '',
+      // statoPagamenti: {
+      //   ...getStatus(procedimento),
+      //   owner: FieldTypes.PROCEDIMENTO,
+      //   statusLabelMap: statoChipFlagMap,
+      //   sx: { minWidth: '92.3px' },
+      //   disabled: true,
+      // },
     };
   };
 

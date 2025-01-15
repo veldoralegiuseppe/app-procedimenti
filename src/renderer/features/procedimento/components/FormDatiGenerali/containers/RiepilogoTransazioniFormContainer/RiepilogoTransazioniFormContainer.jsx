@@ -1,11 +1,12 @@
 import * as React from 'react';
 import { TabellaTransazioni } from '@features/transazione';
-import { useTransazioniProcedimento } from './hooks/useTransazioniProcedimento';
+import { useTransazioniProcedimento } from '@features/procedimento';
 import _ from 'lodash';
 
-const RiepilogoTransazioniFormContainerComponent = ({onChange}) => {
-  const { transazioni } = useTransazioniProcedimento();
- 
+const RiepilogoTransazioniFormContainerComponent = ({ onChange }) => {
+  const { getTransazioni } = useTransazioniProcedimento();
+  const [transazioni] = React.useState(() => getTransazioni());
+
   return (
     <TabellaTransazioni
       transazioni={transazioni}

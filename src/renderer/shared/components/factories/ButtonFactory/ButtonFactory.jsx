@@ -5,6 +5,7 @@ import AddIcon from '@mui/icons-material/Add';
 import DeleteIcon from '@mui/icons-material/Delete';
 import ModifyIcon from '@mui/icons-material/Edit';
 import { ButtonTypes } from '@ui-shared/metadata';
+import { IconButton } from '@mui/material';
 
 const buttonStyles = {
   OUTLINED: {
@@ -90,17 +91,19 @@ const ButtonFactory = ({
       }
     };
 
+    const ButtonComponent = type === ButtonTypes.ICON ? IconButton : Button;
+
     const buttonProps = getButtonProps();
 
     return (
-      <Button
+      <ButtonComponent
         {...buttonProps}
         size={size}
         onClick={onClick}
         disabled={disabled}
       >
         {text}
-      </Button>
+      </ButtonComponent>
     );
   };
 

@@ -81,14 +81,14 @@ const RicercaProcedimentoPage = () => {
           <div style={{ textAlign: 'center' }}>
               <ButtonFactory
                 onClick={handleOpenStatistics}
-                text="Statistiche"
+                text="Riepilogo"
                 size="small"
                 type={ButtonTypes.PRIMARY}
               />
             </div>
 
           <FormModal
-            title="Report statistico"
+            title="Riepilogo"
             open={isModalOpen}
             handleClose={() => setModalOpen(false)}
           >

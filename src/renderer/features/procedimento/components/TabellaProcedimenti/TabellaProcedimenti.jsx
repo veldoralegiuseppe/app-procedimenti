@@ -1,54 +1,134 @@
 import * as React from 'react';
-import { TableFactory } from '@ui-shared/components';
+import {
+  TableFactory,
+  ButtonFactory,
+  FormModal,
+  ModelFactory,
+} from '@ui-shared/components';
+import { useModelArrayStore } from '@ui-shared/hooks';
 import { styled } from '@mui/system';
 import { TableCell, TableHead } from '@mui/material';
+import EuroIcon from '@mui/icons-material/Euro';
+import { ButtonTypes, FieldTypes } from '@ui-shared/metadata';
+import { ModelTypes } from '@shared/metadata';
+import { useStoreContext } from '@ui-shared/context';
+import { useProcedimentoStore } from '@features/procedimento';
+import { usePersoneStore } from '@features/persona';
+import RiepilogoSpese from './components/RiepilogoSpese/RiepilogoSpese';
 import useProcedimentoTableRow from './hooks/useProcedimentoTableRow';
 
-const columns = [
-  {
-    field: 'numProtocollo',
-    headerName: 'Protocollo',
-    sortable: true,
-    align: 'center',
-  },
-  {
-    field: 'dataDeposito',
-    headerName: 'Data deposito',
-    sortable: true,
-    align: 'center',
-  },
-  {
-    field: 'oggettoControversia',
-    headerName: 'Oggetto',
-    sortable: true,
-    align: 'center',
-  },
-  {
-    field: 'valoreControversia',
-    headerName: 'Valore controversia',
-    sortable: true,
-    align: 'center',
-  },
-  {
-    field: 'esitoMediazione',
-    headerName: 'Esito',
-    sortable: true,
-    align: 'center',
-  },
+const AzioniCell = (onClick) => (props) => {
+  //console.log('props', props);
 
-  {
-    field: 'statoPagamenti',
-    headerName: 'Stato',
-    type: 'chip',
-    sortable: true,
-    align: 'center',
-  },
-];
+  const { getItem } = useModelArrayStore(props.store);
+  const procedimento = React.useMemo(
+    () => getItem(props.rowId),
+    [getItem, props.rowId]
+  );
 
-const TabellaProcedimenti = ({onRowSelected, procedimenti=[]}) => {
+  const handleClick = () => {
+    console.log('Click su modifica procedimento');
+    onClick?.(procedimento?.id);
+  };
 
+  return (
+    <ButtonFactory
+      type={ButtonTypes.ICON}
+      text={<EuroIcon />}
+      onClick={handleClick}
+    />
+  );
+};
+
+const TabellaProcedimenti = ({ onRowSelected, procedimenti = [] }) => {
   const { data } = useProcedimentoTableRow({ procedimenti });
-  console.log('data', data)
+  const stores = useStoreContext();
+  const { resetModel } = useProcedimentoStore(stores[ModelTypes.PROCEDIMENTO]);
+  const { resetItems } = usePersoneStore(stores[FieldTypes.PERSONE]);
+
+  const [open, setOpen] = React.useState(false);
+  const [procedimentoSelezionato, setProcedimentoSelezionato] =
+    React.useState(null);
+
+  const loadProcedimento = (procedimento) => {
+    console.log('Caricamento procedimento', procedimento);
+
+    const persone = procedimento?.persone
+      ? procedimento?.persone?.map((p) =>
+          ModelFactory.create({
+            initialValues: p,
+            type: p.type,
+            version: p.version,
+          })
+        )
+      : [];
+
+    const istanza = ModelFactory.create({
+      initialValues: procedimento,
+      type: ModelTypes.PROCEDIMENTO,
+      version: procedimento.version,
+    });
+
+    resetModel(istanza);
+    resetItems(persone);
+
+    return istanza;
+  };
+
+  const handleSpeseClick = (index) => {
+    const procedimento = loadProcedimento(procedimenti[index]);
+    setProcedimentoSelezionato(procedimento);
+    setOpen(true);
+  };
+
+  const columns = [
+    {
+      field: 'numProtocollo',
+      headerName: 'Procedimento',
+      sortable: true,
+      sx: { paddingLeft: '1rem' },
+      align: 'center',
+    },
+    {
+      field: 'dataDeposito',
+      headerName: 'Data deposito',
+      sortable: true,
+      sx: { paddingLeft: '1rem' },
+      align: 'center',
+    },
+    {
+      field: 'oggettoControversia',
+      headerName: 'Oggetto',
+      sortable: true,
+      align: 'center',
+    },
+    {
+      field: 'valoreControversia',
+      headerName: 'Valore controversia',
+      sortable: true,
+      align: 'center',
+    },
+    {
+      field: 'mediatore',
+      headerName: 'Mediatore',
+      sortable: true,
+      align: 'center',
+    },
+    {
+      field: 'esitoMediazione',
+      headerName: 'Esito',
+      sortable: true,
+      align: 'center',
+    },
+    {
+      field: 'azioni',
+      headerName: '',
+      sortable: false,
+      type: 'custom',
+      render: AzioniCell(handleSpeseClick),
+      align: 'center',
+    },
+  ];
 
   const headerConfig = {
     components: {
@@ -89,12 +169,12 @@ const TabellaProcedimenti = ({onRowSelected, procedimenti=[]}) => {
         );
       },
     },
-    selectableConfig: {
-      isMultiSelect: false,
-      onSelected: (selezionati) => {
-        onRowSelected?.(selezionati);
-      },
-    },
+    // selectableConfig: {
+    //   isMultiSelect: false,
+    //   onSelected: (selezionati) => {
+    //     onRowSelected?.(selezionati);
+    //   },
+    // },
     sx: { '& .MuiTableCell-root': { paddingLeft: '4px' } },
   };
 
@@ -110,18 +190,24 @@ const TabellaProcedimenti = ({onRowSelected, procedimenti=[]}) => {
   };
 
   return (
-    <TableFactory
-      headerConfig={headerConfig}
-      rowConfig={rowConfig}
-      sx={{
-        border: '1px solid rgba(224, 224, 224, 1)',
-        borderTop: 'none',
-        borderBottom: 'none',
-      }}
-      footerConfig={footerConfig}
-      columns={columns}
-      data={data}
-    />
+    <React.Fragment>
+      <TableFactory
+        headerConfig={headerConfig}
+        rowConfig={rowConfig}
+        sx={{
+          border: '1px solid rgba(224, 224, 224, 1)',
+          borderTop: 'none',
+          borderBottom: 'none',
+        }}
+        footerConfig={footerConfig}
+        columns={columns}
+        data={data}
+      />
+
+      <FormModal open={open} handleClose={() => setOpen(false)}>
+        <RiepilogoSpese procedimento={procedimentoSelezionato} />
+      </FormModal>
+    </React.Fragment>
   );
 };
 

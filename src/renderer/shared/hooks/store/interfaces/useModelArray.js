@@ -219,6 +219,8 @@ const useModelArray = ({
       if (options?.onResetItems) {
         options.onResetItems();
       }
+
+      console.log('items dopo reset', get().items);
     },
   };
 };
