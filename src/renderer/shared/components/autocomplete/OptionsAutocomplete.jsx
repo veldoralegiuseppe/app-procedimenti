@@ -49,6 +49,7 @@ const OptionsAutocomplete = ({
   optionModel,
   deletable = true,
   creatable = true,
+  extractValue,
   freeSolo,
 }) => {
 
@@ -75,6 +76,7 @@ const OptionsAutocomplete = ({
     groupBy,
     creatable,
     filterFn,
+    extractValue,
   });
 
   const { isFormValid, errorMessage, validateInput } =
@@ -175,7 +177,7 @@ const OptionsAutocomplete = ({
         sx={sx}
         loading={loading}
         helperText={helperText}
-        groupBy={groupBy ? (option) => groupBy?.(option?.value) : null}
+        groupBy={groupBy}
         filterOptions={filterOptions}
         onOptionSelected={onOptionSelected}
         deletable={deletable}

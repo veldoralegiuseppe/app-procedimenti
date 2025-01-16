@@ -10,24 +10,28 @@ export const useOptionsAutocomplete = ({
   optionsStore,
   onBlur,
   groupBy,
+  extractValue,
   creatable = true,
 }) => {
-  const { addItem, removeItemByValue, findItem, getItems } = useModelArrayStore(optionsStore);
+  const { addItem, removeItemByValue, findItem, getItems } =
+    useModelArrayStore(optionsStore);
   const [value, setValue] = useState(initialValue);
-  const { open, dialogValue, openDialog, closeDialog, setDialogValue } = useDialog();
+  const { open, dialogValue, openDialog, closeDialog, setDialogValue } =
+    useDialog();
   const [options, setOptions] = useState([]);
   const items = getItems();
-  
+
   useEffect(() => {
-  const filtered = filterFn ? filterFn(items) : items;
-   setOptions(getOptions(filtered));
+    const filtered = filterFn ? filterFn(items) : items;
+    const filteredOptions = getOptions(filtered);
+   
+    setOptions(filteredOptions);
   }, [items, filterFn]);
 
   useEffect(() => {
     setValue(initialValue);
   }, [initialValue]);
 
-  
   const handleChange = useCallback(
     (event, option, newValue, reason) => {
       if (option?.key === 'add') {
@@ -85,11 +89,26 @@ export const useOptionsAutocomplete = ({
     [removeItemByValue]
   );
 
+  function getOptionValue(option) {
+    let optionWithValueField = option.value
+      ? option
+      : extractValue?.(option) || { value: option };
+    if (
+      typeof optionWithValueField !== 'object' ||
+      !optionWithValueField.value
+    ) {
+      throw new Error(
+        'optionWithValueField must be an object with a "value" field'
+      );
+    }
+    return optionWithValueField;
+  }
+
   function getOptions(items) {
     let resultItems;
 
     if (groupBy) {
-      const groupedItems = _.groupBy(items, (item) => groupBy(item));
+      const groupedItems = _.groupBy(items, (item) => groupBy((item?.value || item), item));
       const sortedItems = [];
 
       Object.keys(groupedItems)
@@ -98,14 +117,9 @@ export const useOptionsAutocomplete = ({
           sortedItems.push(...groupedItems[group]);
         });
 
-      resultItems =
-        sortedItems?.map((option) =>
-          option.value ? option : { value: option }
-        ) || [];
+      resultItems = sortedItems?.map((option) => getOptionValue(option)) || [];
     } else {
-      resultItems =
-        items?.map((option) => (option.value ? option : { value: option })) ||
-        [];
+      resultItems = items?.map((option) => getOptionValue(option)) || [];
     }
 
     let itemsWithId = resultItems?.map((item, index) => {

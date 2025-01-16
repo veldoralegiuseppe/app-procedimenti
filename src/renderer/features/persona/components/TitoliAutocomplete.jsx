@@ -20,10 +20,12 @@ const TitoliAutocompleteComponent = ({ label, sx, onBlur }) => {
           : { maschile: inputValue, femminile: '' }
       }
       optionModel={['maschile', 'femminile']}
-      groupBy={(option) =>
-        option.maschile && option.femminile
+      groupBy={(value, option) =>{
+        console.log('groupBy', value, option);
+        return option.maschile && option.femminile
           ? 'Genere specifico'
           : 'Genere comune'
+      }
       }
       optionsStore={titoliStore}
       onBlur={onBlur}

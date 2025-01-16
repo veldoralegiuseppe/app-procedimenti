@@ -52,7 +52,7 @@ const AutocompleteWrapperComponent = ({
   freeSolo,
 }) => {
   const theme = useTheme();
-  
+
   const renderGroup = (params) => {
     const hasFilteredOptions = params.children[0].props.option.key !== 'add';
 
@@ -92,9 +92,16 @@ const AutocompleteWrapperComponent = ({
       onChange={(event, value, reason) =>
         handleChange(event, null, value, reason)
       }
-      size='small'
+      size="small"
       filterOptions={filterOptions}
-      groupBy={groupBy}
+      groupBy={
+        groupBy
+          ? (option) => {
+              if (option.value != undefined)
+                return groupBy(option?.value, option);
+            }
+          : null
+      }
       //onBlur={(e) => onBlur(value ? value.toUpperCase() : undefined)}
       selectOnFocus
       loadingText="Caricamento..."
@@ -168,7 +175,6 @@ const AutocompleteWrapperComponent = ({
 const AutocompleteWrapper = React.memo(
   AutocompleteWrapperComponent,
   (prevProps, nextProps) => {
-
     return (
       _.isEqual(prevProps.value, nextProps.value) &&
       _.isEqual(prevProps.options, nextProps.options) &&
