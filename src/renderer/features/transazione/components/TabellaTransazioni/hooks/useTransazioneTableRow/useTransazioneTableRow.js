@@ -187,8 +187,10 @@ const useTransazioneTableRow = ({
 
   // Genera i dati per la tabella
   const data = React.useMemo(
-    () =>
-      transazioni.map((transazione, index) => mapRow({ transazione, index })),
+    () =>{
+      console.log('useTransazioniData', transazioni);
+      return transazioni.map((transazione, index) => mapRow({ transazione, index }))
+    },
     [transazioni, mapRow]
   );
 

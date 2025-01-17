@@ -124,7 +124,7 @@ export const useOptionsAutocomplete = ({
 
     let itemsWithId = resultItems?.map((item, index) => {
       if (!item.id) {
-        return { ...item, id: index + 1 };
+        return { ...item, id: index};
       }
       return item;
     });

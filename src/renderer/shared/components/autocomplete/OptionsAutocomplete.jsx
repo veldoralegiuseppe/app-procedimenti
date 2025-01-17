@@ -72,13 +72,13 @@ const OptionsAutocomplete = ({
     onChange,
     optionsStore,
     onBlur,
-    isOptionEqualToValue,
     groupBy,
     creatable,
     filterFn,
     extractValue,
   });
 
+  console.log('autocomplete value', value);
   const { isFormValid, errorMessage, validateInput } =
     useValidation(optionModel);
 
@@ -136,6 +136,7 @@ const OptionsAutocomplete = ({
       }
       else {
         handleChange(null, option, newValue);
+        console.log('setto nuovo valore', newValue);
         setValue(newValue);
       }
      

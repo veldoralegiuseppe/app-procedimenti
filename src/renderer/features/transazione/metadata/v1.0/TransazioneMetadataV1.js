@@ -25,6 +25,11 @@ const TransazioneMetadataV1 = {
     id: true,
   },
 
+  owner: {
+    key: 'owner',
+    type: FieldTypes.STRING,
+  },
+
   stato: {
     key: 'stato',
     label: 'Stato',

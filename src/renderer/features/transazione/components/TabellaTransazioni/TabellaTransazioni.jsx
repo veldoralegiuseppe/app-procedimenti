@@ -90,8 +90,8 @@ const TabellaTransazioniComponent = ({ transazioni, disabled, onChange, onBlur, 
 };
 
 const TabellaTransazioni = React.memo(TabellaTransazioniComponent, (prevProps, nextProps) => {
-  // Considero dinamiche le props: disabled
-  return _.isEqual(prevProps.disabled, nextProps.disabled);
+  // Considero dinamiche le props: disabled, transazioni
+  return _.isEqual(prevProps.disabled, nextProps.disabled) && prevProps.transazioni === nextProps.transazioni;
 });
 TabellaTransazioni.whyDidYouRender = true;
 

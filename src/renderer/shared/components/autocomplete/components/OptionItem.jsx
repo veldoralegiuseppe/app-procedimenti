@@ -9,15 +9,17 @@ const OptionItemComponent = ({
   onDelete,
   onOptionSelected,
   deletable = true,
+  onClose,
 }) => {
-  const theme = useTheme();
+  const theme = useTheme(); 
   //console.log('OptionItemComponent', option);
 
   const handleButtonClick = (option, value) => {
     if (onOptionSelected) {
-      onOptionSelected(option, value);
+     onOptionSelected(option, value)
     }
-    document.activeElement.blur();
+    //document.activeElement.blur();
+    onClose?.();
   };
 
   const renderButtons = () => {
@@ -33,6 +35,7 @@ const OptionItemComponent = ({
             subValue && (
               <Button
                 key={buttonKey}
+                disableRipple={true}
                 variant="text"
                 sx={{
                   width: '100%',
@@ -56,6 +59,7 @@ const OptionItemComponent = ({
       return React.Children.toArray(
         <Button
           key={`${buttonKey}-${option.id}`}
+          disableRipple={true}
           variant="text"
           sx={{
             width: '100%',
@@ -76,8 +80,9 @@ const OptionItemComponent = ({
   };
 
   return (
+
     <li
-      style={{ backgroundColor: 'transparent', padding: '0' }}
+      style={{ backgroundColor: 'transparent', padding: '0',}}
       key={`li-${option.key || 'defaultKey'}-${JSON.stringify(
         option.value || ''
       )}`}

@@ -32,12 +32,16 @@ const usePersone = ({ set, get, initialItems = [], options = {} }) => {
       importoCorrispostoControparti: 0,
     };
 
+    const getTransazioni = (persona) => {
+      return Object.values(persona || {})
+      .filter((field) => field?.type === ModelTypes.TRANSAZIONE)
+    };
+
     const getIncassoPersona = (persona) => {
       const isParteIstante = persona?.ruolo === PersonaEnumsV1.ruolo.PARTE_ISTANTE;
+      const transazioni = getTransazioni(persona);
 
-      Object.values(persona || {})
-        .filter((field) => field?.type === ModelTypes.TRANSAZIONE)
-        .forEach((t) => {
+      transazioni.forEach((t) => {
           if (isParteIstante) {
             tot.importoCorrispostoParti += t.importoCorrisposto;
             tot.importoDovutoParti += t.importoDovuto;
@@ -47,6 +51,7 @@ const usePersone = ({ set, get, initialItems = [], options = {} }) => {
           }
         });
     };
+    
     const createTransazione = (initialValues, isParte = true) => {
       return ModelFactory.create({
         type: ModelTypes.TRANSAZIONE,

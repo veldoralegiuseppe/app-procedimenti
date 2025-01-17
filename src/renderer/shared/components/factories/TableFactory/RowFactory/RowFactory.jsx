@@ -82,7 +82,7 @@ const RowFactory = React.memo(
   },
   (prevProps, nextProps) => {
     return (
-      _.isEqual(prevProps.data, nextProps.data) &&
+      prevProps.data === nextProps.data &&
       _.isEqual(prevProps.sx, nextProps.sx)
     );
   }

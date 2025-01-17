@@ -8,7 +8,7 @@ const CellFactory = ({ column, row, sx, store }) => {
   
   const cellParams = row[column.field] ? {id:row.id, ...row[column.field]} : {id: row.id};
   const cellType = column.type || 'text';
-  
+
   // Rendering condizionale basato sul tipo di cella
   const renderCellContent = () => {
     switch (cellType) {

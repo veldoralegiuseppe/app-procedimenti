@@ -52,6 +52,10 @@ const AutocompleteWrapperComponent = ({
   freeSolo,
 }) => {
   const theme = useTheme();
+  const autocompleteRef = React.useRef(null);
+  const [open, setOpen] = React.useState(false);
+
+  console.log('AutocompleteWrapperComponent', open);
 
   const renderGroup = (params) => {
     const hasFilteredOptions = params.children[0].props.option.key !== 'add';
@@ -86,9 +90,23 @@ const AutocompleteWrapperComponent = ({
     return option?.label || '';
   };
 
+  const handleClose = () => {
+    setOpen(false); 
+  };
+
+  const handleOpen = () => {
+    if(!open) setOpen(true);
+    onOpen?.();
+  };
+
+
   return (
     <Autocomplete
+      ref={autocompleteRef}
       value={value}
+      disableCloseOnSelect
+      open={open}
+      onOpen={handleOpen}
       onChange={(event, value, reason) =>
         handleChange(event, null, value, reason)
       }
@@ -107,7 +125,6 @@ const AutocompleteWrapperComponent = ({
       loadingText="Caricamento..."
       clearOnBlur
       disabled={disabled}
-      onOpen={onOpen}
       isOptionEqualToValue={isOptionEqualToValue}
       disableClearable={!value || disabled}
       loading={loading}
@@ -126,6 +143,8 @@ const AutocompleteWrapperComponent = ({
           onDelete={onDelete}
           onOptionSelected={onOptionSelected}
           deletable={deletable}
+          open={open}
+          onClose={handleClose}
         />
       )}
       sx={{
@@ -145,6 +164,7 @@ const AutocompleteWrapperComponent = ({
           {...params}
           value={value?.value || ''}
           disabled={disabled}
+          onBlur={() => setOpen(false)}
           size="small"
           onKeyDown={(event) => {
             //console.log('onKeyDown', event);

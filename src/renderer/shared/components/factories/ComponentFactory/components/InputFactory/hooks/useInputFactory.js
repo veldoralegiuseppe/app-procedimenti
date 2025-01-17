@@ -2,7 +2,6 @@ import { useMemo, useCallback } from 'react';
 import { useTheme } from '@mui/material/styles';
 import { useStoreContext } from '@ui-shared/context';
 import { useModelStore } from '@ui-shared/hooks';
-import { maxHeight } from '@mui/system';
 
 const useInputFactory = ({
   fieldKey,

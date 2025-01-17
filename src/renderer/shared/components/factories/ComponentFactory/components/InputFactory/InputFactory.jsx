@@ -73,8 +73,6 @@ const InputFactoryComponent = ({
     ...props,
   });
 
-  //console.log('commonProps', commonProps)
-
   // Switch per il rendering condizionale
   let Component = null;
 
@@ -122,7 +120,7 @@ const InputFactoryComponent = ({
         <ImportoInput
           {...{
             ...commonProps,
-            value: !commonProps.value ? 0 : commonProps.value,
+            value: commonProps.value >= 0 ? commonProps.value : 0,
           }}
         />
       );
@@ -216,6 +214,7 @@ const InputFactory = React.memo(
   InputFactoryComponent,
   (prevProps, nextProps) => {
     // Considero dinamici i campi: sx, disabled, value, options
+    console.log('InputFactory', prevProps.value,  nextProps.value);
     return (
       _.isEqual(prevProps.value, nextProps.value) &&
       _.isEqual(prevProps.disabled, nextProps.disabled) &&

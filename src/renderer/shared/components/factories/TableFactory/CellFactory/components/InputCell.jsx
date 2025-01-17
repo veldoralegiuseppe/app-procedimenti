@@ -23,6 +23,15 @@ const InputCell = (props) => {
   } = props;
 
   const [properties, setProperties] = React.useState(restProps);
+
+  React.useEffect(() => {
+    if(Object.entries(restProps).some(([k, v]) => properties[k] !== v)) {
+      setProperties((prev) => {
+        return { ...prev, ...restProps }
+      });
+    }
+  }, [restProps]);
+
   const {value} = useStoreDependencies({
     fieldKey,
     storeType: owner,
@@ -37,6 +46,8 @@ const InputCell = (props) => {
       }
     },
   });
+
+  //console.log('useStoreDependencies', properties, 'value', value);
 
   const FieldComponent = CustomComponent
     ? React.createElement(CustomComponent, {
