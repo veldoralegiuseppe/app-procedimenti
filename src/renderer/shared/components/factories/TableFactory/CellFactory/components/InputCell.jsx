@@ -38,28 +38,33 @@ const InputCell = (props) => {
     dependencies,
     args: { properties },
     callback: ({changes}) => {
-      //console.log('changes', changes);
+      console.log('changes', changes);
       if (Object.entries(changes || {}).some(([k, v]) => properties[k] !== v)) {
         setProperties((prev) => {
+          console.log('newProperties', { ...prev, ...changes });
           return { ...prev, ...changes }
         });
       }
     },
   });
 
-  //console.log('useStoreDependencies', properties, 'value', value);
+  
 
-  const FieldComponent = CustomComponent
-    ? React.createElement(CustomComponent, {
-        fieldKey,
-        value,
-        ...properties
-      })
-    : React.createElement(ComponentFactory.InputFactory, {
-        fieldKey,
-        value,
-        ...properties
-      });
+  const FieldComponent = React.useMemo(() => {
+    console.log('useStoreDependencies', properties, 'value', value);
+    
+    return CustomComponent
+      ? React.createElement(CustomComponent, {
+          fieldKey,
+          value,
+          ...properties
+        })
+      : React.createElement(ComponentFactory.InputFactory, {
+          fieldKey,
+          value,
+          ...properties
+        });
+  }, [CustomComponent, fieldKey, value, properties]);
 
   return FieldComponent;
 };

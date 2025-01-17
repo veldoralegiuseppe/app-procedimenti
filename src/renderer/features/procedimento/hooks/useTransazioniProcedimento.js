@@ -25,6 +25,7 @@ const useTransazioniProcedimento = () => {
       ...transazioniProcedimento,
     ].map((t) => ({ ...t, owner }));
 
+    //console.log('transazioniProcedimento', transazioni)
     return transazioni;
   }, [getTransazioniProcedimento, getIncassi, owner]);
 

@@ -2,74 +2,93 @@ import * as React from 'react';
 import { styled } from '@mui/system';
 import { TableCell, TableHead } from '@mui/material';
 import Grid from '@mui/material/Grid2';
-import {TableFactory} from '@ui-shared/components';
+import { TableFactory } from '@ui-shared/components';
 import { ModeTypes } from '@ui-shared/metadata';
 import TransazioneCellRender from './components/TransazioneCellRender';
-import useTransazioneTableRow  from './hooks/useTransazioneTableRow/useTransazioneTableRow';
+import useTransazioneTableRow from './hooks/useTransazioneTableRow/useTransazioneTableRow';
 import _ from 'lodash';
 
-const TabellaTransazioniComponent = ({ transazioni, disabled, onChange, onBlur, errors, mode=ModeTypes.CREATE}) => {
-  const { data } = useTransazioneTableRow({transazioni, disabled, onChange, onBlur, errors, mode});
+const TabellaTransazioniComponent = ({
+  transazioni,
+  disabled,
+  onChange,
+  onBlur,
+  errors,
+  mode = ModeTypes.CREATE,
+}) => {
+  const { data } = useTransazioneTableRow({
+    transazioni,
+    disabled,
+    onChange,
+    onBlur,
+    errors,
+    mode,
+  });
+  console.log('useTransazioneTableRow', data);
 
-  const columns = React.useMemo(() => [
-    {
-      field: 'nome',
-      type: 'custom',
-      render: TransazioneCellRender,
-      headerName: 'Transazione',
-      align: mode === ModeTypes.DETAIL ? 'center' : 'left',
-    },
-    {
-      field: 'importoDovuto',
-      headerName: 'Importo dovuto',
-      type: mode === ModeTypes.DETAIL ? 'text' : 'input',
-      align: mode === ModeTypes.DETAIL ? 'center' : 'left',
-      sx: { width: '27%' },
-    },
-    {
-      field: 'importoCorrisposto',
-      headerName: 'Importo corrisposto',
-      type: mode === ModeTypes.DETAIL ? 'text' : 'input',
-      align: mode === ModeTypes.DETAIL ? 'center' : 'left',
-      sx: { width: '27%' },
-    },
-    {
-      field: 'stato',
-      headerName: 'Stato',
-      type: 'chip',
-      sx: { width: '20%' },
-      align: 'center',
-    },
-  ], []);
-  
-  const headerConfig = React.useMemo(() => ({
-    components: {
-      TableHead: styled(TableHead)(({ theme }) => ({
-        backgroundColor: theme.palette.background.default,
-      })),
-      TableCell: styled(TableCell)(({ theme }) => ({
-        color: '#255a89',
-        fontSize: '1rem',
-        textTransform: 'uppercase',
-        fontWeight: '500',
-        backgroundColor: '#c8dcec',
-        padding: '4px',
-        '& .MuiButtonBase-root:hover': {
-          color: '#4596de',
-          '& svg': { opacity: '0.8' },
-        },
-        '& .MuiButtonBase-root.Mui-active': {
-          color: theme.palette.logo.secondary,
-          '& svg': { color: theme.palette.logo.secondary },
-        },
-      })),
-    },
-  }), []);
+  const columns = React.useMemo(
+    () => [
+      {
+        field: 'nome',
+        type: 'custom',
+        render: TransazioneCellRender,
+        headerName: 'Transazione',
+        align: mode === ModeTypes.DETAIL ? 'center' : 'left',
+      },
+      {
+        field: 'importoDovuto',
+        headerName: 'Importo dovuto',
+        type: mode === ModeTypes.DETAIL ? 'text' : 'input',
+        align: mode === ModeTypes.DETAIL ? 'center' : 'left',
+        sx: { width: '27%' },
+      },
+      {
+        field: 'importoCorrisposto',
+        headerName: 'Importo corrisposto',
+        type: mode === ModeTypes.DETAIL ? 'text' : 'input',
+        align: mode === ModeTypes.DETAIL ? 'center' : 'left',
+        sx: { width: '27%' },
+      },
+      {
+        field: 'stato',
+        headerName: 'Stato',
+        type: 'chip',
+        sx: { width: '20%' },
+        align: 'center',
+      },
+    ],
+    []
+  );
 
-  
+  const headerConfig = React.useMemo(
+    () => ({
+      components: {
+        TableHead: styled(TableHead)(({ theme }) => ({
+          backgroundColor: theme.palette.background.default,
+        })),
+        TableCell: styled(TableCell)(({ theme }) => ({
+          color: '#255a89',
+          fontSize: '1rem',
+          textTransform: 'uppercase',
+          fontWeight: '500',
+          backgroundColor: '#c8dcec',
+          padding: '4px',
+          '& .MuiButtonBase-root:hover': {
+            color: '#4596de',
+            '& svg': { opacity: '0.8' },
+          },
+          '& .MuiButtonBase-root.Mui-active': {
+            color: theme.palette.logo.secondary,
+            '& svg': { color: theme.palette.logo.secondary },
+          },
+        })),
+      },
+    }),
+    []
+  );
 
   return (
-    <Grid container size={{ xs: 12 }} sx={{rowGap: '1.5rem'}}>
+    <Grid container size={{ xs: 12 }} sx={{ rowGap: '1.5rem' }}>
       {/* Tabella transazioni */}
       <TableFactory
         columns={columns}
@@ -89,10 +108,16 @@ const TabellaTransazioniComponent = ({ transazioni, disabled, onChange, onBlur, 
   );
 };
 
-const TabellaTransazioni = React.memo(TabellaTransazioniComponent, (prevProps, nextProps) => {
-  // Considero dinamiche le props: disabled, transazioni
-  return _.isEqual(prevProps.disabled, nextProps.disabled) && prevProps.transazioni === nextProps.transazioni;
-});
+const TabellaTransazioni = React.memo(
+  TabellaTransazioniComponent,
+  (prevProps, nextProps) => {
+    // Considero dinamiche le props: disabled, transazioni
+    return (
+      _.isEqual(prevProps.disabled, nextProps.disabled) &&
+      prevProps.transazioni === nextProps.transazioni
+    );
+  }
+);
 TabellaTransazioni.whyDidYouRender = true;
 
 export default TabellaTransazioni;

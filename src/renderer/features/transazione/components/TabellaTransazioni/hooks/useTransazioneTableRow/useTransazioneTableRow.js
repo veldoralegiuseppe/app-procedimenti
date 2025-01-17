@@ -3,9 +3,10 @@ import { ImportoInput } from '@ui-shared/components';
 import useTransazioneConstants from './useTransazioneConstants';
 import useTransazioneUtils from './useTransazioneUtils';
 import { useStoreContext } from '@ui-shared/context';
-import { useModelStore } from '@ui-shared/hooks';
 import { ModeTypes } from '@ui-shared/metadata';
 import { ImportoUtils } from '@ui-shared/utils';
+import { ModelFactory } from '@ui-shared/components';
+import { ModelTypes } from '@shared/metadata';
 import _ from 'lodash';
 
 /**
@@ -26,8 +27,11 @@ const mapToRow = ({
   index,
   mode,
 }) => {
+  
   const isParzialmenteSaldato =
     transazione.stato === statoEnums.PARZIALMENTE_SALDATO;
+
+  const isCustom = transazione._custom;
 
   return {
     id: getId(transazione),
@@ -40,7 +44,7 @@ const mapToRow = ({
         : {
             component: ImportoInput,
             disabled,
-            value: transazione.importoDovuto,
+            ...(isCustom ? {value: transazione.importoDovuto} : {}),
             fieldKey: `${transazione.key}.importoDovuto`,
             owner: transazione.owner,
             sx: { width: '12rem' },
@@ -49,7 +53,7 @@ const mapToRow = ({
               ? () => {}
               : (value) => onChange({ importoDovuto: value }),
 
-            dependencies: {
+            dependencies: isCustom ? undefined : {
               importoDovuto: {
                 namespace: `${transazione.key}`,
                 callback: ({ key, oldValue, newValue, props, store }) => {
@@ -68,8 +72,9 @@ const mapToRow = ({
             component: ImportoInput,
             disabled,
             owner: transazione.owner,
+            ...(isCustom ? {value: transazione.importoCorrisposto} : {}),
             fieldKey: `${transazione.key}.importoCorrisposto`,
-            dependencies: {
+            dependencies: isCustom ? undefined :{
               stato: {
                 namespace: `${transazione.key}`,
                 callback: ({ key, oldValue, newValue, props, store }) => {
@@ -89,7 +94,7 @@ const mapToRow = ({
                 },
               },
             },
-            value: transazione.importoCorrisposto,
+            //value: transazione.importoCorrisposto,
             sx: { width: '12rem' },
             backgroundColor: isParzialmenteSaldato
               ? 'transparent'
@@ -106,7 +111,7 @@ const mapToRow = ({
       statusLabelMap: statoChipFlagMap,
       sx: { minWidth: '92.3px' },
       fieldKey: `${transazione.key}.stato`,
-      dependencies: {
+      dependencies: isCustom ? undefined :{
         importoCorrisposto: {
           namespace: `${transazione.key}`,
           callback: ({ key, oldValue, newValue, props, store }) => {
@@ -153,10 +158,7 @@ const useTransazioneTableRow = ({
   errors,
   mode,
 }) => {
-  const { statoChipFlagMap, flagColorToStatoMap, statoEnums } =
-    useTransazioneConstants();
-  const ownerStore = useStoreContext(transazioni[0]?.owner);
-  const { setProperty } = useModelStore(ownerStore);
+  const { statoChipFlagMap, flagColorToStatoMap, statoEnums } = useTransazioneConstants();
 
   const { getNextStatus, getId } = useTransazioneUtils({
     statoChipFlagMap,
@@ -164,7 +166,6 @@ const useTransazioneTableRow = ({
     statoEnums,
   });
 
-  // Funzione per mappare una transazione a una riga
   const mapRow = React.useCallback(
     ({ transazione, index }) =>
       mapToRow({
@@ -185,28 +186,60 @@ const useTransazioneTableRow = ({
     [disabled, errors, getNextStatus]
   );
 
-  // Genera i dati per la tabella
-  const data = React.useMemo(
-    () =>{
-      console.log('useTransazioniData', transazioni);
-      return transazioni.map((transazione, index) => mapRow({ transazione, index }))
-    },
-    [transazioni, mapRow]
-  );
+  const ownerStore = useStoreContext();
+  const currentTransazioni = React.useRef(transazioni);
+  const [data, setData] = React.useState(() => {
+      const owner = currentTransazioni.current[0]?.owner;
+      const metadati = owner ? ModelFactory.getMetadata(owner).metadata : null;
 
-  // Gestione delle modifiche
+      const existTransazioneInMetadata = (transazione) => {
+        if(!metadati) return false; 
+        return Object.values(metadati).some(m => m.type === ModelTypes.TRANSAZIONE && m.key === transazione.key);
+      }
+
+      const newData = transazioni.map((t, index) => mapRow({ transazione: { ...t, _custom: !existTransazioneInMetadata(t) }, index }));
+      return newData;
+  });
+
+  React.useEffect(() => {
+    if (!_.isEqual(currentTransazioni.current, transazioni)) {
+      currentTransazioni.current = transazioni;
+
+      const owner = transazioni[0]?.owner;
+      const metadati = owner ? ModelFactory.getMetadata(owner).metadata : null;
+
+      const existTransazioneInMetadata = (transazione) => {
+        if(!metadati) return false; 
+        return Object.values(metadati).some(m => m.type === ModelTypes.TRANSAZIONE && m.key === transazione.key);
+      }
+    
+      setData((prevData) => {
+        const newData = transazioni.map((t, index) => mapRow({ transazione: { ...t, _custom: !existTransazioneInMetadata(t) }, index }));
+        console.log('prevData', prevData, 'newData', newData);
+        return newData;
+      });
+    }
+  }, [transazioni]);
+
   const handleChange = React.useCallback(
     ({ changes, index }) => {
-      const updatedTransazione = transazioni[index];
-      //console.log('handleChange', changes, index, updatedTransazione);
-      //console.log('onChange', updatedTransazione.key, changes);
-      setProperty?.(updatedTransazione.key, changes);
+      const updatedTransazione = currentTransazioni.current[index];
+      const owner = updatedTransazione.owner;
+      const store = ownerStore[owner];
+
+      store.getState().setProperty(updatedTransazione.key, changes);
+
+      //setProperty?.(updatedTransazione.key, changes);
       onChange?.(index, updatedTransazione.key, changes);
+      currentTransazioni.current = currentTransazioni.current.map(
+        (transazione, i) =>
+          i === index ? { ...transazione, ...changes } : transazione
+      );
     },
-    [onChange]
+    [onChange, ownerStore]
   );
 
-  return { data, handleChange };
+  return { data: data, handleChange };
 };
 
 export default useTransazioneTableRow;

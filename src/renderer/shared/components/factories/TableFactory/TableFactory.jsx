@@ -101,7 +101,7 @@ const TableFactory = React.memo(
   (prevProps, nextProps) => {
     return (
       _.isEqual(prevProps.sx, nextProps.sx) &&
-      prevProps.data === nextProps.data
+      _.isEqual(prevProps.data === nextProps.data)
     );
   }
 );
