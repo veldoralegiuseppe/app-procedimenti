@@ -24,7 +24,6 @@ const TabellaTransazioniComponent = ({
     errors,
     mode,
   });
-  console.log('useTransazioneTableRow', data);
 
   const columns = React.useMemo(
     () => [

@@ -19,6 +19,7 @@ const useTransazioniProcedimento = () => {
   const getTransazioni = useCallback(() => {
     const transazioniProcedimento = getTransazioniProcedimento();
     const incassiPersoneComplessivi = getIncassi();
+    console.log('incassiPersoneComplessivi', incassiPersoneComplessivi);
 
     const transazioni = [
       ...incassiPersoneComplessivi,

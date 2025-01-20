@@ -32,6 +32,7 @@ const mapToRow = ({
     transazione.stato === statoEnums.PARZIALMENTE_SALDATO;
 
   const isCustom = transazione._custom;
+  if(isCustom) console.log('isCustom', isCustom ? {value: transazione.importoDovuto} : {})
 
   return {
     id: getId(transazione),
@@ -53,16 +54,16 @@ const mapToRow = ({
               ? () => {}
               : (value) => onChange({ importoDovuto: value }),
 
-            dependencies: isCustom ? undefined : {
-              importoDovuto: {
-                namespace: `${transazione.key}`,
-                callback: ({ key, oldValue, newValue, props, store }) => {
-                  return {
-                    value: newValue,
-                  };
-                },
-              },
-            },
+            // dependencies: isCustom ? undefined : {
+            //   importoDovuto: {
+            //     namespace: `${transazione.key}`,
+            //     callback: ({ key, oldValue, newValue, props, store }) => {
+            //       return {
+            //         value: newValue,
+            //       };
+            //     },
+            //   },
+            // },
           },
 
     importoCorrisposto:
@@ -85,14 +86,14 @@ const mapToRow = ({
                   else return { disabled: false, value: 0 };
                 },
               },
-              importoCorrisposto: {
-                namespace: `${transazione.key}`,
-                callback: ({ key, oldValue, newValue, props, store }) => {
-                  return {
-                    value: newValue,
-                  };
-                },
-              },
+              // importoCorrisposto: {
+              //   namespace: `${transazione.key}`,
+              //   callback: ({ key, oldValue, newValue, props, store }) => {
+              //     return {
+              //       value: newValue,
+              //     };
+              //   },
+              // },
             },
             //value: transazione.importoCorrisposto,
             sx: { width: '12rem' },
@@ -194,6 +195,7 @@ const useTransazioneTableRow = ({
 
       const existTransazioneInMetadata = (transazione) => {
         if(!metadati) return false; 
+        if(typeof transazione._custom === 'boolean') return !transazione._custom;
         return Object.values(metadati).some(m => m.type === ModelTypes.TRANSAZIONE && m.key === transazione.key);
       }
 
@@ -210,6 +212,7 @@ const useTransazioneTableRow = ({
 
       const existTransazioneInMetadata = (transazione) => {
         if(!metadati) return false; 
+        if(typeof transazione._custom === 'boolean') return !transazione._custom;
         return Object.values(metadati).some(m => m.type === ModelTypes.TRANSAZIONE && m.key === transazione.key);
       }
     
@@ -223,14 +226,18 @@ const useTransazioneTableRow = ({
 
   const handleChange = React.useCallback(
     ({ changes, index }) => {
-      const updatedTransazione = currentTransazioni.current[index];
-      const owner = updatedTransazione.owner;
+      const oldTransazione = currentTransazioni.current[index];
+      const newTransazione = { ...oldTransazione, ...changes };
+
+      if(_.isEqual(oldTransazione, newTransazione)) return;
+
+      const owner = oldTransazione.owner;
       const store = ownerStore[owner];
 
-      store.getState().setProperty(updatedTransazione.key, changes);
+      store.getState().setProperty(oldTransazione.key, changes);
 
-      //setProperty?.(updatedTransazione.key, changes);
-      onChange?.(index, updatedTransazione.key, changes);
+      //console.log('handleChange', index, oldTransazione.key, changes);
+      onChange?.(index, oldTransazione.key, changes);
       currentTransazioni.current = currentTransazioni.current.map(
         (transazione, i) =>
           i === index ? { ...transazione, ...changes } : transazione
