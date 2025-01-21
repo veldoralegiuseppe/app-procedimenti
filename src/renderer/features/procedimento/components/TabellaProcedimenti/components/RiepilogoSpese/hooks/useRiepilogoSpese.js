@@ -1,109 +1,180 @@
 import { useTransazioniProcedimento } from '@features/procedimento';
-import { usePersoneStore } from '@features/persona';
+import { getTransazioniPersona, usePersone } from '@features/persona';
 import { useStoreContext } from '@ui-shared/context';
 import { FieldTypes } from '@ui-shared/metadata';
+import { useCreateStore } from '@ui-shared/hooks';
+import { PersonaEnumsV1 } from '@shared/metadata';
+import { validators } from '@ui-shared/utils';
 import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import _ from 'lodash';
 
-const useRiepilogoSpese = ({ procedimento }) => {
-  const personeStore = useStoreContext(FieldTypes.PERSONE);
-  const { getTransazioniPersona } = usePersoneStore(personeStore);
-  const [indexPersonaSelezionata, setIndexPersonaSelezionata] = useState(null);
-  const [activeTab, setActiveTab] = useState(0);
-  const { getTransazioni: getTransazioniProcedimento } = useTransazioniProcedimento();
+const usePersoneUpdates = ({ persone = [], protocolloProcedimento }) => {
+  // Persona selected
+  const [indexSelezionata, setIndexSelezionata] = useState(null);
+
+  // Transazioni
   const [transazioniPersona, setTransazioniPersona] = useState([]);
-  const modificheTransazioniPersona = useRef({});
-  const modificheTransazioniProcedimento = useRef({});
+  const updatesTransazioni = useRef({});
+  if (protocolloProcedimento)
+    updatesTransazioni.current[protocolloProcedimento] =
+      updatesTransazioni.current[protocolloProcedimento] || {};
 
-  const transazioniProcedimento = useMemo(() => {
-    let override = {};
-    override['transazioniPersone'] = modificheTransazioniPersona.current;
-    console.log('calcoloTransazioniProcedimento', override);
-
-    return getTransazioniProcedimento(override);
-  }, [procedimento, activeTab === 0]);
-
-  const handleSelectPersona = useCallback(
+  const handleSelect = useCallback(
     (index) => {
-      console.log('setIndexPersona', index);
-      setIndexPersonaSelezionata(index);
+      setIndexSelezionata(() => {
+        if (index === null) {
+          setTransazioniPersona([]);
+          return null;
+        }
+
+        const newPersonaSelezionata = _.get(persone, index);
+        const indexPersone = newPersonaSelezionata._personeIndex;
+
+        const newTransazioni = getTransazioniPersona(
+          newPersonaSelezionata,
+          updatesTransazioni.current?.[protocolloProcedimento]?.[indexPersone]
+        );
+
+        setTransazioniPersona(newTransazioni);
+        return index;
+      });
     },
-    [setIndexPersonaSelezionata]
+    [setIndexSelezionata, persone, protocolloProcedimento]
   );
 
-  const handleChangeTransazionePersona = useCallback(
-    (index, key, changes) => {
-      setIndexPersonaSelezionata((prevIndex) => {
-        if (prevIndex === null) return prevIndex;
+  const addUpdate = (idPersona, transazioneUpdate) => {
+    console.log('updatesTransazioni', updatesTransazioni.current);
+    const updatesProcedimento =
+      updatesTransazioni.current[protocolloProcedimento];
+    const updates = updatesProcedimento[idPersona] || [];
 
-        modificheTransazioniPersona.current = {
-          ...modificheTransazioniPersona.current,
-          [prevIndex]: [
-            ...(modificheTransazioniPersona.current?.[prevIndex] || []).map((item) =>
-              item.key === key ? { ...item, ...changes } : item
-            ),
-            ...(modificheTransazioniPersona.current?.[prevIndex]?.some((item) => item.key === key)
-              ? []
-              : [{ ...transazioniPersona[index], ...changes, key, _custom: true }]),
-          ],
+    const indexTransazione = updates.findIndex((transazione) =>
+      _.isEqual(transazione.key, transazioneUpdate.key)
+    );
+
+    if (indexTransazione >= 0) {
+      updates[indexTransazione] = {
+        ...updates[indexTransazione],
+        ...transazioneUpdate,
+      };
+    } else {
+      updates.push(transazioneUpdate);
+    }
+
+    updatesTransazioni.current[protocolloProcedimento][idPersona] = updates;
+  };
+
+  const handleChangeTransazione = useCallback(
+    (index, key, changes) => {
+      setIndexSelezionata((prevIndex) => {
+        if (prevIndex === null) return prevIndex;
+        const personaSelezionata = _.get(persone, prevIndex);
+        const indexPersone = personaSelezionata._personeIndex;
+        const newTransazione = {
+          ...transazioniPersona[index],
+          ...changes,
+          key,
+          _custom: true,
         };
 
-        console.log(
-          'Updated modificheTransazioniPersona',
-          modificheTransazioniPersona.current
-        );
+        addUpdate(indexPersone, newTransazione);
         return prevIndex;
       });
     },
-    [transazioniPersona]
+    [transazioniPersona, persone, protocolloProcedimento]
   );
 
-  const handleChangeTransazioneProvvedimento = useCallback(
-    (index, key, changes) => {
-      modificheTransazioniProcedimento.current = {
-        ...modificheTransazioniProcedimento.current,
-        ...changes,
-      };
+  useEffect(() => {
+    handleSelect(null);
+  }, [protocolloProcedimento]);
 
-      console.log(
-        'Updated modificheTransazioniProvvedimento',
-        modificheTransazioniProcedimento.current
-      );
-    },
-    [procedimento]
+  return {
+    handleSelect,
+    handleChangeTransazione,
+    indexSelezionata,
+    transazioniPersona,
+    updatesTransazioni,
+  };
+};
+
+const useRiepilogoSpese = ({ procedimento }) => {
+  // Tab
+  const [activeTab, setActiveTab] = useState(0);
+
+  // NumProtocollo
+  const protocolloProcedimento =
+    validators.isProtocollo(procedimento?.numProtocollo) === true
+      ? procedimento.numProtocollo
+      : null;
+
+  // Persone
+  const personeStore = useStoreContext(FieldTypes.PERSONE);
+  const persone = personeStore((state) => state.items)?.map(
+    (persona, index) => ({ ...persona, _personeIndex: index })
   );
+  const parti = persone.filter(
+    (persona) => persona.ruolo === PersonaEnumsV1.ruolo.PARTE_ISTANTE
+  );
+  const controparti = persone.filter(
+    (persona) => persona.ruolo === PersonaEnumsV1.ruolo.CONTROPARTE
+  );
+  const storeParti = useCreateStore({
+    storeInterface: usePersone,
+    initialItems: parti || [],
+  });
+  const storeControparti = useCreateStore({
+    storeInterface: usePersone,
+    initialItems: controparti || [],
+  });
+
+  const {
+    handleSelect: handleSelectParte,
+    indexSelezionata: indexParteSelezionata,
+    transazioniPersona: transazioniParte,
+    handleChangeTransazione: handleChangeTransazioneParte,
+    updatesTransazioni: updatesTransazioniParti,
+  } = usePersoneUpdates({ persone: parti, protocolloProcedimento });
+  const {
+    handleSelect: handleSelectControparte,
+    indexSelezionata: indexControparteSelezionata,
+    transazioniPersona: transazioniControparte,
+    handleChangeTransazione: handleChangeTransazioneControparte,
+    updatesTransazioni: updatesTransazioniControparti,
+  } = usePersoneUpdates({ persone: controparti, protocolloProcedimento });
+
+  // Procedimento
+  const { getTransazioni: getTransazioniProcedimento } =
+    useTransazioniProcedimento();
+  const transazioniProcedimento = useMemo(() => {
+    if (!protocolloProcedimento) return [];
+
+    let override = {};
+    override['transazioniPersone'] = {
+      ...updatesTransazioniControparti.current[protocolloProcedimento],
+      ...updatesTransazioniParti.current[protocolloProcedimento],
+    };
+
+    return getTransazioniProcedimento(override);
+  }, [protocolloProcedimento, activeTab === 0, getTransazioniProcedimento]);
 
   const handleTabChange = (event, newValue) => {
     setActiveTab(newValue);
   };
 
-  useEffect(() => {
-    if (indexPersonaSelezionata >= 0) {
-      const newTransazioni =
-        indexPersonaSelezionata >= 0
-          ? getTransazioniPersona(
-              indexPersonaSelezionata,
-              modificheTransazioniPersona.current[indexPersonaSelezionata]
-            )
-          : [];
-
-      console.log(
-        'modificheTransazioniPersona',
-        modificheTransazioniPersona.current
-      );
-      console.log('nuoveTransazioni', newTransazioni);
-      setTransazioniPersona(newTransazioni);
-    }
-  }, [indexPersonaSelezionata]);
-
   return {
     activeTab,
     handleTabChange,
+    indexParteSelezionata,
+    indexControparteSelezionata,
     transazioniProcedimento,
-    transazioniPersona,
-    indexPersonaSelezionata,
-    handleSelectPersona,
-    handleChangeTransazionePersona,
+    transazioniParte,
+    transazioniControparte,
+    handleSelectParte,
+    handleSelectControparte,
+    handleChangeTransazioneParte,
+    handleChangeTransazioneControparte,
+    storeParti,
+    storeControparti,
   };
 };
 

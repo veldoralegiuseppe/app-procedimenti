@@ -3,6 +3,8 @@ import useRiepilogoSpese from './hooks/useRiepilogoSpese';
 import PersoneSelect from '../PersoneSelect/PersoneSelect';
 import { Box, Tab, Tabs } from '@mui/material';
 import { TabellaTransazioni } from '@features/transazione';
+import { ModelTypes } from '@shared/metadata';
+import { useStoreContext } from '@ui-shared/context';
 import _ from 'lodash';
 
 function TabPanel(props) {
@@ -21,16 +23,25 @@ function TabPanel(props) {
   );
 }
 
-const RiepilogoSpese = ({ procedimento }) => {
+const RiepilogoSpese = () => {
+  const procedimentoStore = useStoreContext(ModelTypes.PROCEDIMENTO);
+  const procedimento = procedimentoStore(state => state.model);
+
   const {
     activeTab,
     handleTabChange,
+    indexParteSelezionata,
+    indexControparteSelezionata,
     transazioniProcedimento,
-    transazioniPersona,
-    indexPersonaSelezionata,
-    handleSelectPersona,
-    handleChangeTransazionePersona,
-  } = useRiepilogoSpese({ procedimento });
+    transazioniParte,
+    transazioniControparte,
+    handleSelectParte,
+    handleSelectControparte,
+    handleChangeTransazioneParte,
+    handleChangeTransazioneControparte,
+    storeParti,
+    storeControparti
+  } = useRiepilogoSpese({procedimento});
 
   return (
     <>
@@ -43,7 +54,8 @@ const RiepilogoSpese = ({ procedimento }) => {
           onChange={handleTabChange}
         >
           <Tab label="Generali" />
-          <Tab label="Parti e controparti" />
+          <Tab label="Parti istanti" />
+          <Tab label="Controparti" />
         </Tabs>
       </Box>
 
@@ -57,17 +69,40 @@ const RiepilogoSpese = ({ procedimento }) => {
         )}
       </TabPanel>
 
-      {/* Panel parti e controparti */}
+      {/* Panel parti */}
       <TabPanel value={activeTab} index={1}>
         <div
           style={{ display: 'flex', flexDirection: 'column', rowGap: '4rem' }}
         >
           <PersoneSelect
-            indexPersona={indexPersonaSelezionata}
-            onChange={handleSelectPersona}
+            indexPersona={indexParteSelezionata}
+            onChange={handleSelectParte}
+            store={storeParti}
           />
           {activeTab === 1 && (
-            <TabellaTransazioni transazioni={transazioniPersona} onChange={handleChangeTransazionePersona} />
+            <TabellaTransazioni
+              transazioni={transazioniParte}
+              onChange={handleChangeTransazioneParte}
+            />
+          )}
+        </div>
+      </TabPanel>
+
+      {/* Panel controparti */}
+      <TabPanel value={activeTab} index={2}>
+        <div
+          style={{ display: 'flex', flexDirection: 'column', rowGap: '4rem' }}
+        >
+          <PersoneSelect
+            indexPersona={indexControparteSelezionata}
+            onChange={handleSelectControparte}
+            store={storeControparti}
+          />
+          {activeTab === 2 && (
+            <TabellaTransazioni
+              transazioni={transazioniControparte}
+              onChange={handleChangeTransazioneControparte}
+            />
           )}
         </div>
       </TabPanel>

@@ -1,12 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { ModelTypes } from '@shared/metadata';
-import { FieldTypes } from '@ui-shared/metadata';
 import { useStoreContext } from '@ui-shared/context';
 import { usePersonaStore, usePersoneStore } from '@features/persona';
 import _ from 'lodash';
 
-const usePersonaSelect = (indexPersona, onChange) => {
-  const personeStore = useStoreContext(FieldTypes.PERSONE);
+const usePersonaSelect = (indexPersona, onChange, personeStore) => {
+  console.log('usePersonaSelect', personeStore.getState());
   const personaFisicaStore = useStoreContext(ModelTypes.PERSONA_FISICA);
   const personaGiuridicaStore = useStoreContext(ModelTypes.PERSONA_GIURIDICA);
 

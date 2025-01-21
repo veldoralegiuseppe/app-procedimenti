@@ -1,7 +1,7 @@
 import { useModelArray } from '@ui-shared/hooks';
 import { ModelFactory } from '@ui-shared/components';
 import { ModelTypes, PersonaEnumsV1, TransazioneEnumsV1 } from '@shared/metadata';
-import { getTransazioniPersona as getTransazioni } from '@features/persona';
+import { getTransazioniPersona as getTransazioni, getPartiControparti as getPartiAndControparti } from '@features/persona';
 
 import _ from 'lodash';
 
@@ -88,7 +88,14 @@ const usePersone = ({ set, get, initialItems = [], options = {} }) => {
     return getTransazioni(persona, override);
   }
 
-  return { ...modelArrayInterface, getIncassi, getTransazioniPersona };
+  const getPartiControparti = () => {
+    const key = options?.namespace ? `${options.namespace}.items` : 'items';
+    const persone = _.get(get(), key, []);
+
+    return getPartiAndControparti(persone);
+  }
+
+  return { ...modelArrayInterface, getIncassi, getTransazioniPersona, getPartiControparti };
 };
 
 export default usePersone;
