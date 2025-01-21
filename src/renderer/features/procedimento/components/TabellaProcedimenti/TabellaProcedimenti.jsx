@@ -16,6 +16,7 @@ import { useProcedimentoStore } from '@features/procedimento';
 import { usePersoneStore } from '@features/persona';
 import RiepilogoSpese from './components/RiepilogoSpese/RiepilogoSpese';
 import useProcedimentoTableRow from './hooks/useProcedimentoTableRow';
+import _ from 'lodash';
 
 const AzioniCell = (onClick) => (props) => {
   //console.log('props', props);
@@ -78,7 +79,7 @@ const TabellaProcedimenti = ({ onRowSelected, procedimenti = [] }) => {
   const handleSpeseClick = (index) => {
     const procedimento = loadProcedimento(procedimenti[index]);
     setProcedimentoSelezionato(procedimento);
-    setOpen(true);
+    _.delay(() => setOpen(true), 10);
   };
 
   const handleCloseModale = (onClose) => {
