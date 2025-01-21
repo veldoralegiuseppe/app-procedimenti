@@ -3,12 +3,12 @@ import { ModelTypes } from '@shared/metadata';
 import { ModelFactory } from '@ui-shared/components';
 
 const useTransazioniPersona = () => {
-  const getTransazioniPersona = useCallback((persona) => {
-    if (!persona || (persona.type !== ModelTypes.PERSONA_FISICA && persona.type !== ModelTypes.PERSONA_GIURIDICA)) {
-      throw new Error('Persona is required');
-    }
+  const personeStore = useStoreContext(FieldTypes.PERSONE);
+  const { getItem } = usePersoneStore(personeStore);
 
-    const owner = persona.type;
+  const getTransazioniPersona = useCallback((index) => {
+   const persona = getItem(index);
+   const owner = persona.type;
 
     return Object.values(persona || {})
       .filter((field) => field?.type === ModelTypes.TRANSAZIONE)

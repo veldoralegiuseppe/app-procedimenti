@@ -2,8 +2,8 @@ import { useModel } from '@ui-shared/hooks';
 import { Pipeline } from '@utils';
 import { inputValidator, updateValidator } from '@utils/filters';
 import { ModelFactory } from '@ui-shared/components';
-import {FieldTypes } from '@ui-shared/metadata';
-import _, { initial } from 'lodash';
+import { FieldTypes } from '@ui-shared/metadata';
+import _ from 'lodash';
 
 /**
  * Interfaccia funzionale dello store Procedimento.
@@ -19,7 +19,6 @@ const useProcedimento = ({
   initialModel,
   options = {},
 }) => {
-  
   const updateModelPipeline = new Pipeline([]);
 
   const modelInterface = useModel({
@@ -44,11 +43,22 @@ const useProcedimento = ({
     ...modelInterface,
 
     // Metodi specifici
-    getTransazioni: () => {
-      const rootPath = options?.namespace ? `${options.namespace}.model` : 'model';
-      const model = _.get(get(), rootPath)
-          
-      return _.filter(model, (value) => value?.type === FieldTypes.TRANSAZIONE);
+    getTransazioni: (override) => {
+      const rootPath = options?.namespace
+        ? `${options.namespace}.model`
+        : 'model';
+      const model = _.get(get(), rootPath);
+
+      let transazioni = _.filter(
+        model,
+        (value) => value?.type === FieldTypes.TRANSAZIONE
+      );
+
+      if (Array.isArray(override)) {
+        transazioni = _.unionBy(override, transazioni, 'key');
+      }
+
+      return transazioni;
     },
   };
 };

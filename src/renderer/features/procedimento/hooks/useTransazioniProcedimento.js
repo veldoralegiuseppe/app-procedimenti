@@ -4,6 +4,7 @@ import { useProcedimentoStore } from '@features/procedimento';
 import { usePersoneStore } from '@features/persona';
 import { FieldTypes } from '@ui-shared/metadata';
 import { ModelTypes } from '@shared/metadata';
+import _ from 'lodash';
 
 const useTransazioniProcedimento = () => {
   // Store
@@ -12,13 +13,16 @@ const useTransazioniProcedimento = () => {
   const procedimentoStore = stores[ModelTypes.PROCEDIMENTO];
   const personeStore = stores[FieldTypes.PERSONE];
 
-  const { getTransazioni: getTransazioniProcedimento } =
-    useProcedimentoStore(procedimentoStore);
+  const { getTransazioni: getTransazioniProcedimento } = useProcedimentoStore(procedimentoStore);
   const { getIncassi } = usePersoneStore(personeStore);
 
-  const getTransazioni = useCallback(() => {
-    const transazioniProcedimento = getTransazioniProcedimento();
-    const incassiPersoneComplessivi = getIncassi();
+  const getTransazioni = useCallback((override) => {
+    console.log('useTransazioniProcedimento', override);
+    
+    let transazioniProcedimento = getTransazioniProcedimento(override?.transazioniProcedimento);
+    console.log('transazioniProcedimento', transazioniProcedimento);
+    
+    let incassiPersoneComplessivi = getIncassi(override?.transazioniPersone);
     console.log('incassiPersoneComplessivi', incassiPersoneComplessivi);
 
     const transazioni = [

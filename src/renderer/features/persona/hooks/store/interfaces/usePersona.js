@@ -2,7 +2,7 @@ import { useModel } from '@ui-shared/hooks';
 import { Pipeline } from '@utils';
 import { inputValidator, updateValidator } from '@utils/filters';
 import { FieldTypes } from '@ui-shared/metadata';
-
+import { getTransazioniPersona } from '@features/persona';
 import _ from 'lodash';
 
 /**
@@ -36,12 +36,12 @@ const usePersona = ({ set, get, subscribe, initialModel, options = {} }) => {
   
    ...modelInterface,
 
-    getTransazioni: () => {
+    getTransazioni: (override = []) => {
       const rootPath = options?.namespace ? `${options.namespace}.model` : 'model';
       const model = _.get(get(), rootPath)
-      console.log('model persona', model);
+      const transazioni = getTransazioniPersona(model, override);
           
-      return _.filter(model, (value) => value?.type === FieldTypes.TRANSAZIONE);
+      return transazioni;
     },
   };
 };

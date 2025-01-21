@@ -1,6 +1,7 @@
 import { useModelArray } from '@ui-shared/hooks';
 import { ModelFactory } from '@ui-shared/components';
 import { ModelTypes, PersonaEnumsV1, TransazioneEnumsV1 } from '@shared/metadata';
+import { getTransazioniPersona as getTransazioni } from '@features/persona';
 
 import _ from 'lodash';
 
@@ -22,7 +23,7 @@ const usePersone = ({ set, get, initialItems = [], options = {} }) => {
     initialItems,
   });
 
-  const getIncassi = () => {
+  const getIncassi = (override) => {
     const key = options?.namespace ? `${options.namespace}.items` : 'items';
     const persone = _.get(get(), key, []);
     const tot = {
@@ -32,14 +33,10 @@ const usePersone = ({ set, get, initialItems = [], options = {} }) => {
       importoCorrispostoControparti: 0,
     };
 
-    const getTransazioni = (persona) => {
-      return Object.values(persona || {})
-      .filter((field) => field?.type === ModelTypes.TRANSAZIONE)
-    };
-
-    const getIncassoPersona = (persona) => {
+    const getIncassoPersona = (persona, index) => {
       const isParteIstante = persona?.ruolo === PersonaEnumsV1.ruolo.PARTE_ISTANTE;
-      const transazioni = getTransazioni(persona);
+      const transazioni = getTransazioni(persona, override?.[index]);
+      console.log('getIncassoPersona', persona, transazioni, override);
 
       transazioni.forEach((t) => {
           if (isParteIstante) {
@@ -67,7 +64,7 @@ const usePersone = ({ set, get, initialItems = [], options = {} }) => {
       });
     };
 
-    persone.forEach((persona) => getIncassoPersona(persona));
+    persone.forEach((persona, index) => getIncassoPersona(persona, index));
 
     return [
       createTransazione({
@@ -84,7 +81,14 @@ const usePersone = ({ set, get, initialItems = [], options = {} }) => {
     ];
   };
 
-  return { ...modelArrayInterface, getIncassi };
+  const getTransazioniPersona = (index, override = []) => {
+    const key = options?.namespace ? `${options.namespace}.items` : 'items';
+    const persona = _.get(get(), `${key}[${index}]`, {});
+
+    return getTransazioni(persona, override);
+  }
+
+  return { ...modelArrayInterface, getIncassi, getTransazioniPersona };
 };
 
 export default usePersone;
