@@ -81,6 +81,11 @@ const TabellaProcedimenti = ({ onRowSelected, procedimenti = [] }) => {
     setOpen(true);
   };
 
+  const handleCloseModale = (onClose) => {
+    onClose?.();
+    setOpen(false);
+  }
+
   const columns = [
     {
       field: 'numProtocollo',
@@ -204,8 +209,8 @@ const TabellaProcedimenti = ({ onRowSelected, procedimenti = [] }) => {
         data={data}
       />
 
-      <FormModal open={open} handleClose={() => setOpen(false)}>
-        <RiepilogoSpese procedimento={procedimentoSelezionato} />
+      <FormModal open={open} handleClose={handleCloseModale}>
+        <RiepilogoSpese open={open} procedimento={procedimentoSelezionato} />
       </FormModal>
     </React.Fragment>
   );

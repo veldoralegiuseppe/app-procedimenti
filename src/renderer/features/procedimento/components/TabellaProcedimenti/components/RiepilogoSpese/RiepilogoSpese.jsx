@@ -23,7 +23,7 @@ function TabPanel(props) {
   );
 }
 
-const RiepilogoSpese = () => {
+const RiepilogoSpese = ({open}) => {
   const procedimentoStore = useStoreContext(ModelTypes.PROCEDIMENTO);
   const procedimento = procedimentoStore(state => state.model);
 
@@ -41,7 +41,7 @@ const RiepilogoSpese = () => {
     handleChangeTransazioneControparte,
     storeParti,
     storeControparti
-  } = useRiepilogoSpese({procedimento});
+  } = useRiepilogoSpese({procedimento, open});
 
   return (
     <>

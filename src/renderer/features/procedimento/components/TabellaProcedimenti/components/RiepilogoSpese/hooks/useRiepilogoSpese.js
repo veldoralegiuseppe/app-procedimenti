@@ -8,7 +8,7 @@ import { validators } from '@ui-shared/utils';
 import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import _ from 'lodash';
 
-const usePersoneUpdates = ({ persone = [], protocolloProcedimento }) => {
+const usePersoneUpdates = ({ persone = [], protocolloProcedimento, open }) => {
   // Persona selected
   const [indexSelezionata, setIndexSelezionata] = useState(null);
 
@@ -88,6 +88,12 @@ const usePersoneUpdates = ({ persone = [], protocolloProcedimento }) => {
     handleSelect(null);
   }, [protocolloProcedimento]);
 
+  useEffect(() => {
+    if(!open){
+      handleSelect(null);
+    }
+  }, [open]);
+
   return {
     handleSelect,
     handleChangeTransazione,
@@ -97,7 +103,7 @@ const usePersoneUpdates = ({ persone = [], protocolloProcedimento }) => {
   };
 };
 
-const useRiepilogoSpese = ({ procedimento }) => {
+const useRiepilogoSpese = ({ procedimento, open }) => {
   // Tab
   const [activeTab, setActiveTab] = useState(0);
 
@@ -133,14 +139,14 @@ const useRiepilogoSpese = ({ procedimento }) => {
     transazioniPersona: transazioniParte,
     handleChangeTransazione: handleChangeTransazioneParte,
     updatesTransazioni: updatesTransazioniParti,
-  } = usePersoneUpdates({ persone: parti, protocolloProcedimento });
+  } = usePersoneUpdates({ persone: parti, protocolloProcedimento, open });
   const {
     handleSelect: handleSelectControparte,
     indexSelezionata: indexControparteSelezionata,
     transazioniPersona: transazioniControparte,
     handleChangeTransazione: handleChangeTransazioneControparte,
     updatesTransazioni: updatesTransazioniControparti,
-  } = usePersoneUpdates({ persone: controparti, protocolloProcedimento });
+  } = usePersoneUpdates({ persone: controparti, protocolloProcedimento, open });
 
   // Procedimento
   const { getTransazioni: getTransazioniProcedimento } =
@@ -160,6 +166,13 @@ const useRiepilogoSpese = ({ procedimento }) => {
   const handleTabChange = (event, newValue) => {
     setActiveTab(newValue);
   };
+
+  useEffect(() => {
+    if(!open){
+      setActiveTab(0);
+    }
+
+  }, [open]);
 
   return {
     activeTab,
