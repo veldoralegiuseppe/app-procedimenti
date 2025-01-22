@@ -13,7 +13,8 @@ import {
 } from '@features/persona';
 import {PersonaEnumsV1} from '@shared/metadata';
 import { useStoreContext } from '@ui-shared/context';
-import { ButtonTypes, FieldTypes } from '@ui-shared/metadata';
+import { ButtonTypes, StoreTypes } from '@ui-shared/metadata';
+import { ModelTypes } from '@shared/metadata';
 import {subscribeToLocalStorage } from '@ui-shared/utils';
 import { LOCAL_STORAGE_KEY } from '../../constants';
 import _ from 'lodash';
@@ -24,19 +25,19 @@ const FormParteControparte = ({ handleClose, onSubmit, ruolo: role, tipo: type }
   const ruoloGroupOptions = Object.entries(PersonaEnumsV1.ruolo).map(([key, value]) => ({value, label: value}));
 
   const tipoPersonaGroupOptions = [
-    { value: FieldTypes.PERSONA_FISICA, label: 'PERSONA FISICA' },
-    { value:  FieldTypes.PERSONA_GIURIDICA, label: 'PERSONA GIURIDICA' },
+    { value: ModelTypes.PERSONA_FISICA, label: 'PERSONA FISICA' },
+    { value: ModelTypes.PERSONA_GIURIDICA, label: 'PERSONA GIURIDICA' },
   ];
 
   const [ruolo, setRuolo] = useState(() => role || PersonaEnumsV1.ruolo.PARTE_ISTANTE);
-  const [tipoPersona, setTipoPersona] = useState(() => type || FieldTypes.PERSONA_FISICA);
+  const [tipoPersona, setTipoPersona] = useState(() => type || ModelTypes.PERSONA_FISICA);
 
-  const storePersonaFisica = useStoreContext(FieldTypes.PERSONA_FISICA);
-  const storePersonaGiuridica = useStoreContext(FieldTypes.PERSONA_GIURIDICA);
+  const storePersonaFisica = useStoreContext(StoreTypes.PERSONA_FISICA);
+  const storePersonaGiuridica = useStoreContext(StoreTypes.PERSONA_GIURIDICA);
 
   const handleSubmit = useCallback(() => {
     const newPersona =
-      tipoPersona === FieldTypes.PERSONA_FISICA
+      tipoPersona === ModelTypes.PERSONA_FISICA
         ? storePersonaFisica.getState().getModel()
         : storePersonaGiuridica.getState().getModel();
 
@@ -91,8 +92,8 @@ const FormParteControparte = ({ handleClose, onSubmit, ruolo: role, tipo: type }
         <Grid size={{ xs: 12 }}>
           <Accordion
             title={'Persona fisica'}
-            isDisabled={tipoPersona !== FieldTypes.PERSONA_FISICA}
-            isExpanded={tipoPersona === FieldTypes.PERSONA_FISICA}
+            isDisabled={tipoPersona !== ModelTypes.PERSONA_FISICA}
+            isExpanded={tipoPersona === ModelTypes.PERSONA_FISICA}
           >
             <FormPersonaFisicaContainer />
           </Accordion>
@@ -101,8 +102,8 @@ const FormParteControparte = ({ handleClose, onSubmit, ruolo: role, tipo: type }
         <Grid size={{ xs: 12 }}>
           <Accordion
             title={'Persona giuridica'}
-            isDisabled={tipoPersona !== FieldTypes.PERSONA_GIURIDICA}
-            isExpanded={tipoPersona === FieldTypes.PERSONA_GIURIDICA}
+            isDisabled={tipoPersona !== ModelTypes.PERSONA_GIURIDICA}
+            isExpanded={tipoPersona === ModelTypes.PERSONA_GIURIDICA}
           >
             <FormPersonaGiuridicaContainer />
           </Accordion>

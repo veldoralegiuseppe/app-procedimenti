@@ -8,12 +8,13 @@ import { ClearButton, Totali, ModelFactory } from '@ui-shared/components';
 import { useProcedimentoStore } from '@features/procedimento';
 import { TransazioneMetadata } from '@features/transazione';
 import { useStoreContext } from '@ui-shared/context';
-import { FieldTypes } from '@ui-shared/metadata';
+import { StoreTypes } from '@ui-shared/metadata';
+import { ModelTypes } from '@shared/metadata'
 import { useTotali } from '@ui-shared/hooks';
 
 const FormDatiGeneraliContainer = () => {
  
-  const procedimentoStore = useStoreContext(FieldTypes.PROCEDIMENTO);
+  const procedimentoStore = useStoreContext(StoreTypes.PROCEDIMENTO);
   const { resetModel, getTransazioni } = useProcedimentoStore(procedimentoStore);
 
   const calculateTotali = React.useCallback(() => {
@@ -77,11 +78,11 @@ const FormDatiGeneraliContainer = () => {
 
       <Grid size={{ xs: 12 }}>
         <ClearButton
-          modelType={FieldTypes.PROCEDIMENTO}
+          modelType={ModelTypes.PROCEDIMENTO}
           onClick={() => {
             resetModel(
               ModelFactory.create({
-                type: FieldTypes.PROCEDIMENTO,
+                type: ModelTypes.PROCEDIMENTO,
                 version: '1.0',
               })
             );

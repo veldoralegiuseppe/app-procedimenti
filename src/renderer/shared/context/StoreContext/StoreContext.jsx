@@ -1,8 +1,9 @@
 import React, { createContext } from 'react';
 import { useProcedimento } from '@features/procedimento';
 import { usePersone, usePersona } from '@features/persona';
-import { useCreateStore } from '@ui-shared/hooks';
-import { FieldTypes } from '@ui-shared/metadata';
+import { useCreateStore, useRicerca } from '@ui-shared/hooks';
+import { StoreTypes } from '@ui-shared/metadata';
+import { ModelTypes } from '@shared/metadata';
 import { ModelFactory } from '@ui-shared/components';
 
 export const StoreContext = createContext();
@@ -137,24 +138,29 @@ const personaFisicaTest = {
 const StoreProvider = ({ children }) => {
   const procedimentoStore = useCreateStore({
     storeInterface: useProcedimento,
-    initialModel: ModelFactory.create({type: FieldTypes.PROCEDIMENTO}),
+    initialModel: ModelFactory.create({type: ModelTypes.PROCEDIMENTO}),
   });
   const personeStore = useCreateStore({ storeInterface: usePersone, initialItems: [] });
   const personaFisicaStore = useCreateStore({
     storeInterface: usePersona,
-    initialModel: ModelFactory.create({ type: FieldTypes.PERSONA_FISICA }),
+    initialModel: ModelFactory.create({ type: ModelTypes.PERSONA_FISICA }),
   });
   const personaGiuridicaStore = useCreateStore({
     storeInterface: usePersona,
-    initialModel: ModelFactory.create({ type: FieldTypes.PERSONA_GIURIDICA }),
+    initialModel: ModelFactory.create({ type: ModelTypes.PERSONA_GIURIDICA }),
+  });
+  const ricercaStore = useCreateStore({
+    storeInterface: useRicerca,
+    initialModel: {results: []}
   });
 
   const storeMap = React.useMemo(
     () => ({
-      [FieldTypes.PROCEDIMENTO]: procedimentoStore,
-      [FieldTypes.PERSONE]: personeStore,
-      [FieldTypes.PERSONA_FISICA]: personaFisicaStore,
-      [FieldTypes.PERSONA_GIURIDICA]: personaGiuridicaStore,
+      [StoreTypes.PROCEDIMENTO]: procedimentoStore,
+      [StoreTypes.PERSONE]: personeStore,
+      [StoreTypes.PERSONA_FISICA]: personaFisicaStore,
+      [StoreTypes.PERSONA_GIURIDICA]: personaGiuridicaStore,
+      [StoreTypes.RICERCA]: ricercaStore,
     }),
     [procedimentoStore]
   );

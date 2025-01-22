@@ -1,13 +1,13 @@
 import React from 'react';
 import Grid from '@mui/material/Grid2';
-import { FieldTypes } from '@ui-shared/metadata';
+import { ModelTypes } from '@shared/metadata';
 import { useMetadata } from '@ui-shared/hooks';
 import { FormPresenter, ClearButton } from '@ui-shared/components';
 import useFormPersonaFisica from './hooks/useFormPersonaFisica';
 import RiepilogoTransazioniFormContainer from './components/RiepilogoTransazioni/RiepilogoTransazioniPersonaFisica';
 
 const FormPersonaFisicaContainer = () => {
-  const { enums } = useMetadata({ type: FieldTypes.PERSONA_FISICA });
+  const { enums } = useMetadata({ type: ModelTypes.PERSONA_FISICA });
   const { getInputPropsArray, resetPersonaFisica } = useFormPersonaFisica();
   //console.log('getInputPropsArray', getInputPropsArray());
 
@@ -23,7 +23,7 @@ const FormPersonaFisicaContainer = () => {
             key={key}
             titolo={titolo}
             inputPropsArray={getInputPropsArray(sezione)}
-            type={FieldTypes.PERSONA_FISICA}
+            type={ModelTypes.PERSONA_FISICA}
           />
         );
       })}
@@ -34,7 +34,7 @@ const FormPersonaFisicaContainer = () => {
 
       <Grid sx={{ marginTop: '2rem' }}>
         <ClearButton
-          modelType={FieldTypes.PERSONA_FISICA}
+          modelType={ModelTypes.PERSONA_FISICA}
           onClick={() => resetPersonaFisica()}
         />
       </Grid>

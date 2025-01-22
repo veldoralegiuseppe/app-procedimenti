@@ -1,5 +1,6 @@
 import { useEffect, useMemo } from 'react';
-import { FieldTypes, CacheFetchPolicies } from '@ui-shared/metadata';
+import { CacheFetchPolicies } from '@ui-shared/metadata';
+import { ModelTypes } from '@shared/metadata';
 import {
   useGenerateInputProps,
   useFetchData,
@@ -19,7 +20,7 @@ dayjs.locale('it');
 
 
 const useFormPersonaGiuridica = () => {
-  const personaGiuridicaStore = useStoreContext(FieldTypes.PERSONA_GIURIDICA);
+  const personaGiuridicaStore = useStoreContext(ModelTypes.PERSONA_GIURIDICA);
   const { setProperty, resetModel } = usePersonaStore(personaGiuridicaStore);
   const provinciaStore = useCreateStore({ storeInterface: useModelArray });
   const comuneStore = useCreateStore({
@@ -164,7 +165,7 @@ const useFormPersonaGiuridica = () => {
   };
 
   const { getInputPropsArray } = useGenerateInputProps({
-    modelType: FieldTypes.PERSONA_GIURIDICA,
+    modelType: ModelTypes.PERSONA_GIURIDICA,
     overrides: propsOverrides,
   });
 
@@ -172,7 +173,7 @@ const useFormPersonaGiuridica = () => {
     return () => {
       resetModel(
         ModelFactory.create({
-          type: FieldTypes.PERSONA_GIURIDICA,
+          type: ModelTypes.PERSONA_GIURIDICA,
           version: '1.0',
         })
       );

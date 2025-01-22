@@ -37,7 +37,8 @@ const useModel = ({ set, get, subscribe, initialModel = {}, options = {} }) => {
         produce((state) => {
           const target = _.get(state, path);
 
-          if (_.isObject(value)) {
+          if (!_.isArray(value) && _.isObject(value)) {
+            //console.log('isObject', value)
             const updatedValue = _.merge({}, target, value);
             if (!_.isEqual(target, updatedValue)) {
               console.log('updatedValue', target, updatedValue);
@@ -181,6 +182,7 @@ const useModel = ({ set, get, subscribe, initialModel = {}, options = {} }) => {
     getProperty: (key, namespace) => {
       const fieldPath = namespace ? `${namespace}.${key}` : key;
       const path = `${rootPath}.${fieldPath}`;
+      //console.log('property', path, _.get(get(), path));
       return _.get(get(), path);
     },
 

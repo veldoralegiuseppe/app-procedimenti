@@ -3,6 +3,7 @@ import dayjs from 'dayjs';
 import 'dayjs/locale/it';
 import { validators } from '@utils';
 import {InputTypes, FieldTypes, ValidationHooksTypes} from '@ui-shared/metadata';
+import {ModelTypes} from '@shared/metadata'
 import { TransazioneMetadata } from '@features/transazione';
 
 dayjs.locale('it');
@@ -20,7 +21,7 @@ const ProcedimentoMetadataV1 = {
     inputValidations: [validators.required, validators.isProtocollo],
   },
 
-  type: FieldTypes.PROCEDIMENTO,
+  type: ModelTypes.PROCEDIMENTO,
 
   version: '1.0',
 
@@ -123,7 +124,7 @@ const ProcedimentoMetadataV1 = {
   compensoMediatore: {
     key: 'compensoMediatore',
     label: 'Spese mediatore',
-    type: FieldTypes.TRANSAZIONE,
+    type: ModelTypes.TRANSAZIONE,
     default: {
       key: 'compensoMediatore',
       nome: 'Spese mediatore',
@@ -138,7 +139,7 @@ const ProcedimentoMetadataV1 = {
   speseAvvioSedeSecondaria: {
     key: 'speseAvvioSedeSecondaria',
     label: 'Spese avvio sede secondaria',
-    type: FieldTypes.TRANSAZIONE,
+    type: ModelTypes.TRANSAZIONE,
     default: {
       key: 'speseAvvioSedeSecondaria',
       nome: 'Spese avvio sede secondaria',
@@ -153,7 +154,7 @@ const ProcedimentoMetadataV1 = {
   speseIndennitaSedeSecondaria: {
     key: 'speseIndennitaSedeSecondaria',
     label: 'Spese indennità sede secondaria',
-    type: FieldTypes.TRANSAZIONE,
+    type: ModelTypes.TRANSAZIONE,
     default: {
       key: 'speseIndennitaSedeSecondaria',
       nome: 'Spese indennità sede secondaria',

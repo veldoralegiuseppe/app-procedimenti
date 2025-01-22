@@ -1,10 +1,10 @@
 import { ModelFactory } from '@ui-shared/components';
-import { FieldTypes } from '@ui-shared/metadata';
+import { ModelTypes } from '@shared/metadata';
 import _ from 'lodash';
 
 const useTransazioneConstants = () => {
 
-    const { metadati, enums } = ModelFactory.getMetadata(FieldTypes.TRANSAZIONE);
+    const { metadati, enums } = ModelFactory.getMetadata(ModelTypes.TRANSAZIONE);
     const statoEnums = enums.stato;
 
     const statoChipFlagMap = {

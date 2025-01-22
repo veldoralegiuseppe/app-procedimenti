@@ -1,6 +1,7 @@
 import { ProcedimentoMetadata } from '@features/procedimento';
 import { TransazioneMetadata } from '@features/transazione';
-import { FieldTypes, ValidationHooksTypes } from '@ui-shared/metadata';
+import { ValidationHooksTypes } from '@ui-shared/metadata';
+import { ModelTypes } from '@shared/metadata';
 import {PersonaFisicaMetadata, PersonaGiuridicaMetadata} from '@features/persona';
 
 /**
@@ -8,10 +9,10 @@ import {PersonaFisicaMetadata, PersonaGiuridicaMetadata} from '@features/persona
  */
 export default class ModelFactory {
   static #metadata = {
-    [FieldTypes.PROCEDIMENTO]: ProcedimentoMetadata,
-    [FieldTypes.TRANSAZIONE]: TransazioneMetadata,
-    [FieldTypes.PERSONA_FISICA]: PersonaFisicaMetadata,
-    [FieldTypes.PERSONA_GIURIDICA]: PersonaGiuridicaMetadata,
+    [ModelTypes.PROCEDIMENTO]: ProcedimentoMetadata,
+    [ModelTypes.TRANSAZIONE]: TransazioneMetadata,
+    [ModelTypes.PERSONA_FISICA]: PersonaFisicaMetadata,
+    [ModelTypes.PERSONA_GIURIDICA]: PersonaGiuridicaMetadata,
   };
 
   /**
@@ -44,7 +45,7 @@ export default class ModelFactory {
       if(key === 'type'){
         model[key] = value;
       }
-      else if (value.type === FieldTypes.TRANSAZIONE || value.type === FieldTypes.PROCEDIMENTO){
+      else if (value.type === ModelTypes.TRANSAZIONE || value.type === ModelTypes.PROCEDIMENTO){
         model[key] = ModelFactory.create({
           initialValues: initialValues[key] || value.default || {},
           type: value.type,

@@ -1,12 +1,12 @@
 import * as React from 'react';
 import {FormDatiGeneraliContainer} from '@features/procedimento';
 import { useStoreContext } from '@ui-shared/context';
-import { FieldTypes } from '@ui-shared/metadata';
+import { StoreTypes } from '@ui-shared/metadata';
 
 const StepDatiGeneraliProcedimento = React.forwardRef(
   ({ enableNextStep }, ref) => {
 
-    const store = useStoreContext(FieldTypes.PROCEDIMENTO);
+    const store = useStoreContext(StoreTypes.PROCEDIMENTO);
     const procedimento = store(state => state.model); 
    
     React.useEffect(() => {

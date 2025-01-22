@@ -1,8 +1,8 @@
-import { useMemo, useCallback } from 'react';
+import { useCallback } from 'react';
 import { useStoreContext } from '@ui-shared/context';
 import { useProcedimentoStore } from '@features/procedimento';
 import { usePersoneStore } from '@features/persona';
-import { FieldTypes } from '@ui-shared/metadata';
+import { StoreTypes } from '@ui-shared/metadata';
 import { ModelTypes } from '@shared/metadata';
 import _ from 'lodash';
 
@@ -11,7 +11,7 @@ const useTransazioniProcedimento = () => {
   const owner = ModelTypes.PROCEDIMENTO;
   const stores = useStoreContext();
   const procedimentoStore = stores[ModelTypes.PROCEDIMENTO];
-  const personeStore = stores[FieldTypes.PERSONE];
+  const personeStore = stores[StoreTypes.PERSONE];
 
   const { getTransazioni: getTransazioniProcedimento } = useProcedimentoStore(procedimentoStore);
   const { getIncassi } = usePersoneStore(personeStore);

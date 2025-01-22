@@ -1,13 +1,13 @@
 import React from 'react';
 import Grid from '@mui/material/Grid2';
 import { FormPresenter } from '@ui-shared/components';
-import { FieldTypes } from '@ui-shared/metadata';
+import { ModelTypes } from '@shared/metadata';
 import { useMetadata, useGenerateInputProps } from '@ui-shared/hooks';
 
 const FormRicercaSemplice = () => {
-  const { enums } = useMetadata({ type: FieldTypes.PROCEDIMENTO });
+  const { enums } = useMetadata({ type: ModelTypes.PROCEDIMENTO });
   const { getInputPropsArray } = useGenerateInputProps({
-    modelType: FieldTypes.PROCEDIMENTO,
+    modelType: ModelTypes.PROCEDIMENTO,
   });
 
   return (
@@ -15,7 +15,7 @@ const FormRicercaSemplice = () => {
       <FormPresenter
         key={'procedimento-ricerca-semplice'}
         inputPropsArray={getInputPropsArray(enums.sezione.RICERCA_SEMPLICE)}
-        type={FieldTypes.PROCEDIMENTO}
+        type={ModelTypes.PROCEDIMENTO}
       />
     </Grid>
   );

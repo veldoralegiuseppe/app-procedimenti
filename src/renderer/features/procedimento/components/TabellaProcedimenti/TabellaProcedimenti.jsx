@@ -9,7 +9,7 @@ import { useModelArrayStore } from '@ui-shared/hooks';
 import { styled } from '@mui/system';
 import { TableCell, TableHead } from '@mui/material';
 import EuroIcon from '@mui/icons-material/Euro';
-import { ButtonTypes, FieldTypes } from '@ui-shared/metadata';
+import { ButtonTypes, StoreTypes } from '@ui-shared/metadata';
 import { ModelTypes } from '@shared/metadata';
 import { useStoreContext } from '@ui-shared/context';
 import { useProcedimentoStore } from '@features/procedimento';
@@ -44,8 +44,8 @@ const AzioniCell = (onClick) => (props) => {
 const TabellaProcedimenti = ({ onRowSelected, procedimenti = [] }) => {
   const { data } = useProcedimentoTableRow({ procedimenti });
   const stores = useStoreContext();
-  const { resetModel } = useProcedimentoStore(stores[ModelTypes.PROCEDIMENTO]);
-  const { resetItems } = usePersoneStore(stores[FieldTypes.PERSONE]);
+  const { resetModel } = useProcedimentoStore(stores[StoreTypes.PROCEDIMENTO]);
+  const { resetItems } = usePersoneStore(stores[StoreTypes.PERSONE]);
 
   const [open, setOpen] = React.useState(false);
   const [procedimentoSelezionato, setProcedimentoSelezionato] =

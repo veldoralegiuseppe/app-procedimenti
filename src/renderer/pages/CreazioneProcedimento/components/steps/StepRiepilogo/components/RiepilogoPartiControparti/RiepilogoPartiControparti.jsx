@@ -3,7 +3,7 @@ import Grid from '@mui/material/Grid2';
 import { useTheme } from '@mui/material/styles';
 import useMediaQuery from '@mui/material/useMediaQuery';
 import PersonaTable from './components/PersonaTable';
-import { FieldTypes } from '@ui-shared/metadata';
+import { ModelTypes } from '@shared/metadata';
 import {PersonaEnumsV1} from '@shared/metadata';
 
 const personaFisicaFields = [
@@ -32,10 +32,10 @@ const RiepilogoPartiControparti = ({ persone }) => {
 
   const renderSezione = (titolo, persone) => {
     const personeFisiche = persone.filter(
-      (persona) => persona.type === FieldTypes.PERSONA_FISICA
+      (persona) => persona.type === ModelTypes.PERSONA_FISICA
     );
     const personeGiuridiche = persone.filter(
-      (persona) => persona.type === FieldTypes.PERSONA_GIURIDICA
+      (persona) => persona.type === ModelTypes.PERSONA_GIURIDICA
     );
 
     console.log('personeFisiche', personeFisiche);

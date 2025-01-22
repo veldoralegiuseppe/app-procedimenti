@@ -1,6 +1,6 @@
 import { useMemo } from "react";
 import {ImportoUtils} from '@ui-shared/utils';
-import {FieldTypes} from '@ui-shared/metadata';
+import {ModelTypes} from '@shared/metadata';
 
 const usePersoneTableRow = ({ persone = [] }) => {
   const mapToRow = (persona) => {
@@ -11,7 +11,7 @@ const usePersoneTableRow = ({ persone = [] }) => {
     };
 
     return {
-      anagrafica: tipoPersona === FieldTypes.PERSONA_FISICA ? `${persona.nome} ${persona.cognome}` : persona.denominazione,
+      anagrafica: tipoPersona === ModelTypes.PERSONA_FISICA ? `${persona.nome} ${persona.cognome}` : persona.denominazione,
       ruolo: persona.ruolo,
       speseAvvio: formatCurrency(persona.speseAvvio?.importoDovuto),
       spesePostali: formatCurrency(persona.spesePostali?.importoDovuto),

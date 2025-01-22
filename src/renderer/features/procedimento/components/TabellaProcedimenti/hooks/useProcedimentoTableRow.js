@@ -1,10 +1,11 @@
 import { useMemo } from 'react';
 import { ImportoUtils } from '@ui-shared/utils';
-import { FieldTypes } from '@ui-shared/metadata';
+import { ModelTypes } from '@shared/metadata';
 import {TransazioneEnumsV1 as transazioneEnums  } from '@shared/metadata';
 import dayjs from 'dayjs';
 
 const useProcedimentoTableRow = ({ procedimenti: entities = [] }) => {
+  console.log('entities', entities)
  
   const mapToRow = (procedimento) => {
    
@@ -20,7 +21,7 @@ const useProcedimentoTableRow = ({ procedimenti: entities = [] }) => {
 
     const getStatus = (procedimento) => {
       const statoTransazioni = Object.values(procedimento)
-      .filter((field) => field?.type === FieldTypes.TRANSAZIONE).map(transazione => transazione.stato);
+      .filter((field) => field?.type === ModelTypes.TRANSAZIONE).map(transazione => transazione.stato);
 
       let stato = transazioneEnums.stato.DA_SALDARE;
 

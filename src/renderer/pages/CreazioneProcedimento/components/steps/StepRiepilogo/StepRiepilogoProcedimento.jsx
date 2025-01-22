@@ -3,11 +3,11 @@ import RiepilogoPartiControparti from './components/RiepilogoPartiControparti/Ri
 import RiepilogoSpese from './components/RiepilogoSpese';
 import RiepilogoDatiGenerali from './components/RiepilogoDatiGenerali';
 import { useStoreContext } from '@ui-shared/context';
-import { FieldTypes } from '@ui-shared/metadata';
+import { StoreTypes } from '@ui-shared/metadata';
 
 const StepRiepilogoProcedimento = React.forwardRef((props, ref) => {
-  const procedimentoStore = useStoreContext(FieldTypes.PROCEDIMENTO);
-  const personeStore = useStoreContext(FieldTypes.PERSONE);
+  const procedimentoStore = useStoreContext(StoreTypes.PROCEDIMENTO);
+  const personeStore = useStoreContext(StoreTypes.PERSONE);
 
   const procedimento = procedimentoStore.getState().getModel();
   const persone = personeStore.getState().getItems();

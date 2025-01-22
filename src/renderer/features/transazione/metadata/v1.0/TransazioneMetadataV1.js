@@ -1,6 +1,7 @@
 import { validators } from '@utils';
 import {TransazioneEnumsV1} from '@shared/metadata';
 import { FieldTypes, ValidationHooksTypes } from '@ui-shared/metadata';
+import { ModelTypes } from '@shared/metadata';
 
 const TransazioneMetadataV1 = {
   nome: {
@@ -75,7 +76,7 @@ const TransazioneMetadataV1 = {
     },
   },
 
-  type: FieldTypes.TRANSAZIONE,
+  type: ModelTypes.TRANSAZIONE,
 
   version: '1.0',
 };

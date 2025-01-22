@@ -1,12 +1,13 @@
 import { useTransazioniProcedimento } from '@features/procedimento';
 import { getTransazioniPersona, usePersone } from '@features/persona';
 import { useStoreContext } from '@ui-shared/context';
-import { FieldTypes } from '@ui-shared/metadata';
+import { StoreTypes } from '@ui-shared/metadata';
 import { useCreateStore } from '@ui-shared/hooks';
 import { PersonaEnumsV1 } from '@shared/metadata';
 import { validators } from '@ui-shared/utils';
 import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
 import _ from 'lodash';
+
 
 const usePersoneUpdates = ({ persone = [], protocolloProcedimento, open }) => {
   // Persona selected
@@ -43,9 +44,7 @@ const usePersoneUpdates = ({ persone = [], protocolloProcedimento, open }) => {
   );
 
   const addUpdate = (idPersona, transazioneUpdate) => {
-    console.log('updatesTransazioni', updatesTransazioni.current);
-    const updatesProcedimento =
-      updatesTransazioni.current[protocolloProcedimento];
+    const updatesProcedimento = updatesTransazioni.current[protocolloProcedimento];
     const updates = updatesProcedimento[idPersona] || [];
 
     const indexTransazione = updates.findIndex((transazione) =>
@@ -53,15 +52,31 @@ const usePersoneUpdates = ({ persone = [], protocolloProcedimento, open }) => {
     );
 
     if (indexTransazione >= 0) {
-      updates[indexTransazione] = {
-        ...updates[indexTransazione],
-        ...transazioneUpdate,
-      };
+
+      const transazioneToCompare = _.omit(transazioniPersona[indexTransazione], '_custom');
+      const newTransazioneToCompare = _.omit(transazioneUpdate, '_custom');
+
+      if (_.isEqual(transazioneToCompare, newTransazioneToCompare)) {
+        const newUpdates = updates.filter((transazione, i) => i !== indexTransazione);
+        updates = newUpdates;
+      } else {
+        updates[indexTransazione] = {
+          ...updates[indexTransazione],
+          ...transazioneUpdate,
+        };
+      }
     } else {
       updates.push(transazioneUpdate);
     }
 
-    updatesTransazioni.current[protocolloProcedimento][idPersona] = updates;
+    updatesTransazioni.current = {
+      ...updatesTransazioni.current,
+      [protocolloProcedimento]: {
+      ...updatesTransazioni.current[protocolloProcedimento],
+      [idPersona]: updates,
+      },
+    };
+    //console.log('updatesTransazioni', updatesTransazioni.current);
   };
 
   const handleChangeTransazione = useCallback(
@@ -81,7 +96,7 @@ const usePersoneUpdates = ({ persone = [], protocolloProcedimento, open }) => {
         return prevIndex;
       });
     },
-    [transazioniPersona, persone, protocolloProcedimento]
+    [transazioniPersona, persone, protocolloProcedimento, updatesTransazioni]
   );
 
   useEffect(() => {
@@ -89,7 +104,7 @@ const usePersoneUpdates = ({ persone = [], protocolloProcedimento, open }) => {
   }, [protocolloProcedimento]);
 
   useEffect(() => {
-    if(!open){
+    if (!open) {
       handleSelect(null);
     }
   }, [open]);
@@ -114,7 +129,7 @@ const useRiepilogoSpese = ({ procedimento, open }) => {
       : null;
 
   // Persone
-  const personeStore = useStoreContext(FieldTypes.PERSONE);
+  const personeStore = useStoreContext(StoreTypes.PERSONE);
   const persone = personeStore((state) => state.items)?.map(
     (persona, index) => ({ ...persona, _personeIndex: index })
   );
@@ -140,6 +155,8 @@ const useRiepilogoSpese = ({ procedimento, open }) => {
     handleChangeTransazione: handleChangeTransazioneParte,
     updatesTransazioni: updatesTransazioniParti,
   } = usePersoneUpdates({ persone: parti, protocolloProcedimento, open });
+  console.log('updatesTransazioniParti', updatesTransazioniParti);
+
   const {
     handleSelect: handleSelectControparte,
     indexSelezionata: indexControparteSelezionata,
@@ -151,6 +168,7 @@ const useRiepilogoSpese = ({ procedimento, open }) => {
   // Procedimento
   const { getTransazioni: getTransazioniProcedimento } =
     useTransazioniProcedimento();
+  const updatesTransazioniProcedimento = useRef({});
   const transazioniProcedimento = useMemo(() => {
     if (!protocolloProcedimento) return [];
 
@@ -163,15 +181,59 @@ const useRiepilogoSpese = ({ procedimento, open }) => {
     return getTransazioniProcedimento(override);
   }, [protocolloProcedimento, activeTab === 0, getTransazioniProcedimento]);
 
+  const handleChangeTransazioneProcedimento = useCallback(
+    (index, key, changes) => {
+      let newTransazione = {
+        ...transazioniProcedimento[index],
+        ...changes,
+        _custom: true,
+        key,
+      };
+
+      updatesTransazioniProcedimento.current[protocolloProcedimento] =
+        updatesTransazioniProcedimento.current[protocolloProcedimento] || [];
+
+      const indexTransazione = updatesTransazioniProcedimento.current[
+        protocolloProcedimento
+      ].findIndex((transazione) =>
+        _.isEqual(transazione.key, newTransazione.key)
+      );
+
+      if (indexTransazione >= 0) {
+        const transazioneToCompare = _.omit(
+          transazioniProcedimento[index],
+          '_custom'
+        );
+        const newTransazioneToCompare = _.omit(newTransazione, '_custom');
+
+        if (_.isEqual(transazioneToCompare, newTransazioneToCompare)) {
+          const newUpdates = updatesTransazioniProcedimento.current[
+            protocolloProcedimento
+          ].filter((transazione, i) => i !== indexTransazione);
+          updatesTransazioniProcedimento.current[protocolloProcedimento] =
+            newUpdates;
+        } else {
+          updatesTransazioniProcedimento.current[protocolloProcedimento][
+            indexTransazione
+          ] = newTransazione;
+        }
+      } else {
+        updatesTransazioniProcedimento.current[protocolloProcedimento].push(
+          newTransazione
+        );
+      }
+    },
+    [transazioniProcedimento, protocolloProcedimento]
+  );
+
   const handleTabChange = (event, newValue) => {
     setActiveTab(newValue);
   };
 
   useEffect(() => {
-    if(!open){
+    if (!open) {
       setActiveTab(0);
     }
-
   }, [open]);
 
   return {
@@ -180,12 +242,16 @@ const useRiepilogoSpese = ({ procedimento, open }) => {
     indexParteSelezionata,
     indexControparteSelezionata,
     transazioniProcedimento,
+    updatesTransazioniParti: updatesTransazioniParti.current,
+    updatesTransazioniControparti: updatesTransazioniControparti.current,
+    updatesTransazioniProcedimento: updatesTransazioniProcedimento.current,
     transazioniParte,
     transazioniControparte,
     handleSelectParte,
     handleSelectControparte,
     handleChangeTransazioneParte,
     handleChangeTransazioneControparte,
+    handleChangeTransazioneProcedimento,
     storeParti,
     storeControparti,
   };

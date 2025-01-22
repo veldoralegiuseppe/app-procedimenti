@@ -3,7 +3,7 @@ import { TableFactory } from '@ui-shared/components';
 import { styled } from '@mui/system';
 import { TableCell, TableHead } from '@mui/material';
 import { useStoreContext } from '@ui-shared/context';
-import { FieldTypes } from '@ui-shared/metadata';
+import { StoreTypes } from '@ui-shared/metadata';
 import usePersoneTableRow from './hooks/usePersoneTableRow';
 
 const columns = [
@@ -67,7 +67,7 @@ const columns = [
 ];
 
 const TabellaPartiControparti = ({ onRowSelected }) => {
-  const personeStore = useStoreContext(FieldTypes.PERSONE);
+  const personeStore = useStoreContext(StoreTypes.PERSONE);
   const persone = personeStore((state) => state.getItems());
   const { data } = usePersoneTableRow({ persone });
 

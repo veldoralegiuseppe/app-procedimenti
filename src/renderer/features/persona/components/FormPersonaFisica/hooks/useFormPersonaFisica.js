@@ -1,5 +1,6 @@
 import { useEffect, useMemo } from 'react';
-import { FieldTypes, CacheFetchPolicies } from '@ui-shared/metadata';
+import { CacheFetchPolicies } from '@ui-shared/metadata';
+import { ModelTypes } from '@shared/metadata';
 import {
   useGenerateInputProps,
   useCodiceFiscale,
@@ -30,7 +31,7 @@ const capProps = {
 };
 
 const useFormPersonaFisica = () => {
-  const personaFisicaStore = useStoreContext(FieldTypes.PERSONA_FISICA);
+  const personaFisicaStore = useStoreContext(ModelTypes.PERSONA_FISICA);
   const { setProperty, resetModel } = usePersonaStore(personaFisicaStore);
   const provinciaStore = useCreateStore({ storeInterface: useModelArray });
   const comuneResidenzaStore = useCreateStore({
@@ -348,7 +349,7 @@ const useFormPersonaFisica = () => {
   };
 
   const { getInputPropsArray } = useGenerateInputProps({
-    modelType: FieldTypes.PERSONA_FISICA,
+    modelType: ModelTypes.PERSONA_FISICA,
     overrides: propsOverrides,
   });
 
@@ -356,7 +357,7 @@ const useFormPersonaFisica = () => {
     return () => {
       resetModel(
         ModelFactory.create({
-          type: FieldTypes.PERSONA_FISICA,
+          type: ModelTypes.PERSONA_FISICA,
           version: '1.0',
         })
       );

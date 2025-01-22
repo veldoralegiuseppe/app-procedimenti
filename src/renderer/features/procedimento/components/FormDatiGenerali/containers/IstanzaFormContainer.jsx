@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useMetadata } from '@ui-shared/hooks';
-import { FieldTypes } from '@ui-shared/metadata';
+import { ModelTypes } from '@shared/metadata';
 import { FormPresenter, ModelFactory } from '@ui-shared/components';
 import { useCreateStore, useModelArray } from '@ui-shared/hooks';
 
@@ -11,8 +11,8 @@ const IstanzaFormContainer = () => {
  
 
   const { metadata } = useMetadata({
-    type: FieldTypes.PROCEDIMENTO,
-    keysOrSection: ModelFactory.getMetadata(FieldTypes.PROCEDIMENTO).enums
+    type: ModelTypes.PROCEDIMENTO,
+    keysOrSection: ModelFactory.getMetadata(ModelTypes.PROCEDIMENTO).enums
       .sezione.ISTANZA_MEDIAZIONE,
     overrides: {
       sedeDeposito: {

@@ -2,7 +2,7 @@ import React from 'react';
 import { useTheme } from '@mui/material/styles';
 import { Stepper, PageHeader } from '@ui-shared/components';
 import { useDatabase } from '@ui-shared/hooks';
-import { FieldTypes } from '@ui-shared/metadata';
+import { StoreTypes } from '@ui-shared/metadata';
 import {
   useStoreContext,
   useUtilsContext,
@@ -30,8 +30,8 @@ const CreaProcedimento = () => {
   const [reset, setReset] = React.useState(false);
 
   const onSubmit = () => {
-    const procedimentoStore = stores[FieldTypes.PROCEDIMENTO];
-    const personeStore = stores[FieldTypes.PERSONE];
+    const procedimentoStore = stores[StoreTypes.PROCEDIMENTO];
+    const personeStore = stores[StoreTypes.PERSONE];
 
     const procedimento = procedimentoStore.getState().getModel();
     const persone = personeStore.getState().getItems();
@@ -51,8 +51,8 @@ const CreaProcedimento = () => {
   };
 
   const handleStepReset = () => {
-    const procedimentoStore = stores[FieldTypes.PROCEDIMENTO];
-    const personeStore = stores[FieldTypes.PERSONE];
+    const procedimentoStore = stores[StoreTypes.PROCEDIMENTO];
+    const personeStore = stores[StoreTypes.PERSONE];
 
     procedimentoStore.getState().resetModel();
     personeStore.getState().resetItems([]);

@@ -1,6 +1,6 @@
 import React from 'react';
 import { ImportoUtils } from '@ui-shared/utils';
-import { FieldTypes } from '@ui-shared/metadata';
+import { ModelTypes } from '@shared/metadata';
 
 const RiepilogoSpese = ({ persone }) => {
   const fontSize = '0.9em';
@@ -99,7 +99,7 @@ const RiepilogoSpese = ({ persone }) => {
                   }}
                 >
                   <b>
-                    {persona.type === FieldTypes.PERSONA_GIURIDICA
+                    {persona.type === ModelTypes.PERSONA_GIURIDICA
                       ? `${persona.denominazione || ''}`
                       : `${persona.nome || ''} ${persona.cognome || ''}`}
                   </b>

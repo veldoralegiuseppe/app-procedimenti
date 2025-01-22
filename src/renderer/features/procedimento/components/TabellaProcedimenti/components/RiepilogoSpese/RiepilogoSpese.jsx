@@ -5,6 +5,9 @@ import { Box, Tab, Tabs } from '@mui/material';
 import { TabellaTransazioni } from '@features/transazione';
 import { ModelTypes } from '@shared/metadata';
 import { useStoreContext } from '@ui-shared/context';
+import DeleteIcon from '@mui/icons-material/Delete';
+import { useTheme } from '@mui/material/styles';
+import { ClearButton } from '@ui-shared/theme';
 import _ from 'lodash';
 
 function TabPanel(props) {
@@ -23,9 +26,45 @@ function TabPanel(props) {
   );
 }
 
-const RiepilogoSpese = ({open}) => {
+function ClearBtn({
+  onClick,
+  updates = {},
+}) {
+  const theme = useTheme();
+  const [isModified, setIsModified] = React.useState(() => !_.isEmpty(updates));
+
+  React.useEffect(()=> {
+    console.log('updates', updates);
+    setIsModified(!_.isEmpty(updates));
+  }, [updates]);
+
+  return (
+    <ClearButton
+      variant="outlined"
+      onClick={onClick}
+      startIcon={
+        <DeleteIcon
+          sx={{
+            color: !isModified
+              ? 'rgb(105 105 105 / 60%)'
+              : theme.palette.primary.main,
+          }}
+        />
+      }
+      sx={{
+        fontSize: '.9rem',
+        '&.Mui-disabled': { color: theme.palette.text.disabled },
+      }}
+      disabled={!isModified}
+    >
+      Scarta modifiche
+    </ClearButton>
+  );
+}
+
+const RiepilogoSpese = ({ open }) => {
   const procedimentoStore = useStoreContext(ModelTypes.PROCEDIMENTO);
-  const procedimento = procedimentoStore(state => state.model);
+  const procedimento = procedimentoStore((state) => state.model);
 
   const {
     activeTab,
@@ -39,9 +78,15 @@ const RiepilogoSpese = ({open}) => {
     handleSelectControparte,
     handleChangeTransazioneParte,
     handleChangeTransazioneControparte,
+    handleChangeTransazioneProcedimento,
     storeParti,
-    storeControparti
-  } = useRiepilogoSpese({procedimento, open});
+    storeControparti,
+    updatesTransazioniParti,
+    updatesTransazioniControparti,
+    updatesTransazioniProcedimento,
+  } = useRiepilogoSpese({ procedimento, open });
+
+  console.log('updatesTransazioniParti', updatesTransazioniParti);
 
   return (
     <>
@@ -62,10 +107,14 @@ const RiepilogoSpese = ({open}) => {
       {/* Panel spese generali */}
       <TabPanel value={activeTab} index={0}>
         {procedimento && (
-          <TabellaTransazioni
-            transazioni={transazioniProcedimento}
-            disabled={['Incasso parti', 'Incasso controparti']}
-          />
+          <div>
+            <TabellaTransazioni
+              transazioni={transazioniProcedimento}
+              onChange={handleChangeTransazioneProcedimento}
+              disabled={['Incasso parti', 'Incasso controparti']}
+            />
+            <ClearBtn onClick={() => {}} updates={updatesTransazioniProcedimento[procedimento?.numProtocollo]} />
+          </div>
         )}
       </TabPanel>
 
@@ -80,10 +129,13 @@ const RiepilogoSpese = ({open}) => {
             store={storeParti}
           />
           {activeTab === 1 && (
+            <div>
             <TabellaTransazioni
               transazioni={transazioniParte}
               onChange={handleChangeTransazioneParte}
             />
+            <ClearBtn onClick={() => {}} updates={updatesTransazioniParti[procedimento?.numProtocollo]?.[indexParteSelezionata]} />
+            </div>
           )}
         </div>
       </TabPanel>

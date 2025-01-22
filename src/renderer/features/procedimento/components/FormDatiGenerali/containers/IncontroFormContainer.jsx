@@ -1,13 +1,13 @@
 import * as React from 'react';
-import { FieldTypes } from '@ui-shared/metadata';
+import { ModelTypes } from '@shared/metadata';
 import { useMetadata } from '@ui-shared/hooks';
 import { FormPresenter, ModelFactory } from '@ui-shared/components';
 
 const IncontroFormContainer = () => {
   const commonSx = { width: '29.2rem' };
   const { metadata } = useMetadata({
-    type: FieldTypes.PROCEDIMENTO,
-    keysOrSection: ModelFactory.getMetadata(FieldTypes.PROCEDIMENTO).enums
+    type: ModelTypes.PROCEDIMENTO,
+    keysOrSection: ModelFactory.getMetadata(ModelTypes.PROCEDIMENTO).enums
       .sezione.FISSAZIONE_INCONTRO,
     overrides: {
       modalitaSvolgimento: { sx: commonSx },

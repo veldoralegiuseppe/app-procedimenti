@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
-import { ModeTypes, FieldTypes } from '@ui-shared/metadata';
+import { ModeTypes, StoreTypes } from '@ui-shared/metadata';
+import { ModelTypes } from '@shared/metadata';
 import { PersonaEnumsV1 } from '@shared/metadata';
 import { useStoreContext } from '@ui-shared/context';
 import { usePersoneStore, usePersonaStore } from '@features/persona';
@@ -7,7 +8,7 @@ import { getLocalStorage, setLocalStorage } from '@ui-shared/utils';
 import { LOCAL_STORAGE_KEY } from '../constants';
 
 
-const DEFAULT_TIPO_PERSONA = FieldTypes.PERSONA_FISICA;
+const DEFAULT_TIPO_PERSONA = ModelTypes.PERSONA_FISICA;
 const DEFAULT_RUOLO_PERSONA = PersonaEnumsV1.ruolo.PARTE_ISTANTE
 
 const getContextFromLocalStorage = () => getLocalStorage(LOCAL_STORAGE_KEY);
@@ -21,9 +22,9 @@ const usePartiControparti = () => {
     return context?.selectedRowIndices || [];
   });
 
-  const personeStore = useStoreContext(FieldTypes.PERSONE);
-  const personaFisicaStore = useStoreContext(FieldTypes.PERSONA_FISICA);
-  const personaGiuridicaStore = useStoreContext(FieldTypes.PERSONA_GIURIDICA);
+  const personeStore = useStoreContext(StoreTypes.PERSONE);
+  const personaFisicaStore = useStoreContext(StoreTypes.PERSONA_FISICA);
+  const personaGiuridicaStore = useStoreContext(StoreTypes.PERSONA_GIURIDICA);
 
   const { resetModel: resetPersonaFisica } = usePersonaStore(personaFisicaStore);
   const { resetModel: resetPersonaGiuridica } = usePersonaStore(personaGiuridicaStore);
@@ -57,7 +58,7 @@ const usePartiControparti = () => {
         tipoPersona = selectedPersona.type;
         ruoloPersona = selectedPersona.ruolo;
 
-        if (tipoPersona === FieldTypes.PERSONA_FISICA) {
+        if (tipoPersona === ModelTypes.PERSONA_FISICA) {
           resetPersonaFisica(selectedPersona);
           resetPersonaGiuridica();
         } else {

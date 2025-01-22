@@ -1,7 +1,7 @@
 import React from 'react';
 import { RadioGroup, FormPresenter } from '@ui-shared/components';
 import { Slide } from '@mui/material';
-import { FieldTypes } from '@ui-shared/metadata';
+import { ModelTypes } from '@shared/metadata';
 import Grid from '@mui/material/Grid2';
 import useFormPersona from './hooks/useFormPersona';
 
@@ -38,8 +38,8 @@ const FormPersona = () => {
       <Grid size={{ xs: 12 }}>
         <Slide
           in={[
-            FieldTypes.PERSONA_FISICA,
-            FieldTypes.PERSONA_GIURIDICA,
+            ModelTypes.PERSONA_FISICA,
+            ModelTypes.PERSONA_GIURIDICA,
           ].includes(tipoPersona)}
           container={containerRef.current}
           direction="left"

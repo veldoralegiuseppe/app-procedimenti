@@ -1,8 +1,7 @@
 import { useModel } from '@ui-shared/hooks';
 import { Pipeline } from '@utils';
 import { inputValidator, updateValidator } from '@utils/filters';
-import { ModelFactory } from '@ui-shared/components';
-import { FieldTypes } from '@ui-shared/metadata';
+import { ModelTypes } from '@shared/metadata';
 import _ from 'lodash';
 
 /**
@@ -51,7 +50,7 @@ const useProcedimento = ({
 
       let transazioni = _.filter(
         model,
-        (value) => value?.type === FieldTypes.TRANSAZIONE
+        (value) => value?.type === ModelTypes.TRANSAZIONE
       );
 
       if (Array.isArray(override)) {

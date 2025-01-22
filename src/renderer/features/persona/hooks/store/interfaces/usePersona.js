@@ -1,7 +1,6 @@
 import { useModel } from '@ui-shared/hooks';
 import { Pipeline } from '@utils';
 import { inputValidator, updateValidator } from '@utils/filters';
-import { FieldTypes } from '@ui-shared/metadata';
 import { getTransazioniPersona } from '@features/persona';
 import _ from 'lodash';
 

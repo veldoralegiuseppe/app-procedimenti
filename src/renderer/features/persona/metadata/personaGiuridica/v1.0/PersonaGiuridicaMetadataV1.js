@@ -1,9 +1,10 @@
 import { validators } from '@utils';
 import {PersonaGiuridicaEnumsV1} from '@shared/metadata';
 import {InputTypes, FieldTypes, ValidationHooksTypes} from '@ui-shared/metadata';
+import {ModelTypes} from '@shared/metadata'
 
 const PersonaGiuridicaMetadataV1 = {
-  type: FieldTypes.PERSONA_GIURIDICA,
+  type: ModelTypes.PERSONA_GIURIDICA,
 
   version: '1.0',
 
@@ -92,7 +93,7 @@ const PersonaGiuridicaMetadataV1 = {
   speseAvvio: {
     key: 'speseAvvio',
     label: 'Spese avvio',
-    type: FieldTypes.TRANSAZIONE,
+    type: ModelTypes.TRANSAZIONE,
     default: {
       key: 'speseAvvio',
       nome: 'Spese avvio',
@@ -106,7 +107,7 @@ const PersonaGiuridicaMetadataV1 = {
   spesePostali: {
     key: 'spesePostali',
     label: 'Spese postali',
-    type: FieldTypes.TRANSAZIONE,
+    type: ModelTypes.TRANSAZIONE,
     default: {
       key: 'spesePostali',
       nome: 'Spese postali',
@@ -120,7 +121,7 @@ const PersonaGiuridicaMetadataV1 = {
   speseIndennita: {
     key: 'speseIndennita',
     label: 'Spese indennità',
-    type: FieldTypes.TRANSAZIONE,
+    type: ModelTypes.TRANSAZIONE,
     default: {
       key: 'speseIndennita',
       nome: 'Spese indennità',
@@ -134,7 +135,7 @@ const PersonaGiuridicaMetadataV1 = {
   speseMancatoAccordo: {
     key: 'speseMancatoAccordo',
     label: 'Spese mancato accordo',
-    type: FieldTypes.TRANSAZIONE,
+    type: ModelTypes.TRANSAZIONE,
     default: {
       key: 'speseMancatoAccordo',
       nome: 'Spese mancato accordo',
@@ -148,7 +149,7 @@ const PersonaGiuridicaMetadataV1 = {
   spesePositivoPrimoIncontro: {
     key: 'spesePositivoPrimoIncontro',
     label: 'Spese positivo primo incontro',
-    type: FieldTypes.TRANSAZIONE,
+    type: ModelTypes.TRANSAZIONE,
     default: {
       key: 'spesePositivoPrimoIncontro',
       nome: 'Spese positivo primo incontro',
@@ -162,7 +163,7 @@ const PersonaGiuridicaMetadataV1 = {
   spesePositivoOltrePrimoIncontro: {
     key: 'spesePositivoOltrePrimoIncontro',
     label: 'Spese positivo oltre primo incontro',
-    type: FieldTypes.TRANSAZIONE,
+    type: ModelTypes.TRANSAZIONE,
     default: {
       key: 'spesePositivoOltrePrimoIncontro',
       nome: 'Spese positivo oltre primo incontro',
