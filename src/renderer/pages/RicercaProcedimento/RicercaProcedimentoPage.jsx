@@ -15,7 +15,7 @@ const RicercaProcedimentoPage = () => {
 
   const ricercaStore = useStoreContext(StoreTypes.RICERCA)
   const {setQuery, setQueryResult, getQueryResult} = useRicercaStore(ricercaStore)
-  const {results: procedimenti} = getQueryResult();
+  const {results: procedimenti} = getQueryResult({});
 
   const { retrieve, calculateStatistics } = useDatabase();
 

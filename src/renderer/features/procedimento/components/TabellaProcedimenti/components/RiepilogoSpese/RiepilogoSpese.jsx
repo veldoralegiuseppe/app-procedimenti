@@ -92,7 +92,7 @@ const RiepilogoSpese = ({ open, procedimento, persone }) => {
           onChange={onChange}
         />
 
-        {_.isNumber(indexPersona) && <ClearBtn onClick={() => {}} updates={getChanges(indexPersona)} />}
+        {_.isNumber(indexPersona) && <ClearBtn onClick={() => {}} updates={updates} />}
       </div>
     );
   };

@@ -41,6 +41,7 @@ const useRicerca = ({ set, get, subscribe, initialModel, options = {} }) => {
   };
 
   const getQueryResult = ({ key, namespace, predicate }) => {
+    console.log('getQueryResult', key, namespace, predicate);
     return modelInterface.getProperty({
       root: _.concat(modelInterface.modelRoot, queryResultRoot),
       key,

@@ -35,7 +35,7 @@ const FormAccordion = ({ title, isSelected, onClick, children }) => (
   </Accordion>
 );
 
-const FormRicerca = () => {
+const FormRicercaComponent = () => {
   const [formSelected, updateFormSelected] = React.useState(
     () => RICERCA_SEMPLICE
   );
@@ -83,4 +83,10 @@ const FormRicerca = () => {
   );
 };
 
+const FormRicerca = React.memo(
+  FormRicercaComponent,
+  (prevProps, nextProps) => {
+    return true;
+  }
+);
 export default FormRicerca;
