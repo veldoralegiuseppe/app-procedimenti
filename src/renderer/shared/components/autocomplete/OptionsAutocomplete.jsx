@@ -33,7 +33,7 @@ const OptionsAutocomplete = ({
   onChange,
   onBlur,
   onOpen,
-  optionsStore,
+  optionsStore: optionsOrStore,
   isOptionEqualToValue = (option, value) => _.isEqual(option.value === value),
   sx,
   value: initialValue = '',
@@ -70,7 +70,7 @@ const OptionsAutocomplete = ({
   } = useOptionsAutocomplete({
     initialValue,
     onChange,
-    optionsStore,
+    optionsOrStore,
     onBlur,
     groupBy,
     creatable,

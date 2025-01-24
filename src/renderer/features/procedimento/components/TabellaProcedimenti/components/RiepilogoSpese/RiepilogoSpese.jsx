@@ -3,8 +3,7 @@ import useRiepilogoSpese from './hooks/useRiepilogoSpese';
 import PersoneSelect from '../PersoneSelect/PersoneSelect';
 import { Box, Tab, Tabs } from '@mui/material';
 import { TabellaTransazioni } from '@features/transazione';
-import { ModelTypes } from '@shared/metadata';
-import { useStoreContext } from '@ui-shared/context';
+import { PersonaEnumsV1 } from '@shared/metadata';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useTheme } from '@mui/material/styles';
 import { ClearButton } from '@ui-shared/theme';
@@ -59,11 +58,7 @@ function ClearBtn({ onClick, updates = {} }) {
   );
 }
 
-const RiepilogoSpese = ({ open }) => {
-  const procedimentoStore = useStoreContext(ModelTypes.PROCEDIMENTO);
-  const procedimento = procedimentoStore((state) => state.model);
-
-  const riepilogoProps = useRiepilogoSpese({ procedimento, open });
+const RiepilogoSpese = ({ open, procedimento, persone }) => {
   const {
     activeTab,
     handleTabChange,
@@ -74,22 +69,33 @@ const RiepilogoSpese = ({ open }) => {
     transazioniControparte,
     handleSelectParte,
     handleSelectControparte,
-    handleChangeTransazioneParte,
-    handleChangeTransazioneControparte,
-    handleChangeTransazioneProcedimento,
-    storeParti,
-    storeControparti,
-    updatesTransazioniParti,
-    updatesTransazioniControparti,
-    updatesTransazioniProcedimento,
-  } = riepilogoProps;
+    handleChangeParte,
+    handleChangeControparte,
+    handleChangeProcedimento,
+    procedimentoChanges,
+    personeChanges,
+  } = useRiepilogoSpese({ procedimento, persone, open });
 
-  const renderTabellaTransazioni = (transazioni, onChange, updates) => (
-    <div>
-      <TabellaTransazioni transazioni={transazioni} onChange={onChange} />
-      {updates && <ClearBtn onClick={() => {}} updates={updates} />}
-    </div>
-  );
+  const renderTabellaTransazioni = (transazioni, onChange, indexPersona) => {
+    let updates = {}
+
+    if(indexPersona === -1) 
+      updates = procedimentoChanges;
+    else if(indexPersona >= 0)
+      updates = _.get(personeChanges, indexPersona, {});
+
+    return (
+      <div>
+        <TabellaTransazioni
+          autoUpdate={false}
+          transazioni={transazioni}
+          onChange={onChange}
+        />
+
+        {_.isNumber(indexPersona) && <ClearBtn onClick={() => {}} updates={getChanges(indexPersona)} />}
+      </div>
+    );
+  };
 
   return (
     <>
@@ -110,8 +116,8 @@ const RiepilogoSpese = ({ open }) => {
         {procedimento &&
           renderTabellaTransazioni(
             transazioniProcedimento,
-            handleChangeTransazioneProcedimento,
-            updatesTransazioniProcedimento[procedimento?.numProtocollo]
+            handleChangeProcedimento,
+            -1
           )}
       </TabPanel>
 
@@ -119,28 +125,25 @@ const RiepilogoSpese = ({ open }) => {
         <PersoneSelect
           indexPersona={indexParteSelezionata}
           onChange={handleSelectParte}
-          store={storeParti}
+          persone={persone}
+          ruolo={PersonaEnumsV1.ruolo.PARTE_ISTANTE}
         />
         {activeTab === 1 &&
-          renderTabellaTransazioni(
-            transazioniParte,
-            handleChangeTransazioneParte,
-            updatesTransazioniParti[procedimento?.numProtocollo]?.[
-              indexParteSelezionata
-            ]
-          )}
+          renderTabellaTransazioni(transazioniParte, handleChangeParte, indexParteSelezionata)}
       </TabPanel>
 
       <TabPanel value={activeTab} index={2}>
         <PersoneSelect
           indexPersona={indexControparteSelezionata}
           onChange={handleSelectControparte}
-          store={storeControparti}
+          persone={persone}
+          ruolo={PersonaEnumsV1.ruolo.CONTROPARTE}
         />
         {activeTab === 2 &&
           renderTabellaTransazioni(
             transazioniControparte,
-            handleChangeTransazioneControparte
+            handleChangeControparte,
+            indexParteSelezionata
           )}
       </TabPanel>
     </>

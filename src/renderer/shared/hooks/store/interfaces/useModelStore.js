@@ -19,7 +19,8 @@ const useModelStore = (store) => {
   const getModel = useCallback(() => store?.getState()?.getModel(), [store]);
   const getPropertyAndDependencies = useCallback((props) => store?.getState()?.getPropertyAndDependencies(props), [store]);
   const setErrors = useCallback((props) => store?.getState()?.setErrors(props), [store]);
-  const getFieldErrors = useCallback((props) => store(state => state.getFieldErrors(props)), [store]);
+  const getFieldErrors = useCallback((props) => store(state => state?.getFieldErrors(props)), [store]);
+  const getChange = useCallback((props) => store(state => state?.getChange(props)), [store]);
 
   return { 
     getModel, 
@@ -30,7 +31,8 @@ const useModelStore = (store) => {
     getFieldErrors,
     removeProperty,
     setErrors,
-    findProperties
+    findProperties,
+    getChange,
   };
 };
 

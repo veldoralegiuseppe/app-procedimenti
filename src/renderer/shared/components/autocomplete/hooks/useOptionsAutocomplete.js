@@ -1,23 +1,27 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import _ from 'lodash';
 import { useDialog } from './useDialog';
-import { useModelArrayStore } from '@ui-shared/hooks';
+import { useModelArrayStore, useModelArray } from '@ui-shared/hooks';
+import _ from 'lodash';
 
 export const useOptionsAutocomplete = ({
   initialValue,
   onChange,
   filterFn,
-  optionsStore,
+  optionsOrStore,
   onBlur,
   groupBy,
   extractValue,
   creatable = true,
 }) => {
-  const { addItem, removeItemByValue, findItem, getItems } =
-    useModelArrayStore(optionsStore);
+
+  const store = useCreateStore({
+    storeInterface: useModelArray,
+    initialItems: _.isArray(optionsOrStore) ? optionsOrStore : [],
+  });
+
+  const { addItem, removeItemByValue, findItem, getItems } = useModelArrayStore(_.isArray(optionsOrStore) ? store : optionsOrStore);
   const [value, setValue] = useState(initialValue);
-  const { open, dialogValue, openDialog, closeDialog, setDialogValue } =
-    useDialog();
+  const { open, dialogValue, openDialog, closeDialog, setDialogValue } = useDialog();
   const [options, setOptions] = useState([]);
   const items = getItems();
 

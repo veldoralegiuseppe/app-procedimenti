@@ -28,20 +28,33 @@ const getStoreSchema = (initialModel) => ({
  * @returns {Function} getModel - Ottiene l'intero modello o un sottoinsieme se namespace è definito.
  */
 const useModel = ({ set, get, subscribe, initialModel = {}, options = {} }) => {
-  const buildRoot = (root) => options?.namespace ? `${options.namespace}.${root}` : `${root}`;
+  const buildRoot = (root) => {
+    let newRoot = [];
+
+    const addToRoot = (value) => {
+      if (_.isString(value)) newRoot = _.concat(newRoot, _.toPath(value));
+      else if (_.isArray(value)) newRoot = _.concat(newRoot, value);
+    };
+
+    addToRoot(_.get(options, ['namespace']));
+    addToRoot(root);
+
+    return newRoot;
+  };
   const hasSchema = (root) => _.get(options, ['schema', root]);
-  const defaultRoot = buildRoot('model');
+  const modelRoot = buildRoot('model');
+  const lastUpdateRoot = buildRoot('lastUpdate');
+  const errorsRoot = buildRoot('errors');
 
   const initializePath = ({ root, key, namespace }) => {
-    const initRoot = _.isString(root) ? buildRoot(root) : defaultRoot;
-    let path = [initRoot];
+    let path = !_.isUndefined(root) ? buildRoot(root) : modelRoot;
 
     if (_.isArray(namespace)) path = _.concat(path, namespace);
-    else if (_.isString(namespace)) path =  _.concat(path, _.toPath(namespace))
-    if (_.isString(key)) path =  _.concat(path, _.toPath(key))
-      
+    else if (_.isString(namespace)) path = _.concat(path, _.toPath(namespace));
+    if (_.isString(key)) path = _.concat(path, _.toPath(key));
+
     return path;
-  }
+  };
 
   const buildPath = ({ root, key, namespace, predicate }) => {
     const path = initializePath({ root, key, namespace });
@@ -86,32 +99,47 @@ const useModel = ({ set, get, subscribe, initialModel = {}, options = {} }) => {
     return newErrors;
   };
 
-  const updateModel = (state, { path, value, changes, validations }) => {
-    const currentValue = _.get(state, path);
-    const newValue = value;
-  
-    console.log('updateModel', path, currentValue, newValue);
-  
-    if (!_.isEqual(currentValue, newValue)) {
-      _.set(state, path, newValue);
-  
-      if (_.isUndefined(newValue)) {
-        _.unset(state, ['lastUpdate', ...path.slice(1)]);
-        if (_.isEmpty(_.get(state, 'lastUpdate'))) {
-          _.set(state, 'lastUpdate', null);
-        }
-      } else {
-        _.set(state, ['lastUpdate', ...path.slice(1)], changes);
+  const updateLastChanges = (state, { path, changes }) => {
+    const defaultValue = _.get(initialModel, path);
+    const lastChangesPath = _.concat(lastUpdateRoot, path.slice(1));
+    const lastChanges = _.get(state, lastChangesPath);
+
+    if (!_.isEqual(defaultValue, changes)) {
+      if (!_.isEqual(lastChanges, changes))
+        _.set(state, lastChangesPath, changes);
+    } else {
+      _.unset(state, lastChangesPath);
+      if (_.isEmpty(_.get(state, lastUpdateRoot))) {
+        _.set(state, lastUpdateRoot, null);
       }
-  
-      _.set(state, ['errors', ...path.slice(1)], checkValidation(newValue, validations));
     }
   };
-  
-  const updateError = (state, { path, value }) => {
-    if (!_.isEqual(_.get(state, path), value)) {
-      _.update(state, path, () => value);
+
+  const updateError = (state, { path, changes, isChanged, validations }) => {
+    const errorsPath = _.concat(errorsRoot, path.slice(1));
+    
+    if (isChanged && _.isArray(validations)) {
+      _.set(
+        state,
+        errorsPath,
+        checkValidation(changes, validations)
+      );
     }
+  };
+
+  const updateModel = (
+    state,
+    { path, value: mergedValue, changes, validations }
+  ) => {
+    const currentValue = _.get(state, path);
+    const newValue = mergedValue;
+    const isChanged = !_.isEqual(currentValue, newValue);
+    console.log('updateModel', path, currentValue, newValue);
+
+    if (isChanged) _.set(state, path, newValue);
+
+    updateLastChanges(state, { path, changes });
+    updateError(state, { path, changes, isChanged, validations });
   };
 
   const update = (state, { path, ...rest }) => {
@@ -135,7 +163,7 @@ const useModel = ({ set, get, subscribe, initialModel = {}, options = {} }) => {
     namespace,
     merge = true,
     predicate,
-    root = defaultRoot,
+    root = modelRoot,
   }) => {
     const { path } = buildPath({ root, key, namespace, predicate });
 
@@ -146,9 +174,11 @@ const useModel = ({ set, get, subscribe, initialModel = {}, options = {} }) => {
         let newValue = _.cloneDeep(value);
 
         if (merge) {
-          newValue =_.isObject(value) ? _.merge({}, _.get(draft, path), value) : value;
+          newValue = _.isObject(value)
+            ? _.merge({}, _.get(draft, path), value)
+            : value;
         }
-        
+
         update(draft, { path, changes, value: newValue, validations });
         //console.log('statoDopo', _.cloneDeep(draft));
       })
@@ -166,7 +196,7 @@ const useModel = ({ set, get, subscribe, initialModel = {}, options = {} }) => {
 
   // Rimuove una proprietà
   const removeProperty = ({
-    root = defaultRoot,
+    root = modelRoot,
     key,
     namespace,
     predicate,
@@ -189,13 +219,9 @@ const useModel = ({ set, get, subscribe, initialModel = {}, options = {} }) => {
   const resetModel = (newModel) => {
     set(
       produce((state) => {
-        _.set(state, defaultRoot, _.cloneDeep(newModel || initialModel));
-      })
-    );
-
-    set(
-      produce((state) => {
+        _.set(state, modelRoot, _.cloneDeep(newModel || initialModel));
         state.lastUpdate = null;
+        state.errors = null;
       })
     );
 
@@ -207,7 +233,7 @@ const useModel = ({ set, get, subscribe, initialModel = {}, options = {} }) => {
   };
 
   // Ottiene una proprietà dal modello
-  const getProperty = ({ key, namespace, predicate, root = defaultRoot }) => {
+  const getProperty = ({ key, namespace, predicate, root = modelRoot }) => {
     try {
       const { target } = buildPath({ root, key, namespace, predicate });
       return target;
@@ -217,7 +243,7 @@ const useModel = ({ set, get, subscribe, initialModel = {}, options = {} }) => {
   };
 
   // Ottiene più proprietà
-  const getProperties = ({ paths, root = defaultRoot }) => {
+  const getProperties = ({ paths, root = modelRoot }) => {
     const check = (value) => {
       const isValid =
         _.isString(value) ||
@@ -255,18 +281,24 @@ const useModel = ({ set, get, subscribe, initialModel = {}, options = {} }) => {
   };
 
   // Trova le proprietà che soddisfano il predicato
-  const findProperties = ({ root = defaultRoot, key, namespace, predicate }) => {
+  const findProperties = ({
+    root = modelRoot,
+    key,
+    namespace,
+    predicate,
+  }) => {
     const path = initializePath({ root, key, namespace });
-    const data = _.get(get(), path);
-    console.log('findProperties', path, data)
-    const results = _.filter(_.isArray(data) ? data : _.values(data), predicate);
- 
+    let results = _.get(get(), path);
+    
+    if(_.isFunction(predicate)) 
+      results = _.filter(results, predicate)
+
     return results;
   };
 
   // Ottiene l'intero modello o un sottoinsieme se namespace è definito
   const getModel = () => {
-    return _.get(get(), defaultRoot);
+    return _.get(get(), modelRoot);
   };
 
   // Ottiene una proprietà e le sue dipendenze
@@ -275,14 +307,21 @@ const useModel = ({ set, get, subscribe, initialModel = {}, options = {} }) => {
     namespace,
     predicate,
     dependencies,
-    rootValue = defaultRoot,
+    rootValue = modelRoot,
   }) => {
     const value = getProperty({ key, namespace, predicate, rootValue });
-    const unsubscribeCallbacks = getProperty({ root: 'unsubscribeCallbacks' }) || {};
+    const unsubscribeCallbacks =
+      getProperty({ root: 'unsubscribeCallbacks' }) || {};
 
     if (dependencies) {
       Object.entries(dependencies).forEach(([depName, props]) => {
-        const { depKey, namespace, predicate, callback, rootDep = defaultRoot } = props;
+        const {
+          depKey,
+          namespace,
+          predicate,
+          callback,
+          rootDep = modelRoot,
+        } = props;
 
         const subscriptionKey = `${key}-${depKey}`;
         if (unsubscribeCallbacks?.[subscriptionKey]) {
@@ -292,7 +331,12 @@ const useModel = ({ set, get, subscribe, initialModel = {}, options = {} }) => {
 
         const unsubscribe = subscribe(
           (state) => {
-            const depValue = getProperty({ key: depKey, namespace, root: rootDep, predicate });
+            const depValue = getProperty({
+              key: depKey,
+              namespace,
+              root: rootDep,
+              predicate,
+            });
             return depValue;
           },
           (newValue, oldValue) => {
@@ -317,7 +361,9 @@ const useModel = ({ set, get, subscribe, initialModel = {}, options = {} }) => {
     return {
       value,
       unsubscribe: () => {
-        Object.values(unsubscribeCallbacks).forEach((unsubscribe) => unsubscribe());
+        Object.values(unsubscribeCallbacks).forEach((unsubscribe) =>
+          unsubscribe()
+        );
       },
     };
   };
@@ -340,7 +386,17 @@ const useModel = ({ set, get, subscribe, initialModel = {}, options = {} }) => {
     return getProperty({ key, namespace, predicate, root: 'errors' });
   };
 
+  // Ottiene gli updates rispetto a initialModels
+  const getChange = ({key, namespace, predicate}) => {
+    return getProperty({ key, namespace, predicate, root: lastUpdateRoot });
+  }
+
   return {
+    modelRoot,
+    lastUpdateRoot,
+    errorsRoot,
+    buildRoot,
+    initializePath,
     ...getStoreSchema(initialModel),
     setProperty,
     removeProperty,
@@ -352,6 +408,7 @@ const useModel = ({ set, get, subscribe, initialModel = {}, options = {} }) => {
     setErrors,
     getFieldErrors,
     findProperties,
+    getChange,
   };
 };
 

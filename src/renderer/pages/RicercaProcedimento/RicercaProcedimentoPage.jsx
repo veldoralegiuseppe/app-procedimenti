@@ -12,18 +12,22 @@ import { LinearProgress } from '@mui/material';
 
 const RicercaProcedimentoPage = () => {
   const theme = useTheme();
+
   const ricercaStore = useStoreContext(StoreTypes.RICERCA)
-  const {setProperty, getProperty} = useRicercaStore(ricercaStore)
-  const procedimenti = getProperty({key: 'results', namespace: 'queryResult'});
+  const {setQuery, setQueryResult, getQueryResult} = useRicercaStore(ricercaStore)
+  const {results: procedimenti} = getQueryResult();
+
   const { retrieve, calculateStatistics } = useDatabase();
+
   const [isModalOpen, setModalOpen] = useState(false);
+
   const helperText = `Puoi effettuare la ricerca dei procedimenti utilizzando la ricerca semplice o la ricerca avanzata. 
                     La ricerca semplice ti permette di trovare rapidamente i procedimenti inserendo pochi criteri di base, 
                     mentre la ricerca avanzata ti consente di filtrare i risultati utilizzando criteri più dettagliati e specifici.`;
 
   const handleSearch = useCallback(async () => {
     const res = await retrieve({ type: ModelTypes.PROCEDIMENTO });
-    setProperty({key: 'queryResult', value: res?.success ? res.data : {}});
+    setQueryResult(res?.success ? res.data : {});
   }, [retrieve]);
 
   const handleOpenStatistics = useCallback(async () => {

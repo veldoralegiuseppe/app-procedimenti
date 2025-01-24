@@ -1,31 +1,32 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ModelTypes } from '@shared/metadata';
-import { useStoreContext } from '@ui-shared/context';
-import { usePersonaStore, usePersoneStore } from '@features/persona';
 import _ from 'lodash';
 
-const usePersonaSelect = (indexPersona, onChange, personeStore) => {
-  console.log('usePersonaSelect', personeStore.getState());
-  const personaFisicaStore = useStoreContext(ModelTypes.PERSONA_FISICA);
-  const personaGiuridicaStore = useStoreContext(ModelTypes.PERSONA_GIURIDICA);
+const usePersonaSelect = (indexPersona, onChange, persone=[], ruolo) => {
+ 
+  const [lastIndexSelected, setLastIndexSelected] = useState(indexPersona || null);
+  const [value, setValue] = useState(() => extractValue(persone[indexPersona]));
 
-  const { getItem } = usePersoneStore(personeStore);
-  const { resetModel: resetPersonaFisica } =
-    usePersonaStore(personaFisicaStore);
-  const { resetModel: resetPersonaGiuridica } = usePersonaStore(
-    personaGiuridicaStore
-  );
-
-  const [lastIndexSelected, setLastIndexSelected] = useState(null);
-  const lastValueSelected = useRef('');
+  useEffect(() => {
+    setValue(extractValue(persone[indexPersona]));
+  }, [indexPersona, persone]);
+  
+  const filterFn = (persone) => {
+    return persone
+      .map((p, id) => ({ ...p, id }))
+      .filter((p) => !_.isUndefined(ruolo) ? _.isEqual(p.ruolo, ruolo) : true);
+  }
 
   const extractValue = (persona) => {
+    if (!persona) return '';
+
     if (persona.type === ModelTypes.PERSONA_FISICA) {
       return {
         value: `${persona.nome} ${persona.cognome}`,
         type: persona.type,
       };
     }
+
     return { value: persona.denominazione, type: persona.type };
   };
 
@@ -38,42 +39,20 @@ const usePersonaSelect = (indexPersona, onChange, personeStore) => {
     _.isEqual(option?.id, lastIndexSelected);
 
   const handleBlur = (anagrafica, option) => {
-    const persona = option ? getItem(option.id) : null;
     const newIndex = option?.id >= 0 ? option.id : null;
 
     setLastIndexSelected(newIndex);
-    lastValueSelected.current = anagrafica || '';
-
-    if (option?.type === ModelTypes.PERSONA_FISICA) resetPersonaFisica(persona);
-    else if (option?.type === ModelTypes.PERSONA_GIURIDICA)
-      resetPersonaGiuridica(persona);
-    else {
-      resetPersonaFisica();
-      resetPersonaGiuridica();
-    }
-
+    setValue(extractValue(persone[newIndex]));
     onChange?.(newIndex);
   };
 
-  useEffect(() => {
-    if (indexPersona != null && !_.isEqual(indexPersona, lastIndexSelected)) {
-      setLastIndexSelected(() => {
-        const persona = getItem(indexPersona);
-        lastValueSelected.current = persona
-          ? extractValue(persona)?.value || ''
-          : '';
-        return indexPersona;
-      });
-    }
-  }, [indexPersona]);
-
   return {
-    personeStore,
-    lastValueSelected,
+    value,
     isOptionEqualToValue,
     extractValue,
     groupBy,
     handleBlur,
+    filterFn,
   };
 };
 

@@ -36,8 +36,22 @@ const useModelArrayStore = (arrayStore) => {
   }, [arrayStore]);
   const removeItemByValue = useCallback((item) => arrayStore.getState().removeItemByValue(item), [arrayStore]); 
   const resetItems = useCallback((items) => arrayStore.getState().resetItems(items), [arrayStore]);
+
   
-  return { addItem, addItems, updateItem, removeItem, filterItems, findItem, getItemProperty, getItem, getItems, findItemProperty, updateItemById, removeItemByValue, resetItems };
+  return { 
+    addItem, 
+    addItems, 
+    updateItem, 
+    removeItem, 
+    filterItems, 
+    findItem, 
+    getItemProperty, 
+    getItem, 
+    getItems, 
+    findItemProperty, 
+    updateItemById, 
+    removeItemByValue, 
+    resetItems };
 };
 
 export default useModelArrayStore;

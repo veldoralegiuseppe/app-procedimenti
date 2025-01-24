@@ -43,14 +43,14 @@ const AzioniCell = (onClick) => (props) => {
 
 const TabellaProcedimenti = ({ onRowSelected, procedimenti = [] }) => {
   const { data } = useProcedimentoTableRow({ procedimenti });
-  const stores = useStoreContext();
-  const { resetModel } = useProcedimentoStore(stores[StoreTypes.PROCEDIMENTO]);
-  const { resetItems } = usePersoneStore(stores[StoreTypes.PERSONE]);
+  const store = useStoreContext(StoreTypes.RICERCA);
+  const {setProcedimento, getProcedimento, setPersone, getPersone} = useRicercaStore(store);
 
   const [open, setOpen] = React.useState(false);
-  const [procedimentoSelezionato, setProcedimentoSelezionato] = React.useState(null);
-
-  const loadProcedimento = (procedimento) => {
+  const procedimentoSelezionato = getProcedimento()
+  const personeSelezionate = getPersone();
+  
+  const buildIstanza = (procedimento) => {
     console.log('Caricamento procedimento', procedimento);
 
     const persone = procedimento?.persone
@@ -69,15 +69,13 @@ const TabellaProcedimenti = ({ onRowSelected, procedimenti = [] }) => {
       version: procedimento.version,
     });
 
-    resetModel(istanza);
-    resetItems(persone);
-
-    return istanza;
+    return {persone, procedimento: istanza};
   };
 
   const handleSpeseClick = (index) => {
-    const procedimento = loadProcedimento(procedimenti[index]);
-    setProcedimentoSelezionato(procedimento);
+    const {persone, procedimento} = buildIstanza(procedimenti[index]);
+    setProcedimento(procedimento);
+    setPersone(persone);
     _.delay(() => setOpen(true), 10);
   };
 
@@ -210,7 +208,7 @@ const TabellaProcedimenti = ({ onRowSelected, procedimenti = [] }) => {
       />
 
       <FormModal open={open} handleClose={handleCloseModale}>
-        <RiepilogoSpese open={open} procedimento={procedimentoSelezionato} />
+        <RiepilogoSpese open={open} procedimento={procedimentoSelezionato} persone={personeSelezionate} />
       </FormModal>
     </React.Fragment>
   );

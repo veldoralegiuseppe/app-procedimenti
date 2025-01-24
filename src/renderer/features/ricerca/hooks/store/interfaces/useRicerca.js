@@ -4,68 +4,138 @@ import _ from 'lodash';
 const ricercaModel = {
   query: {},
   queryResult: {},
-  updates: {},
+  procedimento: {},
+  persone: [],
 };
 
 const useRicerca = ({ set, get, subscribe, initialModel, options = {} }) => {
-  const rootPath = options?.namespace ? `${options.namespace}.model` : 'model';
-
   const modelInterface = useModel({
     set,
     get,
     subscribe,
     options,
-    initialModel: _.merge(ricercaModel, initialModel),
+    initialModel: _.merge({}, ricercaModel, initialModel),
   });
+
+  const queryRoot = modelInterface.buildRoot('query');
+  const queryResultRoot = modelInterface.buildRoot('queryResult');
+  const procedimentoRoot = modelInterface.buildRoot('procedimento');
+  const personeRoot = modelInterface.buildRoot('persone');
+  
+  const setQuery = ({ key, value, validations }) => {
+    modelInterface.setProperty({
+      key,
+      value,
+      validations,
+      merge: true,
+      root: _.concat(modelInterface.modelRoot, queryRoot),
+    });
+  };
+
+  const setQueryResult = (result) => {
+    modelInterface.setProperty({
+      value: result,
+      merge: false,
+      root: _.concat(modelInterface.modelRoot, queryResultRoot),
+    });
+  };
+
+  const getQueryResult = ({ key, namespace, predicate }) => {
+    return modelInterface.getProperty({
+      root: _.concat(modelInterface.modelRoot, queryResultRoot),
+      key,
+      namespace,
+      predicate,
+    });
+  };
+
+  const setProcedimento = (procedimento) => {
+    modelInterface.setProperty({
+      value: procedimento,
+      merge: false,
+      root: _.concat(modelInterface.modelRoot, procedimentoRoot),
+    });
+  };
+
+  const setProcedimentoProperty = ({
+    key,
+    value,
+    validations,
+    namespace,
+    predicate,
+  }) => {
+    modelInterface.setProperty({
+      key,
+      value,
+      validations,
+      namespace,
+      predicate,
+      root: _.concat(modelInterface.modelRoot, procedimentoRoot),
+    });
+  };
+
+  const getProcedimento = () => {
+    return modelInterface.getProperty({
+      root: _.concat(modelInterface.modelRoot, procedimentoRoot),
+    });
+  };
+
+  const setPersone = (persone) => {
+    modelInterface.setProperty({
+      value: persone,
+      merge: false,
+      root: _.concat(modelInterface.modelRoot, personeRoot),
+    });
+  };
+
+  const setPersonaProperty = ({
+    key,
+    value,
+    validations,
+    predicate,
+    index,
+  }) => {
+    modelInterface.setProperty({
+      key,
+      value,
+      validations,
+      namespace: [index],
+      predicate,
+      root: _.concat(modelInterface.modelRoot, personeRoot),
+    });
+  };
+
+  const getPersone = () => {
+    return modelInterface.getProperty({
+      root: _.concat(modelInterface.modelRoot, personeRoot),
+    });
+  };
+
+  const getChangeProcedimento = () => {
+    return modelInterface.getChange({namespace: procedimentoRoot});
+  }
+
+  const getChangePersone = () => {
+    return modelInterface.getChange({namespace: personeRoot});
+  }
+
 
   return {
     // Interfaccia funzionale del model store
     ...modelInterface,
 
-    getUpdate: (key, namespace, predicate) => {
-      const path = [rootPath, 'updates'];
-
-      if (_.isArray(namespace)) _.concat(path, namespace);
-      else if (namespace) path.push(namespace);
-
-      if (key) path.push(key);
-
-      let target = _.get(state, path);
-      if(predicate) target = _.filter(target, predicate);
-
-      return target;
-    },
-
-    setUpdate: (changes, key, namespace, merge = false, predicate) => {
-     
-      // Costruisce il path per l'aggiornamento
-      const path = [rootPath, 'updates'];
-
-      if (_.isArray(namespace)) _.concat(path, namespace);
-      else if (namespace) path.push(namespace);
-
-      if (key) path.push(key);
-
-      // Update effettivo
-      set(
-        produce((state) => {
-          let target = _.get(state, path);
-         
-          if(predicate && target) {
-            let keyOrIndex
-
-            if(_.isObject(target)) keyOrIndex = _.findKey(target, predicate);
-            else if (_.isArray(target)) keyOrIndex = _.findIndex(target, predicate);
-
-            if(keyOrIndex) path.push(keyOrIndex);
-          }
-
-          if(!target) _.set(state, path, changes);
-          else if(merge) _.merge(target, changes);
-          else _.set(state, path, changes);
-        })
-      );
-    },
+    // Funzioni specifiche del modello
+    setQuery,
+    setQueryResult,
+    getQueryResult,
+    setProcedimento,
+    setProcedimentoProperty,
+    getProcedimento,
+    setPersone,
+    setPersonaProperty,
+    getPersone,
+    getChangeProcedimento,
+    getChangePersone,
   };
 };
 

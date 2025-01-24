@@ -3,25 +3,27 @@ import { OptionsAutocomplete } from '@ui-shared/components';
 import usePersonaSelect from './hooks/usePersonaSelect';
 import _ from 'lodash';
 
-function PersoneSelect({ onChange, indexPersona, store }) {
+function PersoneSelect({ onChange, indexPersona, persone = [], ruolo }) {
   const {
-    lastValueSelected,
+    value,
     isOptionEqualToValue,
     extractValue,
     groupBy,
     handleBlur,
-  } = usePersonaSelect(indexPersona, onChange, store);
+    filterFn,
+  } = usePersonaSelect(indexPersona, onChange, persone, ruolo);
 
   return (
     <OptionsAutocomplete
       label="Seleziona una persona"
-      value={lastValueSelected.current}
+      value={value}
       deletable={false}
       creatable={false}
       isOptionEqualToValue={isOptionEqualToValue}
-      optionsStore={store}
+      optionsStore={persone}
       extractValue={extractValue}
       groupBy={groupBy}
+      filterFn={filterFn}
       onBlur={handleBlur}
     />
   );

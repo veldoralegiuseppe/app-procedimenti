@@ -1,9 +1,10 @@
-import _ from 'lodash';
 import { ModelFactory } from '@ui-shared/components';
 import { ModelTypes, PersonaEnumsV1 } from '@shared/metadata';
+import _ from 'lodash';
 
 const getTransazioniPersona = (persona, override = []) => {
   const owner = persona.type;
+
   let transazioni = Object.values(persona || {})
     .filter((field) => field?.type === ModelTypes.TRANSAZIONE)
     .map((t) =>
@@ -27,6 +28,70 @@ const getTransazioniPersona = (persona, override = []) => {
   return transazioni;
 };
 
+const getTransazioniPersone = (persone, override) => {
+  const tot = {
+    importoDovutoParti: 0,
+    importoCorrispostoParti: 0,
+    importoDovutoControparti: 0,
+    importoCorrispostoControparti: 0,
+  };
+
+  const transazioni = [];
+
+  const getIncassoPersona = (persona, index) => {
+    const isParteIstante =
+      persona?.ruolo === PersonaEnumsV1.ruolo.PARTE_ISTANTE;
+    const transactions = getTransazioniPersona(persona, override?.[index]);
+    _.set(transazioni, index, transactions);
+
+    console.log('getIncassoPersona', persona, transactions, override);
+
+    transactions.forEach((t) => {
+      if (isParteIstante) {
+        tot.importoCorrispostoParti += t.importoCorrisposto;
+        tot.importoDovutoParti += t.importoDovuto;
+      } else {
+        tot.importoCorrispostoControparti += t.importoCorrisposto;
+        tot.importoDovutoControparti += t.importoDovuto;
+      }
+    });
+  };
+
+  const createTransazione = (initialValues, isParte = true) => {
+    return ModelFactory.create({
+      type: ModelTypes.TRANSAZIONE,
+      initialValues: {
+        ...initialValues,
+        importoDovuto: isParte
+          ? tot.importoDovutoParti
+          : tot.importoDovutoControparti,
+        importoCorrisposto: isParte
+          ? tot.importoCorrispostoParti
+          : tot.importoCorrispostoControparti,
+      },
+    });
+  };
+
+  persone.forEach((persona, index) => getIncassoPersona(persona, index));
+
+  return {
+    incassi: [
+      createTransazione({
+        nome: 'Incasso parti',
+        tipo: TransazioneEnumsV1.tipo.ENTRATA,
+      }),
+      createTransazione(
+        {
+          nome: 'Incasso controparti',
+          tipo: TransazioneEnumsV1.tipo.ENTRATA,
+        },
+        false
+      ),
+    ],
+    transazioniPersone: transazioni,
+  };
+};
+
 const getPartiControparti = (persone = []) => {
   const { PARTE_ISTANTE, CONTROPARTE } = PersonaEnumsV1.ruolo;
   const parti = [];
@@ -43,4 +108,4 @@ const getPartiControparti = (persone = []) => {
   return { parti, controparti };
 };
 
-export { getTransazioniPersona, getPartiControparti };
+export { getTransazioniPersona, getTransazioniPersone, getPartiControparti };

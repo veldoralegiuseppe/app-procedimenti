@@ -177,6 +177,7 @@ const useTransazioneTableRow = ({
   onChange,
   onBlur,
   errors,
+  autoUpdate = true,
   mode,
 }) => {
   const { statoChipFlagMap, flagColorToStatoMap, statoEnums } = useTransazioneConstants();
@@ -254,7 +255,8 @@ const useTransazioneTableRow = ({
       const owner = oldTransazione.owner;
       const store = ownerStore[owner];
 
-      store.getState().setProperty({key: oldTransazione.key, value: changes});
+      if(autoUpdate)
+        store.getState().setProperty({key: oldTransazione.key, value: changes});
 
       //console.log('handleChange', index, oldTransazione.key, changes);
       onChange?.(index, oldTransazione.key, changes);

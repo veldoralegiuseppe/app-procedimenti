@@ -14,6 +14,7 @@ const TabellaTransazioniComponent = ({
   onChange,
   onBlur,
   errors,
+  autoupdate = true,
   mode = ModeTypes.CREATE,
 }) => {
   const { data } = useTransazioneTableRow({
@@ -23,6 +24,7 @@ const TabellaTransazioniComponent = ({
     onBlur,
     errors,
     mode,
+    autoupdate,
   });
 
   const columns = React.useMemo(
@@ -113,7 +115,7 @@ const TabellaTransazioni = React.memo(
     // Considero dinamiche le props: disabled, transazioni
     return (
       _.isEqual(prevProps.disabled, nextProps.disabled) &&
-      prevProps.transazioni === nextProps.transazioni
+      _.isEqual(prevProps.transazioni, nextProps.transazioni)
     );
   }
 );
