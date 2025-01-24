@@ -48,8 +48,7 @@ const TabellaProcedimenti = ({ onRowSelected, procedimenti = [] }) => {
   const { resetItems } = usePersoneStore(stores[StoreTypes.PERSONE]);
 
   const [open, setOpen] = React.useState(false);
-  const [procedimentoSelezionato, setProcedimentoSelezionato] =
-    React.useState(null);
+  const [procedimentoSelezionato, setProcedimentoSelezionato] = React.useState(null);
 
   const loadProcedimento = (procedimento) => {
     console.log('Caricamento procedimento', procedimento);

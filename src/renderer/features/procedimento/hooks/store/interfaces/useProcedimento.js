@@ -37,28 +37,25 @@ const useProcedimento = ({
     initialModel,
   });
 
+  const getTransazioni = (overrides) => {
+    const arrayTransazioni = modelInterface.findProperties({
+      predicate: (value) => value?.type === ModelTypes.TRANSAZIONE,
+    });
+    const sortTransazioni = _.sortBy(arrayTransazioni, 'key');
+    const sortOverrides = _.isArray(overrides)
+      ? _.sortBy(overrides, 'key')
+      : [];
+
+      console.log('arrayTransazioni', arrayTransazioni, 'sortTransazioni', sortTransazioni, 'sortOverrides', sortOverrides);
+    return _.merge(sortTransazioni, sortOverrides);
+  };
+
   return {
     // Interfaccia funzionale del model store
     ...modelInterface,
 
     // Metodi specifici
-    getTransazioni: (override) => {
-      const rootPath = options?.namespace
-        ? `${options.namespace}.model`
-        : 'model';
-      const model = _.get(get(), rootPath);
-
-      let transazioni = _.filter(
-        model,
-        (value) => value?.type === ModelTypes.TRANSAZIONE
-      );
-
-      if (Array.isArray(override)) {
-        transazioni = _.unionBy(override, transazioni, 'key');
-      }
-
-      return transazioni;
-    },
+    getTransazioni,
   };
 };
 

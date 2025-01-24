@@ -4,7 +4,8 @@ import { PageHeader, ButtonFactory, FormModal } from '@ui-shared/components';
 import { TabellaProcedimenti } from '@features/procedimento';
 import { FormRicerca, OverviewStatistico } from './components';
 import { ButtonTypes, StoreTypes } from '@ui-shared/metadata';
-import { useDatabase, useRicercaStore } from '@ui-shared/hooks';
+import { useDatabase } from '@ui-shared/hooks';
+import { useRicercaStore } from '@features/ricerca';
 import { useStoreContext } from '@ui-shared/context';
 import { ModelTypes } from '@shared/metadata';
 import { LinearProgress } from '@mui/material';
@@ -13,8 +14,7 @@ const RicercaProcedimentoPage = () => {
   const theme = useTheme();
   const ricercaStore = useStoreContext(StoreTypes.RICERCA)
   const {setProperty, getProperty} = useRicercaStore(ricercaStore)
-  const procedimenti = getProperty('results');
-  console.log('ricercaStore', procedimenti);
+  const procedimenti = getProperty({key: 'results', namespace: 'queryResult'});
   const { retrieve, calculateStatistics } = useDatabase();
   const [isModalOpen, setModalOpen] = useState(false);
   const helperText = `Puoi effettuare la ricerca dei procedimenti utilizzando la ricerca semplice o la ricerca avanzata. 
@@ -23,8 +23,7 @@ const RicercaProcedimentoPage = () => {
 
   const handleSearch = useCallback(async () => {
     const res = await retrieve({ type: ModelTypes.PROCEDIMENTO });
-    console.log('result', res.data?.results)
-    setProperty('results', res?.success ? res.data?.results : []);
+    setProperty({key: 'queryResult', value: res?.success ? res.data : {}});
   }, [retrieve]);
 
   const handleOpenStatistics = useCallback(async () => {

@@ -118,7 +118,7 @@ const useFormPersonaFisica = () => {
                   (prov) => prov.payload.sigla === siglaProvincia
                 )?.value;
 
-              setProperty('provinciaNascita', provincia || undefined);
+              setProperty({key: 'provinciaNascita', value: provincia || undefined});
             });
 
             return {
@@ -149,7 +149,7 @@ const useFormPersonaFisica = () => {
             if (isCodiceFiscaleValid)
               dataNascita = decodeDataNascita(codiceFiscale);
 
-            setProperty('dataNascita', dataNascita?.format('YYYY-MM-DD'));
+            setProperty({key: 'dataNascita', value: dataNascita?.format('YYYY-MM-DD')});
 
             return {
               disabled: isCodiceFiscaleValid,
@@ -179,7 +179,7 @@ const useFormPersonaFisica = () => {
             let genere;
             if (isCodiceFiscaleValid) genere = decodeGenere(codiceFiscale);
             genere = genere ? (genere === 'M' ? 'UOMO' : 'DONNA') : undefined;
-            setProperty('sesso', genere);
+            setProperty({key: 'sesso', value: genere});
 
             return {
               disabled: isCodiceFiscaleValid,
@@ -195,8 +195,8 @@ const useFormPersonaFisica = () => {
       optionsStore: comuneNascitaStore,
       onBlur: (change, option) => {
         const cap = option?.payload?.cap;
-        setProperty('comuneNascita', option?.value);
-        setProperty('capComuneNascita', cap);
+        setProperty({key: 'comuneNascita', value: option?.value});
+        setProperty({key: 'capComuneNascita', value: cap});
       },
       dependencies: {
         provinciaNascita: {
@@ -208,7 +208,7 @@ const useFormPersonaFisica = () => {
             store,
           }) => {
             // Controllo se il codice fiscale è valido
-            const codiceFiscale = store.getState().getProperty('codiceFiscale');
+            const codiceFiscale = store.getState().getProperty({key: 'codiceFiscale'});
             const isCodiceFiscaleValid =
               codiceFiscale &&
               validators.isCodiceFiscale(codiceFiscale) === true;
@@ -228,10 +228,10 @@ const useFormPersonaFisica = () => {
             // Resetta i campo quando la provincia cambia
             if (!isCodiceFiscaleValid && !_.isEqual(oldProvincia, provincia)) {
               // Comune
-              setProperty('comuneNascita', undefined);
+              setProperty({key: 'comuneNascita', value: undefined});
 
               // CAP
-              setProperty('capComuneNascita', undefined);
+              setProperty({key: 'capComuneNascita', value: undefined});
             }
 
             return {
@@ -260,8 +260,8 @@ const useFormPersonaFisica = () => {
                       String(result?.province).toLowerCase()
                 );
               
-              setProperty('comuneNascita', comune?.value);
-              setProperty('capComuneNascita', comune?.payload?.cap);
+              setProperty({key: 'comuneNascita', value: comune?.value});
+              setProperty({key: 'capComuneNascita', value: comune?.payload?.cap});
             });
           },
         },
@@ -278,8 +278,8 @@ const useFormPersonaFisica = () => {
       onBlur: (change, option) => {
         const cap = option?.payload?.cap;
        
-        setProperty('comuneResidenza', option?.value);
-        setProperty('capComuneResidenza', cap);
+        setProperty({key: 'comuneResidenza', value: option?.value});
+        setProperty({key: 'capComuneResidenza', value: cap});
       },
       dependencies: {
         provinciaResidenza: {
@@ -305,10 +305,10 @@ const useFormPersonaFisica = () => {
             // Resetta i campo quando la provincia cambia
             if (!_.isEqual(oldProvincia, provincia)) {
               // Comune
-              setProperty('comuneResidenza', undefined);
+              setProperty({key: 'comuneResidenza', value: undefined});
 
               // CAP
-              setProperty('capComuneResidenza', undefined);
+              setProperty({key: 'capComuneResidenza', value: undefined});
             }
 
             return {

@@ -12,7 +12,7 @@ const useInputFactory = ({
   const theme = useTheme();
   const store = useStoreContext(owner);
   const { setProperty, getFieldErrors } = useModelStore(store);
-  const errors = getFieldErrors(fieldKey) || {};
+  const errors = getFieldErrors({key: fieldKey}) || {};
   const hasError = typeof Object.values(errors)[0] === 'string';
   const errorMessage = hasError ? Object.values(errors)[0] : '';
 
@@ -35,7 +35,7 @@ const useInputFactory = ({
       props?.onChange?.(changes, ...rest);
       if (updateOnChange) {
         Object.entries(changes).forEach(([key, value]) => {
-          setProperty(key, value, props?.inputValidations);
+          setProperty({key, value, validations: props?.inputValidations});
         });
       }
     },
@@ -46,7 +46,7 @@ const useInputFactory = ({
       if (!updateOnChange) {
         Object.entries(changes).forEach(([key, value]) => {
           console.log('handleBlur', key, value, props?.inputValidations);
-          setProperty(key, value, props?.inputValidations);
+          setProperty({key, value, validations: props?.inputValidations});
         });
       }
       props?.onBlur?.(changes, ...rest);

@@ -9,18 +9,22 @@ const useStoreDependencies = ({
   args,
   callback,
 }) => {
-  //console.log('useStoreDependencies', {fieldKey, storeType, dependencies, args, callback});
+  console.log('useStoreDependencies', {fieldKey, storeType, dependencies, args, callback});
   const store = useStoreContext(storeType);
   const { getPropertyAndDependencies, getProperty } = useModelStore(store);
-  const value = getProperty?.(fieldKey);
+  const value = getProperty?.({key: fieldKey});
 
   const wrappedDep = React.useMemo(() => {
     if (!dependencies) return {};
 
     return Object.entries(dependencies).reduce((acc, [key, value]) => {
       acc[key] = {
-        namespace: value.namespace,
+        depKey: value?.depKey || key,
+        namespace: value?.namespace,
+        predicate: value?.predicate,
+        rootDep: value?.rootDep,
         callback: (key, oldValue, newValue) => {
+          console.log('callback', {key, oldValue, newValue});
           const changes = value.callback({
             key,
             oldValue,
@@ -37,10 +41,11 @@ const useStoreDependencies = ({
 
   const {
     unsubscribe = () => {}
-  } = getPropertyAndDependencies?.(fieldKey, wrappedDep) || {};
+  } = getPropertyAndDependencies?.({key: fieldKey, dependencies: wrappedDep}) || {};
 
   React.useEffect(() => {
     return () => {
+      console.log('useStoreDependencies unsubscribe', fieldKey);
       unsubscribe();
     };
   }, []);

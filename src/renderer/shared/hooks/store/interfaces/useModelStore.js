@@ -5,36 +5,32 @@ import { useCallback } from 'react';
  * 
  * @param {Object} store - L'oggetto store da utilizzare.
  * @returns {Object} - Un oggetto contenente le funzioni per interagire con lo store.
- * @returns {undefined} touchedFields - Campi toccati (attualmente non implementato).
  * @returns {Function} setProperty - Funzione per impostare una proprietà nello store.
  * @returns {Function} resetModel - Funzione per resettare il modello nello store.
- * @returns {undefined} setTouchedFields - Funzione per impostare i campi toccati (attualmente non implementato).
  * @returns {Function} getProperty - Funzione per ottenere una proprietà dallo store.
  */
 const useModelStore = (store) => {
-  const setProperty = useCallback((key, value, validations) => store?.getState()?.setProperty(key, value, validations), [store]);
+  const setProperty = useCallback((props) => store?.getState()?.setProperty(props), [store]);
+  const removeProperty = useCallback((props) => store?.getState()?.removeProperty(props), [store]);
   const resetModel = useCallback((newModel) => store?.getState()?.resetModel(newModel), [store]);
+  const getProperty = useCallback((props) => store(state => state.getProperty(props)), [store]);
+  const getProperties = useCallback((props) => store?.getState()?.getProperties(props), [store]);
+  const findProperties = useCallback((props) => store?.getState()?.findProperties(props), [store]);
   const getModel = useCallback(() => store?.getState()?.getModel(), [store]);
-  const getProperty = useCallback((key) => {
-    if(!store || typeof store !== 'function') return;
-    return store(state => state.getProperty(key))
-  }, [store]);
-  const getProperties = useCallback((keys) => store?.getState()?.getProperties(keys), [store]);
-  const getPropertyAndDependencies = useCallback((key, dependencies) => store?.getState()?.getPropertyAndDependencies(key, dependencies), [store]);
-  const getFieldErrors = useCallback((key) => {
-    if(!store || typeof store !== 'function') return;
-    return store(state => state.getFieldErrors(key))
-  }, [store]);
+  const getPropertyAndDependencies = useCallback((props) => store?.getState()?.getPropertyAndDependencies(props), [store]);
+  const setErrors = useCallback((props) => store?.getState()?.setErrors(props), [store]);
+  const getFieldErrors = useCallback((props) => store(state => state.getFieldErrors(props)), [store]);
 
   return { 
-    touchedFields: undefined, 
     getModel, 
     setProperty, 
     resetModel, 
-    setTouchedFields: undefined, 
     getProperty, getProperties, 
     getPropertyAndDependencies,
     getFieldErrors,
+    removeProperty,
+    setErrors,
+    findProperties
   };
 };
 

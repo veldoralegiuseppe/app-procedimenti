@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { ComponentFactory } from '@ui-shared/components';
 import { useStoreDependencies } from '@ui-shared/hooks';
+import _ from 'lodash';
 
 /**
  * Componente InputCell
@@ -23,48 +24,65 @@ const InputCell = (props) => {
   } = props;
 
   const [properties, setProperties] = React.useState(restProps);
+  const [overrideProps, setOverrideProps] = React.useState({});
 
   React.useEffect(() => {
-    if(Object.entries(restProps).some(([k, v]) => properties[k] !== v)) {
+    if (
+      Object.entries(restProps).some(([k, v]) => !_.isEqual(properties[k], v))
+    ) {
+      console.log('aggiorno properties', restProps);
       setProperties((prev) => {
-        return { ...prev, ...restProps }
+        return { ...prev, ...restProps };
       });
     }
   }, [restProps]);
 
-  const {value} = useStoreDependencies({
+  const mergedProps = React.useMemo(() => {
+    console.log('ricalcolo mergedProps', 'properties', properties, 'overrideProps', overrideProps, 'merged', _.merge({}, properties, overrideProps));
+    return _.merge({}, properties, overrideProps);
+  }, [properties, overrideProps]);
+
+  const { value } = useStoreDependencies({
     fieldKey,
     storeType: owner,
     dependencies,
-    args: { properties },
-    callback: ({changes}) => {
-      console.log('changes', changes);
-      if (Object.entries(changes || {}).some(([k, v]) => properties[k] !== v)) {
-        setProperties((prev) => {
-          console.log('newProperties', { ...prev, ...changes });
-          return { ...prev, ...changes }
-        });
-      }
+    args: { properties: mergedProps },
+    callback: ({ changes }) => {
+      const overrides = {};
+
+      _.forOwn(changes, (v, k) => {
+        if (!_.isEqual(properties[k], v)) _.merge(overrides, { [k]: v });
+      });
+
+      console.log('overrides', mergedProps, overrides, _.isEqual(overrides, overrideProps));
+      setOverrideProps((prev) => _.isEqual(overrides, prev) ? prev :  overrides);
     },
   });
 
-  
-
+  console.log('useStoreDependencies valuue', { fieldKey, value });
   const FieldComponent = React.useMemo(() => {
-    console.log('useStoreDependencies', properties, 'value', value);
-    
+    console.log(
+      'useStoreDependencies',
+      'properties',
+      properties,
+      'overrideProps',
+      overrideProps,
+      'value',
+      value
+    );
+
     return CustomComponent
       ? React.createElement(CustomComponent, {
           fieldKey,
           value,
-          ...properties
+          ...mergedProps,
         })
       : React.createElement(ComponentFactory.InputFactory, {
           fieldKey,
           value,
-          ...properties
+          ...mergedProps,
         });
-  }, [CustomComponent, fieldKey, value, properties]);
+  }, [CustomComponent, fieldKey, value, mergedProps]);
 
   return FieldComponent;
 };

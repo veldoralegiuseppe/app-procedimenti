@@ -31,6 +31,12 @@ const mapToRow = ({
   const isParzialmenteSaldato =
     transazione.stato === statoEnums.PARZIALMENTE_SALDATO;
 
+  const isDaSaldare = 
+    transazione.stato === statoEnums.DA_SALDARE;
+
+  const isSaldato = 
+    transazione.stato === statoEnums.SALDATO;
+
   const isCustom = transazione._custom;
   if(isCustom) console.log('isCustom', isCustom ? {value: transazione.importoDovuto} : {})
 
@@ -71,29 +77,42 @@ const mapToRow = ({
         ? ImportoUtils.formattaImporto(transazione.importoCorrisposto)
         : {
             component: ImportoInput,
-            disabled,
+            disabled: disabled || (isDaSaldare || isSaldato),
             owner: transazione.owner,
             ...(isCustom ? {value: transazione.importoCorrisposto} : {}),
             fieldKey: `${transazione.key}.importoCorrisposto`,
-            dependencies: isCustom ? undefined :{
+            dependencies: isCustom ? undefined : {
               stato: {
                 namespace: `${transazione.key}`,
                 callback: ({ key, oldValue, newValue, props, store }) => {
                   const model = store.getState().model[transazione.key];
+                  console.log('importoCorrisposto', newValue === statoEnums.SALDATO);
 
-                  if (newValue === statoEnums.SALDATO)
+                  if (newValue === statoEnums.SALDATO){
+                    console.log('importoCorrisposto', { disabled: true, value: model.importoDovuto });
                     return { disabled: true, value: model.importoDovuto };
-                  else return { disabled: false, value: 0 };
+                  }
+                  else if(newValue === statoEnums.DA_SALDARE){
+                    console.log('importoCorrisposto', { disabled: false, value: 0 });
+                    return { disabled: true, value: 0 };
+                  }
+                  else {
+                    console.log('importoCorrisposto', { disabled: false, value: 0 });
+                    return { disabled: false };
+                  }
                 },
               },
-              // importoCorrisposto: {
-              //   namespace: `${transazione.key}`,
-              //   callback: ({ key, oldValue, newValue, props, store }) => {
-              //     return {
-              //       value: newValue,
-              //     };
-              //   },
-              // },
+              importoDovuto: {
+                namespace: `${transazione.key}`,
+                callback: ({ key, oldValue: oldImportoDovuto, newValue: newImportoDovuto, props, store }) => {
+                  const model = store.getState().model[transazione.key];
+                  const stato = model.stato;
+
+                  console.log('useTransazioneTableRow', 'importoDovuto', 'old', oldImportoDovuto, 'new', newImportoDovuto, 'stato', stato, 'key', key);
+                  if(stato === statoEnums.SALDATO && !_.isEqual(oldImportoDovuto, newImportoDovuto))
+                    return { value: newImportoDovuto, disabled: true };
+                },
+              },
             },
             //value: transazione.importoCorrisposto,
             sx: { width: '12rem' },
@@ -118,6 +137,7 @@ const mapToRow = ({
           callback: ({ key, oldValue, newValue, props, store }) => {
             //console.log('importoCorrisposto', key, oldValue, newValue, props);
             const model = store.getState().model[transazione.key];
+            console.log('useTransazioneTableRow', 'state', store.getState().model, 'transazione', model);
             const stato = model.stato;
 
             if (stato === statoEnums.PARZIALMENTE_SALDATO)
@@ -234,7 +254,7 @@ const useTransazioneTableRow = ({
       const owner = oldTransazione.owner;
       const store = ownerStore[owner];
 
-      store.getState().setProperty(oldTransazione.key, changes);
+      store.getState().setProperty({key: oldTransazione.key, value: changes});
 
       //console.log('handleChange', index, oldTransazione.key, changes);
       onChange?.(index, oldTransazione.key, changes);

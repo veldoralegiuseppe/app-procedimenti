@@ -118,10 +118,10 @@ const useFormPersonaGiuridica = () => {
 
               console.log('reset comune e cap')
               // Comune
-              setProperty('comuneSedeLegale', undefined);
+              setProperty({key: 'comuneSedeLegale', value: undefined});
 
               // CAP
-              setProperty('capComuneSedeLegale', undefined);
+              setProperty({key: 'capComuneSedeLegale', value: undefined});
             }
 
             return {
@@ -135,8 +135,8 @@ const useFormPersonaGiuridica = () => {
       onBlur: (change, option) => {
         const cap = option?.payload?.cap;
         console.log('capComuneSedeLegale', cap);
-        setProperty('comuneSedeLegale', option?.value);
-        setProperty('capComuneSedeLegale', cap);
+        setProperty({key: 'comuneSedeLegale', value: option?.value});
+        setProperty({key: 'capComuneSedeLegale', value: cap});
       },
     },
 

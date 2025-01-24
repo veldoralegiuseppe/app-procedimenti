@@ -1,7 +1,8 @@
 import React, { createContext } from 'react';
 import { useProcedimento } from '@features/procedimento';
 import { usePersone, usePersona } from '@features/persona';
-import { useCreateStore, useRicerca } from '@ui-shared/hooks';
+import { useCreateStore } from '@ui-shared/hooks';
+import { useRicerca } from '@features/ricerca';
 import { StoreTypes } from '@ui-shared/metadata';
 import { ModelTypes } from '@shared/metadata';
 import { ModelFactory } from '@ui-shared/components';
@@ -30,7 +31,7 @@ const procedimentoTest = {
     tipo: 'USCITA',
     importoDovuto: 10,
     importoCorrisposto: 0,
-    type: 'transazione', 
+    type: 'transazione',
     version: '1.0',
   },
   speseAvvioSedeSecondaria: {
@@ -41,7 +42,7 @@ const procedimentoTest = {
     tipo: 'USCITA',
     importoDovuto: 15,
     importoCorrisposto: 0,
-    type: 'transazione', 
+    type: 'transazione',
     version: '1.0',
   },
   speseIndennitaSedeSecondaria: {
@@ -52,7 +53,7 @@ const procedimentoTest = {
     tipo: 'USCITA',
     importoDovuto: 19,
     importoCorrisposto: 0,
-    type: 'transazione', 
+    type: 'transazione',
     version: '1.0',
   },
   type: 'procedimento', // Tipo di procedura
@@ -138,9 +139,12 @@ const personaFisicaTest = {
 const StoreProvider = ({ children }) => {
   const procedimentoStore = useCreateStore({
     storeInterface: useProcedimento,
-    initialModel: ModelFactory.create({type: ModelTypes.PROCEDIMENTO}),
+    initialModel: ModelFactory.create({ type: ModelTypes.PROCEDIMENTO }),
   });
-  const personeStore = useCreateStore({ storeInterface: usePersone, initialItems: [] });
+  const personeStore = useCreateStore({
+    storeInterface: usePersone,
+    initialItems: [],
+  });
   const personaFisicaStore = useCreateStore({
     storeInterface: usePersona,
     initialModel: ModelFactory.create({ type: ModelTypes.PERSONA_FISICA }),
@@ -151,7 +155,7 @@ const StoreProvider = ({ children }) => {
   });
   const ricercaStore = useCreateStore({
     storeInterface: useRicerca,
-    initialModel: {results: []}
+    initialModel: { results: [] },
   });
 
   const storeMap = React.useMemo(

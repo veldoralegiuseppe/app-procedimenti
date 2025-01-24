@@ -1,6 +1,13 @@
 import _ from 'lodash';
 import { produce } from 'immer';
 
+const getStoreSchema = (initialModel) => ({
+  model: _.cloneDeep(initialModel),
+  lastUpdate: null,
+  errors: null,
+  unsubscribeCallbacks: null,
+});
+
 /**
  * Interfaccia funzionale di uno model store.
  *
@@ -21,243 +28,330 @@ import { produce } from 'immer';
  * @returns {Function} getModel - Ottiene l'intero modello o un sottoinsieme se namespace è definito.
  */
 const useModel = ({ set, get, subscribe, initialModel = {}, options = {} }) => {
-  const rootPath = options?.namespace ? `${options.namespace}.model` : 'model';
+  const buildRoot = (root) => options?.namespace ? `${options.namespace}.${root}` : `${root}`;
+  const hasSchema = (root) => _.get(options, ['schema', root]);
+  const defaultRoot = buildRoot('model');
 
-  return {
-    model: initialModel,
-    lastUpdate: null,
-    errors: null,
+  const initializePath = ({ root, key, namespace }) => {
+    const initRoot = _.isString(root) ? buildRoot(root) : defaultRoot;
+    let path = [initRoot];
 
-    // Imposta una proprietà del modello
-    setProperty: (key, value, validations) => {
-      const path = `${rootPath}.${key}`;
+    if (_.isArray(namespace)) path = _.concat(path, namespace);
+    else if (_.isString(namespace)) path =  _.concat(path, _.toPath(namespace))
+    if (_.isString(key)) path =  _.concat(path, _.toPath(key))
+      
+    return path;
+  }
 
-      // Aggiorna il model
-      set(
-        produce((state) => {
-          const target = _.get(state, path);
+  const buildPath = ({ root, key, namespace, predicate }) => {
+    const path = initializePath({ root, key, namespace });
+    let target = _.get(get(), path);
 
-          if (!_.isArray(value) && _.isObject(value)) {
-            //console.log('isObject', value)
-            const updatedValue = _.merge({}, target, value);
-            if (!_.isEqual(target, updatedValue)) {
-              console.log('updatedValue', target, updatedValue);
-              _.set(state, path, updatedValue); // Imposta una nuova reference solo se ci sono cambiamenti
-            }
-          } else {
-            //console.log('isEqual', 'target', target, 'value', value, _.isEqual(target, value));
-            if (!_.isEqual(target, value)) {
-              console.log(
-                'updatedValue:',
-                'key',
-                key,
-                'path',
-                path,
-                'target',
-                target,
-                'value',
-                value
-              );
-              _.set(state, path, value); // Imposta solo se il valore è diverso
+    if (_.isUndefined(target)) {
+      if (hasSchema(path[0]) || _.isFunction(predicate))
+        throw new Error(`Il path '[${path}]' non esiste nel ${path[0]}`);
+      return { path, exists: false };
+    }
+
+    if (_.isFunction(predicate)) {
+      let keyOrIndex;
+
+      if (_.isObject(target)) keyOrIndex = _.findKey(target, predicate);
+      else if (_.isArray(target)) keyOrIndex = _.findIndex(target, predicate);
+
+      if (keyOrIndex) {
+        path.push(keyOrIndex);
+        target = _.get(get(), path);
+      } else
+        throw new Error(
+          `Il path '[${path}]' esteso con la funzione di ricerca non esiste nel ${path[0]}`
+        );
+    }
+
+    return { path, exists: true, target };
+  };
+
+  const checkValidation = (value, validations) => {
+    console.log('checkValidation', value, validations);
+    if (!validations) return {};
+
+    const newErrors = validations.reduce((acc, validation) => {
+      const errorMessage = validation(value);
+      if (_.isString(errorMessage)) {
+        acc[validation.name || validation.toString()] = errorMessage;
+      }
+      return acc;
+    }, {});
+
+    return newErrors;
+  };
+
+  const updateModel = (state, { path, value, changes, validations }) => {
+    const currentValue = _.get(state, path);
+    const newValue = value;
+  
+    console.log('updateModel', path, currentValue, newValue);
+  
+    if (!_.isEqual(currentValue, newValue)) {
+      _.set(state, path, newValue);
+  
+      if (_.isUndefined(newValue)) {
+        _.unset(state, ['lastUpdate', ...path.slice(1)]);
+        if (_.isEmpty(_.get(state, 'lastUpdate'))) {
+          _.set(state, 'lastUpdate', null);
+        }
+      } else {
+        _.set(state, ['lastUpdate', ...path.slice(1)], changes);
+      }
+  
+      _.set(state, ['errors', ...path.slice(1)], checkValidation(newValue, validations));
+    }
+  };
+  
+  const updateError = (state, { path, value }) => {
+    if (!_.isEqual(_.get(state, path), value)) {
+      _.update(state, path, () => value);
+    }
+  };
+
+  const update = (state, { path, ...rest }) => {
+    const root = path[0];
+
+    switch (root) {
+      case 'model':
+        updateModel(state, { path, ...rest });
+        break;
+      case 'errors':
+        updateError(state, { path, ...rest });
+        break;
+    }
+  };
+
+  // Imposta una proprietà del modello
+  const setProperty = ({
+    key,
+    value,
+    validations,
+    namespace,
+    merge = true,
+    predicate,
+    root = defaultRoot,
+  }) => {
+    const { path } = buildPath({ root, key, namespace, predicate });
+
+    set(
+      produce((draft) => {
+        //console.log('statoPrima', _.cloneDeep(draft));
+        let changes = _.cloneDeep(value);
+        let newValue = _.cloneDeep(value);
+
+        if (merge) {
+          newValue =_.isObject(value) ? _.merge({}, _.get(draft, path), value) : value;
+        }
+        
+        update(draft, { path, changes, value: newValue, validations });
+        //console.log('statoDopo', _.cloneDeep(draft));
+      })
+    );
+
+    // Chiama la callback opzionale se definita
+    if (options?.onSetProperty) {
+      options.onSetProperty(key, value);
+    }
+
+    //console.log('persona', get().model);
+    //console.log('lastUpdate', get().lastUpdate);
+    //console.log('errors', get().errors);
+  };
+
+  // Rimuove una proprietà
+  const removeProperty = ({
+    root = defaultRoot,
+    key,
+    namespace,
+    predicate,
+  }) => {
+    const { path, exists } = buildPath({ root, key, namespace, predicate });
+    if (!exists) return;
+
+    set(
+      produce((state) => {
+        _.unset(state, path);
+      })
+    );
+
+    if (options?.onRemoveProperty) {
+      options.onRemoveProperty(key);
+    }
+  };
+
+  // Resetta il modello
+  const resetModel = (newModel) => {
+    set(
+      produce((state) => {
+        _.set(state, defaultRoot, _.cloneDeep(newModel || initialModel));
+      })
+    );
+
+    set(
+      produce((state) => {
+        state.lastUpdate = null;
+      })
+    );
+
+    if (options?.onResetModel) {
+      options.onResetModel(newModel);
+    }
+
+    console.log('modello resettato', get().model);
+  };
+
+  // Ottiene una proprietà dal modello
+  const getProperty = ({ key, namespace, predicate, root = defaultRoot }) => {
+    try {
+      const { target } = buildPath({ root, key, namespace, predicate });
+      return target;
+    } catch (err) {
+      return undefined;
+    }
+  };
+
+  // Ottiene più proprietà
+  const getProperties = ({ paths, root = defaultRoot }) => {
+    const check = (value) => {
+      const isValid =
+        _.isString(value) ||
+        _.has(value, 'key') ||
+        _.has(value, 'namespace') ||
+        _.has(value, 'predicate');
+
+      if (!isValid)
+        throw new Error(
+          'Ogni oggetto deve avere almeno una chiave tra key, namespace o predicate'
+        );
+    };
+
+    const objResult = _.reduce(
+      paths,
+      (acc, value) => {
+        check(value);
+        const { key, namespace, predicate } = value;
+        try {
+          const { target, path } = buildPath({
+            root,
+            key,
+            namespace,
+            predicate,
+          });
+          _.set(acc, path, target);
+        } catch (err) {}
+
+        return acc;
+      },
+      {}
+    );
+
+    return objResult;
+  };
+
+  // Trova le proprietà che soddisfano il predicato
+  const findProperties = ({ root = defaultRoot, key, namespace, predicate }) => {
+    const path = initializePath({ root, key, namespace });
+    const data = _.get(get(), path);
+    console.log('findProperties', path, data)
+    const results = _.filter(_.isArray(data) ? data : _.values(data), predicate);
+ 
+    return results;
+  };
+
+  // Ottiene l'intero modello o un sottoinsieme se namespace è definito
+  const getModel = () => {
+    return _.get(get(), defaultRoot);
+  };
+
+  // Ottiene una proprietà e le sue dipendenze
+  const getPropertyAndDependencies = ({
+    key,
+    namespace,
+    predicate,
+    dependencies,
+    rootValue = defaultRoot,
+  }) => {
+    const value = getProperty({ key, namespace, predicate, rootValue });
+    const unsubscribeCallbacks = getProperty({ root: 'unsubscribeCallbacks' }) || {};
+
+    if (dependencies) {
+      Object.entries(dependencies).forEach(([depName, props]) => {
+        const { depKey, namespace, predicate, callback, rootDep = defaultRoot } = props;
+
+        const subscriptionKey = `${key}-${depKey}`;
+        if (unsubscribeCallbacks?.[subscriptionKey]) {
+          console.log(`Subscription for ${subscriptionKey} already exists`);
+          return;
+        }
+
+        const unsubscribe = subscribe(
+          (state) => {
+            const depValue = getProperty({ key: depKey, namespace, root: rootDep, predicate });
+            return depValue;
+          },
+          (newValue, oldValue) => {
+            if (!_.isEqual(newValue, oldValue)) {
+              callback?.(depKey, oldValue, newValue);
             }
           }
-        })
-      );
-
-      // Aggiorna lastUpdate
-      set(
-        produce((state) => {
-          let hasChanged;
-
-          if (_.isObject(value)) {
-            hasChanged = Object.entries(value).some(
-              ([subKey, subValue]) =>
-                !_.isEqual(_.get(initialModel, `${key}.${subKey}`), subValue)
-            );
-          } else {
-            hasChanged = !_.isEqual(_.get(initialModel, key), value);
-          }
-
-          if (hasChanged) {
-            if (!state.lastUpdate) {
-              state.lastUpdate = {};
-            }
-            _.merge(state.lastUpdate, { [key]: value });
-          } else {
-            if (_.isObject(value)) {
-              Object.entries(value).forEach(([subKey, subValue]) => {
-                _.unset(state.lastUpdate, `${key}.${subKey}`);
-              });
-              if (_.isEmpty(_.get(state.lastUpdate, key))) {
-                _.unset(state.lastUpdate, key);
-              }
-            } else {
-              _.unset(state.lastUpdate, key);
-            }
-
-            if (_.isEmpty(state.lastUpdate)) {
-              state.lastUpdate = null;
-            }
-          }
-        })
-      );
-
-      // Aggiorna gli errori
-      if (validations) {
-        const newErrors = validations.reduce((acc, validation) => {
-          const errorMessage = validation(value);
-          if (typeof errorMessage === 'string') {
-            acc[validation.name || validation.toString()] = errorMessage;
-          }
-          return acc;
-        }, {});
+        );
 
         set(
-          produce((state) => {
-            if (_.isEmpty(newErrors)) {
-              console.log('nessun errore rilevato', newErrors);
-              _.unset(state.errors, key);
-            } else {
-              if (!state.errors) {
-                state.errors = {};
-              }
-                if (!_.isEqual(_.get(state.errors, key), newErrors)) {
-                _.merge(state.errors, { [key]: newErrors });
-                }
+          produce((draft) => {
+            if (!draft.unsubscribeCallbacks) {
+              draft.unsubscribeCallbacks = {};
             }
-
-            if (_.isEmpty(state.errors)) {
-              state.errors = null;
-            }
+            draft.unsubscribeCallbacks[subscriptionKey] = unsubscribe;
           })
         );
-      }
+      });
+    }
 
-      // Chiama la callback opzionale se definita
-      if (options?.onSetProperty) {
-        options.onSetProperty(key, value);
-      }
+    // Restituisce il valore e la possibilità di disiscriversi
+    return {
+      value,
+      unsubscribe: () => {
+        Object.values(unsubscribeCallbacks).forEach((unsubscribe) => unsubscribe());
+      },
+    };
+  };
 
-      //console.log('persona', get().model);
-      //console.log('lastUpdate', get().lastUpdate);
-      //console.log('errors', get().errors);
-    },
+  // Imposta gli errori
+  const setErrors = ({ key, errors, namespace, predicate }) => {
+    setProperty({
+      key,
+      value: errors,
+      validations: null,
+      namespace,
+      merge: false,
+      predicate,
+      root: 'errors',
+    });
+  };
 
-    // Rimuove una proprietà dal modello
-    removeProperty: (key) => {
-      const path = `${rootPath}.${key}`;
-      set(
-        produce((state) => {
-          _.unset(state, path);
-        })
-      );
+  // Ottiene gli errori
+  const getFieldErrors = ({ key, namespace, predicate }) => {
+    return getProperty({ key, namespace, predicate, root: 'errors' });
+  };
 
-      if (options?.onRemoveProperty) {
-        options.onRemoveProperty(key);
-      }
-    },
-
-    // Resetta il modello
-    resetModel: (newModel) => {
-      set(
-        produce((state) => {
-          _.set(state, rootPath, _.cloneDeep(newModel || initialModel));
-        })
-      );
-
-      set(
-        produce((state) => {
-          state.lastUpdate = null;
-        })
-      );
-
-      if (options?.onResetModel) {
-        options.onResetModel(newModel);
-      }
-
-      console.log('modello resettato', get().model);
-    },
-
-    // Ottiene una proprietà dal modello
-    getProperty: (key, namespace) => {
-      const fieldPath = namespace ? `${namespace}.${key}` : key;
-      const path = `${rootPath}.${fieldPath}`;
-      //console.log('property', path, _.get(get(), path));
-      return _.get(get(), path);
-    },
-
-    // Ottiene più proprietà dal modello
-    getProperties: (keys) => {
-      const objResult = keys.reduce((acc, key) => {
-        const path = `${rootPath}.${key}`;
-        acc[key] = _.get(get(), path);
-        return acc;
-      }, {});
-
-      return objResult;
-    },
-
-    // Ottiene l'intero modello o un sottoinsieme se namespace è definito
-    getModel: () => {
-      return _.get(get(), rootPath);
-    },
-
-    // Ottiene una proprietà e le sue dipendenze
-    getPropertyAndDependencies: (key, dependencies) => {
-      const path = `${rootPath}.${key}`;
-      const value = _.get(get(), path);
-
-      // Gestisce la reattività
-      const unsubscribeCallbacks = [];
-
-      if (dependencies) {
-        Object.entries(dependencies).forEach(([depKey, value]) => {
-          const { namespace, callback } = value;
-          const fieldPath = namespace ? `${namespace}.${depKey}` : depKey;
-          const depPath = `${rootPath}.${fieldPath}`;
-
-          const unsubscribe = subscribe(
-            (state) => {
-              //console.log('Selettore per ' + depKey + ' resituisce', _.get(state, depPath));
-              return _.get(state, depPath);
-            },
-
-            (newValue, oldValue) => {
-              //console.log(`Callback per ${depKey}:`, { newValue, oldValue });
-              if (!_.isEqual(newValue, oldValue)) {
-                //console.log(`Callback attivata per ${depKey}`);
-                callback?.(depKey, oldValue, newValue);
-              } else {
-                //console.log(`Nessun cambiamento rilevato per ${depKey}`);
-              }
-            }
-          );
-          unsubscribeCallbacks.push(unsubscribe);
-        });
-      }
-
-      // Restituisce il valore e la possibilità di disiscriversi
-      return {
-        value,
-        //dependencies: dependenciesMap,
-        unsubscribe: () =>
-          unsubscribeCallbacks.forEach((unsubscribe) => unsubscribe()),
-      };
-    },
-
-    // Imposta gli errori del model: DA RIFATTORIZZARE
-    setErrors: (key, errors) => {
-      set(
-        produce((state) => {
-          state.errors[key] = errors;
-        })
-      );
-    },
-
-    // Ottiene gli errori del model
-    getFieldErrors: (key) => {
-      return get().errors?.[key];
-    },
+  return {
+    ...getStoreSchema(initialModel),
+    setProperty,
+    removeProperty,
+    resetModel,
+    getProperty,
+    getProperties,
+    getModel,
+    getPropertyAndDependencies,
+    setErrors,
+    getFieldErrors,
+    findProperties,
   };
 };
 

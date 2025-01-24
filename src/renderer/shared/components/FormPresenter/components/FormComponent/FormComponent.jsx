@@ -7,18 +7,29 @@ import _ from 'lodash';
 const FormComponentVanilla = ({index, propsArrayStore}) => {
   //console.log('index', index, 'propsArrayStore', propsArrayStore);
   const { getItem } = useModelArrayStore(propsArrayStore);
-  const {size, component, owner, key: fieldKey, dependencies, ...props} = getItem(index);
+  const {size, component, owner, key: fieldKey, dependencies, ...properties} = getItem(index);
  
-  const [properties, setProperties] = React.useState(props);
+  const [overrideProps, setOverrideProps] = React.useState({});
+  const mergedProps = React.useMemo(() => {
+    console.log('ricalcolo mergedProps', 'properties', properties, 'overrideProps', overrideProps, 'merged', _.merge({}, properties, overrideProps));
+    return _.merge({}, properties, overrideProps);
+  }, [properties, overrideProps]);
+
+
   const {value} = useStoreDependencies({
     fieldKey,
     storeType: owner,
     dependencies,
-    args: { props: properties },
+    args: { properties: mergedProps },
     callback: ({changes}) => {
-      if (changes && Object.entries(changes).some(([k, v]) => properties[k] !== v)) {
-        setProperties((prev) => ({ ...prev, ...changes }));
-      }
+      const overrides = {}
+
+      _.forOwn(changes, (v, k) =>  {
+        if(!_.isEqual(properties[k], v)) _.merge(overrides, {[k]: v})
+      });
+
+      console.log('overrides', overrides);
+      setOverrideProps((prev) => _.isEqual(overrides, prev) ? prev :  overrides);
     },
   });
   
@@ -26,13 +37,13 @@ const FormComponentVanilla = ({index, propsArrayStore}) => {
   const CustomComponent = component;
   const FieldComponent = React.useMemo(() => {
     return CustomComponent
-      ? React.createElement(CustomComponent, {value, ...properties, fieldKey, owner})
-      : React.createElement(ComponentFactory.InputFactory, {value, ...properties, fieldKey, owner});
-  }, [CustomComponent, value, properties, fieldKey, owner]);
+      ? React.createElement(CustomComponent, {value, ...mergedProps, fieldKey, owner})
+      : React.createElement(ComponentFactory.InputFactory, {value, ...mergedProps, fieldKey, owner});
+  }, [CustomComponent, value, mergedProps, fieldKey, owner]);
 
   return (
     <Grid
-      key={props?.key}
+      key={properties?.key}
       {...(size ? { size } : {})}
     >
       {FieldComponent}

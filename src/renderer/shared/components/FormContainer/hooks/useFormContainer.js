@@ -19,7 +19,7 @@ import _ from 'lodash';
  */
 const useFormContainer = ({ useStore: store, config, sezioni }) => {
   // Leggi le funzioni direttamente dallo store
-  const { touchedFields, setProperty, resetModel, setTouchedFields } = useModelStore(store);
+  const { setProperty, resetModel } = useModelStore(store);
   
   // Estrai i metadati dal modello
   const metadati = useMemo(() => {
@@ -68,7 +68,7 @@ const useFormContainer = ({ useStore: store, config, sezioni }) => {
           return [key, !valueOrEvent ? undefined : valueOrEvent];
         })
         .forEach(([key, value]) => {
-          setProperty(key, value);
+          setProperty({key, value});
         });
     },
     [setProperty]
@@ -77,7 +77,7 @@ const useFormContainer = ({ useStore: store, config, sezioni }) => {
   // Callback per tracciare i campi toccati
   const onBlur = useCallback(
     (changes) => {
-      setTouchedFields((prev) => {
+      setTouchedFields?.((prev) => {
         const updatedTouchedFields = _.cloneDeep(prev);
 
         Object.entries(changes).forEach(([key, value]) => {
@@ -91,14 +91,13 @@ const useFormContainer = ({ useStore: store, config, sezioni }) => {
 
       config.onBlur?.(changes);
     },
-    [setTouchedFields, config.onBlur]
+    [config.onBlur]
   );
 
   return {
     errors: {}, // Gli errori ora possono essere gestiti a livello superiore o tramite validazione.
     renderOverrides: config.renderOverrides,
     filteredSezioni,
-    touchedFields,
     updateModel,
     onBlur,
     handleReset: resetModel,

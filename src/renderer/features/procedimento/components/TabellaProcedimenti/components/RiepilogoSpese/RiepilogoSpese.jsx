@@ -26,14 +26,11 @@ function TabPanel(props) {
   );
 }
 
-function ClearBtn({
-  onClick,
-  updates = {},
-}) {
+function ClearBtn({ onClick, updates = {} }) {
   const theme = useTheme();
   const [isModified, setIsModified] = React.useState(() => !_.isEmpty(updates));
 
-  React.useEffect(()=> {
+  React.useEffect(() => {
     console.log('updates', updates);
     setIsModified(!_.isEmpty(updates));
   }, [updates]);
@@ -66,6 +63,7 @@ const RiepilogoSpese = ({ open }) => {
   const procedimentoStore = useStoreContext(ModelTypes.PROCEDIMENTO);
   const procedimento = procedimentoStore((state) => state.model);
 
+  const riepilogoProps = useRiepilogoSpese({ procedimento, open });
   const {
     activeTab,
     handleTabChange,
@@ -84,13 +82,17 @@ const RiepilogoSpese = ({ open }) => {
     updatesTransazioniParti,
     updatesTransazioniControparti,
     updatesTransazioniProcedimento,
-  } = useRiepilogoSpese({ procedimento, open });
+  } = riepilogoProps;
 
-  console.log('updatesTransazioniParti', updatesTransazioniParti);
+  const renderTabellaTransazioni = (transazioni, onChange, updates) => (
+    <div>
+      <TabellaTransazioni transazioni={transazioni} onChange={onChange} />
+      {updates && <ClearBtn onClick={() => {}} updates={updates} />}
+    </div>
+  );
 
   return (
     <>
-      {/* Tabs */}
       <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
         <Tabs
           value={activeTab}
@@ -104,59 +106,42 @@ const RiepilogoSpese = ({ open }) => {
         </Tabs>
       </Box>
 
-      {/* Panel spese generali */}
       <TabPanel value={activeTab} index={0}>
-        {procedimento && (
-          <div>
-            <TabellaTransazioni
-              transazioni={transazioniProcedimento}
-              onChange={handleChangeTransazioneProcedimento}
-              disabled={['Incasso parti', 'Incasso controparti']}
-            />
-            <ClearBtn onClick={() => {}} updates={updatesTransazioniProcedimento[procedimento?.numProtocollo]} />
-          </div>
-        )}
+        {procedimento &&
+          renderTabellaTransazioni(
+            transazioniProcedimento,
+            handleChangeTransazioneProcedimento,
+            updatesTransazioniProcedimento[procedimento?.numProtocollo]
+          )}
       </TabPanel>
 
-      {/* Panel parti */}
       <TabPanel value={activeTab} index={1}>
-        <div
-          style={{ display: 'flex', flexDirection: 'column', rowGap: '4rem' }}
-        >
-          <PersoneSelect
-            indexPersona={indexParteSelezionata}
-            onChange={handleSelectParte}
-            store={storeParti}
-          />
-          {activeTab === 1 && (
-            <div>
-            <TabellaTransazioni
-              transazioni={transazioniParte}
-              onChange={handleChangeTransazioneParte}
-            />
-            <ClearBtn onClick={() => {}} updates={updatesTransazioniParti[procedimento?.numProtocollo]?.[indexParteSelezionata]} />
-            </div>
+        <PersoneSelect
+          indexPersona={indexParteSelezionata}
+          onChange={handleSelectParte}
+          store={storeParti}
+        />
+        {activeTab === 1 &&
+          renderTabellaTransazioni(
+            transazioniParte,
+            handleChangeTransazioneParte,
+            updatesTransazioniParti[procedimento?.numProtocollo]?.[
+              indexParteSelezionata
+            ]
           )}
-        </div>
       </TabPanel>
 
-      {/* Panel controparti */}
       <TabPanel value={activeTab} index={2}>
-        <div
-          style={{ display: 'flex', flexDirection: 'column', rowGap: '4rem' }}
-        >
-          <PersoneSelect
-            indexPersona={indexControparteSelezionata}
-            onChange={handleSelectControparte}
-            store={storeControparti}
-          />
-          {activeTab === 2 && (
-            <TabellaTransazioni
-              transazioni={transazioniControparte}
-              onChange={handleChangeTransazioneControparte}
-            />
+        <PersoneSelect
+          indexPersona={indexControparteSelezionata}
+          onChange={handleSelectControparte}
+          store={storeControparti}
+        />
+        {activeTab === 2 &&
+          renderTabellaTransazioni(
+            transazioniControparte,
+            handleChangeTransazioneControparte
           )}
-        </div>
       </TabPanel>
     </>
   );
