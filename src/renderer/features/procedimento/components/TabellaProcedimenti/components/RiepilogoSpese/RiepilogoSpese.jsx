@@ -95,7 +95,7 @@ const RiepilogoSpese = ({ open, procedimento, persone: pers }) => {
     if(indexPersona === -1) 
       updates = procedimentoChanges;
     else if(indexPersona >= 0){
-      rootDep = _.concat(['model'], roots.persone, indexPersona)
+      rootDep = _.concat(roots.persone, indexPersona)
       updates = _.get(personeChanges, indexPersona, {})
       updateMethod = 'setPersonaProperty';
       getMethod = 'getPersonaProperty';
@@ -136,7 +136,7 @@ const RiepilogoSpese = ({ open, procedimento, persone: pers }) => {
       </Box>
 
       <TabPanel value={activeTab} index={0}>
-        {procedimento &&
+        {procedimento && _.isEqual(activeTab, 0) && 
           renderTabellaTransazioni(
             transazioniProcedimento,
             handleChangeProcedimento,
