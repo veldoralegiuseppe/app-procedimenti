@@ -59,11 +59,18 @@ const useRiepilogoSpese = ({ procedimento, persone: initPersone = [], open }) =>
   const { transazioniProcedimento = [], incassi = [], transazioniPersone = [] } = 
   getTransazioniProcedimento({procedimento, persone, overrides: {}});
 
+
   const transazioni = useMemo(() => ({
     transazioniProcedimento: _.union(incassi, transazioniProcedimento), 
+    transazioniPersone,
     transazioniParte: _.get(transazioniPersone, indexParteSelezionata, []),
     transazioniControparte: _.get(transazioniPersone, indexControparteSelezionata, []),
   }), [_.get(procedimento, 'numProtocollo')])
+
+  const transazioniPartiControparti = useMemo(() => ({
+    transazioniParte: _.get(transazioniPersone, indexParteSelezionata, []),
+    transazioniControparte: _.get(transazioniPersone, indexControparteSelezionata, []),
+  }), [transazioni.transazioniPersone, indexParteSelezionata, indexControparteSelezionata])
 
   console.log('transazioni', procedimento, persone, transazioniProcedimento, incassi, transazioniPersone);
 
@@ -100,8 +107,8 @@ const useRiepilogoSpese = ({ procedimento, persone: initPersone = [], open }) =>
     indexParteSelezionata,
     indexControparteSelezionata,
     transazioniProcedimento: transazioni.transazioniProcedimento,
-    transazioniParte: transazioni.transazioniParte,
-    transazioniControparte: transazioni.transazioniControparte,
+    transazioniParte: transazioniPartiControparti.transazioniParte,
+    transazioniControparte: transazioniPartiControparti.transazioniControparte,
     handleSelectParte,
     handleSelectControparte,
     handleChangeParte,
