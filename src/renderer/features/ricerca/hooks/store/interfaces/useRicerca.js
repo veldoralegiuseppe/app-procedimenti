@@ -65,6 +65,7 @@ const useRicerca = ({ set, get, subscribe, initialModel, options = {} }) => {
     namespace,
     predicate,
   }) => {
+
     modelInterface.setProperty({
       key,
       value,
@@ -73,6 +74,8 @@ const useRicerca = ({ set, get, subscribe, initialModel, options = {} }) => {
       predicate,
       root: _.concat(modelInterface.modelRoot, procedimentoRoot),
     });
+
+    console.log('setProcedimentoProperty', {key, value, validations, namespace, predicate, state: _.get(get(), _.concat(modelInterface.modelRoot, procedimentoRoot))});
   };
 
   const getProcedimento = () => {
@@ -80,6 +83,14 @@ const useRicerca = ({ set, get, subscribe, initialModel, options = {} }) => {
       root: _.concat(modelInterface.modelRoot, procedimentoRoot),
     });
   };
+
+  const getProcedimentoProperty = ({key, namespace}) => {
+    return modelInterface.getProperty({
+      root: _.concat(modelInterface.modelRoot, procedimentoRoot),
+      key,
+      namespace,
+    });
+  }
 
   const setPersone = (persone) => {
     modelInterface.setProperty({
@@ -112,18 +123,43 @@ const useRicerca = ({ set, get, subscribe, initialModel, options = {} }) => {
     });
   };
 
+  const getPersona = ({index}) => {
+    return modelInterface.getProperty({
+      root: _.concat(modelInterface.modelRoot, personeRoot),
+      namespace: [index],
+    });
+  }
+
+  const getPersonaProperty = ({ key, index }) => {
+    console.log('getPersonaProperty', key, index)
+    return modelInterface.getProperty({
+      root: _.concat(modelInterface.modelRoot, personeRoot),
+      key,
+      namespace: [index],
+    });
+  }
+
   const getChangeProcedimento = () => {
-    return modelInterface.getChange({namespace: procedimentoRoot});
+    //console.log('getChangeProcedimento', _.concat(modelInterface.lastUpdateRoot, procedimentoRoot));
+    return modelInterface.getChange({namespace: _.concat(modelInterface.lastUpdateRoot, procedimentoRoot)});
   }
 
   const getChangePersone = () => {
-    return modelInterface.getChange({namespace: personeRoot});
+    return modelInterface.getChange({namespace: _.concat(modelInterface.lastUpdateRoot, personeRoot)});
   }
 
 
   return {
     // Interfaccia funzionale del model store
     ...modelInterface,
+
+    // Roots
+    roots: {
+      query: queryRoot,
+      queryResult: queryResultRoot,
+      procedimento: procedimentoRoot,
+      persone: personeRoot
+    },
 
     // Funzioni specifiche del modello
     setQuery,
@@ -137,6 +173,9 @@ const useRicerca = ({ set, get, subscribe, initialModel, options = {} }) => {
     getPersone,
     getChangeProcedimento,
     getChangePersone,
+    getPersona,
+    getProcedimentoProperty,
+    getPersonaProperty,
   };
 };
 

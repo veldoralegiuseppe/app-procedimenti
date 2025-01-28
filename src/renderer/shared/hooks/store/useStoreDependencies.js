@@ -1,18 +1,27 @@
 import * as React from 'react';
 import { useStoreContext } from '@ui-shared/context';
 import { useModelStore } from '@ui-shared/hooks';
+import _ from 'lodash';
 
 const useStoreDependencies = ({
   fieldKey,
+  getMethod = 'getProperty',
+  getMethodArgs = {},
   storeType,
+  store: inputStore,
   dependencies,
   args,
   callback,
 }) => {
-  console.log('useStoreDependencies', {fieldKey, storeType, dependencies, args, callback});
-  const store = useStoreContext(storeType);
-  const { getPropertyAndDependencies, getProperty } = useModelStore(store);
-  const value = getProperty?.({key: fieldKey});
+ 
+  if(_.isUndefined(storeType) && !_.isFunction(inputStore))
+   console.warn('useStoreDependencies storeType is undefined and inputStore is not a function', fieldKey, inputStore, storeType);
+
+  const defaultStore = _.isString(storeType) ? useStoreContext(storeType) : null;
+  const store = inputStore || defaultStore;
+  const storeInterface = _.isFunction(store) ? useModelStore(store) : null;
+  console.log('useStoreDependencies', {fieldKey, getMethod, getMethodArgs, storeInterface, dependencies})
+  const value = store?.(state => state?.[getMethod]?.({ key: fieldKey, ...getMethodArgs }));
 
   const wrappedDep = React.useMemo(() => {
     if (!dependencies) return {};
@@ -24,7 +33,7 @@ const useStoreDependencies = ({
         predicate: value?.predicate,
         rootDep: value?.rootDep,
         callback: (key, oldValue, newValue) => {
-          console.log('callback', {key, oldValue, newValue});
+          console.log('callback', { key, oldValue, newValue });
           const changes = value.callback({
             key,
             oldValue,
@@ -32,16 +41,18 @@ const useStoreDependencies = ({
             store,
             ...args,
           });
-          callback?.({changes});
+          callback?.({ changes });
         },
       };
       return acc;
     }, {});
   }, [dependencies, args]);
 
-  const {
-    unsubscribe = () => {}
-  } = getPropertyAndDependencies?.({key: fieldKey, dependencies: wrappedDep}) || {};
+  const { unsubscribe = () => {} } =
+    storeInterface?.getPropertyAndDependencies?.({
+      key: fieldKey,
+      dependencies: wrappedDep,
+    }) || {};
 
   React.useEffect(() => {
     return () => {

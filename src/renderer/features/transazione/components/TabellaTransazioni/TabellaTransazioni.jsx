@@ -14,8 +14,13 @@ const TabellaTransazioniComponent = ({
   onChange,
   onBlur,
   errors,
-  autoupdate = true,
+  store,
+  updateMethod,
+  updateMethodArgs,
+  getMethod,
+  getMethodArgs,
   mode = ModeTypes.CREATE,
+  rootDep,
 }) => {
   const { data } = useTransazioneTableRow({
     transazioni,
@@ -24,7 +29,12 @@ const TabellaTransazioniComponent = ({
     onBlur,
     errors,
     mode,
-    autoupdate,
+    store,
+    updateMethod,
+    updateMethodArgs,
+    getMethod,
+    getMethodArgs,
+    rootDep,
   });
 
   const columns = React.useMemo(

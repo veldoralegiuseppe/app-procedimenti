@@ -3,15 +3,17 @@ import { OptionsAutocomplete } from '@ui-shared/components';
 import usePersonaSelect from './hooks/usePersonaSelect';
 import _ from 'lodash';
 
-function PersoneSelect({ onChange, indexPersona, persone = [], ruolo }) {
+function PersoneSelect({ indexPersona, onChange, persone = [], ruolo }) {
   const {
     value,
     isOptionEqualToValue,
-    extractValue,
+    extractOption,
     groupBy,
     handleBlur,
     filterFn,
-  } = usePersonaSelect(indexPersona, onChange, persone, ruolo);
+  } = usePersonaSelect(onChange, persone, ruolo, indexPersona);
+
+  console.log('PersonaSelect', value)
 
   return (
     <OptionsAutocomplete
@@ -21,7 +23,7 @@ function PersoneSelect({ onChange, indexPersona, persone = [], ruolo }) {
       creatable={false}
       isOptionEqualToValue={isOptionEqualToValue}
       optionsStore={persone}
-      extractValue={extractValue}
+      extractOption={extractOption}
       groupBy={groupBy}
       filterFn={filterFn}
       onBlur={handleBlur}

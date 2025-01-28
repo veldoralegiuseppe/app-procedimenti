@@ -1,12 +1,12 @@
 import { useRicercaStore } from '@features/ricerca';
 import { useStoreContext } from '@ui-shared/context';
 import { StoreTypes } from '@ui-shared/metadata';
-import { useState, useCallback, useEffect, useMemo, useRef } from 'react';
+import { useState, useCallback, useEffect, useMemo } from 'react';
 import { getTransazioniProcedimento } from '@features/procedimento';
 import _ from 'lodash';
 
-const useSelectPersona = (index) => {
-  const [indexSelezionata, setIndexSelezionata] = useState(_.isNumber(index) ? index : null);
+const useSelectPersona = () => {
+  const [indexSelezionata, setIndexSelezionata] = useState(null);
 
   const handleSelect = useCallback(
     (index) => {
@@ -40,9 +40,14 @@ const useTab = (activeIndex, open) => {
   };
 };
 
-const useRiepilogoSpese = ({ procedimento, persone, open }) => {
+const useRiepilogoSpese = ({ procedimento, persone: initPersone = [], open }) => {
   
+  // Tab
   const { activeTab, handleTabChange } = useTab(0, open);
+
+  // Persone
+  const persone = useMemo(() => _.map(initPersone, (p,id) => ({...p, id})), [initPersone]);
+  console.log('persone', persone)
   const { indexSelezionata: indexParteSelezionata, handleSelect: handleSelectParte } = useSelectPersona();
   const { indexSelezionata: indexControparteSelezionata, handleSelect: handleSelectControparte } = useSelectPersona();
   
@@ -52,7 +57,15 @@ const useRiepilogoSpese = ({ procedimento, persone, open }) => {
 
   // Transazioni
   const { transazioniProcedimento = [], incassi = [], transazioniPersone = [] } = 
-  getTransazioniProcedimento(procedimento, persone);
+  getTransazioniProcedimento({procedimento, persone, overrides: {}});
+
+  const transazioni = useMemo(() => ({
+    transazioniProcedimento: _.union(incassi, transazioniProcedimento), 
+    transazioniParte: _.get(transazioniPersone, indexParteSelezionata, []),
+    transazioniControparte: _.get(transazioniPersone, indexControparteSelezionata, []),
+  }), [_.get(procedimento, 'numProtocollo')])
+
+  console.log('transazioni', procedimento, persone, transazioniProcedimento, incassi, transazioniPersone);
 
   const handleChangeProcedimento = useCallback(
     (index, key, changes) => {
@@ -79,16 +92,16 @@ const useRiepilogoSpese = ({ procedimento, persone, open }) => {
 
   // Changes 
   const procedimentoChanges = getChangeProcedimento();
-  const personeChanges = getChangePersone();
+  const personeChanges = getChangePersone()
 
   return {
     activeTab,
     handleTabChange,
     indexParteSelezionata,
     indexControparteSelezionata,
-    transazioniProcedimento: _.union(incassi, transazioniProcedimento),
-    transazioniParte: _.get(transazioniPersone, indexParteSelezionata, []),
-    transazioniControparte: _.get(transazioniPersone, indexControparteSelezionata, []),
+    transazioniProcedimento: transazioni.transazioniProcedimento,
+    transazioniParte: transazioni.transazioniParte,
+    transazioniControparte: transazioni.transazioniControparte,
     handleSelectParte,
     handleSelectControparte,
     handleChangeParte,
@@ -96,6 +109,7 @@ const useRiepilogoSpese = ({ procedimento, persone, open }) => {
     handleChangeProcedimento,
     procedimentoChanges,
     personeChanges,
+    persone,
   };
 };
 

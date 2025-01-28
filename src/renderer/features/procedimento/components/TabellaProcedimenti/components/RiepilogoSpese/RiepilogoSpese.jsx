@@ -7,6 +7,9 @@ import { PersonaEnumsV1 } from '@shared/metadata';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useTheme } from '@mui/material/styles';
 import { ClearButton } from '@ui-shared/theme';
+import { useStoreContext } from '@ui-shared/context';
+import { StoreTypes } from '@ui-shared/metadata';
+import { useRicercaStore } from '@features/ricerca';
 import _ from 'lodash';
 
 function TabPanel(props) {
@@ -58,7 +61,7 @@ function ClearBtn({ onClick, updates = {} }) {
   );
 }
 
-const RiepilogoSpese = ({ open, procedimento, persone }) => {
+const RiepilogoSpese = ({ open, procedimento, persone: pers }) => {
   const {
     activeTab,
     handleTabChange,
@@ -74,21 +77,41 @@ const RiepilogoSpese = ({ open, procedimento, persone }) => {
     handleChangeProcedimento,
     procedimentoChanges,
     personeChanges,
-  } = useRiepilogoSpese({ procedimento, persone, open });
+    persone
+  } = useRiepilogoSpese({ procedimento, persone: pers, open });
+
+  const store = useStoreContext(StoreTypes.RICERCA)
+  const {roots} = useRicercaStore(store)
 
   const renderTabellaTransazioni = (transazioni, onChange, indexPersona) => {
+   
+    console.log('renderTabellaTransazioni', transazioni, indexPersona);
+    let rootDep = _.concat(['model'], roots.procedimento);
+    let updateMethod = 'setProcedimentoProperty';
+    let getMethod = 'getProcedimentoProperty';
+    let getMethodArgs = {};
     let updates = {}
 
     if(indexPersona === -1) 
       updates = procedimentoChanges;
-    else if(indexPersona >= 0)
-      updates = _.get(personeChanges, indexPersona, {});
+    else if(indexPersona >= 0){
+      rootDep = _.concat(['model'], roots.persone, indexPersona)
+      updates = _.get(personeChanges, indexPersona, {})
+      updateMethod = 'setPersonaProperty';
+      getMethod = 'getPersonaProperty';
+      getMethodArgs = {index: indexPersona}
+    }
 
     return (
       <div>
         <TabellaTransazioni
-          autoUpdate={false}
+          store={store}
+          rootDep={rootDep}
+          updateMethod={updateMethod}
+          getMethod={getMethod}
+          getMethodArgs={getMethodArgs}
           transazioni={transazioni}
+          disabled={['Incasso parti', 'Incasso controparti']}
           onChange={onChange}
         />
 

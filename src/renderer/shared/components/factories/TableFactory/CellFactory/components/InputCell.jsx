@@ -18,13 +18,17 @@ const InputCell = (props) => {
   const {
     component: CustomComponent,
     owner,
+    store,
     fieldKey,
     dependencies,
+    getMethod,
+    getMethodArgs,
     ...restProps
   } = props;
 
   const [properties, setProperties] = React.useState(restProps);
   const [overrideProps, setOverrideProps] = React.useState({});
+  console.log('InputCell',{fieldKey, owner, dependencies, store});
 
   React.useEffect(() => {
     if (
@@ -45,6 +49,9 @@ const InputCell = (props) => {
   const { value } = useStoreDependencies({
     fieldKey,
     storeType: owner,
+    store,
+    getMethod,
+    getMethodArgs,
     dependencies,
     args: { properties: mergedProps },
     callback: ({ changes }) => {

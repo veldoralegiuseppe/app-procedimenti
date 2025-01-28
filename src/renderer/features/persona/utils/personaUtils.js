@@ -1,5 +1,5 @@
 import { ModelFactory } from '@ui-shared/components';
-import { ModelTypes, PersonaEnumsV1 } from '@shared/metadata';
+import { ModelTypes, PersonaEnumsV1, TransazioneEnumsV1 } from '@shared/metadata';
 import _ from 'lodash';
 
 const getTransazioniPersona = (persona, override = []) => {
@@ -78,11 +78,13 @@ const getTransazioniPersone = (persone, override) => {
     incassi: [
       createTransazione({
         nome: 'Incasso parti',
+        key: 'incassoParti',
         tipo: TransazioneEnumsV1.tipo.ENTRATA,
       }),
       createTransazione(
         {
           nome: 'Incasso controparti',
+          key: 'incassoControparti',
           tipo: TransazioneEnumsV1.tipo.ENTRATA,
         },
         false

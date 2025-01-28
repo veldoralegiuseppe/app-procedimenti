@@ -49,7 +49,7 @@ const OptionsAutocomplete = ({
   optionModel,
   deletable = true,
   creatable = true,
-  extractValue,
+  extractOption,
   freeSolo,
 }) => {
 
@@ -75,7 +75,7 @@ const OptionsAutocomplete = ({
     groupBy,
     creatable,
     filterFn,
-    extractValue,
+    extractOption,
   });
 
   console.log('autocomplete value', value);

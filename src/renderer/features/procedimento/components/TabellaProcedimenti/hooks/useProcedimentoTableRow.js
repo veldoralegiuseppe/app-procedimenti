@@ -54,7 +54,6 @@ const useProcedimentoTableRow = ({ procedimenti: entities = [] }) => {
     };
   };
 
-
   const rows = useMemo(() => entities.map(mapToRow), [entities]);
   return { data: rows };
 };

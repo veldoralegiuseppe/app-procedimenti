@@ -11,7 +11,7 @@ export const useOptionsAutocomplete = ({
   optionsOrStore,
   onBlur,
   groupBy,
-  extractValue,
+  extractOption,
   creatable = true,
 }) => {
 
@@ -29,6 +29,7 @@ export const useOptionsAutocomplete = ({
   useEffect(() => {
     const filtered = filterFn ? filterFn(items) : items;
     const filteredOptions = getOptions(filtered);
+    console.log('filteredOptions', {items, filtered, filteredOptions})
    
     setOptions(filteredOptions);
   }, [items, filterFn]);
@@ -43,6 +44,7 @@ export const useOptionsAutocomplete = ({
         setDialogValue(option);
         openDialog();
       } else {
+        console.log('handleChange', { newValue, option });
         onChange?.(!newValue ? undefined : newValue, option);
         onBlur?.(!newValue ? undefined : newValue, option);
         if (reason === 'clear') setValue(null);
@@ -94,10 +96,10 @@ export const useOptionsAutocomplete = ({
     [removeItemByValue]
   );
 
-  function getOptionValue(option) {
-    let optionWithValueField = option.value
-      ? option
-      : extractValue?.(option) || { value: option };
+  function mapToOption(item) {
+    let optionWithValueField = item.value
+      ? item
+      : extractOption?.(item) || { value: item };
     if (
       typeof optionWithValueField !== 'object' ||
       !optionWithValueField.value
@@ -122,21 +124,22 @@ export const useOptionsAutocomplete = ({
           sortedItems.push(...groupedItems[group]);
         });
 
-      resultItems = sortedItems?.map((option) => getOptionValue(option)) || [];
+      resultItems = sortedItems?.map((item) => mapToOption(item)) || [];
     } else {
-      resultItems = items?.map((option) => getOptionValue(option)) || [];
+      resultItems = items?.map((item) => mapToOption(item)) || [];
     }
 
-    let itemsWithId = resultItems?.map((item, index) => {
-      if (!item.id) {
-        return { ...item, id: index};
+    let optionsWithId = resultItems?.map((item, index) => {
+      console.log('resultItems', item);
+      if (_.isUndefined(item.id)) {
+        return { ...item, id: _.get(items, [index, 'id']) || index};
       }
       return item;
     });
 
-    //console.log('itemsWithId', itemsWithId);
+    console.log('itemsWithId', optionsWithId);
 
-    return itemsWithId;
+    return optionsWithId;
   }
 
   return {

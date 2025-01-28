@@ -13,14 +13,14 @@ const useModelStore = (store) => {
   const setProperty = useCallback((props) => store?.getState()?.setProperty(props), [store]);
   const removeProperty = useCallback((props) => store?.getState()?.removeProperty(props), [store]);
   const resetModel = useCallback((newModel) => store?.getState()?.resetModel(newModel), [store]);
-  const getProperty = useCallback((props) => store(state => state.getProperty(props)), [store]);
+  const getProperty = useCallback((props) => store?.(state => state?.getProperty(props)), [store]);
   const getProperties = useCallback((props) => store?.getState()?.getProperties(props), [store]);
   const findProperties = useCallback((props) => store?.getState()?.findProperties(props), [store]);
   const getModel = useCallback(() => store?.getState()?.getModel(), [store]);
   const getPropertyAndDependencies = useCallback((props) => store?.getState()?.getPropertyAndDependencies(props), [store]);
   const setErrors = useCallback((props) => store?.getState()?.setErrors(props), [store]);
-  const getFieldErrors = useCallback((props) => store(state => state?.getFieldErrors(props)), [store]);
-  const getChange = useCallback((props) => store(state => state?.getChange(props)), [store]);
+  const getFieldErrors = useCallback((props) => store?.(state => state?.getFieldErrors(props)), [store]);
+  const getChange = useCallback((props) => store?.(state => state?.getChange(props)), [store]);
 
   return { 
     getModel, 

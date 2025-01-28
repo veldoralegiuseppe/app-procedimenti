@@ -40,15 +40,20 @@ const AzioniCell = (onClick) => (props) => {
   );
 };
 
-const TabellaProcedimenti = ({ onRowSelected, procedimenti = [] }) => {
+const TabellaProcedimentiComponent = ({
+  onRowSelected,
+  procedimenti = [],
+}) => {
+  
   const { data } = useProcedimentoTableRow({ procedimenti });
   const store = useStoreContext(StoreTypes.RICERCA);
-  const {setProcedimento, getProcedimento, setPersone, getPersone} = useRicercaStore(store);
+  const { setProcedimento, getProcedimento, setPersone, getPersone } =
+    useRicercaStore(store);
 
   const [open, setOpen] = React.useState(false);
-  const procedimentoSelezionato = getProcedimento()
+  const procedimentoSelezionato = getProcedimento();
   const personeSelezionate = getPersone();
-  
+
   const buildIstanza = (procedimento) => {
     console.log('Caricamento procedimento', procedimento);
 
@@ -68,11 +73,11 @@ const TabellaProcedimenti = ({ onRowSelected, procedimenti = [] }) => {
       version: procedimento.version,
     });
 
-    return {persone, procedimento: istanza};
+    return { persone, procedimento: istanza };
   };
 
   const handleSpeseClick = (index) => {
-    const {persone, procedimento} = buildIstanza(procedimenti[index]);
+    const { persone, procedimento } = buildIstanza(procedimenti[index]);
     setProcedimento(procedimento);
     setPersone(persone);
     _.delay(() => setOpen(true), 10);
@@ -81,7 +86,7 @@ const TabellaProcedimenti = ({ onRowSelected, procedimenti = [] }) => {
   const handleCloseModale = (onClose) => {
     onClose?.();
     setOpen(false);
-  }
+  };
 
   const columns = [
     {
@@ -193,7 +198,7 @@ const TabellaProcedimenti = ({ onRowSelected, procedimenti = [] }) => {
 
   return (
     <React.Fragment>
-      <TableFactory
+      {!open && <TableFactory
         headerConfig={headerConfig}
         rowConfig={rowConfig}
         sx={{
@@ -204,13 +209,28 @@ const TabellaProcedimenti = ({ onRowSelected, procedimenti = [] }) => {
         footerConfig={footerConfig}
         columns={columns}
         data={data}
-      />
+      />}
 
       <FormModal open={open} handleClose={handleCloseModale}>
-        <RiepilogoSpese open={open} procedimento={procedimentoSelezionato} persone={personeSelezionate} />
+        <RiepilogoSpese
+          open={open}
+          procedimento={procedimentoSelezionato}
+          persone={personeSelezionate}
+        />
       </FormModal>
     </React.Fragment>
   );
 };
 
+const TabellaProcedimenti = React.memo(
+  TabellaProcedimentiComponent,
+  (prevProps, nextProps) => {
+    return (
+      _.size(prevProps.procedimenti) === _.size(nextProps.procedimenti) &&
+      _.every(prevProps.procedimenti, (prevProc) =>
+      _.some(nextProps.procedimenti, { numProtocollo: prevProc.numProtocollo })
+      )
+    );
+  }
+);
 export default TabellaProcedimenti;

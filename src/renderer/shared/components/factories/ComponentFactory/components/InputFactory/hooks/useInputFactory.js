@@ -35,7 +35,10 @@ const useInputFactory = ({
       props?.onChange?.(changes, ...rest);
       if (updateOnChange) {
         Object.entries(changes).forEach(([key, value]) => {
-          setProperty({key, value, validations: props?.inputValidations});
+          const method = props?.updateMethod || 'setProperty';
+          const methodArgs = {key, value, validations: props?.inputValidations, ...(props?.updateMethodArgs || {})};
+          store[method](methodArgs);
+          //setProperty({key, value, namespace: props?.namespace, predicate: props?.predicate, root: props?.root, validations: props?.inputValidations});
         });
       }
     },
@@ -46,7 +49,10 @@ const useInputFactory = ({
       if (!updateOnChange) {
         Object.entries(changes).forEach(([key, value]) => {
           console.log('handleBlur', key, value, props?.inputValidations);
-          setProperty({key, value, validations: props?.inputValidations});
+          const method = props?.updateMethod || 'setProperty';
+          const methodArgs = {key, value, validations: props?.inputValidations, ...(props?.updateMethodArgs || {})};
+          store[method](methodArgs);
+          //setProperty({key, value, namespace: props?.namespace, predicate: props?.predicate, root: props?.root, validations: props?.inputValidations});
         });
       }
       props?.onBlur?.(changes, ...rest);

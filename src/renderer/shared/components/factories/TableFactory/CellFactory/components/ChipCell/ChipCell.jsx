@@ -15,20 +15,35 @@ const ChipCell = ({
   disabled,
   owner,
   fieldKey,
+  store,
+  getMethod,
+  getMethodArgs,
   dependencies,
   ...props
 }) => {
   //const { updateItemById } = useModelArrayStore(store);
-  const { label, chipStyles, status, message, handleNextState, setMessage, setLabel, setStatus } =
-    useChipState({
-      value: props.value,
-      status: props.status,
-      nextStateFn,
-    });
+  const {
+    label,
+    chipStyles,
+    status,
+    message,
+    handleNextState,
+    setMessage,
+    setLabel,
+    setStatus,
+  } = useChipState({
+    value: props.value,
+    status: props.status,
+    nextStateFn,
+  });
 
+  console.log('ChipCell', { fieldKey, owner, dependencies, store });
   const { value, notifyAll } = useStoreDependencies({
     fieldKey,
     storeType: owner,
+    store,
+    getMethod,
+    getMethodArgs,
     dependencies,
     callback: ({ changes: message }) => {
       setMessage(message);
@@ -36,13 +51,14 @@ const ChipCell = ({
   });
 
   React.useEffect(() => {
-    if(_.isEqual(value, label) && _.isEqual(status, statusLabelMap?.[value])) return;
-    
-    if(value && statusLabelMap && statusLabelMap[value]){
+    if (_.isEqual(value, label) && _.isEqual(status, statusLabelMap?.[value]))
+      return;
+
+    if (value && statusLabelMap && statusLabelMap[value]) {
       setLabel(value);
       setStatus(statusLabelMap[value]);
       notifyAll(fieldKey, label, value);
-    } 
+    }
   }, [value]);
 
   const handleClick = () => {

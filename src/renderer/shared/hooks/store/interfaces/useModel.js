@@ -313,6 +313,7 @@ const useModel = ({ set, get, subscribe, initialModel = {}, options = {} }) => {
     const unsubscribeCallbacks =
       getProperty({ root: 'unsubscribeCallbacks' }) || {};
 
+
     if (dependencies) {
       Object.entries(dependencies).forEach(([depName, props]) => {
         const {
@@ -322,6 +323,8 @@ const useModel = ({ set, get, subscribe, initialModel = {}, options = {} }) => {
           callback,
           rootDep = modelRoot,
         } = props;
+
+        console.log('getPropertyAndDependencies', {depKey, namespace, predicate, callback, rootDep})
 
         const subscriptionKey = `${key}-${depKey}`;
         if (unsubscribeCallbacks?.[subscriptionKey]) {
@@ -388,6 +391,7 @@ const useModel = ({ set, get, subscribe, initialModel = {}, options = {} }) => {
 
   // Ottiene gli updates rispetto a initialModels
   const getChange = ({key, namespace, predicate}) => {
+    console.log('getChange', key, namespace, predicate);
     return getProperty({ key, namespace, predicate, root: lastUpdateRoot });
   }
 
