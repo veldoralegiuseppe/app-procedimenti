@@ -293,6 +293,7 @@ const useTransazioneTableRow = ({
 
       const owner = oldTransazione.owner;
       const storeToUpdate = store || stores[owner];
+      console.log('handleChange', {index, oldTransazione, newTransazione, storeToUpdate, updateMethod, updateMethodArgs});
       storeToUpdate?.getState()?.[updateMethod]?.({key: oldTransazione.key, value: changes, ...updateMethodArgs});
       //storeToUpdate?.getState()?.setProperty?.({key: oldTransazione.key, value: changes, namespace, predicate, root});
 

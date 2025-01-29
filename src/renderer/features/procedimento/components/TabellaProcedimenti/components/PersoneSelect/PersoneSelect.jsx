@@ -13,7 +13,7 @@ function PersoneSelect({ indexPersona, onChange, persone = [], ruolo }) {
     filterFn,
   } = usePersonaSelect(onChange, persone, ruolo, indexPersona);
 
-  console.log('PersonaSelect', value)
+  console.log('PersonaSelect', {persone, value, ruolo, indexPersona});
 
   return (
     <OptionsAutocomplete

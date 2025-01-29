@@ -47,12 +47,13 @@ const TabellaProcedimentiComponent = ({
   
   const { data } = useProcedimentoTableRow({ procedimenti });
   const store = useStoreContext(StoreTypes.RICERCA);
-  const { setProcedimento, getProcedimento, setPersone, getPersone } =
+  const { setProcedimentoAndPersone, getProcedimento, getPersone, saveModifiche } =
     useRicercaStore(store);
 
   const [open, setOpen] = React.useState(false);
   const procedimentoSelezionato = getProcedimento();
   const personeSelezionate = getPersone();
+  console.log('procedimentoSelezionato', procedimentoSelezionato);
 
   const buildIstanza = (procedimento) => {
     console.log('Caricamento procedimento', procedimento);
@@ -77,14 +78,16 @@ const TabellaProcedimentiComponent = ({
   };
 
   const handleSpeseClick = (index) => {
+    console.log('Click su spese', index);
     const { persone, procedimento } = buildIstanza(procedimenti[index]);
-    setProcedimento(procedimento);
-    setPersone(persone);
+    setProcedimentoAndPersone({procedimento, persone});
     _.delay(() => setOpen(true), 10);
   };
 
   const handleCloseModale = (onClose) => {
     onClose?.();
+    console.log('handleCloseModale');
+    saveModifiche();
     setOpen(false);
   };
 

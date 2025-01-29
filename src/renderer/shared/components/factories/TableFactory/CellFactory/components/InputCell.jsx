@@ -28,7 +28,7 @@ const InputCell = (props) => {
 
   const [properties, setProperties] = React.useState(restProps);
   const [overrideProps, setOverrideProps] = React.useState({});
-  console.log('InputCell',{fieldKey, owner, dependencies, store});
+  console.log('InputCell',{fieldKey, getMethod, getMethodArgs, owner, dependencies, store});
 
   React.useEffect(() => {
     if (

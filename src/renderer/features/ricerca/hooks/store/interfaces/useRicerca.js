@@ -6,6 +6,7 @@ const ricercaModel = {
   queryResult: {},
   procedimento: {},
   persone: [],
+  modifiche: {},
 };
 
 const useRicerca = ({ set, get, subscribe, initialModel, options = {} }) => {
@@ -21,6 +22,7 @@ const useRicerca = ({ set, get, subscribe, initialModel, options = {} }) => {
   const queryResultRoot = modelInterface.buildRoot('queryResult');
   const procedimentoRoot = modelInterface.buildRoot('procedimento');
   const personeRoot = modelInterface.buildRoot('persone');
+  const modificheRoot = modelInterface.buildRoot('modifiche');
   
   const setQuery = ({ key, value, validations }) => {
     modelInterface.setProperty({
@@ -50,14 +52,6 @@ const useRicerca = ({ set, get, subscribe, initialModel, options = {} }) => {
     });
   };
 
-  const setProcedimento = (procedimento) => {
-    modelInterface.setProperty({
-      value: procedimento,
-      merge: false,
-      root: _.concat(modelInterface.modelRoot, procedimentoRoot),
-    });
-  };
-
   const setProcedimentoProperty = ({
     key,
     value,
@@ -79,6 +73,7 @@ const useRicerca = ({ set, get, subscribe, initialModel, options = {} }) => {
   };
 
   const getProcedimento = () => {
+    console.log('getProcedimento', {state: _.get(get(), _.concat(modelInterface.modelRoot, procedimentoRoot))});
     return modelInterface.getProperty({
       root: _.concat(modelInterface.modelRoot, procedimentoRoot),
     });
@@ -92,14 +87,6 @@ const useRicerca = ({ set, get, subscribe, initialModel, options = {} }) => {
     });
   }
 
-  const setPersone = (persone) => {
-    modelInterface.setProperty({
-      value: persone,
-      merge: false,
-      root: _.concat(modelInterface.modelRoot, personeRoot),
-    });
-  };
-
   const setPersonaProperty = ({
     key,
     value,
@@ -107,6 +94,7 @@ const useRicerca = ({ set, get, subscribe, initialModel, options = {} }) => {
     predicate,
     index,
   }) => {
+    console.log('setPersonaProperty', {key, value, validations, predicate, index});
     modelInterface.setProperty({
       key,
       value,
@@ -141,13 +129,97 @@ const useRicerca = ({ set, get, subscribe, initialModel, options = {} }) => {
 
   const getChangeProcedimento = () => {
     //console.log('getChangeProcedimento', _.concat(modelInterface.lastUpdateRoot, procedimentoRoot));
-    return modelInterface.getChange({namespace: _.concat(modelInterface.lastUpdateRoot, procedimentoRoot)});
+    return modelInterface.getChange({namespace: procedimentoRoot});
   }
 
   const getChangePersone = () => {
-    return modelInterface.getChange({namespace: _.concat(modelInterface.lastUpdateRoot, personeRoot)});
+    return modelInterface.getChange({namespace: personeRoot});
   }
 
+  const saveModifiche = () => {
+    const numProtocollo = modelInterface.getProperty({root: _.concat(modelInterface.modelRoot, procedimentoRoot, 'numProtocollo')});
+    if(_.isUndefined(numProtocollo)) return;
+
+    const changeProcedimento = getChangeProcedimento();
+    const changePersone = getChangePersone();
+    if(_.isUndefined(changeProcedimento) && _.isUndefined(changePersone)) return;
+
+    let modificheCorrenti = _.cloneDeep(_.get(get(), _.concat(['model'],modificheRoot), {}));
+    _.set(modificheCorrenti, numProtocollo, {procedimento: changeProcedimento, persone: changePersone});
+    
+    console.log('saveModifiche', {modificheCorrenti, numProtocollo, changeProcedimento, changePersone});
+
+    modelInterface.setProperty({
+      value: modificheCorrenti,
+      namespace: modificheRoot,
+    });
+  }
+
+  const getModifiche = ({numProtocollo, path}) => {
+    const modifichePath = _.concat(modificheRoot, numProtocollo, path);
+    const modifiche = modelInterface.getProperty({namespace: modifichePath});
+    console.log('getModifiche', {numProtocollo, modifichePath, modifiche, state: _.get(get(), modifichePath)});
+    return modifiche;
+  }
+
+  const setProcedimentoAndPersone = ({procedimento, persone, updateDefaultModel = 'auto'}) => {
+    console.log('setProcedimentoAndPersone', {procedimento, persone, updateDefaultModel});
+    if(_.isUndefined(procedimento)) return;
+
+    let updateProcedimentoDefault
+    let updatePersoneDefault
+   
+    if(_.isBoolean(updateDefaultModel)){
+      updateProcedimentoDefault = updateDefaultModel;
+      updatePersoneDefault = updateDefaultModel;
+
+      modelInterface.setProperty({
+        value: procedimento,
+        merge: false,
+        updateDefaultModel: updateProcedimentoDefault,
+        root: _.concat(modelInterface.modelRoot, procedimentoRoot),
+      });
+  
+      modelInterface.setProperty({
+        value: persone,
+        merge: false,
+        updateDefaultModel: updatePersoneDefault,
+        root: _.concat(modelInterface.modelRoot, personeRoot),
+      });
+    }
+    else if(_.isEqual(updateDefaultModel, 'auto')){
+      let procedimentoObj = _.cloneDeep(procedimento);
+      let personeArr = _.cloneDeep(persone);
+
+      const modificheProcedimento = getModifiche({numProtocollo: procedimentoObj.numProtocollo, path: 'procedimento'});
+      const modifichePersone = getModifiche({numProtocollo: procedimentoObj.numProtocollo, path: 'persone'});
+
+      const procedimentoIsModified = !(_.isEmpty(modificheProcedimento) || _.isUndefined(modificheProcedimento));
+      const personeIsModified = !(_.isEmpty(modifichePersone) || _.isUndefined(modifichePersone));
+
+      updateProcedimentoDefault = !procedimentoIsModified;
+      updatePersoneDefault = !personeIsModified;
+
+      if(procedimentoIsModified) _.merge(procedimentoObj, modificheProcedimento);
+      if(personeIsModified) _.merge(personeArr, modifichePersone);
+
+      console.log('setProcedimentoAndPersone', {updateProcedimentoDefault, updatePersoneDefault, procedimentoObj, personeArr, modificheProcedimento, modifichePersone});
+
+      modelInterface.setProperty({
+        value: procedimentoObj,
+        merge: false,
+        updateDefaultModel: procedimento,
+        root: _.concat(modelInterface.modelRoot, procedimentoRoot),
+      });
+  
+      modelInterface.setProperty({
+        value: personeArr,
+        merge: false,
+        updateDefaultModel: persone,
+        root: _.concat(modelInterface.modelRoot, personeRoot),
+      });
+    }
+  };
 
   return {
     // Interfaccia funzionale del model store
@@ -158,17 +230,17 @@ const useRicerca = ({ set, get, subscribe, initialModel, options = {} }) => {
       query: queryRoot,
       queryResult: queryResultRoot,
       procedimento: procedimentoRoot,
-      persone: personeRoot
+      persone: personeRoot,
+      modifiche: modificheRoot,
     },
 
     // Funzioni specifiche del modello
     setQuery,
     setQueryResult,
     getQueryResult,
-    setProcedimento,
+    setProcedimentoAndPersone,
     setProcedimentoProperty,
     getProcedimento,
-    setPersone,
     setPersonaProperty,
     getPersone,
     getChangeProcedimento,
@@ -176,6 +248,7 @@ const useRicerca = ({ set, get, subscribe, initialModel, options = {} }) => {
     getPersona,
     getProcedimentoProperty,
     getPersonaProperty,
+    saveModifiche,
   };
 };
 

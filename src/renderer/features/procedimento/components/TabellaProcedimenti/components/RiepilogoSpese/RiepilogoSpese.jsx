@@ -62,6 +62,7 @@ function ClearBtn({ onClick, updates = {} }) {
 }
 
 const RiepilogoSpese = ({ open, procedimento, persone: pers }) => {
+  console.log('RiepilogoSpese', { open, procedimento, pers });
   const {
     activeTab,
     handleTabChange,
@@ -88,6 +89,7 @@ const RiepilogoSpese = ({ open, procedimento, persone: pers }) => {
     console.log('renderTabellaTransazioni', transazioni, indexPersona);
     let rootDep = _.concat(['model'], roots.procedimento);
     let updateMethod = 'setProcedimentoProperty';
+    let updateMethodArgs = {}
     let getMethod = 'getProcedimentoProperty';
     let getMethodArgs = {};
     let updates = {}
@@ -100,7 +102,11 @@ const RiepilogoSpese = ({ open, procedimento, persone: pers }) => {
       updateMethod = 'setPersonaProperty';
       getMethod = 'getPersonaProperty';
       getMethodArgs = {index: indexPersona}
+      updateMethodArgs = {index: indexPersona}
+      console.log('updatePersona', {rootDep, updates, updateMethod, getMethod, getMethodArgs, indexPersona});
     }
+
+    console.log('renderTabellaTransazioni', updates);
 
     return (
       <div>
@@ -108,6 +114,7 @@ const RiepilogoSpese = ({ open, procedimento, persone: pers }) => {
           store={store}
           rootDep={rootDep}
           updateMethod={updateMethod}
+          updateMethodArgs={updateMethodArgs}
           getMethod={getMethod}
           getMethodArgs={getMethodArgs}
           transazioni={transazioni}
@@ -166,7 +173,7 @@ const RiepilogoSpese = ({ open, procedimento, persone: pers }) => {
           renderTabellaTransazioni(
             transazioniControparte,
             handleChangeControparte,
-            indexParteSelezionata
+            indexControparteSelezionata
           )}
       </TabPanel>
     </>

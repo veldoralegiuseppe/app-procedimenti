@@ -7,10 +7,9 @@ const useRicercaStore = (store) => {
   const setQuery = useCallback((props) => store?.getState()?.setQuery(props), [store]);
   const setQueryResult = useCallback((props) => store?.getState()?.setQueryResult(props), [store]);
   const getQueryResult = useCallback((props) => store?.(state => state?.getQueryResult(props)), [store]);
-  const setProcedimento = useCallback((props) => store?.getState()?.setProcedimento(props), [store]);
+  const setProcedimentoAndPersone = useCallback((props) => store?.getState()?.setProcedimentoAndPersone(props), [store]);
   const setProcedimentoProperty = useCallback((props) => store?.getState()?.setProcedimentoProperty(props), [store]);
   const getProcedimento = useCallback(() => store?.(state => state?.getProcedimento()), [store]);
-  const setPersone = useCallback((props) => store?.getState()?.setPersone(props), [store]);
   const setPersonaProperty = useCallback((props) => store?.getState()?.setPersonaProperty(props), [store]);
   const getPersone = useCallback(() => store?.(state => state?.getPersone()), [store]);
   const getChangeProcedimento = useCallback(() => store?.(state => state?.getChangeProcedimento()), [store]);
@@ -18,6 +17,7 @@ const useRicercaStore = (store) => {
   const getPersona = useCallback((props) => store?.(state => state?.getPersona(props)), [store]);
   const getProcedimentoProperty = useCallback((props) => store?.(state => state?.getProcedimentoProperty(props)), [store]);
   const getPersonaProperty = useCallback((props) => store?.(state => state?.getPersonaProperty(props)), [store]);
+  const saveModifiche = useCallback((props) => store?.getState()?.saveModifiche(props), [store]);
   
   return { 
     roots: _.get(store?.getState(), ['roots'], {}),
@@ -25,10 +25,9 @@ const useRicercaStore = (store) => {
     setQuery,
     setQueryResult,
     getQueryResult,
-    setProcedimento,
+    setProcedimentoAndPersone,
     setProcedimentoProperty,
     getProcedimento,
-    setPersone,
     setPersonaProperty,
     getPersone,
     getChangeProcedimento,
@@ -36,6 +35,7 @@ const useRicercaStore = (store) => {
     getPersona,
     getProcedimentoProperty,
     getPersonaProperty,
+    saveModifiche,
   };
 };
 

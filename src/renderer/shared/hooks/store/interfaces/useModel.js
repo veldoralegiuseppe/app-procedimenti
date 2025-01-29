@@ -6,6 +6,7 @@ const getStoreSchema = (initialModel) => ({
   lastUpdate: null,
   errors: null,
   unsubscribeCallbacks: null,
+  initialModel: _.cloneDeep(initialModel),
 });
 
 /**
@@ -45,6 +46,7 @@ const useModel = ({ set, get, subscribe, initialModel = {}, options = {} }) => {
   const modelRoot = buildRoot('model');
   const lastUpdateRoot = buildRoot('lastUpdate');
   const errorsRoot = buildRoot('errors');
+  const initialModelRoot = buildRoot('initialModel');
 
   const initializePath = ({ root, key, namespace }) => {
     let path = !_.isUndefined(root) ? buildRoot(root) : modelRoot;
@@ -53,6 +55,7 @@ const useModel = ({ set, get, subscribe, initialModel = {}, options = {} }) => {
     else if (_.isString(namespace)) path = _.concat(path, _.toPath(namespace));
     if (_.isString(key)) path = _.concat(path, _.toPath(key));
 
+    console.log('initializePath', {root, key, namespace, path});
     return path;
   };
 
@@ -99,8 +102,15 @@ const useModel = ({ set, get, subscribe, initialModel = {}, options = {} }) => {
     return newErrors;
   };
 
+  const updateDefaultModel = (state, { path, changes, updateDefaultModel }) => {
+    const defaultModelRoot = _.concat(initialModelRoot, path.slice(1));
+    _.set(state, defaultModelRoot, _.isBoolean(updateDefaultModel) ? changes : updateDefaultModel);
+  }
+
   const updateLastChanges = (state, { path, changes }) => {
-    const defaultValue = _.get(initialModel, path);
+    const defaultModelRoot = _.concat(initialModelRoot, path.slice(1));
+    const defaultValue = _.get(state, defaultModelRoot);
+
     const lastChangesPath = _.concat(lastUpdateRoot, path.slice(1));
     const lastChanges = _.get(state, lastChangesPath);
 
@@ -129,14 +139,19 @@ const useModel = ({ set, get, subscribe, initialModel = {}, options = {} }) => {
 
   const updateModel = (
     state,
-    { path, value: mergedValue, changes, validations }
+    { path, value: mergedValue, changes, validations, updateDefaultModel: updateDefault }
   ) => {
     const currentValue = _.get(state, path);
     const newValue = mergedValue;
     const isChanged = !_.isEqual(currentValue, newValue);
     console.log('updateModel', path, currentValue, newValue);
 
-    if (isChanged) _.set(state, path, newValue);
+    if (isChanged){
+      if(updateDefault === true || _.isObject(updateDefault))
+        updateDefaultModel(state, {path, changes, updateDefaultModel: updateDefault});
+
+       _.set(state, path, newValue);
+      }
 
     updateLastChanges(state, { path, changes });
     updateError(state, { path, changes, isChanged, validations });
@@ -164,6 +179,7 @@ const useModel = ({ set, get, subscribe, initialModel = {}, options = {} }) => {
     merge = true,
     predicate,
     root = modelRoot,
+    updateDefaultModel = false,
   }) => {
     const { path } = buildPath({ root, key, namespace, predicate });
 
@@ -179,8 +195,8 @@ const useModel = ({ set, get, subscribe, initialModel = {}, options = {} }) => {
             : value;
         }
 
-        update(draft, { path, changes, value: newValue, validations });
-        //console.log('statoDopo', _.cloneDeep(draft));
+        update(draft, { path, changes, value: newValue, validations, updateDefaultModel });
+        console.log('statoDopo', _.cloneDeep(draft));
       })
     );
 
@@ -219,7 +235,7 @@ const useModel = ({ set, get, subscribe, initialModel = {}, options = {} }) => {
   const resetModel = (newModel) => {
     set(
       produce((state) => {
-        _.set(state, modelRoot, _.cloneDeep(newModel || initialModel));
+        _.set(state, modelRoot, _.cloneDeep(newModel || _.get(state, initialModelRoot)));
         state.lastUpdate = null;
         state.errors = null;
       })
@@ -391,14 +407,16 @@ const useModel = ({ set, get, subscribe, initialModel = {}, options = {} }) => {
 
   // Ottiene gli updates rispetto a initialModels
   const getChange = ({key, namespace, predicate}) => {
-    console.log('getChange', key, namespace, predicate);
-    return getProperty({ key, namespace, predicate, root: lastUpdateRoot });
+    const change = getProperty({ key, namespace, predicate, root: lastUpdateRoot });
+    console.log('getChange', {key, namespace, predicate, change});
+    return change
   }
 
   return {
     modelRoot,
     lastUpdateRoot,
     errorsRoot,
+    initialModelRoot,
     buildRoot,
     initializePath,
     ...getStoreSchema(initialModel),

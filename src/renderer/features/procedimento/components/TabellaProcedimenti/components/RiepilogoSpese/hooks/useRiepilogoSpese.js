@@ -59,7 +59,6 @@ const useRiepilogoSpese = ({ procedimento, persone: initPersone = [], open }) =>
   const { transazioniProcedimento = [], incassi = [], transazioniPersone = [] } = 
   getTransazioniProcedimento({procedimento, persone, overrides: {}});
 
-
   const transazioni = useMemo(() => ({
     transazioniProcedimento: _.union(incassi, transazioniProcedimento), 
     transazioniPersone,
