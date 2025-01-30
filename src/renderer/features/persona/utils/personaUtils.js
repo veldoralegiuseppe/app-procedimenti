@@ -1,19 +1,13 @@
 import { ModelFactory } from '@ui-shared/components';
 import { ModelTypes, PersonaEnumsV1, TransazioneEnumsV1 } from '@shared/metadata';
+import { extractTransazioni } from '@features/transazione';
 import _ from 'lodash';
 
 const getTransazioniPersona = (persona, override = []) => {
   const owner = persona.type;
 
-  let transazioni = Object.values(persona || {})
-    .filter((field) => field?.type === ModelTypes.TRANSAZIONE)
-    .map((t) =>
-      ModelFactory.create({
-        type: ModelTypes.TRANSAZIONE,
-        initialValues: { ...t, owner: t.owner || owner },
-        version: t.version,
-      })
-    );
+  let transazioni = extractTransazioni(persona);
+  transazioni.map(t => _.merge(t, { owner }));
 
   if (Array.isArray(override) && override.length) {
     override.forEach((t) => {

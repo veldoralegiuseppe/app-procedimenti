@@ -16,8 +16,8 @@ const useSelectPersona = () => {
   );
 
   return {
-   indexSelezionata,
-   handleSelect
+    indexSelezionata,
+    handleSelect,
   };
 };
 
@@ -40,38 +40,87 @@ const useTab = (activeIndex, open) => {
   };
 };
 
-const useRiepilogoSpese = ({ procedimento, persone: initPersone = [], open }) => {
-  
+const useRiepilogoSpese = ({
+  procedimento,
+  persone: initPersone = [],
+  open,
+}) => {
   // Tab
   const { activeTab, handleTabChange } = useTab(0, open);
 
   // Persone
-  const persone = useMemo(() => _.map(initPersone, (p,id) => ({...p, id})), [initPersone]);
-  console.log('persone', persone)
-  const { indexSelezionata: indexParteSelezionata, handleSelect: handleSelectParte } = useSelectPersona();
-  const { indexSelezionata: indexControparteSelezionata, handleSelect: handleSelectControparte } = useSelectPersona();
-  
+  const persone = useMemo(
+    () => _.map(initPersone, (p, id) => ({ ...p, id })),
+    [initPersone]
+  );
+  console.log('persone', persone);
+  const {
+    indexSelezionata: indexParteSelezionata,
+    handleSelect: handleSelectParte,
+  } = useSelectPersona();
+  const {
+    indexSelezionata: indexControparteSelezionata,
+    handleSelect: handleSelectControparte,
+  } = useSelectPersona();
+
   // Store
   const ricercaStore = useStoreContext(StoreTypes.RICERCA);
-  const { setProcedimentoProperty, setPersonaProperty, getChangeProcedimento, getChangePersone } = useRicercaStore(ricercaStore);
+  const {
+    setProcedimentoProperty,
+    setPersonaProperty,
+    getChangeProcedimento,
+    getChangePersone,
+    getTransazioniModificate,
+  } = useRicercaStore(ricercaStore);
 
   // Transazioni
-  const { transazioniProcedimento = [], incassi = [], transazioniPersone = [] } = 
-  getTransazioniProcedimento({procedimento, persone, overrides: {}});
+  const numProtocollo = _.get(procedimento, 'numProtocollo');
+  
+  let {
+    transazioniProcedimento = [],
+    incassi = [],
+    transazioniPersone = [],
+  } = getTransazioniProcedimento({ procedimento, persone, overrides: {} });
+  
 
-  const transazioni = useMemo(() => ({
-    transazioniProcedimento: _.union(incassi, transazioniProcedimento), 
-    transazioniPersone,
-    transazioniParte: _.get(transazioniPersone, indexParteSelezionata, []),
-    transazioniControparte: _.get(transazioniPersone, indexControparteSelezionata, []),
-  }), [_.get(procedimento, 'numProtocollo')])
+  const transazioni = useMemo(
+    () => ({
+      transazioniProcedimento: _.union(incassi, transazioniProcedimento),
+      transazioniPersone,
+      transazioniParte: _.get(transazioniPersone, indexParteSelezionata, []),
+      transazioniControparte: _.get(
+        transazioniPersone,
+        indexControparteSelezionata,
+        []
+      ),
+    }),
+    [numProtocollo, incassi]
+  );
 
-  const transazioniPartiControparti = useMemo(() => ({
-    transazioniParte: _.get(transazioniPersone, indexParteSelezionata, []),
-    transazioniControparte: _.get(transazioniPersone, indexControparteSelezionata, []),
-  }), [transazioni.transazioniPersone, indexParteSelezionata, indexControparteSelezionata])
+  const transazioniPartiControparti = useMemo(
+    () => ({
+      transazioniParte: _.get(transazioniPersone, indexParteSelezionata, []),
+      transazioniControparte: _.get(
+        transazioniPersone,
+        indexControparteSelezionata,
+        []
+      ),
+    }),
+    [
+      transazioni.transazioniPersone,
+      indexParteSelezionata,
+      indexControparteSelezionata,
+    ]
+  );
 
-  console.log('transazioni', procedimento, persone, transazioniProcedimento, incassi, transazioniPersone);
+  console.log(
+    'transazioni',
+    procedimento,
+    persone,
+    transazioniProcedimento,
+    incassi,
+    transazioniPersone
+  );
 
   const handleChangeProcedimento = useCallback(
     (index, key, changes) => {
@@ -82,23 +131,41 @@ const useRiepilogoSpese = ({ procedimento, persone: initPersone = [], open }) =>
 
   const handleChangeParte = useCallback(
     (index, key, changes) => {
-      if(_.isNumber(indexParteSelezionata))
-        setPersonaProperty({ key, index: indexParteSelezionata, value: changes });
+      if (_.isNumber(indexParteSelezionata)){
+        setPersonaProperty({
+          key,
+          index: indexParteSelezionata,
+          value: changes,
+        });
+
+        const overrides =  getTransazioniModificate({ numProtocollo });
+        const {incassi: newIncassi} = getTransazioniProcedimento({ procedimento, persone, overrides });
+        incassi = newIncassi;
+      }
     },
     [setPersonaProperty, indexParteSelezionata]
   );
 
   const handleChangeControparte = useCallback(
     (index, key, changes) => {
-      if(_.isNumber(indexControparteSelezionata))
-        setPersonaProperty({ key, index: indexControparteSelezionata, value: changes });
+      if (_.isNumber(indexControparteSelezionata)){
+        setPersonaProperty({
+          key,
+          index: indexControparteSelezionata,
+          value: changes,
+        })
+
+        const overrides =  getTransazioniModificate({ numProtocollo });
+        const {incassi: newIncassi} = getTransazioniProcedimento({ procedimento, persone, overrides });
+        incassi = newIncassi;
+      }
     },
     [setPersonaProperty, indexControparteSelezionata]
   );
 
-  // Changes 
+  // Changes
   const procedimentoChanges = getChangeProcedimento();
-  const personeChanges = getChangePersone()
+  const personeChanges = getChangePersone();
 
   // OnClose
   useEffect(() => {
@@ -106,7 +173,7 @@ const useRiepilogoSpese = ({ procedimento, persone: initPersone = [], open }) =>
       handleSelectParte(null);
       handleSelectControparte(null);
     }
-  }, [open])
+  }, [open]);
 
   return {
     activeTab,

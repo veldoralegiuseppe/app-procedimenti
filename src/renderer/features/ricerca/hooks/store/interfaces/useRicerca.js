@@ -1,4 +1,5 @@
 import { useModel } from '@ui-shared/hooks';
+import { extractTransazioni } from '@features/transazione';
 import _ from 'lodash';
 
 const ricercaModel = {
@@ -187,7 +188,11 @@ const useRicerca = ({ set, get, subscribe, initialModel, options = {} }) => {
   };
 
   const getModifiche = ({ numProtocollo, path }) => {
-    const modifichePath = _.concat(modificheRoot, numProtocollo, path ? path : []);
+    const modifichePath = _.concat(
+      modificheRoot,
+      numProtocollo,
+      path ? path : []
+    );
     const modifiche = modelInterface.getProperty({ namespace: modifichePath });
     console.log('getModifiche', {
       numProtocollo,
@@ -203,7 +208,6 @@ const useRicerca = ({ set, get, subscribe, initialModel, options = {} }) => {
     persone,
     includeUpdates = true,
   }) => {
-   
     if (_.isUndefined(procedimento)) return;
 
     // Gestione delle modifiche pregresse
@@ -219,7 +223,10 @@ const useRicerca = ({ set, get, subscribe, initialModel, options = {} }) => {
       path: 'persone',
     });
 
-    _.merge(procedimentoAggiornato, includeUpdates ? modificheProcedimento : {});
+    _.merge(
+      procedimentoAggiornato,
+      includeUpdates ? modificheProcedimento : {}
+    );
     _.merge(personeAggiornate, includeUpdates ? modifichePersone : {});
 
     modelInterface.setProperty({
@@ -238,13 +245,60 @@ const useRicerca = ({ set, get, subscribe, initialModel, options = {} }) => {
   };
 
   const hasModifiche = ({ numProtocollo, indexPersona }) => {
-    if(_.isUndefined(numProtocollo)) return false;
+    if (_.isUndefined(numProtocollo)) return false;
 
     const modifiche = getModifiche({ numProtocollo });
-    if(_.isUndefined(indexPersona)) return !_.isEmpty(modifiche);
+    if (_.isUndefined(indexPersona)) return !_.isEmpty(modifiche);
 
     const modifichePersona = _.get(modifiche, ['persone', indexPersona], {});
     return !_.isEmpty(modifichePersona);
+  };
+
+  const getTransazioniModificate = ({ numProtocollo }) => {
+    let result = {};
+
+    if (_.isUndefined(numProtocollo)) return result;
+
+    const procedimento = getProcedimento();
+    const persone = getPersone();
+    const modifiche = getModifiche({ numProtocollo });
+    const modificheProcedimento = _.get(modifiche, 'procedimento', {});
+    const modifichePersone = _.get(modifiche, ['persone'], []);
+
+    let transazioniProc = extractTransazioni(procedimento);
+
+    let transazioniProcModificate = _.transform(transazioniProc, (acc, t) => {
+      if (_.has(modificheProcedimento, t.key)) {
+        acc.push(_.merge({}, t, modificheProcedimento[t.key]));
+      }
+      return acc;
+    });
+
+    _.set(result, 'procedimento', transazioniProcModificate);
+
+    let transazioniPersone = _.map(persone, (persona) =>
+      extractTransazioni(persona)
+    );
+
+    //console.log('getTransazioniModificate', {transazioniPersone, modifichePersone});
+
+    let transazioniPersoneModificate = transazioniPersone.flatMap((tArray, index) => {
+      let modifichePersona = _.get(modifichePersone, index, {});
+      return _.transform(tArray, (acc, t) => {
+        if (_.has(modifichePersona, t.key)) {
+          acc.push(_.merge({}, t, modifichePersona[t.key]));
+        }
+        return acc;
+      });
+    });
+
+    _.set(
+      result,
+      'persone',
+      transazioniPersoneModificate
+    );
+
+    return result;
   };
 
   return {
@@ -276,6 +330,8 @@ const useRicerca = ({ set, get, subscribe, initialModel, options = {} }) => {
     getPersonaProperty,
     saveModifiche,
     hasModifiche,
+    getModifiche,
+    getTransazioniModificate,
   };
 };
 

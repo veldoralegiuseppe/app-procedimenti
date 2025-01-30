@@ -1,6 +1,5 @@
 import { getTransazioniPersone } from '@features/persona';
-import { ModelTypes } from '@shared/metadata';
-import { ModelFactory } from '@ui-shared/components';
+import { extractTransazioni } from '@features/transazione';
 import _ from 'lodash';
 
 const getTransazioniProcedimento = ({ procedimento, persone, overrides }) => {
@@ -9,15 +8,7 @@ const getTransazioniProcedimento = ({ procedimento, persone, overrides }) => {
   console.log('getTransazioniProcedimento', procedimento, persone, overrides);
 
   // Filter and map transazioni from procedimento
-  let transazioniProcedimento = _.values(procedimento)
-    .filter((value) => _.isEqual(value?.type, ModelTypes.TRANSAZIONE))
-    .map((t) =>
-      ModelFactory.create({
-        type: ModelTypes.TRANSAZIONE,
-        initialValues: t,
-        version: t.version,
-      })
-    )
+  let transazioniProcedimento = extractTransazioni(procedimento);
 
     console.log('transazioniProcedimento', transazioniProcedimento)
 
