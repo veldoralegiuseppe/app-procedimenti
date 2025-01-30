@@ -18,6 +18,7 @@ const useRicercaStore = (store) => {
   const getProcedimentoProperty = useCallback((props) => store?.(state => state?.getProcedimentoProperty(props)), [store]);
   const getPersonaProperty = useCallback((props) => store?.(state => state?.getPersonaProperty(props)), [store]);
   const saveModifiche = useCallback((props) => store?.getState()?.saveModifiche(props), [store]);
+  const hasModifiche = useCallback((props) => store(state => state?.hasModifiche(props)), [store]);
   
   return { 
     roots: _.get(store?.getState(), ['roots'], {}),
@@ -36,6 +37,7 @@ const useRicercaStore = (store) => {
     getProcedimentoProperty,
     getPersonaProperty,
     saveModifiche,
+    hasModifiche,
   };
 };
 

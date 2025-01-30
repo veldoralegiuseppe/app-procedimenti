@@ -100,6 +100,14 @@ const useRiepilogoSpese = ({ procedimento, persone: initPersone = [], open }) =>
   const procedimentoChanges = getChangeProcedimento();
   const personeChanges = getChangePersone()
 
+  // OnClose
+  useEffect(() => {
+    if (!open) {
+      handleSelectParte(null);
+      handleSelectControparte(null);
+    }
+  }, [open])
+
   return {
     activeTab,
     handleTabChange,

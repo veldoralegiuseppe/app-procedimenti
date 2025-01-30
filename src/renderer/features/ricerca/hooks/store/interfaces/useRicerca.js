@@ -187,7 +187,7 @@ const useRicerca = ({ set, get, subscribe, initialModel, options = {} }) => {
   };
 
   const getModifiche = ({ numProtocollo, path }) => {
-    const modifichePath = _.concat(modificheRoot, numProtocollo, path);
+    const modifichePath = _.concat(modificheRoot, numProtocollo, path ? path : []);
     const modifiche = modelInterface.getProperty({ namespace: modifichePath });
     console.log('getModifiche', {
       numProtocollo,
@@ -201,70 +201,10 @@ const useRicerca = ({ set, get, subscribe, initialModel, options = {} }) => {
   const setProcedimentoAndPersone = ({
     procedimento,
     persone,
-    updateDefaultModel = 'auto',
+    includeUpdates = true,
   }) => {
-    console.log('setProcedimentoAndPersone', {
-      procedimento,
-      persone,
-      updateDefaultModel,
-    });
-    if (_.isUndefined(procedimento)) return;
-
-    /*
-    let updateProcedimentoDefault
-    let updatePersoneDefault
    
-    if(_.isBoolean(updateDefaultModel)){
-      updateProcedimentoDefault = updateDefaultModel;
-      updatePersoneDefault = updateDefaultModel;
-
-      modelInterface.setProperty({
-        value: procedimento,
-        merge: false,
-        updateDefaultModel: updateProcedimentoDefault,
-        root: _.concat(modelInterface.modelRoot, procedimentoRoot),
-      });
-  
-      modelInterface.setProperty({
-        value: persone,
-        merge: false,
-        updateDefaultModel: updatePersoneDefault,
-        root: _.concat(modelInterface.modelRoot, personeRoot),
-      });
-    }
-    else if(_.isEqual(updateDefaultModel, 'auto')){
-      let procedimentoObj = _.cloneDeep(procedimento);
-      let personeArr = _.cloneDeep(persone);
-
-      const modificheProcedimento = getModifiche({numProtocollo: procedimentoObj.numProtocollo, path: 'procedimento'});
-      const modifichePersone = getModifiche({numProtocollo: procedimentoObj.numProtocollo, path: 'persone'});
-
-      const procedimentoIsModified = !(_.isEmpty(modificheProcedimento) || _.isUndefined(modificheProcedimento));
-      const personeIsModified = !(_.isEmpty(modifichePersone) || _.isUndefined(modifichePersone));
-
-      if(procedimentoIsModified) _.merge(procedimentoObj, modificheProcedimento);
-      if(personeIsModified) _.merge(personeArr, modifichePersone);
-
-      console.log('setProcedimentoAndPersone', {procedimentoIsModified, personeIsModified, procedimentoObj, personeArr, modificheProcedimento, modifichePersone});
-
-      modelInterface.setProperty({
-        value: procedimentoObj,
-        merge: false,
-        updateDefaultModel: true,
-        root: _.concat(modelInterface.modelRoot, procedimentoRoot),
-      });
-  
-      modelInterface.setProperty({
-        value: personeArr,
-        merge: false,
-        updateDefaultModel: persone,
-        root: _.concat(modelInterface.modelRoot, personeRoot),
-      });
-    }
-    */
-
-    // Caricamento semplice (viene aperto sempre lo stesso procedimento)
-    // Procedimento = procedimento originale proveniente dalla query
+    if (_.isUndefined(procedimento)) return;
 
     // Gestione delle modifiche pregresse
     let procedimentoAggiornato = _.cloneDeep(procedimento);
@@ -279,8 +219,8 @@ const useRicerca = ({ set, get, subscribe, initialModel, options = {} }) => {
       path: 'persone',
     });
 
-    _.merge(procedimentoAggiornato, modificheProcedimento);
-    _.merge(personeAggiornate, modifichePersone);
+    _.merge(procedimentoAggiornato, includeUpdates ? modificheProcedimento : {});
+    _.merge(personeAggiornate, includeUpdates ? modifichePersone : {});
 
     modelInterface.setProperty({
       value: procedimentoAggiornato,
@@ -295,6 +235,16 @@ const useRicerca = ({ set, get, subscribe, initialModel, options = {} }) => {
       updateDefaultModel: persone,
       root: _.concat(modelInterface.modelRoot, personeRoot),
     });
+  };
+
+  const hasModifiche = ({ numProtocollo, indexPersona }) => {
+    if(_.isUndefined(numProtocollo)) return false;
+
+    const modifiche = getModifiche({ numProtocollo });
+    if(_.isUndefined(indexPersona)) return !_.isEmpty(modifiche);
+
+    const modifichePersona = _.get(modifiche, ['persone', indexPersona], {});
+    return !_.isEmpty(modifichePersona);
   };
 
   return {
@@ -325,6 +275,7 @@ const useRicerca = ({ set, get, subscribe, initialModel, options = {} }) => {
     getProcedimentoProperty,
     getPersonaProperty,
     saveModifiche,
+    hasModifiche,
   };
 };
 
