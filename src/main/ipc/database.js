@@ -48,6 +48,7 @@ const getModel = (version = '1.0', type) => {
   }
 
   // Crea e restituisce il modello
+  console.log('credo il models:', modelName);
   return modelFactory();
 };
 

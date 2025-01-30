@@ -104,10 +104,10 @@ const useModel = ({ set, get, subscribe, initialModel = {}, options = {} }) => {
 
   const deepDifference = (objA, objB) => {
     return _.transform(objA, (result, value, key) => {
-      if (!_.isEqual(value, objB[key])) {
+      if (!_.isEqual(value, objB?.[key])) {
         result[key] =
           _.isObject(value) && _.isObject(objB[key])
-            ? deepDifference(value, objB[key])
+            ? deepDifference(value, objB?.[key])
             : value;
       }
     });

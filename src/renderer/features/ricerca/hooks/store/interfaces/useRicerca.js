@@ -163,9 +163,7 @@ const useRicerca = ({ set, get, subscribe, initialModel, options = {} }) => {
 
     const changeProcedimento = getChangeProcedimento();
     const changePersone = getChangePersone();
-    if (_.isUndefined(changeProcedimento) && _.isUndefined(changePersone))
-      return;
-
+   
     let modificheCorrenti = _.cloneDeep(
       _.get(get(), _.concat(['model'], modificheRoot), {})
     );
@@ -184,6 +182,7 @@ const useRicerca = ({ set, get, subscribe, initialModel, options = {} }) => {
     modelInterface.setProperty({
       value: modificheCorrenti,
       namespace: modificheRoot,
+      merge: false,
     });
   };
 

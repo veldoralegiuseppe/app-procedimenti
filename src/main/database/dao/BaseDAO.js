@@ -12,11 +12,11 @@ class BaseDAO {
 
   async create(data) {
     console.log('BaseDAO create', data);
-    return await this.Model.create(data);
+    return await this.Model.create(data)?.lean();
   }
 
   async findById(id) {
-    return await this.Model.findById(id);
+    return await this.Model.findById(id)?.lean();
   }
 
   async findAll(query = {}, page = 0, limit = 0, customAggregations = []) {

@@ -45,6 +45,7 @@ export const useOptionsAutocomplete = ({
         openDialog();
       } else {
         console.log('handleChange', { newValue, option });
+    
         onChange?.(!newValue ? undefined : newValue, option);
         onBlur?.(!newValue ? undefined : newValue, option);
         if (reason === 'clear') setValue(null);

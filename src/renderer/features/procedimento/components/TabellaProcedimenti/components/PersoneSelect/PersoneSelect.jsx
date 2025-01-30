@@ -13,7 +13,8 @@ function PersoneSelect({ indexPersona, onChange, persone = [], ruolo }) {
     filterFn,
   } = usePersonaSelect(onChange, persone, ruolo, indexPersona);
 
-  console.log('PersonaSelect', {persone, value, ruolo, indexPersona});
+  
+  console.log('PersonaSelect', {persone, value, ruolo, indexPersona, personeOrdinate: _.sortBy(persone, (persona) => groupBy('', persona))});
 
   return (
     <OptionsAutocomplete

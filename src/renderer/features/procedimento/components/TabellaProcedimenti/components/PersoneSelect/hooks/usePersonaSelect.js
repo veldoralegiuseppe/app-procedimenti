@@ -14,20 +14,23 @@ const usePersonaSelect = (onChange, persone = [], ruolo, indexPersona) => {
       return {
         value: `${persona.nome} ${persona.cognome}`,
         type: persona.type,
+        id: _.get(persona, 'id'),
       };
     }
 
-    return { value: persona.denominazione, type: persona.type };
+    return { value: persona.denominazione, type: persona.type, id: persona.id };
   };
+
+  const findPersonaById = (id) => _.isNumber(id) ? _.find(persone, (p) => p.id === id) : null;
 
   const lastIndexSelected = useRef(indexPersona || null);
   const [value, setValue] = useState(
-    () => extractOption(persone[indexPersona])?.value || ''
+    () => extractOption(findPersonaById(indexPersona))?.value || ''
   );
 
   useEffect(() => {
     lastIndexSelected.current = indexPersona;
-    const nextValue = extractOption(persone[indexPersona])?.value || '';
+    const nextValue = extractOption(findPersonaById(indexPersona))?.value || '';
     console.log('usePersonaSelect', { indexPersona, value, nextValue });
     if (!_.isEqual(value, nextValue)) {
       setValue(nextValue);
@@ -50,8 +53,8 @@ const usePersonaSelect = (onChange, persone = [], ruolo, indexPersona) => {
       .hasModifiche({ numProtocollo, indexPersona: id });
 
     return option.type === ModelTypes.PERSONA_FISICA
-      ? 'Persone fisiche' + `${hasModifiche ? ' (modificate)' : ''}`
-      : 'Persone giuridiche' + `${hasModifiche ? ' (modificate)' : ''}`;
+      ? 'Persone fisiche' + (hasModifiche ? ' (modificati)' : '')
+      : 'Persone giuridiche' + (hasModifiche ? ' (modificati)' : '');
   };
 
   const isOptionEqualToValue = (option, anagrafica) => {
@@ -66,14 +69,12 @@ const usePersonaSelect = (onChange, persone = [], ruolo, indexPersona) => {
   const handleBlur = (anagrafica, option) => {
     const newIndex = option?.id >= 0 ? option.id : null;
 
-    console.log('handleBlur', {
-      option,
-      newIndex,
-      value: extractOption(persone[newIndex]),
-    });
-
     lastIndexSelected.current = newIndex;
-    setValue(extractOption(persone[newIndex])?.value || '');
+    const newPersonaSelezionata =  findPersonaById(newIndex)
+
+    console.log('handleBlur', { anagrafica, option, newIndex, newPersonaSelezionata });
+
+    setValue(extractOption(newPersonaSelezionata)?.value || '');
     onChange?.(newIndex);
   };
 
