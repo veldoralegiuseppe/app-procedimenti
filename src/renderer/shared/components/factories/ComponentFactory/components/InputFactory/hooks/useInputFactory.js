@@ -2,6 +2,7 @@ import { useMemo, useCallback } from 'react';
 import { useTheme } from '@mui/material/styles';
 import { useStoreContext } from '@ui-shared/context';
 import { useModelStore } from '@ui-shared/hooks';
+import _ from 'lodash';
 
 const useInputFactory = ({
   fieldKey,
@@ -15,6 +16,8 @@ const useInputFactory = ({
   const errors = getFieldErrors({key: fieldKey}) || {};
   const hasError = typeof Object.values(errors)[0] === 'string';
   const errorMessage = hasError ? Object.values(errors)[0] : '';
+  const validations = _.get(props, 'inputValidations', []);
+  console.log('userInputFactoryValidations', {fieldKey, validations, errors});
 
   // Memorizzazione degli styles
   const inputStyles = useMemo(() => {
@@ -71,7 +74,6 @@ const useInputFactory = ({
     () => ({
       ...props,
       label: props?.label || '',
-      error: props?.error,
       onChange: (change, ...rest) => {
         handleChanges({ [fieldKey]: change?.target?.value ?? change }, ...rest);
       },
@@ -87,8 +89,9 @@ const useInputFactory = ({
       key: fieldKey + '-input',
       fieldKey,
       owner,
+      required: validations.some(validation => validation.name === 'required'),
     }),
-    [props, inputStyles, handleChanges, handleBlur, errors]
+    [props, inputStyles, handleChanges, handleBlur, errors, validations]
   );
 
   return {

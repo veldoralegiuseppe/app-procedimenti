@@ -21,6 +21,7 @@ export default function ProtocolloInput({
   helperText,
   onBlur,
   label = '',
+  required = false,
   sx = {},
 }) {
   const theme = useTheme();
@@ -150,7 +151,7 @@ export default function ProtocolloInput({
       label={label}
       variant="outlined"
       size="small"
-      required
+      required={required}
     />
   );
 }
