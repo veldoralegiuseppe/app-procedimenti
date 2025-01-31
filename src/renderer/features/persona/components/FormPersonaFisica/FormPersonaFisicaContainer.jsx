@@ -13,7 +13,7 @@ const FormPersonaFisicaContainer = () => {
 
   return (
     <Grid container sx={{ rowGap: '2.4rem' }}>
-      {Object.entries(enums.sezione).filter(([key, _]) => key !== enums.sezione.RICERCA_AVANZATA).map(([key, sezione]) => {
+      {Object.entries(enums.sezione).filter(([key, _]) => key !== 'RICERCA_AVANZATA').map(([key, sezione]) => {
         const titolo =
           key.charAt(0).toUpperCase() +
           key.slice(1).toLowerCase().replaceAll('_', ' ');
