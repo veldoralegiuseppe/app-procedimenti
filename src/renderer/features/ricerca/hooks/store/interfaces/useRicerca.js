@@ -1,5 +1,6 @@
 import { useModel } from '@ui-shared/hooks';
 import { extractTransazioni } from '@features/transazione';
+import { ModelFactory } from '@ui-shared/components';
 import _ from 'lodash';
 
 const ricercaModel = {
@@ -59,6 +60,7 @@ const useRicerca = ({ set, get, subscribe, initialModel, options = {} }) => {
     validations,
     namespace,
     predicate,
+    updateDefaultModel,
   }) => {
     modelInterface.setProperty({
       key,
@@ -66,6 +68,7 @@ const useRicerca = ({ set, get, subscribe, initialModel, options = {} }) => {
       validations,
       namespace,
       predicate,
+      updateDefaultModel,
       root: _.concat(modelInterface.modelRoot, procedimentoRoot),
     });
 
@@ -101,6 +104,7 @@ const useRicerca = ({ set, get, subscribe, initialModel, options = {} }) => {
     value,
     validations,
     predicate,
+    updateDefaultModel,
     index,
   }) => {
     console.log('setPersonaProperty', {
@@ -114,6 +118,7 @@ const useRicerca = ({ set, get, subscribe, initialModel, options = {} }) => {
       key,
       value,
       validations,
+      updateDefaultModel,
       namespace: [index],
       predicate,
       root: _.concat(modelInterface.modelRoot, personeRoot),
@@ -300,6 +305,49 @@ const useRicerca = ({ set, get, subscribe, initialModel, options = {} }) => {
     return result;
   };
 
+  const getProcedimentoAndPersoneInQueryResults = () => {
+    const numProtocolloAttuale = getProcedimentoProperty({ key: 'numProtocollo' });
+    if (_.isUndefined(numProtocolloAttuale)) return;
+
+    const predicate = (p) => _.isEqual(p?.numProtocollo, numProtocolloAttuale);
+    const queryResult = getQueryResult({ key: 'results', predicate });
+    console.log('getProcedimentoAndPersoneInQueryResults', queryResult);
+    return queryResult
+  }
+
+  const resetModifiche = ({ numProtocollo, indexPersona }) => {
+    if (_.isUndefined(numProtocollo)) return;
+
+    let modificheCorrenti = _.cloneDeep(
+      _.get(get(), _.concat(['model'], modificheRoot), {})
+    );
+
+    const databaseProc = getProcedimentoAndPersoneInQueryResults();
+    const persone = _.get(databaseProc, 'persone', []);
+    console.log('databaseProc', {databaseProc, persone, indexPersona});
+
+    if (_.isUndefined(indexPersona) || indexPersona < 0) {
+      _.unset(modificheCorrenti, [numProtocollo, 'procedimento']);
+      const procInstance = ModelFactory.create({initialValues: databaseProc});
+      console.log('resetModifiche', {procInstance, modificheCorrenti});
+      setProcedimentoProperty({value: procInstance, updateDefaultModel: true});
+
+    } else {
+      _.unset(modificheCorrenti, [numProtocollo, 'persone', indexPersona]);
+      const personaInstance = ModelFactory.create({initialValues: persone[indexPersona]});
+      console.log('resetModifiche', {personaInstance, modificheCorrenti});
+      setPersonaProperty({index: indexPersona, value: personaInstance, updateDefaultModel: true});
+    }
+
+    modelInterface.setProperty({
+      value: modificheCorrenti,
+      namespace: modificheRoot,
+      merge: false,
+    });
+  }
+
+  
+
   return {
     // Interfaccia funzionale del model store
     ...modelInterface,
@@ -331,6 +379,7 @@ const useRicerca = ({ set, get, subscribe, initialModel, options = {} }) => {
     hasModifiche,
     getModifiche,
     getTransazioniModificate,
+    resetModifiche,
   };
 };
 

@@ -7,10 +7,10 @@ import { PersonaEnumsV1 } from '@shared/metadata';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { useTheme } from '@mui/material/styles';
 import { ClearButton } from '@ui-shared/theme';
-import { useStoreContext } from '@ui-shared/context';
-import { StoreTypes } from '@ui-shared/metadata';
-import { useRicercaStore } from '@features/ricerca';
+import { ButtonTypes } from '@ui-shared/metadata';
+import { ButtonFactory } from '@ui-shared/components';
 import _ from 'lodash';
+import { height } from '@mui/system';
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props;
@@ -53,6 +53,7 @@ function ClearBtn({ onClick, updates = {} }) {
       sx={{
         fontSize: '.9rem',
         '&.Mui-disabled': { color: theme.palette.text.disabled },
+        maxWidth: '14rem',
       }}
       disabled={!isModified}
     >
@@ -61,8 +62,7 @@ function ClearBtn({ onClick, updates = {} }) {
   );
 }
 
-const RiepilogoSpese = ({ open, procedimento, persone: pers }) => {
-  console.log('RiepilogoSpese', { open, procedimento, pers });
+const RiepilogoSpese = ({ open, procedimento, persone: pers, handleClose }) => {
   const {
     activeTab,
     handleTabChange,
@@ -78,38 +78,48 @@ const RiepilogoSpese = ({ open, procedimento, persone: pers }) => {
     handleChangeProcedimento,
     procedimentoChanges,
     personeChanges,
-    persone
-  } = useRiepilogoSpese({ procedimento, persone: pers, open });
-
-  const store = useStoreContext(StoreTypes.RICERCA)
-  const {roots} = useRicercaStore(store)
+    persone,
+    handleSalvaBozzaBtn,
+    handleChiudiBtn,
+    isSalvaBozzaBtnDisabled,
+    roots,
+    store,
+    handleClearBtn,
+  } = useRiepilogoSpese({ procedimento, persone: pers, open, handleClose });
 
   const renderTabellaTransazioni = (transazioni, onChange, indexPersona) => {
-   
     console.log('renderTabellaTransazioni', transazioni, indexPersona);
     let rootDep = _.concat(['model'], roots.procedimento);
     let updateMethod = 'setProcedimentoProperty';
-    let updateMethodArgs = {}
+    let updateMethodArgs = {};
     let getMethod = 'getProcedimentoProperty';
     let getMethodArgs = {};
-    let updates = {}
+    let updates = {};
 
-    if(indexPersona === -1) 
-      updates = procedimentoChanges;
-    else if(indexPersona >= 0){
-      rootDep = _.concat(roots.persone, indexPersona)
-      updates = _.get(personeChanges, indexPersona, {})
+    if (indexPersona === -1) updates = procedimentoChanges;
+    else if (indexPersona >= 0) {
+      rootDep = _.concat(roots.persone, indexPersona);
+      updates = _.get(personeChanges, indexPersona, {});
       updateMethod = 'setPersonaProperty';
       getMethod = 'getPersonaProperty';
-      getMethodArgs = {index: indexPersona}
-      updateMethodArgs = {index: indexPersona}
-      console.log('updatePersona', {rootDep, updates, updateMethod, getMethod, getMethodArgs, indexPersona});
+      getMethodArgs = { index: indexPersona };
+      updateMethodArgs = { index: indexPersona };
+      console.log('updatePersona', {
+        rootDep,
+        updates,
+        updateMethod,
+        getMethod,
+        getMethodArgs,
+        indexPersona,
+      });
     }
 
     console.log('renderTabellaTransazioni', updates);
 
     return (
-      <div>
+      <div
+        style={{ display: 'flex', flexDirection: 'column', rowGap: '2.5rem'}}
+      >
         <TabellaTransazioni
           store={store}
           rootDep={rootDep}
@@ -122,14 +132,26 @@ const RiepilogoSpese = ({ open, procedimento, persone: pers }) => {
           onChange={onChange}
         />
 
-        {_.isNumber(indexPersona) && <ClearBtn onClick={() => {}} updates={updates} />}
+        {_.isNumber(indexPersona) && (
+          <ClearBtn
+            onClick={() =>
+              handleClearBtn({
+                numProtocollo: _.get(procedimento, 'numProtocollo'),
+                indexPersona,
+              })
+            }
+            updates={updates}
+          />
+        )}
       </div>
     );
   };
 
   return (
-    <>
-      <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+    <div style={{ display: 'grid', gridTemplateRows: 'auto 1fr auto', height: '100%' }}>
+      <Box
+        sx={{ borderBottom: 1, borderColor: 'divider', position: 'relative' }}
+      >
         <Tabs
           value={activeTab}
           variant="fullWidth"
@@ -143,7 +165,8 @@ const RiepilogoSpese = ({ open, procedimento, persone: pers }) => {
       </Box>
 
       <TabPanel value={activeTab} index={0}>
-        {procedimento && _.isEqual(activeTab, 0) && 
+        {procedimento &&
+          _.isEqual(activeTab, 0) &&
           renderTabellaTransazioni(
             transazioniProcedimento,
             handleChangeProcedimento,
@@ -152,31 +175,70 @@ const RiepilogoSpese = ({ open, procedimento, persone: pers }) => {
       </TabPanel>
 
       <TabPanel value={activeTab} index={1}>
-        <PersoneSelect
-          indexPersona={indexParteSelezionata}
-          onChange={handleSelectParte}
-          persone={persone}
-          ruolo={PersonaEnumsV1.ruolo.PARTE_ISTANTE}
-        />
-        {activeTab === 1 &&
-          renderTabellaTransazioni(transazioniParte, handleChangeParte, indexParteSelezionata)}
+        <div
+          style={{ display: 'flex', flexDirection: 'column', rowGap: '3rem' }}
+        >
+          <PersoneSelect
+            indexPersona={indexParteSelezionata}
+            onChange={handleSelectParte}
+            persone={persone}
+            ruolo={PersonaEnumsV1.ruolo.PARTE_ISTANTE}
+          />
+          {activeTab === 1 &&
+            renderTabellaTransazioni(
+              transazioniParte,
+              handleChangeParte,
+              indexParteSelezionata
+            )}
+        </div>
       </TabPanel>
 
       <TabPanel value={activeTab} index={2}>
-        <PersoneSelect
-          indexPersona={indexControparteSelezionata}
-          onChange={handleSelectControparte}
-          persone={persone}
-          ruolo={PersonaEnumsV1.ruolo.CONTROPARTE}
-        />
-        {activeTab === 2 &&
-          renderTabellaTransazioni(
-            transazioniControparte,
-            handleChangeControparte,
-            indexControparteSelezionata
-          )}
+        <div
+          style={{ display: 'flex', flexDirection: 'column', rowGap: '3rem' }}
+        >
+          <PersoneSelect
+            indexPersona={indexControparteSelezionata}
+            onChange={handleSelectControparte}
+            persone={persone}
+            ruolo={PersonaEnumsV1.ruolo.CONTROPARTE}
+          />
+          {activeTab === 2 &&
+            renderTabellaTransazioni(
+              transazioniControparte,
+              handleChangeControparte,
+              indexControparteSelezionata
+            )}
+        </div>
       </TabPanel>
-    </>
+
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between',
+          padding: '1rem 0',
+          marginTop: '3rem',
+          marginBottom: '-2rem',
+          borderTop: 1,
+          borderColor: 'divider',
+          gridRow: 3,
+        }}
+      >
+        <ButtonFactory
+          type={ButtonTypes.OUTLINED}
+          text="Chiudi"
+          onClick={handleChiudiBtn}
+          sx={{ width: '11rem' }}
+        />
+        <ButtonFactory
+          type={ButtonTypes.MODIFY}
+          text="Salva bozza"
+          onClick={handleSalvaBozzaBtn}
+          disabled={isSalvaBozzaBtnDisabled}
+          sx={{ width: '11rem' }}
+        />
+      </Box>
+    </div>
   );
 };
 

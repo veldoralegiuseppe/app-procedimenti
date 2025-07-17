@@ -21,6 +21,7 @@ const useRicercaStore = (store) => {
   const hasModifiche = useCallback((props) => store?.getState()?.hasModifiche(props), [store]);
   const getModifiche = useCallback((props) => store?.(state => state?.getModifiche(props)), [store]);
   const getTransazioniModificate = useCallback((props) => store?.getState()?.getTransazioniModificate(props), [store]);
+  const resetModifiche = useCallback((props) => store?.getState()?.resetModifiche(props), [store]);
   
   
   return { 
@@ -43,6 +44,7 @@ const useRicercaStore = (store) => {
     hasModifiche,
     getModifiche,
     getTransazioniModificate,
+    resetModifiche,
   };
 };
 

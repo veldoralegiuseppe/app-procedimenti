@@ -24,14 +24,14 @@ export default class ModelFactory {
    */
   static create({ initialValues = {}, type, version }) {
     const model = {};
-    const typeMetadata = ModelFactory.#metadata[type];
+    const typeMetadata = ModelFactory.#metadata[type || initialValues?.type];
 
     if (!typeMetadata) {
       console.error(`Tipo ${type} non supportato`);
       return model;
     }
 
-    const modelVersion = version ? version : Object.keys(typeMetadata).pop();
+    const modelVersion = version ? version : (initialValues?.version || Object.keys(typeMetadata).pop());
     const metadata = typeMetadata[modelVersion]?.metadata;
 
     if (!metadata) {

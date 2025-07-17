@@ -102,6 +102,20 @@ const useModel = ({ set, get, subscribe, initialModel = {}, options = {} }) => {
     return newErrors;
   };
 
+  const checkIfIsFalsy = (value) => {
+    if (_.isArray(value)) {
+      if (_.isEmpty(value)) return true;
+      return _.every(value, checkIfIsFalsy);
+    } 
+    else if (_.isObject(value)) {
+      console.log('checkIfIsFalsy', _.cloneDeep(value));
+      if (_.isEmpty(value)) return true;
+      return _.every(value, checkIfIsFalsy);
+    } 
+    else 
+      return _.isNil(value) || (_.isString(value) && _.isEmpty(value));
+  };
+
   const deepDifference = (objA, objB) => {
     return _.transform(objA, (result, value, key) => {
       if (!_.isEqual(value, objB?.[key])) {
@@ -134,17 +148,21 @@ const useModel = ({ set, get, subscribe, initialModel = {}, options = {} }) => {
     const defaultValue = _.get(state, defaultModelRoot);
     const difference = deepDifference(changes, defaultValue);
     const hasChanged = !_.isEmpty(difference);
+    console.log('updateLastChanges', { hasChanged, path, changes, difference });
 
     if (hasChanged) {
       // Verifico che i cambiamenti non siano già stati registrati
       const lastChanges = _.get(state, lastChangesPath);
 
       if (!isSubset(difference, lastChanges)) {
+        console.log('updateLastChanges-hasChanged', { path, changes, difference });
         _.set(state, lastChangesPath, _.merge({}, lastChanges, difference));
       }
     } else {
       _.unset(state, lastChangesPath);
-      if (_.isEmpty(_.get(state, lastUpdateRoot)))
+      if(checkIfIsFalsy(_.get(state, lastChangesPath)))
+        
+      if (checkIfIsFalsy(_.get(state, lastUpdateRoot)))
         _.set(state, lastUpdateRoot, null);
     }
   };
@@ -450,7 +468,6 @@ const useModel = ({ set, get, subscribe, initialModel = {}, options = {} }) => {
     console.log('getChange', { key, namespace, predicate, change });
     return change;
   };
-
   return {
     modelRoot,
     lastUpdateRoot,

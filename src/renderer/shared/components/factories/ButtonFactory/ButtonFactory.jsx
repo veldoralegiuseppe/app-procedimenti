@@ -9,7 +9,7 @@ import { IconButton } from '@mui/material';
 
 const buttonStyles = {
   OUTLINED: {
-    width: '90px',
+    minWidth: '90px',
     color: '#467bae',
     border: '.9px solid #467bae',
     '&:hover': {
@@ -18,13 +18,13 @@ const buttonStyles = {
     },
   },
   PRIMARY: {
-    width: '90px',
+    minWidth: '90px',
     color: 'white',
     backgroundColor: '#467bae',
     '&:hover': { backgroundColor: '#3d6f9f', color: 'white' },
   },
   DELETE: {
-    width: '90px',
+    minWidth: '90px',
     color: 'white',
     backgroundColor: '#d32f2f',
     '&:hover': { backgroundColor: '#b71c1c', color: 'white' },
@@ -36,6 +36,7 @@ const ButtonFactory = ({
   onClick,
   text,
   size,
+  sx,
   disabled: initialDisabled = false,
 }) => {
   const [disabled, setDisabled] = useState(initialDisabled);
@@ -98,6 +99,7 @@ const ButtonFactory = ({
     return (
       <ButtonComponent
         {...buttonProps}
+        sx={{ ...buttonProps.sx, ...sx }}
         size={size}
         onClick={onClick}
         disabled={disabled}

@@ -53,8 +53,8 @@ const usePersonaSelect = (onChange, persone = [], ruolo, indexPersona) => {
       .hasModifiche({ numProtocollo, indexPersona: id });
 
     return option.type === ModelTypes.PERSONA_FISICA
-      ? 'Persone fisiche' + (hasModifiche ? ' (modificati)' : '')
-      : 'Persone giuridiche' + (hasModifiche ? ' (modificati)' : '');
+      ? 'Persone fisiche' + (hasModifiche ? ' (modificate)' : '')
+      : 'Persone giuridiche' + (hasModifiche ? ' (modificate)' : '');
   };
 
   const isOptionEqualToValue = (option, anagrafica) => {

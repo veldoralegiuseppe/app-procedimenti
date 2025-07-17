@@ -86,8 +86,6 @@ const TabellaProcedimentiComponent = ({
 
   const handleCloseModale = (onClose) => {
     onClose?.();
-    console.log('handleCloseModale');
-    saveModifiche();
     setOpen(false);
   };
 
@@ -214,7 +212,7 @@ const TabellaProcedimentiComponent = ({
         data={data}
       />}
 
-      <FormModal open={open} handleClose={handleCloseModale}>
+      <FormModal open={open} handleClose={handleCloseModale} title="Riepilogo spese">
         <RiepilogoSpese
           open={open}
           procedimento={procedimentoSelezionato}

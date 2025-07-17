@@ -1,5 +1,5 @@
 import { useRicercaStore } from '@features/ricerca';
-import { useStoreContext } from '@ui-shared/context';
+import { useStoreContext, useUtilsContext } from '@ui-shared/context';
 import { StoreTypes } from '@ui-shared/metadata';
 import { useState, useCallback, useEffect, useMemo } from 'react';
 import { getTransazioniProcedimento } from '@features/procedimento';
@@ -44,6 +44,7 @@ const useRiepilogoSpese = ({
   procedimento,
   persone: initPersone = [],
   open,
+  handleClose,
 }) => {
   // Tab
   const { activeTab, handleTabChange } = useTab(0, open);
@@ -71,6 +72,9 @@ const useRiepilogoSpese = ({
     getChangeProcedimento,
     getChangePersone,
     getTransazioniModificate,
+    saveModifiche,
+    roots,
+    resetModifiche,
   } = useRicercaStore(ricercaStore);
 
   // Transazioni
@@ -113,15 +117,7 @@ const useRiepilogoSpese = ({
     ]
   );
 
-  console.log(
-    'transazioni',
-    procedimento,
-    persone,
-    transazioniProcedimento,
-    incassi,
-    transazioniPersone
-  );
-
+ 
   const handleChangeProcedimento = useCallback(
     (index, key, changes) => {
       setProcedimentoProperty({ key, value: changes });
@@ -164,8 +160,8 @@ const useRiepilogoSpese = ({
   );
 
   // Changes
-  const procedimentoChanges = getChangeProcedimento();
-  const personeChanges = getChangePersone();
+  let procedimentoChanges = getChangeProcedimento();
+  let personeChanges = getChangePersone();
 
   // OnClose
   useEffect(() => {
@@ -174,6 +170,29 @@ const useRiepilogoSpese = ({
       handleSelectControparte(null);
     }
   }, [open]);
+
+  // Buttons 
+  const { notify } = useUtilsContext();
+
+  const handleSalvaBozzaBtn = useCallback(() => {
+    saveModifiche();
+    handleClose?.();
+    notify('Bozza salvata', 'success');
+  }, [saveModifiche]);
+
+  const handleChiudiBtn = useCallback(() => {
+    handleClose?.();
+  }, []);
+
+  const isSalvaBozzaBtnDisabled = useMemo(() => {
+    return _.isEmpty(procedimentoChanges) && _.isEmpty(personeChanges);
+  }, [procedimentoChanges, personeChanges]);
+
+  const handleClearBtn = useCallback((obj) => {
+    resetModifiche(obj);
+    procedimentoChanges = ricercaStore?.getState()?.getChangeProcedimento();
+    personeChanges = ricercaStore?.getState()?.getChangePersone();
+  }, [resetModifiche, ricercaStore, procedimentoChanges, personeChanges]);
 
   return {
     activeTab,
@@ -191,6 +210,12 @@ const useRiepilogoSpese = ({
     procedimentoChanges,
     personeChanges,
     persone,
+    handleSalvaBozzaBtn,
+    handleChiudiBtn,
+    isSalvaBozzaBtnDisabled,
+    roots,
+    store: ricercaStore,  
+    handleClearBtn,
   };
 };
 
